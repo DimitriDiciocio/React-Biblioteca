@@ -85,24 +85,22 @@ const Login: React.FC = () => {
 
           <div className="col-6">
             <div className="row">
-              <img className="col-4 livro" src="assets/img/o-diario-de-anne-frank.png" alt="O Diário de Anne Frank" />
-              <img className="col-4 livro" src="assets/img/o-alquimista.png" alt="O Alquimista" />
-              <img className="col-4 livro" src="assets/img/o-codigo-da-vinci.png" alt="O Código Da Vinci" />
-            </div>
-            <div className="row">
-              <img className="col-4 livro" src="assets/img/harry-potter-e-a-crianca-amaldicioada.png" alt="Harry Potter e a Criança Amaldiçoada" />
-              <img className="col-4 livro" src="assets/img/dom-casmurro.png" alt="Dom Casmurro" />
-              <img className="col-4 livro" src="assets/img/o-pequeno-principe.png" alt="O Pequeno Príncipe" />
-            </div>
-            <div className="row">
-              <img className="col-4 livro" src="assets/img/e-o-vento-levou.png" alt="E o Vento Levou" />
-              <img className="col-4 livro" src="assets/img/alem-da-capa.png" alt="Além da Capa" />
-              <img className="col-4 livro" src="assets/img/o-senhor-dos-aneis.png" alt="O Senhor dos Anéis" />
-            </div>
-            <div className="row">
-              <img className="col-4 livro" src="assets/img/crepusculo.png" alt="Crepúsculo" />
-              <img className="col-4 livro" src="assets/img/percy-jackson-e-os-olimpianos.png" alt="Percy Jackson e os Olimpianos" />
-              <img className="col-4 livro" src="assets/img/diario-de-um-banana.png" alt="Diário de um Banana" />
+              {[
+                'o-diario-de-anne-frank.png',
+                'o-alquimista.png',
+                'o-codigo-da-vinci.png',
+                'harry-potter-e-a-crianca-amaldicioada.png',
+                'dom-casmurro.png',
+                'o-pequeno-principe.png',
+                'e-o-vento-levou.png',
+                'alem-da-capa.png',
+                'o-senhor-dos-aneis.png',
+                'crepusculo.png',
+                'percy-jackson-e-os-olimpianos.png',
+                'diario-de-um-banana.png',
+              ].map((livro, index) => (
+                <img key={index} className="col-4 livro animacao" src={`assets/img/${livro}`} alt={livro.replace('.png', '')} />
+              ))}
             </div>
           </div>
         </div>

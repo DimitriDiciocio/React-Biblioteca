@@ -138,8 +138,8 @@ const Cadastro: React.FC = () => {
           <div className="col-1"></div>
 
           {/* Exibição de Livros */}
-          <div className="col-6">
-            <div className="row">
+          <div className="col-6 container-livros">
+            <div className="row animacao">
               {[
                 'o-diario-de-anne-frank.png',
                 'o-alquimista.png',

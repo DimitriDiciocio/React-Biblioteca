@@ -889,8 +889,18 @@
     .text-decoration-none {
         text-decoration: none;
     }
-    
 
-    .colorBack {
-        background-color: #EBEBEB;
-    }
+    .animacao {
+        position: relative; /* Necessário para a movimentação */
+        animation: subirEDescer 20s infinite alternate linear;
+      }
+      
+      @keyframes subirEDescer {
+        0% {
+          top: 0;
+        }
+        100% {
+          top: -850px; /* Ajuste conforme necessário */
+        }
+      }
+      
