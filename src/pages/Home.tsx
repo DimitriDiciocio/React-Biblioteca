@@ -58,7 +58,8 @@ const Home: React.FC = () => {
             <input id="campo-busca" placeholder="O que você quer ler hoje?" />
             </div>
             <div className="col-lg-1 col-sm-3 justify-content-center align-items-center">
-            <Link to='/cadastro'><i className="conta2">account_circle</i></Link>
+            <Link to='/user/editar' className='text-decoration-none'><i className="conta2">account_circle</i></Link>
+            <Link to='/cadastro' className='text-decoration-none'><i className="">Sair</i></Link>
             </div>
         </section>
 

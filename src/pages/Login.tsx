@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { BrowserRouter as Router, Route, Routes, Link } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
 
 const Login: React.FC = () => {
@@ -21,10 +20,11 @@ const Login: React.FC = () => {
       const data = await response.json();
 
       if (response.ok) {
-        alert('Login realizado com sucesso!');
+        alert(data.message);
+        localStorage.setItem("id", JSON.stringify(data.id_user))
         navigate('/'); // Redireciona para a página inicial ou outra rota
       } else {
-        alert(data.message || 'Erro ao fazer login');
+        alert(data.message);
       }
     } catch (error) {
       alert('Erro ao se conectar com o servidor: ' + String(error));
@@ -73,7 +73,13 @@ const Login: React.FC = () => {
                       <button type="submit" className="botao-fundo-azul">Entrar</button>
                     </div>
                     <div className="centraliza">
-                      <Link to='/cadastro' className="botao-fundo-transparente text-decoration-none">Não possuo uma conta</Link>
+                      <button
+                        type="button"
+                        className="botao-fundo-transparente text-decoration-none"
+                        onClick={() => navigate('/Cadastro')}
+                      >
+                        Não possuo uma conta
+                      </button>
                     </div>
                   </div>
                 </div>

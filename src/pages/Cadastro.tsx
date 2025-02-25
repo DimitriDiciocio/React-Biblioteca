@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import '../index.css'; // Certifique-se de importar o CSS adequado
+import '../index.css';
 
 const Cadastro: React.FC = () => {
   const [nome, setNome] = useState('');
@@ -22,11 +22,13 @@ const Cadastro: React.FC = () => {
         body: JSON.stringify(newUser),
       });
 
+      const data = await response.json();
+
       if (response.ok) {
-        alert('Cadastro realizado com sucesso!');
+        alert(data.message);
         navigate('/login');
       } else {
-        alert('Erro ao realizar cadastro');
+        alert(data.message);
       }
     } catch (error) {
       alert('Erro de conexão com o servidor' + error);
@@ -102,13 +104,14 @@ const Cadastro: React.FC = () => {
                     required
                   />
 
-                  <label htmlFor="tipo">Tipo de usuário</label>
+                  {/* <label htmlFor="tipo">Tipo de usuário</label> */}
                   <select
                     id="tipo"
                     className="botao-fundo-transparente"
                     value={tipo}
                     onChange={(e) => setTipo(Number(e.target.value))}
                     required
+                    hidden
                   >
                     <option value={1}>Leitor</option>
                     <option value={2}>Bibliotecário</option>
@@ -138,8 +141,8 @@ const Cadastro: React.FC = () => {
           <div className="col-1"></div>
 
           {/* Exibição de Livros */}
-          <div className="col-6 container-livros">
-            <div className="row animacao">
+          <div className="col-6">
+            <div className="row">
               {[
                 'o-diario-de-anne-frank.png',
                 'o-alquimista.png',

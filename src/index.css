@@ -78,7 +78,6 @@
 .botao-fundo-azul:hover{
     color: var(--branco);
     background: linear-gradient(50deg, #647fe9, #3552c4);
-    padding: 6px 25px;
 }
 
 .botao-fundo-transparente{
@@ -88,6 +87,7 @@
     font-weight: bold;
     padding: 7px 25px;
     border-radius: 50px;
+
     display: flex;
     align-items: center;
     justify-content: center;
@@ -95,7 +95,8 @@
 
 .botao-fundo-transparente:hover{
     border: 3.3px solid var(--azul-claro);
-    padding: 6px 25px;
+    background-color: #7979791a;
+    padding: 7px 27px;
 }
 
 
@@ -793,10 +794,12 @@
     }
 
     .foto-conta{
-        font-family: 'Material Icons';
-        font-style: normal;
-        font-size: 450px;
-        color: #000000;
+        width: 440px;
+        height: 440px;
+        border-radius: 500px;
+        background-repeat: no-repeat;
+        background-size: cover; 
+        background-position: bottom center;
     }
 
     .pagina-ver-conta .muda-modo{
@@ -886,21 +889,40 @@
         height: 300px;
         width: 300px;
     }
-    .text-decoration-none {
-        text-decoration: none;
+  
+    
+/*=-+-=-+-=-+-=-+-=-+-=-+-=-+-=-+-=-+-=-+-= EDIÇÃO DE USUARIO =-+-=-+-=-+-=-+-=-+-=-+-=-+-=-+-=-+-=-+-=*/
+
+    .pagina-edicao-usuario .formulario p{
+        margin-bottom: 0px;
     }
 
-    .animacao {
-        position: relative; /* Necessário para a movimentação */
-        animation: subirEDescer 20s infinite alternate linear;
-      }
-      
-      @keyframes subirEDescer {
-        0% {
-          top: 0;
-        }
-        100% {
-          top: -850px; /* Ajuste conforme necessário */
-        }
-      }
-      
+    .formulario input{
+        color: var(--azul-claro);
+        background-color: transparent;
+        border: 3px solid var(--azul-claro);
+        padding-left: 7px;
+        border-radius: 50px;
+        height: 40px;
+        width: 400px;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .formulario p{
+        color: var(--azul-claro);
+        font-weight: bold;
+        padding-left: 17px;
+        margin-top: 10px;
+    }
+
+    .formulario .endereco-edita{
+        margin-bottom: 50px;
+    }
+
+    .formulario .cc{
+        margin-top: 20px;
+        width: 400px;
+    }

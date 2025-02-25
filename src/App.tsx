@@ -4,6 +4,7 @@ import Login from './pages/Login';
 import Cadastro from './pages/Cadastro';
 // import AddBooks from './AddBooks';
 import Home from './pages/Home'
+import EditarUsuario from './pages/EditarUsuario';
 
 const App: React.FC = () => {
 
@@ -52,6 +53,7 @@ const App: React.FC = () => {
           <Route path='/' element={<Home />}/>
           <Route path="/cadastro" element={<Cadastro />} />
           <Route path="/login" element={<Login />} />
+          <Route path="/user/editar" element={<EditarUsuario/>} />
         </Routes>
     </Router>
   )
