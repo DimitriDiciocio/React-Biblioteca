@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { BrowserRouter as Router, Route, Routes, Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 const Home: React.FC = () => {
 
   interface Tag {
@@ -19,15 +19,7 @@ const Home: React.FC = () => {
 
   const [books, setBooks] = useState<Book[]>([]);
   const [currentSlide, setCurrentSlide] = useState<number>(0);
-
-  useEffect(() => {
-    async function fetchBooks() {
-      const response = await fetch('http://127.0.0.1:5000/livros', { method: 'GET' });
-      const data = await response.json();
-      setBooks(data);
-    }
-    fetchBooks();
-  }, []);
+  const navigate = useNavigate();
 
   const moveSlide = (index: number) => {
     setCurrentSlide(index);
@@ -58,8 +50,8 @@ const Home: React.FC = () => {
             <input id="campo-busca" placeholder="O que você quer ler hoje?" />
             </div>
             <div className="col-lg-1 col-sm-3 justify-content-center align-items-center">
-            <Link to='/user/editar' className='text-decoration-none'><i className="conta2">account_circle</i></Link>
-            <Link to='/cadastro' className='text-decoration-none'><i className="">Sair</i></Link>
+            <button onClick={() => navigate('/usuario/editar')} className='text-decoration-none'><i className="conta2">account_circle</i></button>
+            <button onClick={() => navigate('/sair')} className='text-decoration-none'><i className="">Sair</i></button>
             </div>
         </section>
 

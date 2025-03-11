@@ -21,7 +21,7 @@ const Login: React.FC = () => {
 
       if (response.ok) {
         alert(data.message);
-        localStorage.setItem("id", JSON.stringify(data.id_user))
+        localStorage.setItem("id_livro", JSON.stringify(data.id_user))
         navigate('/'); // Redireciona para a página inicial ou outra rota
       } else {
         alert(data.message);
