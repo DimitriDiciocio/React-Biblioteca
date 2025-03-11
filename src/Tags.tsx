@@ -12,7 +12,7 @@ interface TagsProps {
 
 const Tags: React.FC<TagsProps> = ({ onTagsChange }) => {
   const [tags, setTags] = useState<Tag[]>([]);
-  const [selectedTags, setSelectedTags] = useState<Tag[]>([]); // Array de objetos no formato { value, label }
+  const [selectedTags, setSelectedTags] = useState<Tag[]>([]);
 
   useEffect(() => {
     async function fetchTags() {
@@ -45,7 +45,7 @@ const Tags: React.FC<TagsProps> = ({ onTagsChange }) => {
         name="tags"
         options={tagOptions}
         value={selectedTags}
-        onChange={handleTagChange} // Chama a função para atualizar as tags
+        onChange={handleTagChange}
         getOptionLabel={(e) => e.label}
         getOptionValue={(e) => e.value.toString()}
         closeMenuOnSelect={false}

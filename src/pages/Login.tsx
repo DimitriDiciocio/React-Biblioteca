@@ -21,7 +21,10 @@ const Login: React.FC = () => {
 
       if (response.ok) {
         alert(data.message);
-        localStorage.setItem("id_livro", JSON.stringify(data.id_user))
+        localStorage.setItem("token", (data.token))
+        localStorage.setItem("id_user", JSON.stringify(data.id_user))
+
+
         navigate('/'); // Redireciona para a página inicial ou outra rota
       } else {
         alert(data.message);
@@ -89,25 +92,8 @@ const Login: React.FC = () => {
 
           <div className="col-1"></div>
 
-          <div className="col-6">
-            <div className="row">
-              {[
-                'o-diario-de-anne-frank.png',
-                'o-alquimista.png',
-                'o-codigo-da-vinci.png',
-                'harry-potter-e-a-crianca-amaldicioada.png',
-                'dom-casmurro.png',
-                'o-pequeno-principe.png',
-                'e-o-vento-levou.png',
-                'alem-da-capa.png',
-                'o-senhor-dos-aneis.png',
-                'crepusculo.png',
-                'percy-jackson-e-os-olimpianos.png',
-                'diario-de-um-banana.png',
-              ].map((livro, index) => (
-                <img key={index} className="col-4 livro animacao" src={`assets/img/${livro}`} alt={livro.replace('.png', '')} />
-              ))}
-            </div>
+          <div className='video-bg'>
+            <video autoPlay loop muted> <source src='../../assets/video/libris-login.mp4' type='video/mp4'/> </video>
           </div>
         </div>
       </section>

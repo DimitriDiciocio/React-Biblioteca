@@ -9,17 +9,29 @@ const Cadastro: React.FC = () => {
   const [endereco, setEndereco] = useState('');
   const [senha, setSenha] = useState('');
   const [tipo, setTipo] = useState(1);
+  const [imagem, setImagem] = useState<File | null>(null); // Novo estado para a imagem
   const navigate = useNavigate();
 
   const handleCadastro = async (e: React.FormEvent) => {
     e.preventDefault();
-    const newUser = { nome, email, telefone, endereco, senha, tipo };
+
+    const formData = new FormData();
+    formData.append('nome', nome);
+    formData.append('email', email);
+    formData.append('telefone', telefone);
+    formData.append('endereco', endereco);
+    formData.append('senha', senha);
+    formData.append('tipo', tipo.toString());
+
+    // Se o usuário escolheu uma imagem, adicionamos ao FormData
+    if (imagem) {
+      formData.append('imagem', imagem);
+    }
 
     try {
       const response = await fetch('http://127.0.0.1:5000/cadastro', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(newUser),
+        body: formData, // Enviamos FormData, sem JSON.stringify
       });
 
       const data = await response.json();
@@ -31,7 +43,7 @@ const Cadastro: React.FC = () => {
         alert(data.message);
       }
     } catch (error) {
-      alert('Erro de conexão com o servidor' + error);
+      alert('Erro de conexão com o servidor: ' + error);
     }
   };
 
@@ -52,7 +64,7 @@ const Cadastro: React.FC = () => {
                 <h1>CADASTRO</h1>
               </div>
 
-              <form className="centraliza" onSubmit={handleCadastro}>
+              <form className="centraliza" onSubmit={handleCadastro} encType="multipart/form-data">
                 <div className="coluna gap-ss">
                   <label htmlFor="name">Nome de Usuário</label>
                   <input
@@ -104,19 +116,28 @@ const Cadastro: React.FC = () => {
                     required
                   />
 
-                  {/* <label htmlFor="tipo">Tipo de usuário</label> */}
+                  <label htmlFor="tipo">Tipo de usuário</label>
                   <select
                     id="tipo"
                     className="botao-fundo-transparente"
                     value={tipo}
-                    onChange={(e) => setTipo(Number(e.target.value))}
+                    onChange={(e) => setTipo(parseInt(e.target.value))}
                     required
-                    hidden
                   >
                     <option value={1}>Leitor</option>
                     <option value={2}>Bibliotecário</option>
                     <option value={3}>Administrador</option>
                   </select>
+
+                  {/* Novo campo para upload de imagem */}
+                  <label htmlFor="imagem">Imagem de Perfil (opcional)</label>
+                  <input
+                    type="file"
+                    id="imagem"
+                    className="botao-fundo-transparente"
+                    accept="image/*"
+                    onChange={(e) => setImagem(e.target.files ? e.target.files[0] : null)}
+                  />
 
                   <div className="gap-s centraliza">
                     <button type="submit" className="botao-fundo-azul">
@@ -141,25 +162,10 @@ const Cadastro: React.FC = () => {
           <div className="col-1"></div>
 
           {/* Exibição de Livros */}
-          <div className="col-6">
-            <div className="row">
-              {[
-                'o-diario-de-anne-frank.png',
-                'o-alquimista.png',
-                'o-codigo-da-vinci.png',
-                'harry-potter-e-a-crianca-amaldicioada.png',
-                'dom-casmurro.png',
-                'o-pequeno-principe.png',
-                'e-o-vento-levou.png',
-                'alem-da-capa.png',
-                'o-senhor-dos-aneis.png',
-                'crepusculo.png',
-                'percy-jackson-e-os-olimpianos.png',
-                'diario-de-um-banana.png',
-              ].map((livro, index) => (
-                <img key={index} className="col-4 livro" src={`assets/img/${livro}`} alt={livro.replace('.png', '')} />
-              ))}
-            </div>
+          <div className="video-bg">
+            <video autoPlay loop muted>
+              <source src="../../assets/video/libris-login.mp4" type="video/mp4" />
+            </video>
           </div>
         </div>
       </section>

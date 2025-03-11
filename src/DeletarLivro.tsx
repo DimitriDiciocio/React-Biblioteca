@@ -1,9 +1,13 @@
 import React from 'react';
 
-const DeletarLivro: React.FC = () => {
+interface DeletarLivroProps {
+    id: number;
+}
+
+const DeletarLivro: React.FC<DeletarLivroProps> = ({ id }) => {
     const handleDelete = async (id: number) => {
         try {
-            const response = await fetch(`localhost:5000/deletar_livro/${id}`, {
+            const response = await fetch(`http://localhost:5000/deletar_livro/${id}`, {
                 method: 'DELETE',
             });
 
@@ -20,8 +24,7 @@ const DeletarLivro: React.FC = () => {
 
     return (
         <div>
-            <h1>Deletar Livro</h1>
-            <button onClick={() => handleDelete(1)}>Deletar Livro com ID 1</button>
+            <button onClick={() => handleDelete(id)}>Deletar Livro</button>
         </div>
     );
 };

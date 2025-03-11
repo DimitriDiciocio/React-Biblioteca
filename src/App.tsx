@@ -2,9 +2,11 @@
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import Login from './pages/Login';
 import Cadastro from './pages/Cadastro';
-// import AddBooks from './AddBooks';
+import AddBooks from './pages/AddBooks';
 import Home from './pages/Home'
 import EditarUsuario from './pages/EditarUsuario';
+import Relatorios from './pages/Relatorios';
+import BookDetail from './pages/DetalhesLivro';
 import Sair from './pages/Sair';
 
 const App: React.FC = () => {
@@ -35,18 +37,6 @@ const App: React.FC = () => {
   //   fetchBooks();
   // }, []);
 
-  // function onAddBookSubmit(titulo: string, autor: string, categoria: string, isbn: string, qtd_disponivel: string, descricao: string, selectedTags: Tag[]) {
-  //   const newBook = {
-  //     titulo,
-  //     autor,
-  //     categoria,
-  //     isbn,
-  //     qtd_disponivel,
-  //     descricao,
-  //     selectedTags
-  //   };
-  //   setBooks([...books, newBook]);
-  // }
 
   return (
     <Router>
@@ -55,7 +45,10 @@ const App: React.FC = () => {
           <Route path="/cadastro" element={<Cadastro />} />
           <Route path="/login" element={<Login />} />
           <Route path="/user/editar" element={<EditarUsuario/>} />
-          <Route path="/sair" element={<Sair/>} />
+          <Route path="/addLivro" element={<AddBooks/>} />
+          <Route path="/Relatorios" element={<Relatorios/>} />
+          <Route path="/livro/:id" element={<BookDetail />} />
+          <Route path="/sair" element={<Sair/>}/>
         </Routes>
     </Router>
   )

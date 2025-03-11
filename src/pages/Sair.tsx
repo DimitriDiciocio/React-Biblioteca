@@ -3,7 +3,8 @@ import { useNavigate } from 'react-router-dom';
 
 const Sair: React.FC = () => {
     const navigate = useNavigate();
-    localStorage.removeItem('id');
+    localStorage.removeItem("id_user");
+    localStorage.removeItem("token")
     return (
         <div>
             <h1>Saída concluida com sucesso</h1>
