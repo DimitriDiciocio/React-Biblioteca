@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import MostrarLivros from './MostrarLivros';
 const Home: React.FC = () => {
 
   interface Tag {
@@ -102,13 +103,13 @@ const Home: React.FC = () => {
             <p className="subtitulo">Uma seleção feita para você!</p>
             </div>
             <div className="d-flex rolagem">
-            <a href="livro-informa.html">
-                <div className="livro col-12">
-                <img className="capa-livro" src="assets/img/capa-livro.jpg" alt="" />
-                <p className="nome-livro">Vermelho Branco e Sangue Azul</p>
-                </div>
-            </a>
-            {/* Repetir o conteúdo do livro, conforme necessário */}
+              <a href="livro-informa.html">
+                  <div className="livro col-12">
+                  <img className="capa-livro" src="assets/img/capa-livro.jpg" alt="" />
+                  <p className="nome-livro">Vermelho Branco e Sangue Azul</p>
+                  </div>
+              </a>
+              <MostrarLivros/>
             </div>
         </section>
 

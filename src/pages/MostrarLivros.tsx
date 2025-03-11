@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import Tags from '../Tags';
+import { Link } from 'react-router-dom';
 
 const MostrarLivros = () => {
     const [books, setBooks] = useState<Book[]>([]);
@@ -17,7 +18,8 @@ const MostrarLivros = () => {
         isbn: string,
         qtd_disponivel: string,
         descricao: string,
-        selectedTags: Tag[]
+        selectedTags: Tag[],
+        image_path: string
       }
 
     useEffect(() => {
@@ -29,13 +31,14 @@ const MostrarLivros = () => {
         fetchBooks();
       }, []);
     return (
-        <div>
-        <h1>Livros</h1>
-        <ul>
-            {books.map((book) => (
-            <li key={book.id}>{book.titulo}</li>
-            ))}
-        </ul>
+        <div className='d-flex rolagem'>
+          {books.map((book, index) => (
+            <Link to={`/livro/${book.id}`} key={index} className="livro col-12">
+              <img className="capa-livro" src={book.image_path} alt={book.titulo} />
+              <p className="nome-livro">{book.titulo}</p>
+              <p className="autor-livro">{book.autor}</p>
+            </Link>
+          ))}
         </div>
     );
     }
