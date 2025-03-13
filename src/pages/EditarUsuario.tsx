@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useDropzone } from 'react-dropzone';
 import '../index.css';
+import Swal from 'sweetalert2';
 
 const EditarUsuario: React.FC = () => {
     const [nome, setNome] = useState('');
@@ -14,17 +15,47 @@ const EditarUsuario: React.FC = () => {
     const [imagem, setImagem] = useState<File | null>(null);
     const [imagemPreview, setImagemPreview] = useState<string | null>(null);
     const navigate = useNavigate();
+    const token = localStorage.getItem("token");
+  
+  useEffect(() => {
+    const tokenIsActive = async () => {
+      if (!token) {
+        navigate("/login");
+        return;
+      }
+
+      try {
+        const response = await fetch("http://127.0.0.1:5000/token", {
+          method: "POST",
+          headers: {
+            "Authorization": `Bearer ${token}`,
+            "Content-Type": "application/json"
+          }
+        });
+
+        const result = await response.json();
+
+        if (!response.ok) {
+          Swal.fire({
+            title: "Erro na verificação do token",
+            text: result.error || "Erro na verificação do token",
+            icon: "error",
+            });
+          localStorage.removeItem("token");
+          navigate("/login");
+        }
+      } catch (error) {
+        console.error("Erro ao verificar token:", error);
+        navigate("/login");
+      }
+    };
+
+    tokenIsActive();
+  }, [navigate, token]);
 
     useEffect(() => {
         const fetchUserData = async () => {
-            const token = localStorage.getItem("token");
             const userId = localStorage.getItem("id_user");
-
-            if (!token || !userId) {
-                alert("Usuário não autenticado ou ID de usuário não encontrado.");
-                navigate('/login');
-                return;
-            }
 
             try {
                 const response = await fetch(`http://127.0.0.1:5000/user/${userId}`, {
@@ -65,7 +96,7 @@ const EditarUsuario: React.FC = () => {
         };
     
         fetchUserData();
-    }, [navigate]);
+    }, [navigate, token]);
 
     const onDrop = useCallback((acceptedFiles: File[]) => {
         const file = acceptedFiles[0];

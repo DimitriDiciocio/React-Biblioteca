@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
-import { useNavigate } from 'react-router-dom';
+import { useParams, useNavigate } from "react-router-dom";
+import Swal from "sweetalert2";
 import DeletarLivro from "../DeletarLivro";
+import EditarLivro from "./EditarLivro";
 
 interface Tag {
     id: number;
@@ -17,28 +18,61 @@ interface Book {
     qtd_disponivel: string;
     descricao: string;
     selectedTags: Tag[];
-    ano_publicado: string; // A API retorna como string
-    image_path: string;
+    ano_publicado: string;
+    imagem: string;
 }
 
 const BookDetail = () => {
     const { id } = useParams();
     const [book, setBook] = useState<Book | null>(null);
     const [loading, setLoading] = useState(true);
-
     const navigate = useNavigate();
 
+    const handleOpenBook = (book: Book) => {
+        const url = `/editar_livro/${book.id}`;
+        window.location.href = url;
+    };
+
     const token = localStorage.getItem("token");
-        if (!token) {
-            navigate('/login'); // Redireciona para a página de login se não houver token
-        }
+      
+      useEffect(() => {
+        const tokenIsActive = async () => {
+          if (!token) {
+            navigate("/login");
+            return;
+          }
+    
+          try {
+            const response = await fetch("http://127.0.0.1:5000/token", {
+              method: "POST",
+              headers: {
+                "Authorization": `Bearer ${token}`,
+                "Content-Type": "application/json"
+              }
+            });
+    
+            const result = await response.json();
+    
+            if (!response.ok) {
+              alert(result.error || "Erro na verificação do token");
+              localStorage.removeItem("token");
+              navigate("/login");
+            }
+          } catch (error) {
+            console.error("Erro ao verificar token:", error);
+            navigate("/login");
+          }
+        };
+    
+        tokenIsActive();
+      }, [navigate, token]);
 
     useEffect(() => {
         async function fetchBook() {
             try {
                 const response = await fetch(`http://127.0.0.1:5000/livros/${id}`);
                 if (!response.ok) throw new Error("Livro não encontrado");
-
+                
                 const data = await response.json();
                 setBook(data);
             } catch (error) {
@@ -53,17 +87,128 @@ const BookDetail = () => {
     if (loading) return <p>Carregando...</p>;
     if (!book) return <p>Livro não encontrado.</p>;
 
+    const handleAgendamento = () => {
+        Swal.fire({
+            title: "Quer Agendar?",
+            text: `Você quer fazer o agendamento do livro ${book.titulo}?`,
+            icon: "question",
+            showCancelButton: true,
+            confirmButtonColor: "#4562D6",
+            cancelButtonColor: "#d33",
+            confirmButtonText: "Agendar"
+        }).then((result) => {
+            if (result.isConfirmed) {
+                Swal.fire({
+                    title: "Agendado!",
+                    text: "Quando o livro estiver disponível, você será notificado!",
+                    icon: "success"
+                });
+            }
+        });
+    };
+
+    const handleEmprestimo = () => {
+        Swal.fire({
+            title: "Fazer Empréstimo?",
+            text: `Você quer fazer o empréstimo do livro ${book.titulo}?`,
+            icon: "question",
+            showCancelButton: true,
+            confirmButtonColor: "#4562D6",
+            cancelButtonColor: "#d33",
+            confirmButtonText: "Emprestar"
+        }).then((result) => {
+            if (result.isConfirmed) {
+                Swal.fire({
+                    title: "Emprestado!",
+                    text: "A devolução ficará para o dia 00/00/0000!",
+                    icon: "success"
+                });
+            }
+        });
+    };
+
     return (
-        <div>
-            <h1>{book.titulo}</h1>
-            <p><strong>Autor:</strong> {book.autor}</p>
-            <p><strong>Categoria:</strong> {book.categoria}</p>
-            <p><strong>ISBN:</strong> {book.isbn}</p>
-            <p><strong>Quantidade disponível:</strong> {book.qtd_disponivel}</p>
-            <p><strong>Ano:</strong> {new Date(book.ano_publicado).getFullYear()}</p>
-            <p><strong>Resumo:</strong> {book.descricao}</p>
-            {book.image_path && <img src={book.image_path} alt={book.titulo} />}
-            <DeletarLivro id={book.id}/>
+        <div className="pagina-livro-informa">
+            <header className="container-fluid">
+                <section className="row  d-flex cabecalho-claro2">
+                    <div className="col-lg-5 col-sm-3 d-flex justify-content-center align-items-center">
+                        <img className="logo" src="../../assets/img/logo-branca.png" alt="logo do site" onClick={() => navigate('/')} />
+                    </div>
+
+                    <div className="col-lg-6 col-sm-6 d-flex justify-content-center align-items-center">
+                        <input id="campo-busca" placeholder="O que você quer ler hoje?"/>
+                    </div>
+                    <div className="col-lg-1 col-sm-3 justify-content-center align-items-center">
+                        <a href="ver-conta.html"><i className="conta2">account_circle</i></a>
+                    </div>
+                </section>
+
+                <section className="row cabecalho-escuro2">
+                    <div className="col-12 d-flex align-items-center">
+                        <div className="d-flex navegacao2 align-items-center">
+                            <p>Genero</p>
+                            <i>arrow_drop_down</i>
+                        </div>
+                        <div className="d-flex navegacao2 align-items-center">
+                            <p>Minha lista</p>
+                            <i>list</i>
+                        </div>
+                        <div className="d-flex navegacao2 align-items-center">
+                            <p>Notificações</p>
+                            <i>notifications</i>
+                        </div>
+                    </div>
+                </section>
+            </header>
+
+            <div className="espaco-vazio"></div>
+            <div className="container-fluid">
+                <div className="d-flex-eve row">
+                    <div className="col-6">
+                        <img src={`http://127.0.0.1:5000/uploads/livros/${book.imagem}`}  className="livro"/>
+                    </div>
+                </div>
+                <div className="row informacoes">
+                    <div className="col-6">
+                        <div className="d-flex estreita">
+                            <p className="titulo">{book.titulo}</p>
+                            <div className="d-flex avaliacao">
+                                <p>4.8</p>
+                                <i>star</i>
+                            </div>
+                        </div>
+                        <p className="autor">{book.autor}</p>
+                        <div className="d-flex tags">
+                            {book.selectedTags?.map((tag) => (
+                                <p key={tag.id} className="tag">{tag.nome}</p>
+                            ))}
+                        </div>
+                        <p className="plot">
+                            {book.descricao}
+                        </p>
+                        <div className="d-flex-bit">
+                            <p className="ano">{book.ano_publicado}</p>
+                            <p className="codigo">{book.isbn}</p>
+                        </div>
+        
+                        <div className="avalie d-flex">
+                            <i className="star">star</i>
+                            <i className="star">star</i>
+                            <i className="star">star</i>
+                            <i className="star">star</i>
+                            <i className="star">star</i>
+                        </div>
+                        
+        
+                        <div className="botoes">
+                            <p id="agenda" onClick={handleAgendamento} className="agendamento botao-fundo-transparente">Fazer Agendamento</p>
+                            <p id="empresta" onClick={handleEmprestimo} className="emprestimo botao-fundo-azul">Fazer Empréstimo</p>
+                            <DeletarLivro id_livro={book.id}/>
+                            <p onClick={() => handleOpenBook(book)}>Editar</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     );
 };

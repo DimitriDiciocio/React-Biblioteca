@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import Swal from 'sweetalert2';
 import '../index.css';
 
 const Cadastro: React.FC = () => {
@@ -9,7 +10,7 @@ const Cadastro: React.FC = () => {
   const [endereco, setEndereco] = useState('');
   const [senha, setSenha] = useState('');
   const [tipo, setTipo] = useState(1);
-  const [imagem, setImagem] = useState<File | null>(null); // Novo estado para a imagem
+  const [imagem, setImagem] = useState<File | null>(null);
   const navigate = useNavigate();
 
   const handleCadastro = async (e: React.FormEvent) => {
@@ -23,7 +24,6 @@ const Cadastro: React.FC = () => {
     formData.append('senha', senha);
     formData.append('tipo', tipo.toString());
 
-    // Se o usuário escolheu uma imagem, adicionamos ao FormData
     if (imagem) {
       formData.append('imagem', imagem);
     }
@@ -31,19 +31,35 @@ const Cadastro: React.FC = () => {
     try {
       const response = await fetch('http://127.0.0.1:5000/cadastro', {
         method: 'POST',
-        body: formData, // Enviamos FormData, sem JSON.stringify
+        body: formData,
       });
 
       const data = await response.json();
 
       if (response.ok) {
-        alert(data.message);
+        await Swal.fire({
+          title: 'Cadastro realizado!',
+          text: data.message,
+          icon: 'success',
+          confirmButtonColor: '#3085d6',
+          confirmButtonText: 'Ir para o login',
+        });
         navigate('/login');
       } else {
-        alert(data.message);
+        await Swal.fire({
+          title: 'Erro no cadastro',
+          text: data.message,
+          icon: 'error',
+          confirmButtonColor: '#d33',
+        });
       }
     } catch (error) {
-      alert('Erro de conexão com o servidor: ' + error);
+      await Swal.fire({
+        title: 'Erro de conexão!',
+        text: 'Não foi possível se conectar ao servidor.' + String(error),
+        icon: 'error',
+        confirmButtonColor: '#d33',
+      });
     }
   };
 

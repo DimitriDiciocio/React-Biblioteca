@@ -23,7 +23,7 @@ const MostrarLivros = () => {
     // Abre uma nova aba com os detalhes do livro
     const handleOpenBook = (book: Book) => {
         const url = `/livro/${book.id}`;
-        window.open(url, '_blank');
+        window.location.href = url;
     };
 
     useEffect(() => {
@@ -54,10 +54,7 @@ const MostrarLivros = () => {
                             alt={book.titulo} 
                         />
                         <p className="nome-livro">{book.titulo}</p>
-                        {book.selectedTags?.map((tag) => (
-                            <p key={tag.id}>{tag.nome}</p>
-                        ))}
-                        <p className="autor-livro">{book.autor}</p>
+                        <p className="nome-livro">{book.autor}</p>
                     </div>
                 );
             })}

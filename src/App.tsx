@@ -8,6 +8,7 @@ import EditarUsuario from './pages/EditarUsuario';
 import Relatorios from './pages/Relatorios';
 import BookDetail from './pages/DetalhesLivro';
 import Sair from './pages/Sair';
+import EditarLivro from './pages/EditarLivro';
 
 const App: React.FC = () => {
 
@@ -48,6 +49,7 @@ const App: React.FC = () => {
           <Route path="/addLivro" element={<AddBooks/>} />
           <Route path="/Relatorios" element={<Relatorios/>} />
           <Route path="/livro/:id" element={<BookDetail />} />
+          <Route path="/editar_livro/:id" element={<EditarLivro />} />
           <Route path="/sair" element={<Sair/>}/>
         </Routes>
     </Router>

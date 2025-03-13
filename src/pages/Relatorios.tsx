@@ -1,38 +1,42 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useNavigate } from 'react-router-dom';
 
 const Relatorios = () => {
   const navigate = useNavigate();
 
-    const token = localStorage.getItem("token");
-        if (!token) {
-            navigate('/login'); // Redireciona para a página de login se não houver token
-        }
-
-  const handleDownload = async (tipo:string) => {
-
-    try {
-      const response = await fetch(`/relatorio/${tipo}`, {
-        method: "GET",
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-      });
-
-      if (!response.ok) {
-        throw new Error("Erro ao gerar relatório");
+  const token = localStorage.getItem("token");
+  
+  useEffect(() => {
+    const tokenIsActive = async () => {
+      if (!token) {
+        navigate("/login");
+        return;
       }
 
-      const blob = await response.blob();
-      const url = window.URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = `relatorio_${tipo}.pdf`;
-      a.click();
-    } catch (error) {
-      console.error("Erro ao baixar relatório:", error);
-    }
-  };
+      try {
+        const response = await fetch("http://127.0.0.1:5000/token", {
+          method: "POST",
+          headers: {
+            "Authorization": `Bearer ${token}`,
+            "Content-Type": "application/json"
+          }
+        });
+
+        const result = await response.json();
+
+        if (!response.ok) {
+          alert(result.error || "Erro na verificação do token");
+          localStorage.removeItem("token");
+          navigate("/login");
+        }
+      } catch (error) {
+        console.error("Erro ao verificar token:", error);
+        navigate("/login");
+      }
+    };
+
+    tokenIsActive();
+  }, [navigate, token]);
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100 p-6">

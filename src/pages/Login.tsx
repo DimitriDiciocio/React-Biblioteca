@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import Swal from 'sweetalert2';
 
 const Login: React.FC = () => {
   const [email, setEmail] = useState('');
@@ -20,17 +21,33 @@ const Login: React.FC = () => {
       const data = await response.json();
 
       if (response.ok) {
-        alert(data.message);
-        localStorage.setItem("token", (data.token))
-        localStorage.setItem("id_user", JSON.stringify(data.id_user))
+        localStorage.setItem('token', data.token);
+        localStorage.setItem('id_user', JSON.stringify(data.id_user));
 
+        await Swal.fire({
+          title: 'Login realizado!',
+          text: data.message,
+          icon: 'success',
+          confirmButtonColor: '#3085d6',
+          confirmButtonText: 'Ir para o início',
+        });
 
-        navigate('/'); // Redireciona para a página inicial ou outra rota
+        navigate('/'); // Redireciona para a página inicial
       } else {
-        alert(data.message);
+        await Swal.fire({
+          title: 'Erro no login',
+          text: data.message,
+          icon: 'error',
+          confirmButtonColor: '#d33',
+        });
       }
     } catch (error) {
-      alert('Erro ao se conectar com o servidor: ' + String(error));
+      await Swal.fire({
+        title: 'Erro de conexão!',
+        text: 'Não foi possível se conectar ao servidor.' + String(error),
+        icon: 'error',
+        confirmButtonColor: '#d33',
+      });
     }
   };
 
@@ -40,7 +57,7 @@ const Login: React.FC = () => {
         <div className="row">
           <div className="col-1"></div>
           <div className="col-4 modal-login centraliza">
-            <div className="col modal-login2" style={{ backgroundColor: "white" }}>
+            <div className="col modal-login2" style={{ backgroundColor: 'white' }}>
               <div className="centraliza">
                 <img src="assets/img/logo-azul.png" alt="Logo Libris" />
               </div>
@@ -57,6 +74,7 @@ const Login: React.FC = () => {
                       className="botao-fundo-transparente"
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
+                      required
                     />
                   </div>
 
@@ -68,6 +86,7 @@ const Login: React.FC = () => {
                       className="botao-fundo-transparente"
                       value={senha}
                       onChange={(e) => setSenha(e.target.value)}
+                      required
                     />
                   </div>
 
@@ -92,8 +111,10 @@ const Login: React.FC = () => {
 
           <div className="col-1"></div>
 
-          <div className='video-bg'>
-            <video autoPlay loop muted> <source src='../../assets/video/libris-login.mp4' type='video/mp4'/> </video>
+          <div className="video-bg">
+            <video autoPlay loop muted>
+              <source src="../../assets/video/libris-login.mp4" type="video/mp4" />
+            </video>
           </div>
         </div>
       </section>
