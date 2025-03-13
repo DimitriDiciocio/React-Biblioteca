@@ -54,9 +54,9 @@ const BookDetail = () => {
             const result = await response.json();
     
             if (!response.ok) {
-              alert(result.error || "Erro na verificação do token");
-              localStorage.removeItem("token");
-              navigate("/login");
+                Swal.fire("Erro", result.error || "Erro na verificação do token", "error");
+                localStorage.removeItem("token");
+                navigate("/login");
             }
           } catch (error) {
             console.error("Erro ao verificar token:", error);

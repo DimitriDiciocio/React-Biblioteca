@@ -88,10 +88,18 @@ const EditarUsuario: React.FC = () => {
                             });
                     }
                 } else {
-                    alert(data.message);
+                    Swal.fire({
+                        title: 'Erro ao buscar dados do usuário',
+                        text: data.message,
+                        icon: 'error',
+                    });
                 }
             } catch (error) {
-                alert('Erro de conexão com o servidor: ' + error);
+                Swal.fire({
+                    title: 'Erro de conexão com o servidor',
+                    text: String(error),
+                    icon: 'error',
+                });
             }
         };
     
@@ -143,13 +151,17 @@ const EditarUsuario: React.FC = () => {
             const data = await response.json();
 
             if (response.ok) {
-                alert(data.message);
+                Swal.fire({
+                    title: 'Usuário editado com sucesso!',
+                    text: data.message,
+                    icon: 'success',
+                });
                 navigate('/');
             } else {
-                alert(data.message);
+                Swal.fire('Erro ao editar usuário', data.message, 'error');
             }
         } catch (error) {
-            alert('Erro de conexão com o servidor: ' + error);
+            Swal.fire('Erro de conexão com o servidor', String(error), 'error');
         }
     };
 

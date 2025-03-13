@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Route, Routes, Link } from 'react-router-dom';
 import MostrarLivros from './MostrarLivros';
+import Swal from "sweetalert2";
 import { useNavigate } from 'react-router-dom';
 
 const Home: React.FC = () => {
@@ -29,7 +30,7 @@ const Home: React.FC = () => {
           const result = await response.json();
   
           if (!response.ok) {
-            alert(result.error || "Erro na verificação do token");
+            Swal.fire("Erro", result.error || "Erro na verificação do token", "error");
             localStorage.removeItem("token");
             navigate("/login");
           }

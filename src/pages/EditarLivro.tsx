@@ -3,6 +3,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import '../index.css';
 import { useDropzone } from 'react-dropzone';
 import Tags from '../Tags';
+import Swal from 'sweetalert2';
 
 const EditarLivro = () => {
     interface Tag {
@@ -43,7 +44,11 @@ const EditarLivro = () => {
                 const result = await response.json();
 
                 if (!response.ok) {
-                    alert(result.error || "Erro na verificação do token");
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Erro',
+                        text: result.error || "Erro na verificação do token",
+                    });
                     localStorage.removeItem("token");
                     navigate("/login");
                 }
@@ -93,10 +98,10 @@ const EditarLivro = () => {
                             });
                     }
                 } else {
-                    alert(data.message);
+                    Swal.fire('Erro', data.message, 'error');
                 }
             } catch (error) {
-                alert('Erro de conexão com o servidor: ' + error);
+                Swal.fire('Erro', 'Erro de conexão com o servidor' + String(error), 'error');
             }
         };
 
@@ -152,13 +157,25 @@ const EditarLivro = () => {
             const data = await response.json();
     
             if (response.ok) {
-                alert(data.message);
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Sucesso',
+                    text: data.message,
+                });
                 navigate(`/livro/${id}`);
             } else {
-                alert(data.message);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Erro',
+                    text: data.message || 'Erro ao editar livro',
+                });
             }
         } catch (error) {
-            alert('Erro de conexão com o servidor: ' + error);
+            Swal.fire({
+                icon: 'error',
+                title: 'Erro',
+                text: 'Erro de conexão com o servidor' + String(error),
+            });
         }
     };
 

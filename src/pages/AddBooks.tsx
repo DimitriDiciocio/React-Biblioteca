@@ -2,6 +2,7 @@ import React, { useState, useCallback, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useDropzone } from "react-dropzone";
 import '../index.css';
+import Swal from "sweetalert2";
 import Tags from "../Tags";
 
 interface Tag {
@@ -47,7 +48,11 @@ const AddBooks: React.FC = () => {
         const result = await response.json();
 
         if (!response.ok) {
-          alert(result.error || "Erro na verificação do token");
+          Swal.fire({
+            icon: "error",
+            title: "Erro",
+            text: result.error || "Erro na verificação do token",
+          });
           localStorage.removeItem("token");
           navigate("/login");
         }
@@ -111,7 +116,11 @@ const AddBooks: React.FC = () => {
       });
   
       const result = await response.json();
-      alert(result.message || result.error);
+      Swal.fire({
+        icon: response.ok ? "success" : "error",
+        title: response.ok ? "Sucesso" : "Erro",
+        text: result.message || result.error,
+      });
   
       // Resetar os campos do formulário após o sucesso
       if (response.ok) {
