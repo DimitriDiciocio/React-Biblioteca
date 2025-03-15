@@ -862,7 +862,7 @@
     .modal-login2{
         padding-top: 40px;
         border-radius: 10px;
-        height: 530px;
+        height: auto;
     }
     .modal-login2 button{
         width: 235px;
@@ -1829,7 +1829,7 @@
         .modal-login2{
             padding-top: 40px;
             border-radius: 10px;
-            height: 530px;
+            height: auto;
         }
         .modal-login2 button{
             width: 235px;

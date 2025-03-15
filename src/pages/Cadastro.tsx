@@ -145,7 +145,6 @@ const Cadastro: React.FC = () => {
                     <option value={3}>Administrador</option>
                   </select>
 
-                  {/* Novo campo para upload de imagem */}
                   <label htmlFor="imagem">Imagem de Perfil (opcional)</label>
                   <input
                     type="file"
