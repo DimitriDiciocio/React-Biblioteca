@@ -862,7 +862,7 @@
     .modal-login2{
         padding-top: 40px;
         border-radius: 10px;
-        height: auto;
+        height: 110%;
     }
     .modal-login2 button{
         width: 235px;
@@ -940,9 +940,12 @@
     .video-bg video {
         position: absolute;
         top: 0;
-        right: 0;
+        left: 0;
         width: 100%;
+        height: 100%;
+        object-fit: cover;
     }
+    
 
     * {
         margin: 0;
@@ -1155,6 +1158,10 @@
         
             .logo{
                 height: 50px;
+            }
+
+            .reparticao {
+                padding-left: 0px;
             }
         
             .cabecalho-claro input{
@@ -1402,6 +1409,9 @@
                 font-size: 26px;
                 font-weight: bold;
                 margin: 0;
+            }
+            .reparticao {
+                padding-left: 10px;
             }
         
             .reparticao .subtitulo{
@@ -1829,7 +1839,10 @@
         .modal-login2{
             padding-top: 40px;
             border-radius: 10px;
-            height: auto;
+            height: 110%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
         .modal-login2 button{
             width: 235px;
@@ -1959,6 +1972,21 @@
         body{
             background-image: url(../img/bg-mobile.png);
         }
+        
+        .row-centraliza {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        form div label {
+            font-size: small;
+        }
+        form div input {
+            padding: 0%;
+        }
+        .botao-fundo-transparente {
+            width: 300px;
+        }
     }
 
     .tag {
@@ -1969,4 +1997,597 @@
         margin-right: 5px;
         margin-top: 5px;
         display: inline-block;
+    }
+
+    @media screen and (max-width: 550px){
+    
+        .logo{
+            height: 50px;
+        }
+    
+        .cabecalho-claro input{
+            height: 47px;
+            width: 300px;
+            border-radius: 25px;
+            border: none;
+            background-color: var(--branco);
+            font-size: 19px;
+            padding-left: 15px;
+            color:var(--cinza);
+            outline: none;
+        }
+
+        .cabecalho-claro2 div{
+            display: flex;
+            flex-wrap: wrap;
+        }
+
+        .cabecalho-claro2 {
+            display:flex;
+            flex-direction: column;
+            flex-wrap: wrap;
+        }
+    
+        .cabecalho-claro2 div {
+            width: 50%;
+            justify-content: space-around !important;
+        }
+
+        .cabecalho-claro2 input {
+            height: 47px;
+            width: 500px;
+            border-radius: 25px;
+            border: none;
+            background-color: var(--branco);
+            font-size: 19px;
+            padding-left: 15px;
+            color:var(--cinza);
+            outline: none;
+            display: none;
+        }
+        
+        .cabecalho-claro input:focus{
+            border: 3px solid var(--verde);
+            color: var(--preto);
+            background-color: #d9d9d9;
+        }
+    
+        .cabecalho-claro2 input:focus{
+            border: 3px solid var(--verde);
+            color: var(--preto);
+            background-color: #d9d9d9;
+        }
+    
+        .conta{
+            font-family: 'Material Icons';
+            font-style: normal;
+            font-size: 55px;
+            margin-left: 40px;
+            color: var(--branco);
+        }
+    
+        .conta2{
+            font-family: 'Material Icons';
+            font-style: normal;
+            font-size: 45px;
+            color: var(--branco);
+            text-decoration: none;
+            padding: 0px;
+        }
+    
+        
+        .cabecalho-escuro{
+            background: var(--degrade-escuro);
+            height: 42px;
+            width: 100%;
+            justify-content: flex-end;
+        }
+    
+        .cabecalho-escuro2{
+            background: var(--degrade-escuro);
+            height: 42px;
+            justify-content: flex-end;
+        }
+
+        .cabecalho-escuro2 div div p{
+            font-size: small;
+        }
+    
+        .navegacao{
+            display: flex;
+            align-items: center;
+            justify-content: center;
+    
+            margin-right: 10px;
+        }
+    
+        .navegacao2{
+            margin-right: 10px;
+        }
+    
+        .navegacao2 p{
+            color: var(--branco);
+            font-size: 19px;
+            padding: 0px 10px;
+            margin: 0;
+        }
+    
+        .navegacao p{
+            color: var(--branco);
+            font-size: 19px;
+            height: 42px;
+            padding: 0px 10px;
+    
+            display: flex;
+            align-items: center;
+        }
+    
+        .navegacao:hover{
+            background-color: #03124d60;
+        }
+    
+        .navegacao2:hover{
+            background-color: #03124d60;
+        }
+    
+        .navegacao:hover p{
+            text-decoration: underline;
+        }
+    
+        .navegacao i{
+            font-family: 'Material Icons';
+            font-style: normal;
+            font-size: 24px;
+            margin-right: 10px;
+            color: var(--branco);
+        }
+    
+        .navegacao2 i{
+            font-family: 'Material Icons';
+            font-style: normal;
+            font-size: 24px;
+            margin-right: 10px;
+            color: var(--branco);
+        }
+    
+        .espaco-vazio{
+            height: 110px;
+        }
+    
+    }
+
+    @media screen and (max-width: 550px){
+
+        
+    
+        .reparticao .titulo{
+            color: var(--azul-claro);
+            font-size: 20px;
+            font-weight: bold;
+            margin: 0;
+        }
+    
+        .reparticao .subtitulo{
+            display: none;
+            color: var(--cinza);
+            font-size: 17px;
+            margin-left: 10px;
+            margin: 0;
+        }
+    
+        .rolagem .livro:hover{
+            background-color: #dbdbdb;
+            cursor: pointer;
+        }
+    
+        .rolagem .capa-livro{
+            height: 180px;
+            border-radius: 4px;
+        }
+    
+        .rolagem .nome-livro{
+            font-size: 15px;
+        }
+        .cabecalho-claro2 input {
+            width: 50%;
+        }
+
+        .navegacao2 {
+            margin-right: 0px;
+        }
+    }
+
+    @media screen and (max-width: 1025px){
+        .video-bg video{
+            width: 115%;
+        }
+
+        .pagina-login section{
+            max-width: 50%;
+        }
+
+        .pagina-cadastro section{
+            max-width: 50%;
+        }
+
+        .pagina-cadastro-bibli section{
+            max-width: 50%;
+        }
+    
+        .quadro-login{
+            margin-top: 2vh;
+            width: 320px;
+            height: 500px;
+        }
+    
+        .quadro-login img{
+            width: 100px;
+        }
+    
+        .quadro-login h1{
+            font-size: 38px;
+        }
+    
+        .quadro-login .divi-1{
+            margin-bottom: 0px;
+        }
+    
+        .quadro-login label{
+            margin-left: 20px;
+            margin-top: 10px;
+            font-weight: bold;
+            color: var(--azul-escuro);
+            background-color: var(--branco);
+            width: 60px;
+            padding: 0px 10px;
+    
+            position: relative;
+            top: 12px;
+            z-index: 10;
+        }
+    
+        .quadro-login .input-fundo-transparente{
+            height: 42px;
+            width: 260px;
+            padding-left: 10px;
+        }
+    
+        .quadro-login .divi-2{
+            margin-top: 30px;
+        }
+    
+        .quadro-login .divi-2 a{
+            margin-top: 20px;
+        }
+    
+        .livro{
+            height: 300px;
+            width: 300px;
+        }
+        .video-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            overflow: hidden;
+            z-index: -1;
+        }
+        
+        .video-bg video {
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 100%;
+        }
+        .cabecalho-claro3 input{
+            height: 47px;
+            width: 500px;
+            border-radius: 25px;
+            background-color: var(--branco);
+            font-size: 19px;
+            padding-left: 15px;
+            color:var(--cinza);
+            outline: none;
+            border-color: var(--azul-escuro);
+        }
+
+        /* pagina cadastro bibliotecario */
+        .pagina-cadastro-bibli section{
+            max-width: 50%;
+        }
+
+        .pagina-cadastro-bibli .quadro-login{
+            margin-top: 2vh;
+            width: 320px;
+            height: 500px;
+        }
+
+        .pagina-cadastro-bibli .quadro-login h1{
+            font-size: 38px;
+        }
+
+        .pagina-cadastro-bibli .quadro-login label{
+            margin-left: 20px;
+            margin-top: 10px;
+            width: 60px;
+            padding: 0px 10px;
+    
+            top: 12px;
+        }
+
+        .pagina-cadastro-bibli .quadro-login .input-fundo-transparente-branco{
+            height: 42px;
+            width: 260px;
+            padding-left: 10px;
+        }
+
+        .pagina-cadastro-bibli .quadro-login .divi-2 a{
+            margin-top: 20px;
+        }
+    }
+
+    @media screen and (max-width: 769px){
+        .video-bg video{
+            width: 150%;
+        }
+
+        .pagina-login section{
+            max-width: 50%;
+        }
+
+        .pagina-cadastro section{
+            max-width: 50%;
+        }
+
+        .pagina-cadastro-bibli section{
+            max-width: 50%;
+        }
+    
+        .quadro-login{
+            margin-top: 2vh;
+            width: 300px;
+            height: 390px;
+        }
+    
+        .quadro-login img{
+            width: 90px;
+        }
+    
+        .quadro-login h1{
+            font-size: 38px;
+        }
+    
+        .quadro-login .divi-1{
+            margin-bottom: 0px;
+        }
+    
+        .quadro-login label{
+            margin-left: 20px;
+            margin-top: 10px;
+            font-weight: bold;
+            color: var(--azul-escuro);
+            background-color: var(--branco);
+            width: 60px;
+            padding: 0px 10px;
+    
+            position: relative;
+            top: 12px;
+            z-index: 10;
+        }
+    
+        .quadro-login .input-fundo-transparente{
+            height: 42px;
+            width: 260px;
+            padding-left: 10px;
+        }
+    
+        .quadro-login .divi-2{
+            margin-top: 30px;
+        }
+    
+        .quadro-login .divi-2 a{
+            margin-top: 20px;
+        }
+    
+        .livro{
+            height: 300px;
+            width: 300px;
+        }
+        .video-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            overflow: hidden;
+            z-index: -1;
+        }
+        
+        .video-bg video {
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 100%;
+        }
+        .cabecalho-claro3 input{
+            height: 47px;
+            width: 500px;
+            border-radius: 25px;
+            background-color: var(--branco);
+            font-size: 19px;
+            padding-left: 15px;
+            color:var(--cinza);
+            outline: none;
+            border-color: var(--azul-escuro);
+        }
+
+        /* pagina cadastro bibliotecario */
+        .pagina-cadastro-bibli section{
+            max-width: 50%;
+        }
+
+        .pagina-cadastro-bibli .quadro-login{
+            margin-top: 2vh;
+            width: 300px;
+            height: 390px;
+        }
+
+        .pagina-cadastro-bibli .quadro-login h1{
+            font-size: 38px;
+        }
+
+        .pagina-cadastro-bibli .quadro-login label{
+            margin-left: 20px;
+            margin-top: 10px;
+            width: 60px;
+            padding: 0px 10px;
+    
+            top: 12px;
+        }
+
+        .pagina-cadastro-bibli .quadro-login .input-fundo-transparente-branco{
+            height: 42px;
+            width: 260px;
+            padding-left: 10px;
+        }
+
+        .pagina-cadastro-bibli .quadro-login .divi-2 a{
+            margin-top: 20px;
+        }
+    }
+    
+    @media screen and (max-width: 426px){
+        .video-bg{
+            display: none;
+        }
+        body{
+            background-image: url(../img/bg-mobile.png);
+        }
+
+        .pagina-login section{
+            max-width: 100%;
+        }
+
+        .pagina-cadastro section{
+            max-width: 100%;
+        }
+
+        .quadro-login{
+            width: 250px;
+            height: 460px;
+        }
+    
+        .quadro-login img{
+            width: 100px;
+        }
+    
+        .quadro-login h1{
+            font-size: 30px;
+            letter-spacing: 2px;
+        }
+    
+        .quadro-login .divi-1{
+            margin-bottom: 10px;
+        }
+
+        .pagina-cadastro .quadro-login .divi-1{
+            margin-bottom: 0px;
+        }
+    
+        .quadro-login label{
+            margin-left: 20px;
+            margin-top: 6px;
+            width: 60px;
+            padding: 0px 10px;
+    
+            top: 12px;
+        }
+    
+        .quadro-login .input-fundo-transparente{
+            height: 35px;
+            width: 200px;
+            padding-left: 10px;
+        }
+    
+        .quadro-login .divi-2{
+            margin-top: 30px;
+        }
+    
+        .quadro-login .divi-2 a{
+            margin-top: 20px;
+        }
+    
+        .livro{
+            height: 300px;
+            width: 300px;
+        }
+        .video-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            overflow: hidden;
+            z-index: -1;
+        }
+        
+        .video-bg video {
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 100%;
+        }
+        .cabecalho-claro3 input{
+            height: 47px;
+            width: 500px;
+            border-radius: 25px;
+            background-color: var(--branco);
+            font-size: 19px;
+            padding-left: 15px;
+            color:var(--cinza);
+            outline: none;
+            border-color: var(--azul-escuro);
+        }
+    
+        .cabecalho-claro3 input:focus{
+            border: 3px solid var(--verde);
+            color: var(--preto);
+            background-color: #d9d9d9;
+        }
+
+        /* pagina cadastro bibliotecario */
+        .pagina-cadastro-bibli section{
+            max-width: 100%;
+        }
+
+        .pagina-cadastro-bibli .quadro-login{
+            margin-top: 2vh;
+            width: 250px;
+            height: 460px;
+        }
+
+        .pagina-cadastro-bibli .quadro-login h1{
+            font-size: 30px;
+            letter-spacing: 2px;
+        }
+
+        .pagina-cadastro-bibli .quadro-login label{
+            margin-left: 20px;
+            margin-top: 6px;
+            width: 60px;
+            padding: 0px 10px;
+    
+            top: 12px;
+        }
+
+        .pagina-cadastro-bibli .quadro-login .input-fundo-transparente-branco{
+            height: 35px;
+            width: 200px;
+            padding-left: 10px;
+        }
+
+        .pagina-cadastro-bibli .quadro-login .divi-2 a{
+            margin-top: 5px;
+        }
     }

@@ -54,7 +54,7 @@ const Login: React.FC = () => {
   return (
     <div className="overflow-hidden colorBack">
       <section className="container">
-        <div className="row">
+        <div className="row row-centraliza">
           <div className="col-1"></div>
           <div className="col-4 modal-login centraliza">
             <div className="col modal-login2" style={{ backgroundColor: 'white' }}>

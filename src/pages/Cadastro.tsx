@@ -64,12 +64,18 @@ const Cadastro: React.FC = () => {
   };
 
   return (
-    <div className="overflow-hidden colorBack">
+    <div className="overflow-hidden pagina-cadastro colorBack">
+
+      <div className="video-bg">
+        <video autoPlay loop muted>
+          <source src="../../assets/video/libris-login.mp4" type="video/mp4" />
+        </video>
+      </div>
+      
       <section className="container">
-        <div className="row">
+        <div className="row row-centraliza">
           <div className="col-1"></div>
 
-          {/* Formulário de Cadastro */}
           <div className="col-4 modal-login centraliza">
             <div className="col modal-login2" style={{ backgroundColor: 'white' }}>
               <div className="centraliza">
@@ -177,11 +183,6 @@ const Cadastro: React.FC = () => {
           <div className="col-1"></div>
 
           {/* Exibição de Livros */}
-          <div className="video-bg">
-            <video autoPlay loop muted>
-              <source src="../../assets/video/libris-login.mp4" type="video/mp4" />
-            </video>
-          </div>
         </div>
       </section>
     </div>

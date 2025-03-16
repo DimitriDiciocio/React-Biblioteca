@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useDropzone } from 'react-dropzone';
 import '../index.css';
 import Swal from 'sweetalert2';
+import Header from '../Header';
 
 const EditarUsuario: React.FC = () => {
     const [nome, setNome] = useState('');
@@ -167,8 +168,7 @@ const EditarUsuario: React.FC = () => {
 
     return (
         <div className="pagina-edicao-usuario">
-            <header className="container-fluid">
-            </header>
+            <Header/>
 
             <div className="espaco-vazio"></div>
 

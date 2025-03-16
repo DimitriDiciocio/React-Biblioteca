@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Route, Routes, Link } from 'react-router-dom';
 import MostrarLivros from './MostrarLivros';
 import Swal from "sweetalert2";
 import { useNavigate } from 'react-router-dom';
+import Header from '../Header';
 
 const Home: React.FC = () => {
   
@@ -50,38 +51,7 @@ const Home: React.FC = () => {
 
   return (
     <div>
-        <header className="container-fluid">
-        <section className="row d-flex cabecalho-claro2">
-            <div className="col-lg-5 col-sm-3 d-flex justify-content-center align-items-center">
-            <img className="logo" src="assets/img/logo-branca.png" alt="logo do site" />
-            </div>
-
-            <div className="col-lg-6 col-sm-6 d-flex justify-content-center align-items-center">
-            <input id="campo-busca" placeholder="O que você quer ler hoje?" />
-            </div>
-            <div className="col-lg-1 col-sm-3 justify-content-center align-items-center">
-            <a onClick={() => navigate('/user/editar')} className='text-decoration-none'><i className="conta2">account_circle</i></a>
-            <a onClick={() => navigate('/sair')} className='text-decoration-none'><i className="">Sair</i></a>
-            </div>
-        </section>
-
-        <section className="row cabecalho-escuro2">
-            <div className="col-12 d-flex align-items-center">
-            <div className="d-flex navegacao2 align-items-center">
-                <p>Genero</p>
-                <i>arrow_drop_down</i>
-            </div>
-            <div className="d-flex navegacao2 align-items-center">
-                <p>Minha lista</p>
-                <i>list</i>
-            </div>
-            <div className="d-flex navegacao2 align-items-center">
-                <p>Notificações</p>
-                <i>notifications</i>
-            </div>
-            </div>
-        </section>
-        </header>
+        <Header/>
 
         <div className="espaco-vazio"></div>
 

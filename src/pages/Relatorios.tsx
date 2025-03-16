@@ -1,5 +1,6 @@
 import React, { useEffect } from "react";
 import { useNavigate } from 'react-router-dom';
+import Header from "../Header";
 
 const Relatorios = () => {
   const navigate = useNavigate();
@@ -39,21 +40,24 @@ const Relatorios = () => {
   }, [navigate, token]);
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100 p-6">
-      <h1 className="text-2xl font-bold mb-6">Gerar Relatórios</h1>
-      <div className="space-y-4">
-        <a
-          href="http://127.0.0.1:5000/relatorio/livros"
-          className="bg-blue-500 text-white px-6 py-2 rounded-lg shadow-md hover:bg-blue-600 transition"
-        >
-          Baixar Relatório de Livros
-        </a>
-        <a
-          href="http://127.0.0.1:5000/relatorio/usuarios"
-          className="bg-green-500 text-white px-6 py-2 rounded-lg shadow-md hover:bg-green-600 transition"
-        >
-          Baixar Relatório de Usuários
-        </a>
+    <div>
+      <Header/>
+      <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100 p-6">
+        <h1 className="text-2xl font-bold mb-6">Gerar Relatórios</h1>
+        <div className="space-y-4">
+          <a
+            href="http://127.0.0.1:5000/relatorio/livros"
+            className="bg-blue-500 text-white px-6 py-2 rounded-lg shadow-md hover:bg-blue-600 transition"
+          >
+            Baixar Relatório de Livros
+          </a>
+          <a
+            href="http://127.0.0.1:5000/relatorio/usuarios"
+            className="bg-green-500 text-white px-6 py-2 rounded-lg shadow-md hover:bg-green-600 transition"
+          >
+            Baixar Relatório de Usuários
+          </a>
+        </div>
       </div>
     </div>
   );
