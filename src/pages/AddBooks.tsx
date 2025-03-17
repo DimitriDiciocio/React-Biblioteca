@@ -177,6 +177,7 @@ const AddBooks: React.FC = () => {
                     height: "100%",
                     maxHeight: "100%",
                     objectFit: "cover",
+                    right: "100px", 
                   }}
                 />
               ) : (

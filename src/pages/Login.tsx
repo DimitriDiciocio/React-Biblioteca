@@ -31,8 +31,12 @@ const Login: React.FC = () => {
           confirmButtonColor: '#3085d6',
           confirmButtonText: 'Ir para o início',
         });
-
-        navigate('/'); // Redireciona para a página inicial
+        if (data.tipo == 1) {
+          navigate('/');
+        }
+        else if (data.tipo == 3) {
+          navigate('/usuarios')
+        }
       } else {
         await Swal.fire({
           title: 'Erro no login',
