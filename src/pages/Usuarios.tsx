@@ -7,36 +7,67 @@ const Usuarios: React.FC = () => {
     const navigate = useNavigate();
 
     useEffect(() => {
-            const tokenIsActive = async () => {
-              if (!token) {
-                navigate("/login");
-                return;
-              }
-        
-              try {
-                const response = await fetch("http://127.0.0.1:5000/token", {
-                  method: "POST",
-                  headers: {
-                    "Authorization": `Bearer ${token}`,
-                    "Content-Type": "application/json"
-                  }
-                });
-        
-                const result = await response.json();
-        
-                if (!response.ok) {
-                    Swal.fire("Erro", result.error || "Erro na verificação do token", "error");
-                    localStorage.removeItem("token");
-                    navigate("/login");
+        const tokenIsActive = async () => {
+            if (!token) {
+            navigate("/login");
+            return;
+            }
+    
+            try {
+            const response = await fetch("http://127.0.0.1:5000/token", {
+                method: "POST",
+                headers: {
+                "Authorization": `Bearer ${token}`,
+                "Content-Type": "application/json"
                 }
-              } catch (error) {
-                console.error("Erro ao verificar token:", error);
+            });
+    
+            const result = await response.json();
+    
+            if (!response.ok) {
+                Swal.fire("Erro", result.error || "Erro na verificação do token", "error");
+                localStorage.removeItem("token");
                 navigate("/login");
-              }
-            };
-        
-            tokenIsActive();
-          }, [navigate, token]);
+            }
+            } catch (error) {
+            console.error("Erro ao verificar token:", error);
+            navigate("/login");
+            }
+        };
+    
+        tokenIsActive();
+        }, [navigate, token]);
+
+          
+    useEffect(() => {
+        const temPermissao = async () => {
+    
+        try {
+            const response = await fetch("http://127.0.0.1:5000/tem_permissao", {
+            method: "GET",
+            headers: {
+                "Authorization": `Bearer ${token}`,
+                "Content-Type": "application/json"
+            }
+            });
+    
+            const result = await response.json();
+    
+            if (!response.ok) {
+            Swal.fire({
+                icon: "error",
+                title: "Erro",
+                text: result.error || "Essa pagina é restrita",
+            });
+            }
+        } catch (error) {
+            console.error("Essa página é restrita:", error);
+            navigate(-1)
+        }
+        };
+    
+        temPermissao();
+    }, [navigate, token]);
 
     const { id } = useParams();
 

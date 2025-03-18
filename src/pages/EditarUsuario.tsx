@@ -221,12 +221,12 @@ const EditarUsuario: React.FC = () => {
                                     <input type="number" value={telefone} onChange={(e) => setTelefone(e.target.value)} required />
                                     <p>Endereço</p>
                                     <input type="text" value={endereco} onChange={(e) => setEndereco(e.target.value)} required />
+                                    <p>Senha Antiga (opcional)</p>
+                                    <input type="password" value={senhaAntiga} onChange={(e) => setSenhaAntiga(e.target.value)} />
                                     <p>Senha (opcional)</p>
                                     <input type="password" value={senha} onChange={(e) => setSenha(e.target.value)} />
                                     <p>Confirmar Senha (opcional)</p>
                                     <input type="password" value={senhaConfirm} onChange={(e) => setSenhaConfirm(e.target.value)} />
-                                    <p>Senha Antiga (opcional)</p>
-                                    <input type="password" value={senhaAntiga} onChange={(e) => setSenhaAntiga(e.target.value)} />
                                     <div className="d-flex-bit cc">
                                         <button className='botao-fundo-transparente' type="button" onClick={() => navigate('/')}>Cancelar</button>
                                         <button className='botao-fundo-azul' type="submit">Salvar</button>

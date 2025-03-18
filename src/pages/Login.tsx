@@ -31,7 +31,7 @@ const Login: React.FC = () => {
           confirmButtonColor: '#3085d6',
           confirmButtonText: 'Ir para o início',
         });
-        if (data.tipo == 1) {
+        if (data.tipo == 1 || data.tipo == 2) {
           navigate('/');
         }
         else if (data.tipo == 3) {

@@ -66,6 +66,38 @@ const AddBooks: React.FC = () => {
     tokenIsActive();
   }, [navigate, token]);
 
+  useEffect(() => {
+      const temPermissao = async () => {
+  
+        try {
+          const response = await fetch("http://127.0.0.1:5000/tem_permissao", {
+            method: "GET",
+            headers: {
+              "Authorization": `Bearer ${token}`,
+              "Content-Type": "application/json"
+            }
+          });
+  
+          const result = await response.json();
+  
+          if (!response.ok) {
+            Swal.fire({
+              icon: "error",
+              title: "Erro",
+              text: result.error || "Essa pagina é restrita",
+            });
+          }
+        } catch (error) {
+          console.error("Essa página é restrita:", error);
+          navigate(-1)
+        }
+      };
+  
+      temPermissao();
+    }, [navigate, token]);
+
+
+
   const handleTagsChange = (tags: Tag[]) => {
     setSelectedTags(tags);
   };

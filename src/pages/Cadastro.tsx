@@ -9,6 +9,7 @@ const Cadastro: React.FC = () => {
   const [telefone, setTelefone] = useState('');
   const [endereco, setEndereco] = useState('');
   const [senha, setSenha] = useState('');
+  const [confirmSenha, setConfirmSenha] = useState('');
   const [tipo, setTipo] = useState(1);
   const [imagem, setImagem] = useState<File | null>(null);
   const navigate = useNavigate();
@@ -22,6 +23,7 @@ const Cadastro: React.FC = () => {
     formData.append('telefone', telefone);
     formData.append('endereco', endereco);
     formData.append('senha', senha);
+    formData.append('confirmSenha', confirmSenha);
     formData.append('tipo', tipo.toString());
 
     if (imagem) {
@@ -110,7 +112,7 @@ const Cadastro: React.FC = () => {
 
                   <label htmlFor="telefone">Telefone</label>
                   <input
-                    type="text"
+                    type="number"
                     id="telefone"
                     className="botao-fundo-transparente"
                     value={telefone}
@@ -135,6 +137,16 @@ const Cadastro: React.FC = () => {
                     className="botao-fundo-transparente"
                     value={senha}
                     onChange={(e) => setSenha(e.target.value)}
+                    required
+                  />
+
+                  <label htmlFor="confirmSenha">Confirmar senha</label>
+                  <input
+                    type="password"
+                    id="confirmSenha"
+                    className="botao-fundo-transparente"
+                    value={confirmSenha}
+                    onChange={(e) => setConfirmSenha(e.target.value)}
                     required
                   />
 

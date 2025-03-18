@@ -19,6 +19,8 @@ const EditarLivro = () => {
     const [isbn, setIsbn] = useState('');
     const [qtd_disponivel, setQtd_disponivel] = useState('');
     const [descricao, setDescricao] = useState('');
+    const [anoPublicado, setAnoPublicado] = useState('')
+    const [idiomas, setIdiomas] = useState('')
     const [selectedTags, setSelectedTags] = useState<Tag[]>([]);
     const [imagemPreview, setImagemPreview] = useState<string | null>(null);
     const [imagem, setImagem] = useState<File | null>(null);
@@ -82,6 +84,8 @@ const EditarLivro = () => {
                     setIsbn(data.isbn);
                     setQtd_disponivel(data.qtd_disponivel);
                     setDescricao(data.descricao);
+                    setIdiomas(data.idiomas);
+                    setAnoPublicado(data.ano_publicado);
                     setSelectedTags(data.selectedTags);
                     console.log(data);
 
@@ -108,6 +112,36 @@ const EditarLivro = () => {
 
         fetchBookData();
     }, [navigate, id, token]);
+
+    useEffect(() => {
+        const temPermissao = async () => {
+    
+          try {
+            const response = await fetch("http://127.0.0.1:5000/tem_permissao", {
+              method: "GET",
+              headers: {
+                "Authorization": `Bearer ${token}`,
+                "Content-Type": "application/json"
+              }
+            });
+    
+            const result = await response.json();
+    
+            if (!response.ok) {
+              Swal.fire({
+                icon: "error",
+                title: "Erro",
+                text: result.error || "Essa pagina é restrita",
+              });
+            }
+          } catch (error) {
+            console.error("Essa página é restrita:", error);
+            navigate(-1)
+          }
+        };
+    
+        temPermissao();
+      }, [navigate, token]);
 
     const onDrop = useCallback((acceptedFiles: File[]) => {
         const file = acceptedFiles[0];
@@ -138,8 +172,8 @@ const EditarLivro = () => {
         formData.append("qtd_disponivel", qtd_disponivel);
         formData.append("descricao", descricao);
         formData.append("selectedTags", selectedTags.map((tag) => tag.id));
-        formData.append("idiomas", "Português");
-        formData.append("ano_publicado", "2021");
+        formData.append("idiomas", idiomas);
+        formData.append("ano_publicado", anoPublicado);
     
         if (imagem) {
             formData.append("imagem", imagem);
@@ -235,6 +269,22 @@ const EditarLivro = () => {
                                         type="number"
                                         value={qtd_disponivel}
                                         onChange={(e) => setQtd_disponivel(e.target.value)}
+                                        required
+                                    />
+                                    <p>Idiomas</p>
+                                    <input
+                                        className="fone-edita"
+                                        type="text"
+                                        value={idiomas}
+                                        onChange={(e) => setIdiomas(e.target.value)}
+                                        required
+                                    />
+                                    <p>Ano publicado</p>
+                                    <input
+                                        className="fone-edita"
+                                        type="number"
+                                        value={anoPublicado}
+                                        onChange={(e) => setAnoPublicado(e.target.value)}
                                         required
                                     />
                                     <p>Descrição</p>
