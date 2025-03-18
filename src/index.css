@@ -66,7 +66,7 @@
 .botao-fundo-azul{
     color: var(--branco);
     background: var(--degrade-claro);
-    padding: 7px 25px;
+    padding: 6px 25px;
     border-radius: 50px;
     font-weight: bold;
     border: none;
@@ -860,9 +860,8 @@
         height: 50px;
     }  
     .modal-login2{
-        padding-top: 40px;
+        padding: 40px;
         border-radius: 10px;
-        height: 110%;
     }
     .modal-login2 button{
         width: 235px;
@@ -1027,7 +1026,7 @@
     .botao-fundo-azul{
         color: var(--branco);
         background: var(--degrade-claro);
-        padding: 7px 25px;
+        padding: 5px 25px;
         border-radius: 50px;
         font-weight: bold;
         border: none;
@@ -1047,7 +1046,7 @@
         background-color: transparent;
         border: 3px solid var(--azul-claro);
         font-weight: bold;
-        padding: 7px 25px;
+        padding: 3px 25px;
         border-radius: 50px;
     
         display: flex;
@@ -1837,9 +1836,9 @@
             height: 50px;
         }  
         .modal-login2{
-            padding-top: 40px;
+            padding: 40px;
             border-radius: 10px;
-            height: 110%;
+            height: 100%;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -2158,8 +2157,19 @@
 
     @media screen and (max-width: 550px){
 
+        .botao-fundo-transparente{
+            width: 100%;
+        }
+
+        .modal-login2 button {
+            width: 100%;
+        }
+        .submit {
+            display: flex;
+            flex-direction: column;
+        }
         
-    
+
         .reparticao .titulo{
             color: var(--azul-claro);
             font-size: 20px;
@@ -2329,7 +2339,12 @@
 
     @media screen and (max-width: 769px){
         .video-bg video{
-            width: 150%;
+            display: none;
+        }
+
+        .row-centraliza {
+            display: flex;
+            justify-content: center;
         }
 
         .pagina-login section{
@@ -2591,3 +2606,11 @@
             margin-top: 5px;
         }
     }
+
+.mg-top-s {
+    margin-top: 4px;
+}
+
+.direita {
+    margin-right: 1px;
+}

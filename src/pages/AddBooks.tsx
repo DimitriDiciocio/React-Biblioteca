@@ -86,6 +86,7 @@ const AddBooks: React.FC = () => {
               title: "Erro",
               text: result.error || "Essa pagina é restrita",
             });
+            navigate(-1)
           }
         } catch (error) {
           console.error("Essa página é restrita:", error);
@@ -185,7 +186,7 @@ const AddBooks: React.FC = () => {
       <main>
         <section className="d-flex-eve">
           {/* Dropzone para imagem de capa */}
-          <div className="col-1">
+          <div>
             <div
               {...getRootProps()}
               className="dropzone"
@@ -302,28 +303,38 @@ const AddBooks: React.FC = () => {
                   <label htmlFor="categoria">
                     <p className="margin-b-zero">Categoria</p>
                   </label>
-                  <input
+                  <select
                     className="botao-fundo-transparente w-100"
-                    type="text"
                     name="categoria"
                     value={formData.categoria}
                     onChange={handleChange}
                     required
-                  />
+                  >
+                    <option value="">Selecione uma categoria</option>
+                    <option value="Livro">Livro</option>
+                    <option value="Artigo Científico">Artigo Científico</option>
+                    <option value="Jornal">Jornal</option>
+                    <option value="Quadrinhos">Quadrinhos</option>
+                  </select>
                 </div>
                 <div className="espacinho"></div>
                 <div className="avaliacao">
                   <label>
                     <p className="margin-b-zero">Idiomas</p>
                   </label>
-                  <input
-                    className="botao-fundo-transparente w-75 "
-                    type="text"
+                  <select
+                    className="botao-fundo-transparente w-100"
                     name="idiomas"
                     value={formData.idiomas}
                     onChange={handleChange}
                     required
-                  />
+                  >
+                    <option value="">Idioma</option>
+                    <option value="Português">Português</option>
+                    <option value="Inglês">Inglês</option>
+                    <option value="Espanhol">Espanhol</option>
+                    <option value="Francês">Francês</option>
+                  </select>
                 </div>
               </div>
 

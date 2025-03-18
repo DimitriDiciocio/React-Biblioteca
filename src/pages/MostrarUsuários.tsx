@@ -97,6 +97,8 @@ const MostrarUsuarios: React.FC = () => {
 
   return (
     <div>
+      <button onClick={() => navigate('/')} className="botao-fundo-azul">Página Inicial</button>
+      <button onClick={() => navigate('/relatorios')} className="botao-fundo-transparente">Relatórios</button>
       <h1>Usuários</h1>
       <input
         type="text"

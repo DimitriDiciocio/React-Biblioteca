@@ -133,6 +133,7 @@ const EditarLivro = () => {
                 title: "Erro",
                 text: result.error || "Essa pagina é restrita",
               });
+              navigate(-1)
             }
           } catch (error) {
             console.error("Essa página é restrita:", error);
@@ -248,13 +249,19 @@ const EditarLivro = () => {
                                         required
                                     />
                                     <p>Categoria</p>
-                                    <input
-                                        className="fone-edita"
-                                        type="text"
+                                    <select
+                                        className="botao-fundo-transparente w-50"
+                                        name="categoria"
                                         value={categoria}
                                         onChange={(e) => setCategoria(e.target.value)}
                                         required
-                                    />
+                                    >
+                                        <option value="">Selecione uma categoria</option>
+                                        <option value="Livro">Livro</option>
+                                        <option value="Artigo Científico">Artigo Científico</option>
+                                        <option value="Jornal">Jornal</option>
+                                        <option value="Quadrinhos">Quadrinhos</option>
+                                    </select>
                                     <p>ISBN</p>
                                     <input
                                         className="fone-edita"
@@ -272,13 +279,19 @@ const EditarLivro = () => {
                                         required
                                     />
                                     <p>Idiomas</p>
-                                    <input
-                                        className="fone-edita"
-                                        type="text"
+                                    <select
+                                        className="botao-fundo-transparente w-50"
+                                        name="idiomas"
                                         value={idiomas}
                                         onChange={(e) => setIdiomas(e.target.value)}
                                         required
-                                    />
+                                    >
+                                    <option value="">Idioma</option>
+                                    <option value="Português">Português</option>
+                                    <option value="Inglês">Inglês</option>
+                                    <option value="Espanhol">Espanhol</option>
+                                    <option value="Francês">Francês</option>
+                                    </select>
                                     <p>Ano publicado</p>
                                     <input
                                         className="fone-edita"

@@ -60,6 +60,7 @@ const Relatorios = () => {
             title: "Erro",
             text: result.error || "Essa pagina é restrita",
           });
+          navigate(-1)
         }
       } catch (error) {
         console.error("Essa página é restrita:", error);

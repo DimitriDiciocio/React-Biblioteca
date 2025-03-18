@@ -94,7 +94,7 @@ const Login: React.FC = () => {
                     />
                   </div>
 
-                  <div className="gap-s">
+                  <div className="gap-s mg-top-s">
                     <div className="centraliza">
                       <button type="submit" className="botao-fundo-azul">Entrar</button>
                     </div>

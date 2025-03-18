@@ -150,19 +150,6 @@ const Cadastro: React.FC = () => {
                     required
                   />
 
-                  <label htmlFor="tipo">Tipo de usuário</label>
-                  <select
-                    id="tipo"
-                    className="botao-fundo-transparente"
-                    value={tipo}
-                    onChange={(e) => setTipo(parseInt(e.target.value))}
-                    required
-                  >
-                    <option value={1}>Leitor</option>
-                    <option value={2}>Bibliotecário</option>
-                    <option value={3}>Administrador</option>
-                  </select>
-
                   <label htmlFor="imagem">Imagem de Perfil (opcional)</label>
                   <input
                     type="file"
@@ -172,20 +159,22 @@ const Cadastro: React.FC = () => {
                     onChange={(e) => setImagem(e.target.files ? e.target.files[0] : null)}
                   />
 
-                  <div className="gap-s centraliza">
-                    <button type="submit" className="botao-fundo-azul">
-                      Cadastrar
-                    </button>
-                  </div>
+                  <div className='centraliza mg-top-s submit'>
+                    <div className="gap-s centraliza direita">
+                      <button type="submit" className="botao-fundo-azul">
+                        Cadastrar
+                      </button>
+                    </div>
 
-                  <div className="gap-s centraliza">
-                    <button
-                      type="button"
-                      className="botao-fundo-transparente text-decoration-none"
-                      onClick={() => navigate('/login')}
-                    >
-                      Possuo uma conta
-                    </button>
+                    <div className="gap-s centraliza">
+                      <button
+                        type="button"
+                        className="botao-fundo-transparente text-decoration-none"
+                        onClick={() => navigate('/login')}
+                      >
+                        Possuo uma conta
+                      </button>
+                    </div>
                   </div>
                 </div>
               </form>
