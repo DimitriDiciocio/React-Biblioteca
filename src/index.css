@@ -2614,3 +2614,48 @@
 .direita {
     margin-right: 1px;
 }
+
+.filter-options {
+    scale: 1;
+}
+
+.filter-options-content {
+    display: none;
+}
+
+.filter-options:hover .filter-options-content {
+    display: block;
+    scale: 0.7;
+    position: absolute;
+    top: 0px;
+    right: -27px;
+    width: 220%;
+    & > label {
+        display: block;
+        background-color: var(--azul-claro);
+        color: var(--branco);
+        padding: 5px 10px;
+        border-radius: 5px;
+        margin-bottom: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+        & > input {
+        display: block;
+        width: 100%;
+        padding: 10px;
+        margin-top: 5px;
+        border: 2px solid var(--azul-claro);
+        border-radius: 5px;
+        background-color: var(--branco);
+        color: var(--azul-escuro);
+        font-size: 16px;
+        outline: none;
+        transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        & > input:focus {
+        border-color: var(--azul-escuro);
+        box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+    }
+    }
+}

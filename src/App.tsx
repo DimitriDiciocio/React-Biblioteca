@@ -10,8 +10,9 @@ import BookDetail from './pages/DetalhesLivro';
 import Sair from './pages/Sair';
 import EditarLivro from './pages/EditarLivro';
 import Usuarios from './pages/Usuarios';
-import MostrarLivros from './pages/MostrarLivros';
 import MostrarUsuarios from './pages/MostrarUsuários';
+import PuxarHistorico from './pages/PuxarHistorico';
+import Search from './pages/Search';
 
 const App: React.FC = () => {
 
@@ -56,6 +57,8 @@ const App: React.FC = () => {
           <Route path="/sair" element={<Sair/>}/>
           <Route path="/usuarios/:id" element={<Usuarios/>}/>
           <Route path="/usuarios" element={<MostrarUsuarios/>}/>
+          <Route path="/historico" element={<PuxarHistorico/>}/>
+          <Route path="/pesquisa/:search" element={<Search/>}/>
         </Routes>
     </Router>
   )

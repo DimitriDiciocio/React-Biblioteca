@@ -17,8 +17,6 @@ const Header: React.FC = () => {
           },
         });
 
-        const result = await response.json();
-
         if (!response.ok) {
           setTemPermissao(false);
         }
@@ -44,11 +42,46 @@ const Header: React.FC = () => {
         </div>
 
         <div className="col-lg-6 col-sm-6 d-flex justify-content-center align-items-center">
-          <input
-            id="campo-busca"
-            placeholder="O que você quer ler hoje?"
-            className="responsivo-pesquisa"
-          />
+            <form
+              onSubmit={(e) => {
+                e.preventDefault();
+                const query = (document.getElementById('campo-busca') as HTMLInputElement)?.value;
+                const filters = Array.from(document.querySelectorAll('.filter-checkbox:checked')).map(
+                  (checkbox) => (checkbox as HTMLInputElement).value
+                );
+                navigate(`/pesquisa/${query}?filters=${filters.join(',')}`);
+              }}
+            >
+              <div className="d-flex justify-content-center align-items-center">
+                <input
+                  id="campo-busca"
+                  required
+                  placeholder="O que você quer ler hoje?"
+                  className="responsivo-pesquisa"
+                />
+                <div className="filter-options">
+                  <i className="conta2">arrow_drop_down</i>
+                  <div className="filter-options-content">
+                    <label>
+                      <input type="checkbox" className="filter-checkbox" value="tags" />
+                      Tags
+                    </label>
+                    <label>
+                      <input type="checkbox" className="filter-checkbox" value="isbn" />
+                      ISBN
+                    </label>
+                    <label>
+                      <input type="checkbox" className="filter-checkbox" value="autor" />
+                      Autor
+                    </label>
+                    <label>
+                      <input type="checkbox" className="filter-checkbox" value="categoria" />
+                      Categoria
+                    </label>
+                  </div>
+                </div>
+              </div>
+            </form>
         </div>
         <div className="col-lg-1 col-sm-3 justify-content-center align-items-center">
           <a onClick={() => navigate('/user/editar')} className='text-decoration-none'>
@@ -66,7 +99,7 @@ const Header: React.FC = () => {
             <p>Genero</p>
             <i>arrow_drop_down</i>
           </div>
-          <div className="d-flex navegacao2 align-items-center">
+          <div className="d-flex navegacao2 align-items-center" onClick={() => navigate('/historico')}>
             <p>Minha lista</p>
             <i>list</i>
           </div>
