@@ -107,6 +107,9 @@ const PuxarHistorico = () => {
     return (
         <div>
             <Header/>
+
+            <div className="espaco-vazio"></div>
+
             <div className="historico-container">
                 <h2>Histórico da Biblioteca</h2>
 

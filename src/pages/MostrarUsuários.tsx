@@ -55,13 +55,12 @@ const MostrarUsuarios: React.FC = () => {
             }
           });
   
-  
           if (!response.ok) {
-            navigate(-1)
+            navigate("/")
           }
         } catch (error) {
           console.error("Essa página é restrita:", error);
-          navigate(-1)
+          navigate("/")
         }
       };
   
@@ -82,7 +81,7 @@ const MostrarUsuarios: React.FC = () => {
     imagem: string;
   }
 
-  const handleOpenBook = (usuario: Usuario) => {
+  const handleEdit = (usuario: Usuario) => {
     const url = `/usuarios/${usuario.id_usuario}`;
     window.location.href = url;
   };
@@ -123,8 +122,7 @@ const MostrarUsuarios: React.FC = () => {
 
   return (
     <div>
-
-      <Header/>
+      <Header />
 
       <div className="espaco-vazio"></div>
 
@@ -134,30 +132,46 @@ const MostrarUsuarios: React.FC = () => {
         placeholder="Pesquisar usuários"
         onChange={(e) => setPesquisa(e.target.value)}
       />
-      <div className="d-flex rolagem">
-        {filteredUsers.map((user, index) => {
-          const imageUrl = `http://127.0.0.1:5000/uploads/usuarios/${user.imagem}`;
-
-          return (
-            <div
-              key={index}
-              className="livro col-12"
-              onClick={() => handleOpenBook(user)}
-              style={{ cursor: "pointer" }}
-            >
-              <img src={imageUrl} alt="" />
-              <p className="nome-livro">{user.id_usuario}</p>
-              <p className="nome-livro">{user.nome}</p>
-              <p className="nome-livro">{user.email}</p>
-              <p className="nome-livro">{user.telefone}</p>
-              <p className="nome-livro">{user.endereco}</p>
-              <p className="nome-livro">{user.tipo}</p>
-              <p className="nome-livro">{user.ativo ? "Ativo" : "Inativo"}</p>
-            </div>
-          );
-        })}
-      </div>
+      
+      <table className="table table-bordered">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Nome</th>
+            <th>Email</th>
+            <th>Telefone</th>
+            <th>Endereço</th>
+            <th>Tipo</th>
+            <th>Status</th>
+            <th>Ação</th>
+          </tr>
+        </thead>
+        <tbody>
+          {filteredUsers.map((user) => {
+            return (
+              <tr key={user.id_usuario}>
+                <td>{user.id_usuario}</td>
+                <td>{user.nome}</td>
+                <td>{user.email}</td>
+                <td>{user.telefone}</td>
+                <td>{user.endereco}</td>
+                <td>{user.tipo}</td>
+                <td>{user.ativo ? "Ativo" : "Inativo"}</td>
+                <td>
+                  <button
+                    onClick={() => handleEdit(user)}
+                    className="btn btn-primary"
+                  >
+                    <span className="material-icons">edit</span>
+                  </button>
+                </td>
+              </tr>
+            );
+          })}
+        </tbody>
+      </table>
     </div>
   );
 };
+
 export default MostrarUsuarios;

@@ -52,19 +52,13 @@ const Relatorios = () => {
           }
         });
 
-        const result = await response.json();
 
         if (!response.ok) {
-          Swal.fire({
-            icon: "error",
-            title: "Erro",
-            text: result.error || "Essa pagina é restrita",
-          });
-          navigate(-1)
+          navigate("/")
         }
       } catch (error) {
         console.error("Essa página é restrita:", error);
-        navigate(-1)
+        navigate("/")
       }
     };
 
@@ -74,6 +68,9 @@ const Relatorios = () => {
   return (
     <div>
       <Header/>
+
+      <div className="espaco-vazio"></div>
+
       <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100 p-6">
         <h1 className="text-2xl font-bold mb-6">Gerar Relatórios</h1>
         <div className="space-y-4">

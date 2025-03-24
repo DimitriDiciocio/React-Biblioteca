@@ -24,7 +24,8 @@ const Search = () => {
   const queryParams = new URLSearchParams(window.location.search);
   const filtros = queryParams.get("filters")?.split(",") || [];
   const [books, setBooks] = useState<Book[]>([]);
-  const [hasSearched, setHasSearched] = useState(false); // Novo estado para controlar a busca
+  const [hasSearched, setHasSearched] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null); // Estado para armazenar erro
   const token = localStorage.getItem("token");
   const navigate = useNavigate();
 
@@ -79,26 +80,20 @@ const Search = () => {
         });
 
         if (!response.ok) {
-          const errorMessage = await response.json();
-          Swal.fire({
-            icon: "error",
-            title: "Erro",
-            text: errorMessage.error || "Erro ao buscar livros",
-          });
-          return;
+          const errorData = await response.json();
+          setErrorMessage(errorData.message || "Erro desconhecido ao buscar livros.");
+          return; // Retorna para evitar o processamento adicional
         }
 
         const data = await response.json();
         setBooks(data.resultados); // Definindo os livros obtidos
         setHasSearched(true); // Marcar que a busca foi realizada
+        setErrorMessage(null); // Limpar mensagem de erro caso a busca tenha sucesso
       } catch (error) {
         const errorMessage =
           (error as Error).message || "Erro ao buscar livros";
-        Swal.fire({
-          icon: "error",
-          title: "Erro",
-          text: errorMessage,
-        });
+        setErrorMessage(errorMessage); // Armazena a mensagem de erro
+        console.log(errorMessage);
       }
     };
 
@@ -110,21 +105,26 @@ const Search = () => {
   return (
     <div>
       <h1>Search Page</h1>
-      {books.map((book, index) => {
-        const imageUrl = `http://127.0.0.1:5000/uploads/livros/${book.imagem}`;
-        return (
-          <div
-            key={index}
-            className="livro col-12"
-            onClick={() => handleOpenBook(book)}
-            style={{ cursor: "pointer" }}
-          >
-            <img className="capa-livro" src={imageUrl} alt={book.titulo} />
-            <p className="nome-livro">{book.titulo}</p>
-            <p className="nome-livro">{book.autor}</p>
-          </div>
-        );
-      })}
+      {errorMessage && <p>{errorMessage}</p>} {/* Exibe mensagem de erro */}
+      {books.length === 0 && hasSearched && !errorMessage ? (
+        <p>Nenhum livro encontrado para sua pesquisa.</p>
+      ) : (
+        books.map((book, index) => {
+          const imageUrl = `http://127.0.0.1:5000/uploads/livros/${book.imagem}`;
+          return (
+            <div
+              key={index}
+              className="livro col-12"
+              onClick={() => handleOpenBook(book)}
+              style={{ cursor: "pointer" }}
+            >
+              <img className="capa-livro" src={imageUrl} alt={book.titulo} />
+              <p className="nome-livro">{book.titulo}</p>
+              <p className="nome-livro">{book.autor}</p>
+            </div>
+          );
+        })
+      )}
     </div>
   );
 };

@@ -5,7 +5,12 @@ import Swal from 'sweetalert2';
 const Login: React.FC = () => {
   const [email, setEmail] = useState('');
   const [senha, setSenha] = useState('');
+  const [mostrarSenha, setMostrarSenha] = useState(false); // Estado para controlar a visibilidade da senha
   const navigate = useNavigate();
+
+  const veSenha = () => {
+    setMostrarSenha(!mostrarSenha); // Alterna entre mostrar e ocultar a senha
+  };
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -35,7 +40,7 @@ const Login: React.FC = () => {
           navigate('/');
         }
         else if (data.tipo == 3) {
-          navigate('/usuarios')
+          navigate('/usuarios');
         }
       } else {
         await Swal.fire({
@@ -83,15 +88,18 @@ const Login: React.FC = () => {
                   </div>
 
                   <label htmlFor="senha">Senha</label>
-                  <div className="gap-m">
+                  <div className="">
                     <input
-                      type="password"
+                      type={mostrarSenha ? 'text' : 'password'} // Alterna entre 'password' e 'text'
                       id="senha"
                       className="botao-fundo-transparente"
                       value={senha}
                       onChange={(e) => setSenha(e.target.value)}
                       required
                     />
+                    <p onClick={veSenha} style={{ cursor: 'pointer' }}>
+                      {mostrarSenha ? 'Esconder' : 'Mostrar'} senha
+                    </p>
                   </div>
 
                   <div className="gap-s mg-top-s">

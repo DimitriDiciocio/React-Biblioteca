@@ -78,11 +78,11 @@ const Usuarios: React.FC = () => {
                         title: "Erro",
                         text: result.error || "Essa página é restrita",
                     });
-                    navigate(-1)
+                    navigate("/")
                 }
             } catch (error) {
                 console.error("Essa página é restrita:", error);
-                navigate(-1);
+                navigate("/");
             }
         };
 

@@ -133,11 +133,11 @@ const EditarLivro = () => {
                 title: "Erro",
                 text: result.error || "Essa pagina é restrita",
               });
-              navigate(-1)
+              navigate("/")
             }
           } catch (error) {
             console.error("Essa página é restrita:", error);
-            navigate(-1)
+            navigate("/")
           }
         };
     

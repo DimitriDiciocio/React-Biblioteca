@@ -1,10 +1,10 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Swal from 'sweetalert2';
 import '../index.css';
 
 const CadastroUsuario: React.FC = () => {
-    const [nome, setNome] = useState('');
+  const [nome, setNome] = useState('');
   const [email, setEmail] = useState('');
   const [telefone, setTelefone] = useState('');
   const [endereco, setEndereco] = useState('');
@@ -13,6 +13,71 @@ const CadastroUsuario: React.FC = () => {
   const [tipo, setTipo] = useState(1);
   const [imagem, setImagem] = useState<File | null>(null);
   const navigate = useNavigate();
+  const token = localStorage.getItem("token");
+
+  useEffect(() => {
+          const tokenIsActive = async () => {
+              if (!token) {
+                  navigate("/login");
+                  return;
+              }
+  
+              try {
+                  const response = await fetch("http://127.0.0.1:5000/token", {
+                      method: "POST",
+                      headers: {
+                          "Authorization": `Bearer ${token}`,
+                          "Content-Type": "application/json"
+                      }
+                  });
+  
+                  const result = await response.json();
+  
+                  if (!response.ok) {
+                      Swal.fire({
+                          icon: 'error',
+                          title: 'Erro',
+                          text: result.error || "Erro na verificação do token",
+                      });
+                      localStorage.removeItem("token");
+                  }
+              } catch (error) {
+                  console.error("Erro ao verificar token:", error);
+              }
+          };
+  
+          tokenIsActive();
+      }, [navigate, token]);
+  
+  useEffect(() => {
+          const temPermissao = async () => {
+              try {
+                  const response = await fetch("http://127.0.0.1:5000/tem_permissao_adm", {
+                      method: "GET",
+                      headers: {
+                          "Authorization": `Bearer ${token}`,
+                          "Content-Type": "application/json"
+                      }
+                  });
+  
+                  const result = await response.json();
+  
+                  if (!response.ok) {
+                      Swal.fire({
+                          icon: "error",
+                          title: "Erro",
+                          text: result.error || "Essa página é restrita",
+                      });
+                      navigate("/")
+                  }
+              } catch (error) {
+                  console.error("Essa página é restrita:", error);
+                  navigate("/");
+              }
+          };
+  
+          temPermissao();
+      }, [navigate, token]);
 
   const handleCadastro = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -38,23 +103,21 @@ const CadastroUsuario: React.FC = () => {
 
       const data = await response.json();
 
-      if (response.ok) {
-        await Swal.fire({
-          title: 'Cadastro realizado!',
-          text: data.message,
-          icon: 'success',
-          confirmButtonColor: '#3085d6',
-          confirmButtonText: 'Ir para o login',
-        });
-        navigate('/login');
-      } else {
+      if (!response.ok) {
         await Swal.fire({
           title: 'Erro no cadastro',
           text: data.message,
           icon: 'error',
           confirmButtonColor: '#d33',
         });
+      } else {
+        await Swal.fire({
+          title: 'Cadastro realizado com sucesso',
+          text: data.message,
+          icon: 'success',
+          confirmButtonColor: '#33dd3e',})
       }
+      navigate("/")
     } catch (error) {
       await Swal.fire({
         title: 'Erro de conexão!',

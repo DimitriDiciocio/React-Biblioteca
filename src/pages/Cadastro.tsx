@@ -12,6 +12,8 @@ const Cadastro: React.FC = () => {
   const [confirmSenha, setConfirmSenha] = useState('');
   const [tipo, setTipo] = useState(1);
   const [imagem, setImagem] = useState<File | null>(null);
+  const [mostrarSenha, setMostrarSenha] = useState(false); // Estado para controlar a visibilidade da senha
+  const [mostrarConfirmSenha, setMostrarConfirmSenha] = useState(false); // Estado para controlar a visibilidade da confirmação da senha
   const navigate = useNavigate();
 
   const handleCadastro = async (e: React.FormEvent) => {
@@ -65,15 +67,23 @@ const Cadastro: React.FC = () => {
     }
   };
 
+  // Função para alternar a visibilidade das senhas
+  const veSenha = (campo: 'senha' | 'confirmSenha') => {
+    if (campo === 'senha') {
+      setMostrarSenha(!mostrarSenha);
+    } else if (campo === 'confirmSenha') {
+      setMostrarConfirmSenha(!mostrarConfirmSenha);
+    }
+  };
+
   return (
     <div className="overflow-hidden pagina-cadastro colorBack">
-
       <div className="video-bg">
         <video autoPlay loop muted>
           <source src="../../assets/video/libris-login.mp4" type="video/mp4" />
         </video>
       </div>
-      
+
       <section className="container">
         <div className="row row-centraliza">
           <div className="col-1"></div>
@@ -132,23 +142,29 @@ const Cadastro: React.FC = () => {
 
                   <label htmlFor="senha">Senha</label>
                   <input
-                    type="password"
+                    type={mostrarSenha ? 'text' : 'password'} // Alterna entre 'password' e 'text'
                     id="senha"
                     className="botao-fundo-transparente"
                     value={senha}
                     onChange={(e) => setSenha(e.target.value)}
                     required
                   />
+                  <p onClick={() => veSenha('senha')} style={{ cursor: 'pointer' }}>
+                    {mostrarSenha ? 'Esconder' : 'Mostrar'} senha
+                  </p>
 
                   <label htmlFor="confirmSenha">Confirmar senha</label>
                   <input
-                    type="password"
+                    type={mostrarConfirmSenha ? 'text' : 'password'} // Alterna entre 'password' e 'text'
                     id="confirmSenha"
                     className="botao-fundo-transparente"
                     value={confirmSenha}
                     onChange={(e) => setConfirmSenha(e.target.value)}
                     required
                   />
+                  <p onClick={() => veSenha('confirmSenha')} style={{ cursor: 'pointer' }}>
+                    {mostrarConfirmSenha ? 'Esconder' : 'Mostrar'} confirmação
+                  </p>
 
                   <label htmlFor="imagem">Imagem de Perfil (opcional)</label>
                   <input
@@ -159,7 +175,7 @@ const Cadastro: React.FC = () => {
                     onChange={(e) => setImagem(e.target.files ? e.target.files[0] : null)}
                   />
 
-                  <div className='centraliza mg-top-s submit'>
+                  <div className="centraliza mg-top-s submit">
                     <div className="gap-s centraliza direita">
                       <button type="submit" className="botao-fundo-azul">
                         Cadastrar
