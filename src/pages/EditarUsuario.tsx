@@ -1,9 +1,6 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useDropzone } from 'react-dropzone';
 import '../index.css';
-import Swal from 'sweetalert2';
-import Header from '../Header';
 
 const EditarUsuario: React.FC = () => {
     const [nome, setNome] = useState('');
@@ -13,232 +10,163 @@ const EditarUsuario: React.FC = () => {
     const [senha, setSenha] = useState('');
     const [senhaConfirm, setSenhaConfirm] = useState('');
     const [senhaAntiga, setSenhaAntiga] = useState('');
-    const [imagem, setImagem] = useState<File | null>(null);
-    const [imagemPreview, setImagemPreview] = useState<string | null>(null);
     const navigate = useNavigate();
-    const token = localStorage.getItem("token");
-  
-  useEffect(() => {
-    const tokenIsActive = async () => {
-      if (!token) {
-        navigate("/login");
-        return;
-      }
-
-      try {
-        const response = await fetch("http://127.0.0.1:5000/token", {
-          method: "POST",
-          headers: {
-            "Authorization": `Bearer ${token}`,
-            "Content-Type": "application/json"
-          }
-        });
-
-        const result = await response.json();
-
-        if (!response.ok) {
-          Swal.fire({
-            title: "Erro na verificação do token",
-            text: result.error || "Erro na verificação do token",
-            icon: "error",
-            });
-          localStorage.removeItem("token");
-          navigate("/login");
-        }
-      } catch (error) {
-        console.error("Erro ao verificar token:", error);
-        navigate("/login");
-      }
-    };
-
-    tokenIsActive();
-  }, [navigate, token]);
-
-    useEffect(() => {
-        const fetchUserData = async () => {
-            const userId = localStorage.getItem("id_user");
-
-            try {
-                const response = await fetch(`http://127.0.0.1:5000/user/${userId}`, {
-                    method: 'GET',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${token}`
-                    },
-                });
-
-                const data = await response.json();
-
-                if (response.ok) {
-                    setNome(data.nome);
-                    setEmail(data.email);
-                    setTelefone(data.telefone);
-                    setEndereco(data.endereco);
-                    
-                    if (data.imagem) {
-                        const imagemUrl = `http://127.0.0.1:5000/uploads/usuarios/${data.imagem}`;
-    
-                        fetch(imagemUrl)
-                            .then((imgResponse) => {
-                                if (imgResponse.ok) {
-                                    setImagemPreview(imagemUrl);
-                                }
-                            })
-                            .catch(() => {
-                                console.log("Imagem não encontrada");
-                            });
-                    }
-                } else {
-                    Swal.fire({
-                        title: 'Erro ao buscar dados do usuário',
-                        text: data.message,
-                        icon: 'error',
-                    });
-                }
-            } catch (error) {
-                Swal.fire({
-                    title: 'Erro de conexão com o servidor',
-                    text: String(error),
-                    icon: 'error',
-                });
-            }
-        };
-    
-        fetchUserData();
-    }, [navigate, token]);
-
-    const onDrop = useCallback((acceptedFiles: File[]) => {
-        const file = acceptedFiles[0];
-        if (file) {
-            setImagem(file);
-            setImagemPreview(URL.createObjectURL(file));
-        }
-    }, []);
-
-    const { getRootProps, getInputProps } = useDropzone({
-        onDrop,
-        accept: { 'image/*': [] },
-        multiple: false,
-    });
 
     const handleEdicao = async (e: React.FormEvent) => {
         e.preventDefault();
-
-        const formData = new FormData();
-        formData.append('nome', nome);
-        formData.append('email', email);
-        formData.append('telefone', telefone);
-        formData.append('endereco', endereco);
-
-        if (senha || senhaConfirm || senhaAntiga) {
-            formData.append('senha', senha);
-            formData.append('senhaConfirm', senhaConfirm);
-            formData.append('senhaAntiga', senhaAntiga);
-        }
-
-        if (imagem) {
-            formData.append('imagem', imagem);
-        }
-
+        const updateUser = { nome, email, telefone, endereco, senha, senhaConfirm, senhaAntiga };
         try {
-            const response = await fetch(`http://127.0.0.1:5000/editar_usuario`, {
+            const response = await fetch(`http://127.0.0.1:5000/editar_usuario/${localStorage.getItem("id")}`, {
                 method: 'PUT',
-                headers: {
-                    'Authorization': `Bearer ${localStorage.getItem("token")}`
-                },
-                body: formData,
-            });
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(updateUser),
+              });
 
-            const data = await response.json();
+              const data = await response.json();
 
-            if (response.ok) {
-                Swal.fire({
-                    title: 'Usuário editado com sucesso!',
-                    text: data.message,
-                    icon: 'success',
-                });
-                navigate('/');
-            } else {
-                Swal.fire('Erro ao editar usuário', data.message, 'error');
+              if (response.ok) {
+                alert(data.message);
+                navigate('/login');
+              } else {
+                alert(data.message);
+              }
+            } catch (error) {
+              alert('Erro de conexão com o servidor' + error);
             }
-        } catch (error) {
-            Swal.fire('Erro de conexão com o servidor', String(error), 'error');
         }
-    };
-
-    return (
-        <div className="pagina-edicao-usuario">
-            <Header/>
-
-            <div className="espaco-vazio"></div>
-
-            <main className="container-fluid">
-                <section className="row align-items-center">
-                    <div className="col-2"></div>
-
-                    <div className="col-4">
-                        <div
-                            {...getRootProps()}
-                            className="dropzone"
-                            style={{
-                                border: '2px dashed #ccc',
-                                padding: '20px',
-                                textAlign: 'center',
-                                cursor: 'pointer',
-                                borderRadius: '50%',
-                                width: '400px',
-                                height: '400px',
-                            }}
-                        >
-                            <input {...getInputProps()} />
-                            {imagemPreview ? (
-                                <img
-                                    src={imagemPreview}
-                                    alt="Imagem de perfil"
-                                    style={{
-                                        width: '100%',
-                                        height: '100%',
-                                        maxHeight: '100%',
-                                        borderRadius: '50%',
-                                        objectFit: 'cover',
-                                    }}
-                                />
-                            ) : (
-                                <p>Arraste uma imagem ou clique para selecionar</p>
-                            )}
+        return (
+            <div className="pagina-edicao-usuario">
+                <header className="container-fluid">
+                    <section className="row d-flex cabecalho-claro2">
+                        <div className="col-lg-5 col-sm-3 d-flex justify-content-center align-items-center">
+                            <img className="logo" src="../../assets/img/logo-branca.png" alt="logo do site" />
                         </div>
-                    </div>
 
-                    <div className="col-6">
-                        <div className="row">
-                            <div className="formulario col-12">
-                                <form onSubmit={handleEdicao}>
-                                    <p>Nome</p>
-                                    <input type="text" value={nome} onChange={(e) => setNome(e.target.value)} required />
-                                    <p>Email</p>
-                                    <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} required />
-                                    <p>Telefone</p>
-                                    <input type="number" value={telefone} onChange={(e) => setTelefone(e.target.value)} required />
-                                    <p>Endereço</p>
-                                    <input type="text" value={endereco} onChange={(e) => setEndereco(e.target.value)} required />
-                                    <p>Senha Atual (opcional)</p>
-                                    <input type="password" value={senhaAntiga} onChange={(e) => setSenhaAntiga(e.target.value)} />
-                                    <p>Nova Senha (opcional)</p>
-                                    <input type="password" value={senha} onChange={(e) => setSenha(e.target.value)} />
-                                    <p>Confirmar Senha (opcional)</p>
-                                    <input type="password" value={senhaConfirm} onChange={(e) => setSenhaConfirm(e.target.value)} />
-                                    <div className="d-flex-bit cc">
-                                        <button className='botao-fundo-transparente' type="button" onClick={() => navigate('/')}>Cancelar</button>
-                                        <button className='botao-fundo-azul' type="submit">Salvar</button>
-                                    </div>
-                                </form>
+                        <div className="col-lg-6 col-sm-6 d-flex justify-content-center align-items-center">
+                            <input id="campo-busca" placeholder="O que você quer ler hoje?" />
+                        </div>
+                        <div className="col-lg-1 col-sm-3 justify-content-center align-items-center">
+                            <a href="ver-conta.html">
+                                <i className="conta2">account_circle</i>
+                            </a>
+                        </div>
+                    </section>
+
+                    <section className="row cabecalho-escuro2">
+                        <div className="col-12 d-flex align-items-center">
+                            <div className="d-flex navegacao2 align-items-center">
+                                <p>Gênero</p>
+                                <i>arrow_drop_down</i>
+                            </div>
+                            <div className="d-flex navegacao2 align-items-center">
+                                <p>Minha lista</p>
+                                <i>list</i>
+                            </div>
+                            <div className="d-flex navegacao2 align-items-center">
+                                <p>Notificações</p>
+                                <i>notifications</i>
                             </div>
                         </div>
-                    </div>
-                </section>
-            </main>
-        </div>
-    );
+                    </section>
+                </header>
+
+                <div className="espaco-vazio"></div>
+
+                <main className="container-fluid">
+                    <section className="row align-items-center">
+                        <div className="col-2"></div>
+                        <div className="col-4">
+                            <img className="foto-conta" src="../../assets/img/sorriso.jpg" alt="foto de usuário" />
+                        </div>
+
+                        <div className="col-6">
+                            <div className="row">
+                                <div className="formulario col-12">
+                                    <form onSubmit={handleEdicao}>
+                                        <p>Nome</p>
+                                        <input
+                                            className="nome-edita"
+                                            type="text"
+                                            placeholder="seu nome"
+                                            value={nome}
+                                            onChange={(e) => setNome(e.target.value)}
+                                            required
+                                        />
+                                        <p>Email</p>
+                                        <input
+                                            className="email-edita"
+                                            type="email"
+                                            placeholder="seu email"
+                                            value={email}
+                                            onChange={(e) => setEmail(e.target.value)}
+                                            required
+                                        />
+                                        <p>Telefone</p>
+                                        <input
+                                            className="fone-edita"
+                                            type="number"
+                                            placeholder="seu telefone"
+                                            value={telefone}
+                                            onChange={(e) => setTelefone(e.target.value)}
+                                            required
+                                        />
+                                        <p>Endereço</p>
+                                        <input
+                                            className="endereco-edita"
+                                            type="text"
+                                            placeholder="seu endereco"
+                                            value={endereco}
+                                            onChange={(e) => setEndereco(e.target.value)}
+                                            required
+                                        />
+                                        <p>Senha</p>
+                                        <input
+                                            className="senha-edita"
+                                            type="password"
+                                            placeholder="sua senha"
+                                            value={senha}
+                                            onChange={(e) => setSenha(e.target.value)}
+                                            required
+                                        />
+                                        <p>Confirma Senha</p>
+                                        <input
+                                            className="senha-edita-c"
+                                            type="password"
+                                            placeholder="Confirmar sua senha"
+                                            value={senhaConfirm}
+                                            onChange={(e) => setSenhaConfirm(e.target.value)}
+                                            required
+                                        />
+                                        <p>Senha Antiga</p>
+                                        <input
+                                            className="senha-edita-c"
+                                            type="password"
+                                            placeholder="Digite a senha antiga"
+                                            value={senhaAntiga}
+                                            onChange={(e) => setSenhaAntiga(e.target.value)}
+                                            required
+                                        />
+
+                                        <div className="d-flex-bit cc">
+                                            <button
+                                                type="button"
+                                                className="botao-fundo-transparente"
+                                                onClick={() => navigate('/')}
+                                            >
+                                                Cancelar
+                                            </button>
+                                            <button className="botao-fundo-azul" type="submit">
+                                                Salvar
+                                            </button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                </main>
+            </div>
+        );
 };
 
 export default EditarUsuario;
