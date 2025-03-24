@@ -144,7 +144,7 @@ const EditarLivro = () => {
         temPermissao();
       }, [navigate, token]);
 
-    const onDrop = useCallback((acceptedFiles: File[]) => {
+      const onDrop = useCallback((acceptedFiles: File[]) => {
         const file = acceptedFiles[0];
         if (file) {
             setImagem(file);
@@ -152,7 +152,7 @@ const EditarLivro = () => {
         }
     }, []);
 
-    useDropzone({
+    const { getRootProps, getInputProps } = useDropzone({
         onDrop,
         accept: { 'image/*': [] },
         multiple: false,
@@ -225,7 +225,35 @@ const EditarLivro = () => {
                 <section className="row align-items-center">
                     <div className="col-2"></div>
                     <div className="col-4">
-                        <img className="foto-conta" src={imagemPreview || "../../assets/img/sorriso.jpg"} alt="Imagem do livro" />
+                        <div {...getRootProps()}
+                        className="dropzone"
+                        style={{
+                            border: "2px dashed #ccc",
+                            padding: "20px",
+                            textAlign: "center",
+                            cursor: "pointer",
+                            borderRadius: "10px",
+                            width: "300px",
+                            height: "400px",
+                        }}
+                        >
+                        <input {...getInputProps()} />
+                        {imagemPreview ? (
+                            <img
+                            src={imagemPreview}
+                            alt="Imagem de capa"
+                            style={{
+                                width: "100%",
+                                height: "100%",
+                                maxHeight: "100%",
+                                objectFit: "cover",
+                                right: "100px", 
+                            }}
+                            />
+                        ) : (
+                            <p>Arraste uma imagem ou clique para selecionar</p>
+                        )}
+                        </div>
                     </div>
 
                     <div className="col-6">

@@ -135,7 +135,15 @@ const BookDetail = () => {
             <div className="container-fluid">
                 <div className="d-flex-eve row">
                     <div className="col-6">
-                        <img src={`http://127.0.0.1:5000/uploads/livros/${book.imagem}`}  className="livro"/>
+                        <img src={`http://127.0.0.1:5000/uploads/livros/${book.imagem}`} 
+                        style={{
+                            width: "50%",
+                            height: "100%",
+                            maxHeight: "100%",
+                            objectFit: "cover",
+                            right: "100px", 
+                        }}
+                        className="livro"/>
                     </div>
                 </div>
                 <div className="row informacoes">

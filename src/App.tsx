@@ -13,6 +13,7 @@ import Usuarios from './pages/Usuarios';
 import MostrarUsuarios from './pages/MostrarUsuários';
 import PuxarHistorico from './pages/PuxarHistorico';
 import Search from './pages/Search';
+import CadastroUsuario from './pages/CadastroUsuario';
 
 const App: React.FC = () => {
 
@@ -59,6 +60,7 @@ const App: React.FC = () => {
           <Route path="/usuarios" element={<MostrarUsuarios/>}/>
           <Route path="/historico" element={<PuxarHistorico/>}/>
           <Route path="/pesquisa/:search" element={<Search/>}/>
+          <Route path="/cadastrar_usuario" element={<CadastroUsuario/>}/>
         </Routes>
     </Router>
   )

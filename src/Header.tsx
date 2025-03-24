@@ -88,7 +88,7 @@ const Header: React.FC = () => {
             <i className="conta2">account_circle</i>
           </a>
           <a onClick={() => navigate('/sair')} className='text-decoration-none'>
-            <i className="">Sair</i>
+            <i className="conta2">logout</i>
           </a>
         </div>
       </section>
@@ -115,7 +115,17 @@ const Header: React.FC = () => {
           )}
           {temPermissao && (
             <div className="d-flex navegacao2 align-items-center" id="tipo">
-              <p onClick={() => navigate('/usuarios')}>Usuarios</p>
+              <p onClick={() => navigate('/usuarios')}>Usuários</p>
+            </div>
+          )}
+          {temPermissao && (
+            <div className="d-flex navegacao2 align-items-center" id="tipo">
+              <p onClick={() => navigate('/relatorios')}>Relatórios</p>
+            </div>
+          )}
+          {temPermissao && (
+            <div className="d-flex navegacao2 align-items-center" id="tipo">
+              <p onClick={() => navigate('/cadastrar_usuario')}>Cadastrar Usuário</p>
             </div>
           )}
         </div>

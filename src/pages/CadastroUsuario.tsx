@@ -3,8 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import Swal from 'sweetalert2';
 import '../index.css';
 
-const Cadastro: React.FC = () => {
-  const [nome, setNome] = useState('');
+const CadastroUsuario: React.FC = () => {
+    const [nome, setNome] = useState('');
   const [email, setEmail] = useState('');
   const [telefone, setTelefone] = useState('');
   const [endereco, setEndereco] = useState('');
@@ -159,6 +159,18 @@ const Cadastro: React.FC = () => {
                     onChange={(e) => setImagem(e.target.files ? e.target.files[0] : null)}
                   />
 
+                  <label>Tipo</label>
+                  <select
+                      value={tipo}
+                      onChange={(e) => setTipo(Number(e.target.value))}
+                      className="botao-fundo-transparente"
+                  >
+                      <option value="1">Usuário</option>
+                      <option value="2">Bibliotecário</option>
+                      <option value="3">Administrador</option>
+                  </select>
+                  
+
                   <div className='centraliza mg-top-s submit'>
                     <div className="gap-s centraliza direita">
                       <button type="submit" className="botao-fundo-azul">
@@ -170,9 +182,9 @@ const Cadastro: React.FC = () => {
                       <button
                         type="button"
                         className="botao-fundo-transparente text-decoration-none"
-                        onClick={() => navigate('/login')}
+                        onClick={() => navigate('/')}
                       >
-                        Possuo uma conta
+                        Cancelar
                       </button>
                     </div>
                   </div>
@@ -182,10 +194,12 @@ const Cadastro: React.FC = () => {
           </div>
 
           <div className="col-1"></div>
+
+          {/* Exibição de Livros */}
         </div>
       </section>
     </div>
   );
 };
 
-export default Cadastro;
+export default CadastroUsuario;

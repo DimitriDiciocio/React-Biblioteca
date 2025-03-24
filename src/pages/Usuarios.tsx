@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import Swal from "sweetalert2";
+import Header from "../Header";
 
 const Usuarios: React.FC = () => {
     const token = localStorage.getItem("token");
@@ -18,6 +19,7 @@ const Usuarios: React.FC = () => {
         imagem: "",
     });
 
+    const [ativo, setAtivo] = useState(user.ativo)
     const [tipo, setTipo] = useState(user.tipo);
     const [nome, setNome] = useState(user.nome);
     const [email, setEmail] = useState(user.email);
@@ -76,6 +78,7 @@ const Usuarios: React.FC = () => {
                         title: "Erro",
                         text: result.error || "Essa página é restrita",
                     });
+                    navigate(-1)
                 }
             } catch (error) {
                 console.error("Essa página é restrita:", error);
@@ -103,12 +106,22 @@ const Usuarios: React.FC = () => {
             setTelefone(data.telefone);
             setEndereco(data.endereco);
             setTipo(data.tipo);
+            setAtivo(data.ativo)
         };
 
         fetchUserData();
     }, [id, token]);
 
     const imageUrl = `http://127.0.0.1:5000/uploads/usuarios/${user.imagem}`;
+
+    const [texto, setTexto] = useState("")
+    useEffect(() => {
+        if (ativo) {
+            setTexto("reativar_usuario");
+        } else {
+            setTexto("inativar_usuario");
+        }
+    }, [ativo]);
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -144,10 +157,38 @@ const Usuarios: React.FC = () => {
         } catch (error) {
             console.error("Erro ao atualizar usuário:", error);
         }
+
+        try {
+            const response = await fetch(`http://127.0.0.1:5000/${texto}`, {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}`,
+                },
+                body: JSON.stringify({ id }),
+            });
+    
+            const result = await response.json();
+    
+            if (response.ok) {
+                console.log("Status atualizado com sucesso", result.error)
+                navigate("/usuarios")
+            } else {
+                console.error("Erro ao atualizar status:", result.error);
+            }
+        } catch (error) {
+            console.error("Erro ao atualizar status:", error);
+        }
     };
 
     return (
         <div>
+
+            <Header/>
+            
+            <div className="espaco-vazio"></div>
+
+
             <h1>Editar Usuário</h1>
             <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100 p-6">
                 <img src={imageUrl} alt={user.nome} className="w-48" />
@@ -204,6 +245,17 @@ const Usuarios: React.FC = () => {
                         <option value="2">Bibliotecário</option>
                         <option value="3">Administrador</option>
                     </select>
+
+                    <label>Status do Usuário</label>
+                    <select 
+                        value={ativo ? "true" : "false"}
+                        onChange={(e) => setAtivo(e.target.value === "true")} 
+                        className="botao-fundo-transparente"
+                    >
+                        <option value="true">Ativo</option>
+                        <option value="false">Inativo</option>
+                    </select>
+                    
                     <button type="submit" className="botao-fundo-azul">
                         Atualizar Informações e Tipo
                     </button>

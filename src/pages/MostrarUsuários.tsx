@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
+import Header from "../Header";
 
 const MostrarUsuarios: React.FC = () => {
   const token = localStorage.getItem("token");
@@ -41,6 +42,31 @@ const MostrarUsuarios: React.FC = () => {
 
     tokenIsActive();
   }, [navigate, token]);
+
+  useEffect(() => {
+      const temPermissao = async () => {
+  
+        try {
+          const response = await fetch("http://127.0.0.1:5000/tem_permissao", {
+            method: "GET",
+            headers: {
+              "Authorization": `Bearer ${token}`,
+              "Content-Type": "application/json"
+            }
+          });
+  
+  
+          if (!response.ok) {
+            navigate(-1)
+          }
+        } catch (error) {
+          console.error("Essa página é restrita:", error);
+          navigate(-1)
+        }
+      };
+  
+      temPermissao();
+    }, [navigate, token]);
 
   const [users, setUsers] = useState<Usuario[]>([]);
   const [filteredUsers, setFilteredUsers] = useState<Usuario[]>([]);
@@ -97,8 +123,11 @@ const MostrarUsuarios: React.FC = () => {
 
   return (
     <div>
-      <button onClick={() => navigate('/')} className="botao-fundo-azul">Página Inicial</button>
-      <button onClick={() => navigate('/relatorios')} className="botao-fundo-transparente">Relatórios</button>
+
+      <Header/>
+
+      <div className="espaco-vazio"></div>
+
       <h1>Usuários</h1>
       <input
         type="text"
