@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import Swal from 'sweetalert2';
 
 const Login: React.FC = () => {
   const [email, setEmail] = useState('');
@@ -20,24 +21,47 @@ const Login: React.FC = () => {
       const data = await response.json();
 
       if (response.ok) {
-        alert(data.message);
-        localStorage.setItem("id", JSON.stringify(data.id_user))
-        navigate('/'); // Redireciona para a página inicial ou outra rota
+        localStorage.setItem('token', data.token);
+        localStorage.setItem('id_user', JSON.stringify(data.id_user));
+
+        await Swal.fire({
+          title: 'Login realizado!',
+          text: data.message,
+          icon: 'success',
+          confirmButtonColor: '#3085d6',
+          confirmButtonText: 'Ir para o início',
+        });
+        if (data.tipo == 1 || data.tipo == 2) {
+          navigate('/');
+        }
+        else if (data.tipo == 3) {
+          navigate('/usuarios')
+        }
       } else {
-        alert(data.message);
+        await Swal.fire({
+          title: 'Erro no login',
+          text: data.message,
+          icon: 'error',
+          confirmButtonColor: '#d33',
+        });
       }
     } catch (error) {
-      alert('Erro ao se conectar com o servidor: ' + String(error));
+      await Swal.fire({
+        title: 'Erro de conexão!',
+        text: 'Não foi possível se conectar ao servidor.' + String(error),
+        icon: 'error',
+        confirmButtonColor: '#d33',
+      });
     }
   };
 
   return (
     <div className="overflow-hidden colorBack">
       <section className="container">
-        <div className="row">
+        <div className="row row-centraliza">
           <div className="col-1"></div>
           <div className="col-4 modal-login centraliza">
-            <div className="col modal-login2" style={{ backgroundColor: "white" }}>
+            <div className="col modal-login2" style={{ backgroundColor: 'white' }}>
               <div className="centraliza">
                 <img src="assets/img/logo-azul.png" alt="Logo Libris" />
               </div>
@@ -54,6 +78,7 @@ const Login: React.FC = () => {
                       className="botao-fundo-transparente"
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
+                      required
                     />
                   </div>
 
@@ -65,10 +90,11 @@ const Login: React.FC = () => {
                       className="botao-fundo-transparente"
                       value={senha}
                       onChange={(e) => setSenha(e.target.value)}
+                      required
                     />
                   </div>
 
-                  <div className="gap-s">
+                  <div className="gap-s mg-top-s">
                     <div className="centraliza">
                       <button type="submit" className="botao-fundo-azul">Entrar</button>
                     </div>
@@ -89,25 +115,10 @@ const Login: React.FC = () => {
 
           <div className="col-1"></div>
 
-          <div className="col-6">
-            <div className="row">
-              {[
-                'o-diario-de-anne-frank.png',
-                'o-alquimista.png',
-                'o-codigo-da-vinci.png',
-                'harry-potter-e-a-crianca-amaldicioada.png',
-                'dom-casmurro.png',
-                'o-pequeno-principe.png',
-                'e-o-vento-levou.png',
-                'alem-da-capa.png',
-                'o-senhor-dos-aneis.png',
-                'crepusculo.png',
-                'percy-jackson-e-os-olimpianos.png',
-                'diario-de-um-banana.png',
-              ].map((livro, index) => (
-                <img key={index} className="col-4 livro animacao" src={`assets/img/${livro}`} alt={livro.replace('.png', '')} />
-              ))}
-            </div>
+          <div className="video-bg">
+            <video autoPlay loop muted>
+              <source src="../../assets/video/libris-login.mp4" type="video/mp4" />
+            </video>
           </div>
         </div>
       </section>

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import Swal from 'sweetalert2';
 import '../index.css';
 
 const Cadastro: React.FC = () => {
@@ -8,40 +9,75 @@ const Cadastro: React.FC = () => {
   const [telefone, setTelefone] = useState('');
   const [endereco, setEndereco] = useState('');
   const [senha, setSenha] = useState('');
+  const [confirmSenha, setConfirmSenha] = useState('');
   const [tipo, setTipo] = useState(1);
+  const [imagem, setImagem] = useState<File | null>(null);
   const navigate = useNavigate();
 
   const handleCadastro = async (e: React.FormEvent) => {
     e.preventDefault();
-    const newUser = { nome, email, telefone, endereco, senha, tipo };
+
+    const formData = new FormData();
+    formData.append('nome', nome);
+    formData.append('email', email);
+    formData.append('telefone', telefone);
+    formData.append('endereco', endereco);
+    formData.append('senha', senha);
+    formData.append('confirmSenha', confirmSenha);
+    formData.append('tipo', tipo.toString());
+
+    if (imagem) {
+      formData.append('imagem', imagem);
+    }
 
     try {
       const response = await fetch('http://127.0.0.1:5000/cadastro', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(newUser),
+        body: formData,
       });
 
       const data = await response.json();
 
       if (response.ok) {
-        alert(data.message);
+        await Swal.fire({
+          title: 'Cadastro realizado!',
+          text: data.message,
+          icon: 'success',
+          confirmButtonColor: '#3085d6',
+          confirmButtonText: 'Ir para o login',
+        });
         navigate('/login');
       } else {
-        alert(data.message);
+        await Swal.fire({
+          title: 'Erro no cadastro',
+          text: data.message,
+          icon: 'error',
+          confirmButtonColor: '#d33',
+        });
       }
     } catch (error) {
-      alert('Erro de conexão com o servidor' + error);
+      await Swal.fire({
+        title: 'Erro de conexão!',
+        text: 'Não foi possível se conectar ao servidor.' + String(error),
+        icon: 'error',
+        confirmButtonColor: '#d33',
+      });
     }
   };
 
   return (
-    <div className="overflow-hidden colorBack">
+    <div className="overflow-hidden pagina-cadastro colorBack">
+
+      <div className="video-bg">
+        <video autoPlay loop muted>
+          <source src="../../assets/video/libris-login.mp4" type="video/mp4" />
+        </video>
+      </div>
+      
       <section className="container">
-        <div className="row">
+        <div className="row row-centraliza">
           <div className="col-1"></div>
 
-          {/* Formulário de Cadastro */}
           <div className="col-4 modal-login centraliza">
             <div className="col modal-login2" style={{ backgroundColor: 'white' }}>
               <div className="centraliza">
@@ -52,7 +88,7 @@ const Cadastro: React.FC = () => {
                 <h1>CADASTRO</h1>
               </div>
 
-              <form className="centraliza" onSubmit={handleCadastro}>
+              <form className="centraliza" onSubmit={handleCadastro} encType="multipart/form-data">
                 <div className="coluna gap-ss">
                   <label htmlFor="name">Nome de Usuário</label>
                   <input
@@ -76,7 +112,7 @@ const Cadastro: React.FC = () => {
 
                   <label htmlFor="telefone">Telefone</label>
                   <input
-                    type="text"
+                    type="number"
                     id="telefone"
                     className="botao-fundo-transparente"
                     value={telefone}
@@ -104,34 +140,41 @@ const Cadastro: React.FC = () => {
                     required
                   />
 
-                  {/* <label htmlFor="tipo">Tipo de usuário</label> */}
-                  <select
-                    id="tipo"
+                  <label htmlFor="confirmSenha">Confirmar senha</label>
+                  <input
+                    type="password"
+                    id="confirmSenha"
                     className="botao-fundo-transparente"
-                    value={tipo}
-                    onChange={(e) => setTipo(Number(e.target.value))}
+                    value={confirmSenha}
+                    onChange={(e) => setConfirmSenha(e.target.value)}
                     required
-                    hidden
-                  >
-                    <option value={1}>Leitor</option>
-                    <option value={2}>Bibliotecário</option>
-                    <option value={3}>Administrador</option>
-                  </select>
+                  />
 
-                  <div className="gap-s centraliza">
-                    <button type="submit" className="botao-fundo-azul">
-                      Cadastrar
-                    </button>
-                  </div>
+                  <label htmlFor="imagem">Imagem de Perfil (opcional)</label>
+                  <input
+                    type="file"
+                    id="imagem"
+                    className="botao-fundo-transparente"
+                    accept="image/*"
+                    onChange={(e) => setImagem(e.target.files ? e.target.files[0] : null)}
+                  />
 
-                  <div className="gap-s centraliza">
-                    <button
-                      type="button"
-                      className="botao-fundo-transparente text-decoration-none"
-                      onClick={() => navigate('/login')}
-                    >
-                      Possuo uma conta
-                    </button>
+                  <div className='centraliza mg-top-s submit'>
+                    <div className="gap-s centraliza direita">
+                      <button type="submit" className="botao-fundo-azul">
+                        Cadastrar
+                      </button>
+                    </div>
+
+                    <div className="gap-s centraliza">
+                      <button
+                        type="button"
+                        className="botao-fundo-transparente text-decoration-none"
+                        onClick={() => navigate('/login')}
+                      >
+                        Possuo uma conta
+                      </button>
+                    </div>
                   </div>
                 </div>
               </form>
@@ -139,28 +182,6 @@ const Cadastro: React.FC = () => {
           </div>
 
           <div className="col-1"></div>
-
-          {/* Exibição de Livros */}
-          <div className="col-6">
-            <div className="row">
-              {[
-                'o-diario-de-anne-frank.png',
-                'o-alquimista.png',
-                'o-codigo-da-vinci.png',
-                'harry-potter-e-a-crianca-amaldicioada.png',
-                'dom-casmurro.png',
-                'o-pequeno-principe.png',
-                'e-o-vento-levou.png',
-                'alem-da-capa.png',
-                'o-senhor-dos-aneis.png',
-                'crepusculo.png',
-                'percy-jackson-e-os-olimpianos.png',
-                'diario-de-um-banana.png',
-              ].map((livro, index) => (
-                <img key={index} className="col-4 livro" src={`assets/img/${livro}`} alt={livro.replace('.png', '')} />
-              ))}
-            </div>
-          </div>
         </div>
       </section>
     </div>
