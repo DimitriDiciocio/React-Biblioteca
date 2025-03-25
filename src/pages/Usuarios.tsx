@@ -62,7 +62,7 @@ const Usuarios: React.FC = () => {
     useEffect(() => {
         const temPermissao = async () => {
             try {
-                const response = await fetch("http://127.0.0.1:5000/tem_permissao", {
+                const response = await fetch("http://127.0.0.1:5000/tem_permissao_adm", {
                     method: "GET",
                     headers: {
                         "Authorization": `Bearer ${token}`,

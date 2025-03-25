@@ -114,8 +114,7 @@ const CadastroUsuario: React.FC = () => {
         await Swal.fire({
           title: 'Cadastro realizado com sucesso',
           text: data.message,
-          icon: 'success',
-          confirmButtonColor: '#33dd3e',})
+          icon: 'success',})
       }
       navigate("/")
     } catch (error) {

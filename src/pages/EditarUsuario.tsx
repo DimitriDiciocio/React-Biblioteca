@@ -121,6 +121,11 @@ const EditarUsuario: React.FC = () => {
         multiple: false,
     });
 
+    const handleRemoveImage = () => {
+        setImagem(null);
+        setImagemPreview(null);
+    };
+
     const handleEdicao = async (e: React.FormEvent) => {
         e.preventDefault();
 
@@ -188,21 +193,41 @@ const EditarUsuario: React.FC = () => {
                                 borderRadius: '50%',
                                 width: '400px',
                                 height: '400px',
+                                position: 'relative', // Allow positioning of the "X"
                             }}
                         >
                             <input {...getInputProps()} />
                             {imagemPreview ? (
-                                <img
-                                    src={imagemPreview}
-                                    alt="Imagem de perfil"
-                                    style={{
-                                        width: '100%',
-                                        height: '100%',
-                                        maxHeight: '100%',
-                                        borderRadius: '50%',
-                                        objectFit: 'cover',
-                                    }}
-                                />
+                                <div>
+                                    <img
+                                        src={imagemPreview}
+                                        alt="Imagem de perfil"
+                                        style={{
+                                            width: '100%',
+                                            height: '100%',
+                                            maxHeight: '100%',
+                                            borderRadius: '50%',
+                                            objectFit: 'cover',
+                                        }}
+                                    />
+                                    <button
+                                        onClick={handleRemoveImage}
+                                        style={{
+                                            position: 'absolute',
+                                            top: '10px',
+                                            right: '10px',
+                                            background: 'rgba(0, 0, 0, 0.5)',
+                                            color: 'white',
+                                            border: 'none',
+                                            borderRadius: '50%',
+                                            width: '30px',
+                                            height: '30px',
+                                            cursor: 'pointer',
+                                        }}
+                                    >
+                                        X
+                                    </button>
+                                </div>
                             ) : (
                                 <p>Arraste uma imagem ou clique para selecionar</p>
                             )}
