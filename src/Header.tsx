@@ -107,6 +107,10 @@ const Header: React.FC = () => {
             <p>Notificações</p>
             <i>notifications</i>
           </div>
+          <div className="d-flex navegacao2 align-items-center" onClick={() => navigate('/carrinho')}>
+            <p>Carrinho</p>
+            <i className="material-icons">shopping_cart</i>
+          </div>
 
           {temPermissao && (
             <div className="d-flex navegacao2 align-items-center" id="tipo">
