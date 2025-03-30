@@ -142,7 +142,7 @@ const BookDetail = () => {
     });
   };
 
-  const handleEmprestimo = () => {
+  const handleEmprestimo = async () => {
     Swal.fire({
       title: "Fazer Empréstimo?",
       text: `Você quer fazer o empréstimo do livro ${book.titulo}?`,
@@ -151,22 +151,59 @@ const BookDetail = () => {
       confirmButtonColor: "#4562D6",
       cancelButtonColor: "#d33",
       confirmButtonText: "Emprestar",
-    }).then((result) => {
+    }).then(async (result) => {
       if (result.isConfirmed) {
-        Swal.fire({
-          title: "Emprestado!",
-          text: "A devolução ficará para o dia 00/00/0000!",
-          icon: "success",
-        });
+        try {
+          const response = await fetch("http://127.0.0.1:5000/carrinho_emprestimos", {
+            method: "POST",
+            headers: {
+              Authorization: `Bearer ${token}`,
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ id_livro: book.id }),
+          });
+  
+          if (!response.ok) {
+            const errorData = await response.json();
+            Swal.fire(
+              "Erro",
+              errorData.message || "Erro ao realizar o empréstimo",
+              "error"
+            );
+            return;
+          }
+  
+          const data = await response.json();
+            Swal.fire({
+            title: "Livro adicionado ao carrinho de empréstimos!",
+            text: "Deseja ir para o carrinho ou continuar procurando mais livros?",
+            icon: "success",
+            showCancelButton: true,
+            confirmButtonText: "Ir para o carrinho",
+            cancelButtonText: "Procurar mais livros",
+            }).then((result) => {
+            if (result.isConfirmed) {
+              navigate("/carrinho_emprestimos");
+            }
+            });
+        } catch (error) {
+          console.error("Erro ao realizar empréstimo:", error);
+          Swal.fire(
+            "Erro",
+            "Ocorreu um erro ao tentar emprestar o livro." + String(error),
+            "error"
+          );
+        }
       }
     });
   };
+  
 
   return (
     <div className="pagina-livro-informa">
       <Header />
-
       <div className="espaco-vazio"></div>
+
       <div className="container-fluid">
         <div className="d-flex-eve row">
           <div className="col-6">

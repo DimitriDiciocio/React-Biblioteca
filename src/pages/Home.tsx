@@ -52,7 +52,6 @@ const Home: React.FC = () => {
   return (
     <div>
         <Header/>
-
         <div className="espaco-vazio"></div>
 
         <main className="container-fluid">

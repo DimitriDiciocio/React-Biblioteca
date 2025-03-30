@@ -18,7 +18,7 @@ interface Reserva {
     titulo: string;
     autor: string;
     id_reserva: number;
-    data_reservado: string;
+    data_criacao: string; // Alterado para refletir o campo correto
     data_validade: string;
 }
 
@@ -152,7 +152,7 @@ const PuxarHistorico = () => {
                         historico.reservas_ativas.map((item) => (
                             <div key={item.id_reserva} className="historico-item">
                                 <p><strong>{item.titulo}</strong> - {item.autor}</p>
-                                <p>Reservado em: {item.data_reservado}</p>
+                                <p>Reservado em: {item.data_criacao}</p> {/* Alterado aqui */}
                                 <p>Válido até: {item.data_validade}</p>
                             </div>
                         ))
