@@ -60,7 +60,7 @@ const Header: React.FC = () => {
                   className="responsivo-pesquisa"
                 />
                 <div className="filter-options">
-                  <i className="conta2">arrow_drop_down</i>
+                  <i className="conta2 absolute-arrow">arrow_drop_down</i>
                   <div className="filter-options-content">
                     <label>
                       <input type="checkbox" className="filter-checkbox" value="tags" />

@@ -211,7 +211,10 @@ const EditarUsuario: React.FC = () => {
                                         }}
                                     />
                                     <button
-                                        onClick={handleRemoveImage}
+                                        onClick={(event) => {
+                                            event.stopPropagation()
+                                            handleRemoveImage()
+                                        }}
                                         style={{
                                             position: 'absolute',
                                             top: '10px',
