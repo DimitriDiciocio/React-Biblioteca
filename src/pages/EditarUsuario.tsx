@@ -173,48 +173,46 @@ const EditarUsuario: React.FC = () => {
 
     return (
         <div className="pagina-edicao-usuario">
-            <Header/>
-
+            <Header />
+    
             <div className="espaco-vazio"></div>
-
+    
             <main className="container-fluid">
-                <section className="row align-items-center">
+                <section className="row align-items-center d-flex justify-content-center">
                     <div className="col-2"></div>
-
-                    <div className="col-4">
+    
+                    <div className="col-4 d-flex justify-content-center">
                         <div
                             {...getRootProps()}
-                            className="dropzone"
+                            className="dropzone d-flex align-items-center justify-content-center"
                             style={{
                                 border: '2px dashed #ccc',
                                 padding: '20px',
                                 textAlign: 'center',
                                 cursor: 'pointer',
                                 borderRadius: '50%',
-                                width: '400px',
-                                height: '400px',
-                                position: 'relative', // Allow positioning of the "X"
+                                width: '100%',
+                                maxWidth: '300px',
+                                height: 'auto',
+                                aspectRatio: '1 / 1',
+                                position: 'relative',
                             }}
                         >
                             <input {...getInputProps()} />
                             {imagemPreview ? (
-                                <div>
-                                    <img
-                                        src={imagemPreview}
-                                        alt="Imagem de perfil"
-                                        style={{
-                                            width: '100%',
-                                            height: '100%',
-                                            maxHeight: '100%',
-                                            borderRadius: '50%',
-                                            objectFit: 'cover',
-                                        }}
-                                    />
-                                    <button
+                                <><img
+                                    src={imagemPreview}
+                                    alt="Imagem de perfil"
+                                    style={{
+                                        width: '100%',
+                                        height: '100%',
+                                        borderRadius: '50%',
+                                        objectFit: 'cover',
+                                    }} /><button
                                         onClick={(event) => {
-                                            event.stopPropagation()
-                                            handleRemoveImage()
-                                        }}
+                                            event.stopPropagation();
+                                            handleRemoveImage();
+                                        } }
                                         style={{
                                             position: 'absolute',
                                             top: '10px',
@@ -229,33 +227,39 @@ const EditarUsuario: React.FC = () => {
                                         }}
                                     >
                                         X
-                                    </button>
-                                </div>
+                                    </button></>
                             ) : (
-                                <p>Arraste uma imagem ou clique para selecionar</p>
+                                <p className="text-center">Arraste ou clique para selecionar</p>
                             )}
                         </div>
                     </div>
-
+    
                     <div className="col-6">
                         <div className="row">
                             <div className="formulario col-12">
-                                <form onSubmit={handleEdicao}>
+                                <form onSubmit={handleEdicao} className="d-flex flex-column">
                                     <p>Nome</p>
                                     <input type="text" value={nome} onChange={(e) => setNome(e.target.value)} required />
+    
                                     <p>Email</p>
                                     <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} required />
+    
                                     <p>Telefone</p>
                                     <input type="number" value={telefone} onChange={(e) => setTelefone(e.target.value)} required />
+    
                                     <p>Endereço</p>
                                     <input type="text" value={endereco} onChange={(e) => setEndereco(e.target.value)} required />
+    
                                     <p>Senha Atual (opcional)</p>
                                     <input type="password" value={senhaAntiga} onChange={(e) => setSenhaAntiga(e.target.value)} />
+    
                                     <p>Nova Senha (opcional)</p>
                                     <input type="password" value={senha} onChange={(e) => setSenha(e.target.value)} />
+    
                                     <p>Confirmar Senha (opcional)</p>
                                     <input type="password" value={senhaConfirm} onChange={(e) => setSenhaConfirm(e.target.value)} />
-                                    <div className="d-flex-bit cc">
+    
+                                    <div className="d-flex gap-2 mt-3">
                                         <button className='botao-fundo-transparente' type="button" onClick={() => navigate('/')}>Cancelar</button>
                                         <button className='botao-fundo-azul' type="submit">Salvar</button>
                                     </div>
@@ -266,7 +270,7 @@ const EditarUsuario: React.FC = () => {
                 </section>
             </main>
         </div>
-    );
+    );    
 };
 
 export default EditarUsuario;

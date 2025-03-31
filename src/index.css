@@ -2673,3 +2673,16 @@
     right: 60px;
     color: #525252;
 }
+
+.dropzone {
+    border: 2px dashed rgb(204, 204, 204);
+    padding: 0px;
+    text-align: center;
+    cursor: pointer;
+    border-radius: 50%;
+    width: 175%;
+    max-width: 305px;
+    height: auto;
+    aspect-ratio: 1 / 1;
+    position: relative;
+}

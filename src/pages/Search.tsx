@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import Swal from "sweetalert2";
+import Header from "../Header";
 
 interface Tag {
   id: number;
@@ -109,6 +110,9 @@ const Search = () => {
 
   return (
     <div>
+      <Header/>
+      <div className="espaco-vazio"></div>
+      
       <h1>Search Page</h1>
       {books.map((book, index) => {
         const imageUrl = `http://127.0.0.1:5000/uploads/livros/${book.imagem}`;

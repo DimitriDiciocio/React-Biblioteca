@@ -229,7 +229,6 @@ const Carrinho: React.FC = () => {
       const response = await fetch("http://127.0.0.1:5000/reservar", {
         method: "POST",
         headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
-        body: JSON.stringify({ DATA_VALIDADE: "2025-12-31" }),
       });
       const data = await response.json();
       
