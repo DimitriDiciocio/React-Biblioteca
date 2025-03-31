@@ -25,6 +25,8 @@ interface Book {
 const BookDetail = () => {
   const { id } = useParams();
   const [book, setBook] = useState<Book | null>(null);
+  const [disponivelReserva, setDisponivelReserva] = useState(false);
+  const [disponivelEmprestimo, setDisponivelEmprestimo] = useState(false);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
@@ -74,7 +76,13 @@ const BookDetail = () => {
   useEffect(() => {
     async function fetchBook() {
       try {
-        const response = await fetch(`http://127.0.0.1:5000/livros/${id}`);
+        const response = await fetch(`http://127.0.0.1:5000/livros/${id}`, {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        });
         if (!response.ok) throw new Error("Livro não encontrado");
 
         const data = await response.json();
@@ -86,20 +94,49 @@ const BookDetail = () => {
       }
     }
     fetchBook();
-  }, [id]);
+  }, [id, token]);
+
+  useEffect(() => {
+    const verificarDisponibilidade = async () => {
+      try {
+        const responseReserva = await fetch(`http://127.0.0.1:5000/verificar_reserva/${id}`, {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        });
+        const dataReserva = await responseReserva.json();
+        setDisponivelReserva(dataReserva.disponivel);
+        
+        const responseEmprestimo = await fetch(`http://127.0.0.1:5000/verificar_emprestimo/${id}`, {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        });
+        const dataEmprestimo = await responseEmprestimo.json();
+        setDisponivelEmprestimo(dataEmprestimo.disponivel);
+      } catch (error) {
+        console.error("Erro ao verificar disponibilidade:", error);
+      }
+    };
+    verificarDisponibilidade();
+  }, [id, token]);
 
   if (loading) return <p>Carregando...</p>;
   if (!book) return <p>Livro não encontrado.</p>;
 
   const handleAgendamento = async () => {
     Swal.fire({
-      title: "Quer Agendar?",
+      title: "Quer Reservar?",
       text: `Você quer adicionar ${book.titulo} ao carrinho de reservas?`,
       icon: "question",
       showCancelButton: true,
       confirmButtonColor: "#4562D6",
       cancelButtonColor: "#d33",
-      confirmButtonText: "Agendar",
+      confirmButtonText: "Adicionar",
     }).then(async (result) => {
       if (result.isConfirmed) {
         try {
@@ -145,12 +182,12 @@ const BookDetail = () => {
   const handleEmprestimo = async () => {
     Swal.fire({
       title: "Fazer Empréstimo?",
-      text: `Você quer fazer o empréstimo do livro ${book.titulo}?`,
+      text: `Você quer adicionar ${book.titulo} ao carrinho de empréstimos?`,
       icon: "question",
       showCancelButton: true,
       confirmButtonColor: "#4562D6",
       cancelButtonColor: "#d33",
-      confirmButtonText: "Emprestar",
+      confirmButtonText: "Adicionar",
     }).then(async (result) => {
       if (result.isConfirmed) {
         try {
@@ -252,17 +289,19 @@ const BookDetail = () => {
             </div>
 
             <div className="botoes">
-              <p
-                id="agenda"
-                onClick={handleAgendamento}
-                className="agendamento botao-fundo-transparente"
+              <p 
+                id="agenda" 
+                className={`botao-fundo-transparente ${!disponivelReserva ? 'botao-desativado' : ''}`} 
+                style={{ cursor: disponivelReserva ? 'pointer' : 'not-allowed' }}
+                onClick={disponivelReserva ? handleAgendamento : undefined}
               >
                 Reservar
               </p>
-              <p
-                id="empresta"
-                onClick={handleEmprestimo}
-                className="emprestimo botao-fundo-azul"
+              <p 
+                id="empresta" 
+                className={`botao-fundo-azul ${!disponivelEmprestimo ? 'botao-desativado' : ''}`} 
+                style={{ cursor: disponivelEmprestimo ? 'pointer' : 'not-allowed' }}
+                onClick={disponivelEmprestimo ? handleEmprestimo : undefined}
               >
                 Fazer Empréstimo
               </p>
