@@ -322,7 +322,7 @@ const Carrinho: React.FC = () => {
         const data = await response.json();
   
         if (response.ok) {
-          setEmprestimos([]); // Limpar o carrinho após o empréstimo
+          setEmprestimos([]);
           Swal.fire({ icon: "success", title: "Empréstimo Confirmado!", text: "Os livros foram emprestados com sucesso." }); 
         } else {
           Swal.fire({ icon: "error", title: "Erro", text: String(data.message) }); 

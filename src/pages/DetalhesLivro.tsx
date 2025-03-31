@@ -163,15 +163,22 @@ const BookDetail = () => {
           }
 
           Swal.fire({
-            title: `Sucesso!`,
-            text: `${book.titulo} foi adicionado ao seu carrinho de reservas!`,
+            title: "Livro adicionado ao carrinho de reservas!",
+            text: "Deseja ir para o carrinho ou continuar procurando mais livros?",
             icon: "success",
-          });
+            showCancelButton: true,
+            confirmButtonText: "Ir para o carrinho",
+            cancelButtonText: "Procurar mais livros",
+            }).then((result) => {
+            if (result.isConfirmed) {
+              navigate("/carrinho");
+            }
+            });
         } catch (error) {
-          console.error("Erro ao adicionar ao carrinho:", error);
+          console.error("Erro ao realizar empréstimo:", error);
           Swal.fire(
             "Erro",
-            "Ocorreu um erro ao tentar adicionar ao carrinho" + String(error),
+            "Ocorreu um erro ao tentar emprestar o livro." + String(error),
             "error"
           );
         }
@@ -220,7 +227,7 @@ const BookDetail = () => {
             cancelButtonText: "Procurar mais livros",
             }).then((result) => {
             if (result.isConfirmed) {
-              navigate("/carrinho_emprestimos");
+              navigate("/carrinho");
             }
             });
         } catch (error) {
