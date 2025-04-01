@@ -84,7 +84,7 @@ const Cadastro: React.FC = () => {
         </video>
       </div>
 
-      <section className="container">
+      <section>
         <div className="row row-centraliza">
           <div className="col-1"></div>
 

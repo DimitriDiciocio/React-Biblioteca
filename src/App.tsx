@@ -15,6 +15,7 @@ import PuxarHistorico from './pages/PuxarHistorico';
 import Search from './pages/Search';
 import CadastroUsuario from './pages/CadastroUsuario';
 import Carrinho from './pages/Carrinho';
+import HomeBiblio from './pages/HomeBiblio';
 
 const App: React.FC = () => {
 
@@ -53,7 +54,7 @@ const App: React.FC = () => {
           <Route path="/login" element={<Login />} />
           <Route path="/user/editar" element={<EditarUsuario/>} />
           <Route path="/addLivro" element={<AddBooks/>} />
-          <Route path="/Relatorios" element={<Relatorios/>} />
+          <Route path="/relatorios" element={<Relatorios/>} />
           <Route path="/livro/:id" element={<BookDetail />} />
           <Route path="/editar_livro/:id" element={<EditarLivro />} />
           <Route path="/sair" element={<Sair/>}/>
@@ -63,6 +64,7 @@ const App: React.FC = () => {
           <Route path="/pesquisa/:search" element={<Search/>}/>
           <Route path="/cadastrar_usuario" element={<CadastroUsuario/>}/>
           <Route path="/carrinho" element={<Carrinho/>}/>
+          <Route path="/home_biblio" element={<HomeBiblio/>}/>
         </Routes>
     </Router>
   )

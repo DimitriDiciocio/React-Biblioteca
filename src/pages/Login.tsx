@@ -36,7 +36,11 @@ const Login: React.FC = () => {
           confirmButtonColor: '#3085d6',
           confirmButtonText: 'Ir para o início',
         });
-        navigate("/")
+        if (data.tipo == 1) {
+          navigate("/")
+        } else {
+          navigate("/home_biblio")
+        }
       } else {
         await Swal.fire({
           title: 'Erro no login',
@@ -57,7 +61,7 @@ const Login: React.FC = () => {
 
   return (
     <div className="overflow-hidden colorBack">
-      <section className="container">
+      <section>
         <div className="row row-centraliza">
           <div className="col-1"></div>
           <div className="col-4 modal-login centraliza">

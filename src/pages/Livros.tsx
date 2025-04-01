@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 import Header from "../Header";
 
-const MostrarUsuarios: React.FC = () => {
+const Livros: React.FC = () => {
   const token = localStorage.getItem("token");
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false); // Ajuste inicial para false
@@ -67,26 +67,24 @@ const MostrarUsuarios: React.FC = () => {
     temPermissao();
   }, [navigate, token]);
 
-  const [users, setUsers] = useState<Usuario[]>([]);
-  const [filteredUsers, setFilteredUsers] = useState<Usuario[]>([]);
+  const [livros, setLivros] = useState<Livro[]>([]);
+  const [filteredLivros, setFilteredLivros] = useState<Livro[]>([]);
 
-  interface Usuario {
-    id_usuario: number;
-    nome: string;
-    email: string;
-    telefone: string;
-    endereco: string;
-    tipo: number;
+  interface Livro {
+    id_livro: number;
+    titulo: string;
+    autor: string;
+    genero: string;
+    ano_publicacao: number;
     ativo: boolean;
-    imagem: string;
   }
 
-  const handleEdit = (usuario: Usuario) => {
-    const url = `/usuarios/${usuario.id_usuario}`;
+  const handleEdit = (livro: Livro) => {
+    const url = `/editar_livro/${livro.id_livro}`;
     window.location.href = url;
   };
 
-  const handleDelete = async (usuario: Usuario) => {
+  const handleDelete = async (livro: Livro) => {
     const confirmacao = await Swal.fire({
       title: "Tem certeza?",
       text: "Essa ação não pode ser desfeita!",
@@ -103,35 +101,35 @@ const MostrarUsuarios: React.FC = () => {
     setLoading(true);
 
     try {
-      const response = await fetch("http://localhost:5000/deletar_usuario", {
+      const response = await fetch("http://localhost:5000/deletar_livro", {
         method: "DELETE",
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
-        body: JSON.stringify({ id_usuario: usuario.id_usuario }), // Enviando como JSON
+        body: JSON.stringify({ id_livro: livro.id_livro }), // Enviando como JSON
       });
 
       if (response.ok) {
         await Swal.fire(
           "Deletado!",
-          "O usuário foi removido com sucesso.",
+          "O livro foi removido com sucesso.",
           "success"
         );
-        setUsers((prevUsers) =>
-          prevUsers.filter((user) => user.id_usuario !== usuario.id_usuario)
+        setLivros((prevLivros) =>
+          prevLivros.filter((book) => book.id_livro !== livro.id_livro)
         );
-        setFilteredUsers((prevFiltered) =>
-          prevFiltered.filter((user) => user.id_usuario !== usuario.id_usuario)
+        setFilteredLivros((prevFiltered) =>
+          prevFiltered.filter((book) => book.id_livro !== livro.id_livro)
         );
       } else {
-        await Swal.fire("Erro!", "Não foi possível excluir o usuário.", "error");
+        await Swal.fire("Erro!", "Não foi possível excluir o livro.", "error");
       }
     } catch (error) {
       console.error("Erro:", error);
       await Swal.fire(
         "Erro!",
-        "Ocorreu um erro ao tentar excluir o usuário.",
+        "Ocorreu um erro ao tentar excluir o livro.",
         "error"
       );
     } finally {
@@ -140,46 +138,46 @@ const MostrarUsuarios: React.FC = () => {
   };
 
   useEffect(() => {
-    async function fetchUsers() {
+    async function fetchLivros() {
       try {
-        const response = await fetch("http://127.0.0.1:5000/usuarios", {
+        const response = await fetch("http://127.0.0.1:5000/livros", {
           method: "get",
           headers: {
             "Content-Type": "application/json",
             Authorization: `Bearer ${localStorage.getItem("token")}`,
           },
         });
-        if (!response.ok) throw new Error("Erro ao buscar usuários");
+        if (!response.ok) throw new Error("Erro ao buscar livros");
         const data = await response.json();
-        setUsers(data);
-        setFilteredUsers(data);
+        setLivros(data);
+        setFilteredLivros(data);
       } catch (error) {
         console.error(error);
       }
     }
-    fetchUsers();
+    fetchLivros();
   }, []);
 
   const [pesquisa, setPesquisa] = useState("");
 
   useEffect(() => {
     if (pesquisa) {
-      const filtered = users.filter(
-        (user) =>
-          user.id_usuario.toString().includes(pesquisa) ||
-          user.nome.toLowerCase().includes(pesquisa.toLowerCase()) ||
-          user.email.toLowerCase().includes(pesquisa.toLowerCase()) ||
-          user.telefone.toLowerCase().includes(pesquisa.toLowerCase()) ||
-          user.endereco.toLowerCase().includes(pesquisa.toLowerCase()) ||
-          (user.ativo ? "Ativo" : "Inativo")
+      const filtered = livros.filter(
+        (book) =>
+          book.id_livro.toString().includes(pesquisa) ||
+          book.titulo.toLowerCase().includes(pesquisa.toLowerCase()) ||
+          book.autor.toLowerCase().includes(pesquisa.toLowerCase()) ||
+          book.genero.toLowerCase().includes(pesquisa.toLowerCase()) ||
+          book.ano_publicacao.toString().includes(pesquisa) ||
+          (book.ativo ? "Ativo" : "Inativo")
             .toLowerCase()
             .includes(pesquisa.toLowerCase())
       );
-      setFilteredUsers(filtered);
+      setFilteredLivros(filtered);
     } else {
-      setFilteredUsers(users);
+      setFilteredLivros(livros);
     }
-  }, [pesquisa, users]);
+  }, [pesquisa, livros]);
 
   return (
     <div>
@@ -187,10 +185,10 @@ const MostrarUsuarios: React.FC = () => {
 
       <div className="espaco-vazio"></div>
 
-      <h1>Usuários</h1>
+      <h1>Livros</h1>
       <input
         type="text"
-        placeholder="Pesquisar usuários"
+        placeholder="Pesquisar livros"
         onChange={(e) => setPesquisa(e.target.value)}
       />
 
@@ -198,35 +196,33 @@ const MostrarUsuarios: React.FC = () => {
         <thead>
           <tr>
             <th>ID</th>
-            <th>Nome</th>
-            <th>Email</th>
-            <th>Telefone</th>
-            <th>Endereço</th>
-            <th>Tipo</th>
+            <th>Título</th>
+            <th>Autor</th>
+            <th>Gênero</th>
+            <th>Ano de Publicação</th>
             <th>Status</th>
             <th>Ação</th>
           </tr>
         </thead>
         <tbody>
-          {filteredUsers.map((user) => {
+          {filteredLivros.map((book) => {
             return (
-              <tr key={user.id_usuario}>
-                <td>{user.id_usuario}</td>
-                <td>{user.nome}</td>
-                <td>{user.email}</td>
-                <td>{user.telefone}</td>
-                <td>{user.endereco}</td>
-                <td>{user.tipo === 1 ? "Leitor" : user.tipo === 2 ? "Bibliotecário" : "Administrador"}</td>
-                <td>{user.ativo ? "Ativo" : "Inativo"}</td>
+              <tr key={book.id_livro}>
+                <td>{book.id_livro}</td>
+                <td>{book.titulo}</td>
+                <td>{book.autor}</td>
+                <td>{book.genero}</td>
+                <td>{book.ano_publicacao}</td>
+                <td>{book.ativo ? "Ativo" : "Inativo"}</td>
                 <td className="gap-botao">
                   <button
-                    onClick={() => handleEdit(user)}
+                    onClick={() => handleEdit(book)}
                     className="btn btn-primary"
                   >
                     <span className="material-icons">edit</span>
                   </button>
                   <button
-                    onClick={() => handleDelete(user)}
+                    onClick={() => handleDelete(book)}
                     disabled={loading}
                     className="btn btn-danger"
                   >
@@ -246,4 +242,4 @@ const MostrarUsuarios: React.FC = () => {
   );
 };
 
-export default MostrarUsuarios;
+export default Livros;

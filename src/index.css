@@ -131,7 +131,7 @@
 
     .cabecalho-claro2 input{
         height: 47px;
-        width: 500px;
+        width: 45vw;
         border-radius: 25px;
         border: none;
         background-color: var(--branco);
@@ -168,9 +168,10 @@
 
     .navegacao2 p{
         color: var(--branco);
-        font-size: 19px;
-        padding: 0px 10px;
+        font-size: 1.4vw;
+        padding: 0px 0.5vw;
         margin: 0;
+        white-space: nowrap;
     }
 
     .navegacao2:hover{
@@ -184,7 +185,7 @@
     .navegacao2 i{
         font-family: 'Material Icons';
         font-style: normal;
-        font-size: 24px;
+        font-size: 1.4vw;
         margin-right: 10px;
         color: var(--branco);
     }
@@ -192,48 +193,17 @@
     .espaco-vazio{
         height: 110px;
     }
+    .espaco-vazio2{
+        height: 20px;
+    }
 
-    @media screen and (max-width: 550px){
+    @media screen and (max-width: 576px){
     
         .logo{
             height: 50px;
         }
     
-        .cabecalho-claro input{
-            height: 47px;
-            width: 500px;
-            border-radius: 25px;
-            border: none;
-            background-color: var(--branco);
-            font-size: 19px;
-            padding-left: 15px;
-            color:var(--cinza);
-            outline: none;
-        }
-    
-        .cabecalho-claro2 input{
-            height: 47px;
-            width: 500px;
-            border-radius: 25px;
-            border: none;
-            background-color: var(--branco);
-            font-size: 19px;
-            padding-left: 15px;
-            color:var(--cinza);
-            outline: none;
-        }
         
-        .cabecalho-claro input:focus{
-            border: 3px solid var(--verde);
-            color: var(--preto);
-            background-color: #d9d9d9;
-        }
-    
-        .cabecalho-claro2 input:focus{
-            border: 3px solid var(--verde);
-            color: var(--preto);
-            background-color: #d9d9d9;
-        }
     
         .conta{
             font-family: 'Material Icons';
@@ -281,9 +251,10 @@
     
         .navegacao2 p{
             color: var(--branco);
-            font-size: 19px;
-            padding: 0px 10px;
+            font-size: 1.9vw;
+            padding: 0px 0.5vw;
             margin: 0;
+            white-space: nowrap;
         }
     
         .navegacao p{
@@ -319,7 +290,7 @@
         .navegacao2 i{
             font-family: 'Material Icons';
             font-style: normal;
-            font-size: 24px;
+            font-size: 1.4vw;
             margin-right: 10px;
             color: var(--branco);
         }
@@ -437,7 +408,7 @@
         max-width: 140px;
     }
 
-    @media screen and (max-width: 550px){
+    @media screen and (max-width: 576px){
     
         .reparticao .titulo{
             color: var(--azul-claro);
@@ -1091,7 +1062,7 @@
     
         .cabecalho-claro2 input{
             height: 47px;
-            width: 500px;
+            width: 45vw;
             border-radius: 25px;
             border: none;
             background-color: var(--branco);
@@ -1128,9 +1099,10 @@
     
         .navegacao2 p{
             color: var(--branco);
-            font-size: 19px;
-            padding: 0px 10px;
+            font-size: 1.4vw;
+            padding: 0px 0.5vw;
             margin: 0;
+            white-space: nowrap;
         }
     
         .navegacao2:hover{
@@ -1144,7 +1116,7 @@
         .navegacao2 i{
             font-family: 'Material Icons';
             font-style: normal;
-            font-size: 24px;
+            font-size: 1.4vw;
             margin-right: 10px;
             color: var(--branco);
         }
@@ -1153,7 +1125,7 @@
             height: 110px;
         }
     
-        @media screen and (max-width: 550px){
+        @media screen and (max-width: 576px){
         
             .logo{
                 height: 50px;
@@ -1177,7 +1149,6 @@
         
             .cabecalho-claro2 input{
                 height: 47px;
-                width: 500px;
                 border-radius: 25px;
                 border: none;
                 background-color: var(--branco);
@@ -1245,9 +1216,10 @@
         
             .navegacao2 p{
                 color: var(--branco);
-                font-size: 19px;
-                padding: 0px 10px;
+                font-size: 1.9vw;
+                padding: 0px 0.5vw;
                 margin: 0;
+                white-space: nowrap;
             }
         
             .navegacao p{
@@ -1283,7 +1255,7 @@
             .navegacao2 i{
                 font-family: 'Material Icons';
                 font-style: normal;
-                font-size: 24px;
+                font-size: 1.4vw;
                 margin-right: 10px;
                 color: var(--branco);
             }
@@ -1401,7 +1373,7 @@
             max-width: 140px;
         }
     
-        @media screen and (max-width: 550px){
+        @media screen and (max-width: 576px){
         
             .reparticao .titulo{
                 color: var(--azul-claro);
@@ -1998,7 +1970,7 @@
         display: inline-block;
     }
 
-    @media screen and (max-width: 550px){
+    @media screen and (max-width: 576px){
     
         .logo{
             height: 50px;
@@ -2096,9 +2068,7 @@
             justify-content: flex-end;
         }
 
-        .cabecalho-escuro2 div div p{
-            font-size: small;
-        }
+        
     
         .navegacao{
             display: flex;
@@ -2114,9 +2084,10 @@
     
         .navegacao2 p{
             color: var(--branco);
-            font-size: 19px;
-            padding: 0px 10px;
+            font-size: 2.2vw;
+            padding: 0px 0.5vw;
             margin: 0;
+            white-space: nowrap;
         }
     
         .navegacao p{
@@ -2152,7 +2123,7 @@
         .navegacao2 i{
             font-family: 'Material Icons';
             font-style: normal;
-            font-size: 24px;
+            font-size: 1.4vw;
             margin-right: 10px;
             color: var(--branco);
         }
@@ -2163,7 +2134,7 @@
     
     }
 
-    @media screen and (max-width: 550px){
+    @media screen and (max-width: 576px){
 
         .botao-fundo-transparente{
             width: 100%;
@@ -2685,4 +2656,221 @@
     height: auto;
     aspect-ratio: 1 / 1;
     position: relative;
+}
+
+.custom-btn {
+    background-color: #ef4444 !important;
+  }
+  
+  .custom-btn:hover {
+    background-color: #dc2626 !important;
+  }
+  
+  .gap-botao {
+    display: flex;
+    gap: 10px;
+  }
+
+
+
+
+
+.container {
+  font-family: Arial, sans-serif;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: #f8f8f8;
+}
+
+.titulo {
+  font-size: 24px;
+  margin-bottom: 20px;
+}
+
+.conteudo {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 20px;
+  width: 100%;
+}
+
+.secao {
+  background: white;
+  padding: 15px;
+  border-radius: 10px;
+  box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
+  width: 350px !important;
+}
+
+.titulo-secao {
+  font-size: 18px;
+  margin-bottom: 10px;
+}
+
+.lista-livros {
+  max-height: 200px;
+  overflow-y: auto;
+  border: 1px solid #ccc;
+  padding: 10px;
+  border-radius: 5px;
+}
+
+.item-livro {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px;
+  border-bottom: 1px solid #ddd;
+}
+
+.imagem-livro {
+  width: 40px;
+  height: 60px;
+  object-fit: cover;
+  border-radius: 5px;
+  margin-right: 10px;
+}
+
+.info-livro {
+  flex-grow: 1;
+}
+
+.botao-acao {
+  background-color: black;
+  color: white;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background 0.3s;
+  font-weight: bold;
+}
+
+.botao-acao:hover {
+  background-color: #444;
+}
+
+.botao-remover {
+  background: none;
+  border: none;
+  font-size: 16px;
+  cursor: pointer;
+  color: red;
+  font-weight: bold;
+}
+.gap-tabela {
+    display: flex;
+    gap: 10px;
+  }
+
+@media (min-width: 768px) {
+    .conteudo {
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+    }
+  
+    .secao {
+      width: 45%;
+    }
+  }
+  
+  @media (max-width: 768px) {
+    .conteudo {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+  
+    .secao {
+      width: 80%;
+    }
+    .gap-tabela{
+        display: block;
+    }
+    
+  }
+  
+  @media (max-width: 320px) {
+    .secao {
+      width: 95%;
+      padding: 10px;
+    }
+    .imagem-livro {
+      width: 30px;
+      height: 45px;
+    }
+  }
+
+  .container-home-biblio {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+.grid-home-biblio {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+    max-width: 600px;
+    width: 100%;
+    margin-top: 20px;
+}
+
+.botao-home-biblio {
+    width: 250px;
+    height: 150px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background-color: #f5f5f5;
+    border: 2px solid #000;
+    border-radius: 15px;
+    font-size: 18px;
+    font-weight: bold;
+    text-align: center;
+    cursor: pointer;
+    transition: transform 0.2s ease-in-out;
+}
+
+.botao-home-biblio:hover {
+    transform: scale(1.05);
+}
+
+.titulo-botao-home-biblio {
+    font-size: 20px;
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.descricao-botao-home-biblio {
+    font-size: 14px;
+    color: #666;
+}
+
+@media (max-width: 768px) {
+    .grid-home-biblio {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 480px) {
+    .botao-home-biblio {
+        width: 200px;
+        height: 120px;
+        font-size: 16px;
+    }
+    
+    .titulo-botao-home-biblio {
+        font-size: 18px;
+    }
+    
+    .descricao-botao-home-biblio {
+        font-size: 12px;
+    }
 }

@@ -114,22 +114,7 @@ const Header: React.FC = () => {
 
           {temPermissao && (
             <div className="d-flex navegacao2 align-items-center" id="tipo">
-              <p onClick={() => navigate('/addLivro')}>Adicionar Livros</p>
-            </div>
-          )}
-          {temPermissao && (
-            <div className="d-flex navegacao2 align-items-center" id="tipo">
-              <p onClick={() => navigate('/usuarios')}>Usuários</p>
-            </div>
-          )}
-          {temPermissao && (
-            <div className="d-flex navegacao2 align-items-center" id="tipo">
-              <p onClick={() => navigate('/relatorios')}>Relatórios</p>
-            </div>
-          )}
-          {temPermissao && (
-            <div className="d-flex navegacao2 align-items-center" id="tipo">
-              <p onClick={() => navigate('/cadastrar_usuario')}>Cadastrar Usuário</p>
+              <p onClick={() => navigate('/home_biblio')}>Bibliotecário</p>
             </div>
           )}
         </div>

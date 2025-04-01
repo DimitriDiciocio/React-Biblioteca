@@ -337,47 +337,91 @@ const Carrinho: React.FC = () => {
   if (loading) return <p>Carregando...</p>;
 
   return (
-    <div>
-      <Header/>
+    <div className="container">
+      <Header />
       <div className="espaco-vazio"></div>
-
-      <h1>Seu Carrinho</h1>
-
-      <section>
-        <h2>Livros Reservados</h2>
-        {reservas.length === 0 ? (
-          <p>Nenhum livro reservado.</p>
-        ) : (
-          reservas.map((book) => (
-            <div key={book.id_reserva}>
-              <img src={`http://127.0.0.1:5000/uploads/livros/${book.imagem}`} alt={book.titulo} width="100" />
-              <h3>{book.titulo}</h3>
-              <p>{book.autor}</p>
-              <button onClick={() => removerLivro(book.id_reserva!, "reserva")}>Remover</button>
+  
+      <h1 className="titulo">Seu Carrinho</h1>
+      <div className="gap-tabela">
+        <section className="secao">
+          <h2 className="titulo-secao">Livros Reservados</h2>
+          {reservas.length === 0 ? (
+            <p>Nenhum livro reservado.</p>
+          ) : (
+            <div className="lista-livros">
+              {reservas.map((book) => (
+                <div key={book.id_reserva} className="item-livro">
+                  <img
+                    src={`http://127.0.0.1:5000/uploads/livros/${book.imagem}`}
+                    alt={book.titulo}
+                    className="imagem-livro"
+                  />
+                  <div className="info-livro">
+                    <h3>{book.titulo}</h3>
+                    <p>{book.autor}</p>
+                  </div>
+                  <button
+                    className="botao-remover"
+                    onClick={() => removerLivro(book.id_reserva, "reserva")}
+                  >
+                    ✖
+                  </button>
+                </div>
+              ))}
             </div>
-          ))
-        )}
-        {reservas.length > 0 && <button onClick={reservarLivros} disabled={reserving}>Reservar Todos</button>}
-      </section>
-
-      <section>
-        <h2>Livros Emprestados</h2>
-        {emprestimos.length === 0 ? (
-          <p>Nenhum livro emprestado.</p>
-        ) : (
-          emprestimos.map((book) => (
-            <div key={book.id_emprestimo}>
-              <img src={`http://127.0.0.1:5000/uploads/livros/${book.imagem}`} alt={book.titulo} width="100" />
-              <h3>{book.titulo}</h3>
-              <p>{book.autor}</p>
-              <button onClick={() => removerLivro(book.id_emprestimo!, "emprestimo")}>Remover</button>
+            
+            
+          )}
+          <div className="espaco-vazio2"></div>
+          {reservas.length > 0 && (
+            <div className="centraliza">
+              <button className="botao-acao" onClick={reservarLivros} disabled={reserving}>
+                Reservar Todos
+              </button>
             </div>
-          ))
-        )}
-        {emprestimos.length > 0 && <button onClick={emprestarLivros} disabled={borrowing}>Emprestar Todos</button>}
-      </section>
+          )}
+        </section>
+        <div className="espaco-vazio2"></div>
+        <section className="secao">
+          <h2 className="titulo-secao">Livros Emprestados</h2>
+          {emprestimos.length === 0 ? (
+            <p>Nenhum livro emprestado.</p>
+          ) : (
+            <div className="lista-livros">
+              {emprestimos.map((book) => (
+                <div key={book.id_emprestimo} className="item-livro">
+                  <img
+                    src={`http://127.0.0.1:5000/uploads/livros/${book.imagem}`}
+                    alt={book.titulo}
+                    className="imagem-livro"
+                  />
+                  <div className="info-livro">
+                    <h3>{book.titulo}</h3>
+                    <p>{book.autor}</p>
+                  </div>
+                  <button
+                    className="botao-remover"
+                    onClick={() => removerLivro(book.id_emprestimo, "emprestimo")}
+                  >
+                    ✖
+                  </button>
+                </div>
+              ))}
+            </div>
+          )}
+          <div className="espaco-vazio2"></div>
+          {emprestimos.length > 0 && (
+            <div className="centraliza">
+              <button className="botao-acao" onClick={emprestarLivros} disabled={borrowing}>
+                Emprestar Todos
+              </button>
+            </div>
+          )}
+        </section>
+      </div>
     </div>
   );
+  
 };
 
 export default Carrinho;
