@@ -1,150 +1,37 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import Swal from "sweetalert2";
-import Header from "../Header";
+import Header from "../components/Header";
+import DeletarLivro from "../components/DeletarLivro";
+import { usePermission } from "../components/usePermission";
 
 const Livros: React.FC = () => {
   const token = localStorage.getItem("token");
   const navigate = useNavigate();
-  const [loading, setLoading] = useState(false); // Ajuste inicial para false
+  const [loading, setLoading] = useState(false);
+  const [livros, setLivros] = useState<Book[]>([]);
+  const [filteredLivros, setFilteredLivros] = useState<Book[]>([]);
+  const [pesquisa, setPesquisa] = useState("");
+  const isAllowed = usePermission(2);
 
-  useEffect(() => {
-    const tokenIsActive = async () => {
-      if (!token) {
-        navigate("/login");
-        return;
-      }
-
-      try {
-        const response = await fetch("http://127.0.0.1:5000/token", {
-          method: "POST",
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-        });
-
-        const result = await response.json();
-
-        if (!response.ok) {
-          Swal.fire(
-            "Erro",
-            result.error || "Erro na verificação do token",
-            "error"
-          );
-          localStorage.removeItem("token");
-          navigate("/login");
-        }
-      } catch (error) {
-        console.error("Erro ao verificar token:", error);
-        navigate("/login");
-      }
-    };
-
-    tokenIsActive();
-  }, [navigate, token]);
-
-  useEffect(() => {
-    const temPermissao = async () => {
-      try {
-        const response = await fetch("http://127.0.0.1:5000/tem_permissao", {
-          method: "GET",
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-        });
-
-        if (!response.ok) {
-          navigate("/");
-        }
-      } catch (error) {
-        console.error("Essa página é restrita:", error);
-        navigate("/");
-      }
-    };
-
-    temPermissao();
-  }, [navigate, token]);
-
-  const [livros, setLivros] = useState<Livro[]>([]);
-  const [filteredLivros, setFilteredLivros] = useState<Livro[]>([]);
-
-  interface Livro {
-    id_livro: number;
+  interface Book {
+    id: number;
     titulo: string;
     autor: string;
-    genero: string;
-    ano_publicacao: number;
-    ativo: boolean;
+    categoria: string;
+    isbn: string;
+    qtd_disponivel: number;
+    descricao: string;
+    imagem: string;
   }
-
-  const handleEdit = (livro: Livro) => {
-    const url = `/editar_livro/${livro.id_livro}`;
-    window.location.href = url;
-  };
-
-  const handleDelete = async (livro: Livro) => {
-    const confirmacao = await Swal.fire({
-      title: "Tem certeza?",
-      text: "Essa ação não pode ser desfeita!",
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonColor: "#d33",
-      cancelButtonColor: "#3085d6",
-      confirmButtonText: "Sim, deletar!",
-      cancelButtonText: "Cancelar",
-    });
-
-    if (!confirmacao.isConfirmed) return;
-
-    setLoading(true);
-
-    try {
-      const response = await fetch("http://localhost:5000/deletar_livro", {
-        method: "DELETE",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-        body: JSON.stringify({ id_livro: livro.id_livro }), // Enviando como JSON
-      });
-
-      if (response.ok) {
-        await Swal.fire(
-          "Deletado!",
-          "O livro foi removido com sucesso.",
-          "success"
-        );
-        setLivros((prevLivros) =>
-          prevLivros.filter((book) => book.id_livro !== livro.id_livro)
-        );
-        setFilteredLivros((prevFiltered) =>
-          prevFiltered.filter((book) => book.id_livro !== livro.id_livro)
-        );
-      } else {
-        await Swal.fire("Erro!", "Não foi possível excluir o livro.", "error");
-      }
-    } catch (error) {
-      console.error("Erro:", error);
-      await Swal.fire(
-        "Erro!",
-        "Ocorreu um erro ao tentar excluir o livro.",
-        "error"
-      );
-    } finally {
-      setLoading(false);
-    }
-  };
 
   useEffect(() => {
     async function fetchLivros() {
       try {
         const response = await fetch("http://127.0.0.1:5000/livros", {
-          method: "get",
+          method: "GET",
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
+            Authorization: `Bearer ${token}`,
           },
         });
         if (!response.ok) throw new Error("Erro ao buscar livros");
@@ -156,22 +43,17 @@ const Livros: React.FC = () => {
       }
     }
     fetchLivros();
-  }, []);
-
-  const [pesquisa, setPesquisa] = useState("");
+  }, [token]);
 
   useEffect(() => {
     if (pesquisa) {
       const filtered = livros.filter(
         (book) =>
-          book.id_livro.toString().includes(pesquisa) ||
+          book.id.toString().includes(pesquisa) ||
           book.titulo.toLowerCase().includes(pesquisa.toLowerCase()) ||
           book.autor.toLowerCase().includes(pesquisa.toLowerCase()) ||
-          book.genero.toLowerCase().includes(pesquisa.toLowerCase()) ||
-          book.ano_publicacao.toString().includes(pesquisa) ||
-          (book.ativo ? "Ativo" : "Inativo")
-            .toLowerCase()
-            .includes(pesquisa.toLowerCase())
+          book.categoria.toLowerCase().includes(pesquisa.toLowerCase()) ||
+          book.isbn.includes(pesquisa)
       );
       setFilteredLivros(filtered);
     } else {
@@ -179,63 +61,67 @@ const Livros: React.FC = () => {
     }
   }, [pesquisa, livros]);
 
+  const handleOpenBook = (book: Book) => {
+    const url = `/editar_livro/${book.id}`;
+    window.location.href = url;
+  };
+
+  if (isAllowed === null) return <p>Verificando permissão...</p>;
+  if (!isAllowed) return null;
+
   return (
     <div>
       <Header />
-
       <div className="espaco-vazio"></div>
 
-      <h1>Livros</h1>
+      <h1>Gerenciamento de Livros</h1>
       <input
         type="text"
         placeholder="Pesquisar livros"
         onChange={(e) => setPesquisa(e.target.value)}
       />
-
       <table className="table table-bordered">
         <thead>
           <tr>
             <th>ID</th>
             <th>Título</th>
             <th>Autor</th>
-            <th>Gênero</th>
-            <th>Ano de Publicação</th>
-            <th>Status</th>
+            <th>Categoria</th>
+            <th>ISBN</th>
+            <th>Qtd. Disponível</th>
+            <th>Descrição</th>
+            <th>Imagem</th>
             <th>Ação</th>
           </tr>
         </thead>
         <tbody>
-          {filteredLivros.map((book) => {
-            return (
-              <tr key={book.id_livro}>
-                <td>{book.id_livro}</td>
-                <td>{book.titulo}</td>
-                <td>{book.autor}</td>
-                <td>{book.genero}</td>
-                <td>{book.ano_publicacao}</td>
-                <td>{book.ativo ? "Ativo" : "Inativo"}</td>
-                <td className="gap-botao">
-                  <button
-                    onClick={() => handleEdit(book)}
-                    className="btn btn-primary"
-                  >
-                    <span className="material-icons">edit</span>
-                  </button>
-                  <button
-                    onClick={() => handleDelete(book)}
-                    disabled={loading}
-                    className="btn btn-danger"
-                  >
-                    {loading ? (
-                      <span className="spinner-border spinner-border-sm"></span>
-                    ) : (
-                      <span className="material-icons">delete</span>
-                    )}
-                  </button>
-                </td>
-              </tr>
-            );
-          })}
+          {filteredLivros.map((book) => (
+            <tr key={book.id}>
+              <td>{book.id}</td>
+              <td>{book.titulo}</td>
+              <td>{book.autor}</td>
+              <td>{book.categoria}</td>
+              <td>{book.isbn}</td>
+              <td>{book.qtd_disponivel}</td>
+              <td>{book.descricao}</td>
+              <td>
+                <img
+                  src={`http://127.0.0.1:5000/uploads/livros/${book.imagem}`}
+                  alt={book.titulo}
+                  width="50"
+                />
+              </td>
+              <td>
+                <button
+                  onClick={() => handleOpenBook(book)}
+                  className="btn btn-primary"
+                >
+                  <span className="material-icons">edit</span>
+                </button>
+                <DeletarLivro id_livro={book.id} />
+              </td>
+            </tr>
+          ))}
         </tbody>
       </table>
     </div>

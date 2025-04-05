@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import Swal from "sweetalert2";
-import Header from "../Header";
+import Header from "../components/Header";
+import { usePermission } from "../components/usePermission";
 
 interface Tag {
   id: number;
@@ -22,47 +23,17 @@ interface Book {
 
 const Search = () => {
   const { search } = useParams();
+  const navigate = useNavigate();
   const queryParams = new URLSearchParams(window.location.search);
   const filtros = queryParams.get("filters")?.split(",") || [];
   const [books, setBooks] = useState<Book[]>([]);
   const [hasSearched, setHasSearched] = useState(false); // Novo estado para controlar a busca
   const token = localStorage.getItem("token");
-  const navigate = useNavigate();
+  const isAllowed = usePermission(1);
 
   const handleOpenBook = (book: Book) => {
-    const url = `/livro/${book.id}`;
-    window.location.href = url;
+    navigate(`/livro/${book.id}`);
   };
-
-  useEffect(() => {
-    const verificarToken = async () => {
-      if (!token) {
-        navigate("/login");
-        return;
-      }
-
-      try {
-        const response = await fetch("http://127.0.0.1:5000/token", {
-          method: "POST",
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-        });
-
-        if (!response.ok) {
-          Swal.fire("Erro", "Sessão expirada. Faça login novamente.", "error");
-          localStorage.removeItem("token");
-          navigate("/login");
-        }
-      } catch (error) {
-        console.error("Erro ao verificar token:", error);
-        navigate("/login");
-      }
-    };
-
-    verificarToken();
-  }, [navigate, token]);
 
   useEffect(() => {
     const searchBooks = async () => {
@@ -108,11 +79,14 @@ const Search = () => {
     }
   }, [search, filtros, token, hasSearched]);
 
+  if (isAllowed === null) return <p>Verificando permissão...</p>;
+  if (!isAllowed) return null;
+
   return (
     <div>
-      <Header/>
+      <Header />
       <div className="espaco-vazio"></div>
-      
+
       <h1>Search Page</h1>
       {books.map((book, index) => {
         const imageUrl = `http://127.0.0.1:5000/uploads/livros/${book.imagem}`;

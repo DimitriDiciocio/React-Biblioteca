@@ -1,72 +1,13 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
-import Header from "../Header";
+import Header from "../components/Header";
+import { usePermission } from "../components/usePermission";
 
 const MostrarUsuarios: React.FC = () => {
-  const token = localStorage.getItem("token");
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false); // Ajuste inicial para false
-
-  useEffect(() => {
-    const tokenIsActive = async () => {
-      if (!token) {
-        navigate("/login");
-        return;
-      }
-
-      try {
-        const response = await fetch("http://127.0.0.1:5000/token", {
-          method: "POST",
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-        });
-
-        const result = await response.json();
-
-        if (!response.ok) {
-          Swal.fire(
-            "Erro",
-            result.error || "Erro na verificação do token",
-            "error"
-          );
-          localStorage.removeItem("token");
-          navigate("/login");
-        }
-      } catch (error) {
-        console.error("Erro ao verificar token:", error);
-        navigate("/login");
-      }
-    };
-
-    tokenIsActive();
-  }, [navigate, token]);
-
-  useEffect(() => {
-    const temPermissao = async () => {
-      try {
-        const response = await fetch("http://127.0.0.1:5000/tem_permissao", {
-          method: "GET",
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-        });
-
-        if (!response.ok) {
-          navigate("/");
-        }
-      } catch (error) {
-        console.error("Essa página é restrita:", error);
-        navigate("/");
-      }
-    };
-
-    temPermissao();
-  }, [navigate, token]);
-
+  const isAllowed = usePermission(2);
   const [users, setUsers] = useState<Usuario[]>([]);
   const [filteredUsers, setFilteredUsers] = useState<Usuario[]>([]);
 
@@ -82,8 +23,7 @@ const MostrarUsuarios: React.FC = () => {
   }
 
   const handleEdit = (usuario: Usuario) => {
-    const url = `/usuarios/${usuario.id_usuario}`;
-    window.location.href = url;
+    navigate(`/usuarios/${usuario.id_usuario}`);
   };
 
   const handleDelete = async (usuario: Usuario) => {
@@ -125,7 +65,11 @@ const MostrarUsuarios: React.FC = () => {
           prevFiltered.filter((user) => user.id_usuario !== usuario.id_usuario)
         );
       } else {
-        await Swal.fire("Erro!", "Não foi possível excluir o usuário.", "error");
+        await Swal.fire(
+          "Erro!",
+          "Não foi possível excluir o usuário.",
+          "error"
+        );
       }
     } catch (error) {
       console.error("Erro:", error);
@@ -181,6 +125,9 @@ const MostrarUsuarios: React.FC = () => {
     }
   }, [pesquisa, users]);
 
+  if (isAllowed === null) return <p>Verificando permissão...</p>;
+  if (!isAllowed) return null;
+
   return (
     <div>
       <Header />
@@ -216,25 +163,20 @@ const MostrarUsuarios: React.FC = () => {
                 <td>{user.email}</td>
                 <td>{user.telefone}</td>
                 <td>{user.endereco}</td>
-                <td>{user.tipo === 1 ? "Leitor" : user.tipo === 2 ? "Bibliotecário" : "Administrador"}</td>
+                <td>
+                  {user.tipo === 1
+                    ? "Leitor"
+                    : user.tipo === 2
+                    ? "Bibliotecário"
+                    : "Administrador"}
+                </td>
                 <td>{user.ativo ? "Ativo" : "Inativo"}</td>
                 <td className="gap-botao">
                   <button
-                    onClick={() => handleEdit(user)}
-                    className="btn btn-primary"
+                    onClick={() => navigate(`/usuarios/${user.id_usuario}`)}
+                    className="btn btn-secondary"
                   >
-                    <span className="material-icons">edit</span>
-                  </button>
-                  <button
-                    onClick={() => handleDelete(user)}
-                    disabled={loading}
-                    className="btn btn-danger"
-                  >
-                    {loading ? (
-                      <span className="spinner-border spinner-border-sm"></span>
-                    ) : (
-                      <span className="material-icons">delete</span>
-                    )}
+                    <span className="material-icons">launch</span>
                   </button>
                 </td>
               </tr>
