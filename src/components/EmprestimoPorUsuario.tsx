@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import DevolverEmprestimo from "./DevolverEmprestimo"; // Import the DevolverEmprestimo component
+import AtenderReserva from "./AtenderReserva"; // Importa o componente AtenderReserva
 
 interface EmprestimoAtivo {
   id_livro: number;
@@ -151,6 +152,12 @@ const HistoricoById: React.FC<EmprestimoPorUsuarioProps> = ({ userId }) => {
             <p>Data de Criação: {reserva.data_criacao}</p>
             <p>Data de Validade: {reserva.data_validade}</p>
             <p>Status: {reserva.status}</p>
+            {reserva.status === "EM ESPERA" && (
+              <AtenderReserva
+                id={reserva.id_reserva.toString()}
+                onAtenderSuccess={refreshHistorico}
+              />
+            )}
           </li>
         ))}
       </ul>

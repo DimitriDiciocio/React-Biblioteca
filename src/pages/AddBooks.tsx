@@ -113,6 +113,7 @@ const AddBooks: React.FC = () => {
 
   const handleRemoveImage = () => {
     setImagemPreview(null);
+    setImage(null);
   };
 
   if (isAllowed === null) return <p>Verificando permissão...</p>;
@@ -120,7 +121,6 @@ const AddBooks: React.FC = () => {
 
   return (
     <div>
-      <Header />
       <main className="background-blue">
         <div className="space-sm-y"></div>
         <section className="d-flex center-x size-medium g-30">

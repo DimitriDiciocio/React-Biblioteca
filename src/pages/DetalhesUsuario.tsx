@@ -8,7 +8,17 @@ import Header from "../components/Header";
 
 const DetalhesUsuario: React.FC = () => {
   const { id } = useParams<{ id: string }>();
-  const [user, setUser] = useState<any>(null);
+  interface User {
+    nome: string;
+    email: string;
+    telefone: string;
+    endereco: string;
+    tipo: number;
+    ativo: boolean;
+    imagem: string;
+  }
+
+  const [user, setUser] = useState<User | null>(null);
   const [isEditing, setIsEditing] = useState(false);
   const navigate = useNavigate();
 
@@ -46,7 +56,7 @@ const DetalhesUsuario: React.FC = () => {
     <div>
       <Header />
       <button
-        onClick={() => navigate("/usuarios")}
+        onClick={() => navigate("/home_biblio?page=3")}
         style={{
           marginBottom: "20px",
           background: "none",
@@ -95,33 +105,25 @@ const DetalhesUsuario: React.FC = () => {
                   <label className="montserrat-alternates-semibold">
                     Nome:
                   </label>
-                  <p className="">
-                    {user.nome}
-                  </p>
+                  <p className="">{user.nome}</p>
                 </div>
                 <div className="form-group">
                   <label className="montserrat-alternates-semibold">
                     Email:
                   </label>
-                  <p className="">
-                    {user.email}
-                  </p>
+                  <p className="">{user.email}</p>
                 </div>
                 <div className="form-group">
                   <label className="montserrat-alternates-semibold">
                     Telefone:
                   </label>
-                  <p className="">
-                    {user.telefone}
-                  </p>
+                  <p className="">{user.telefone}</p>
                 </div>
                 <div className="form-group">
                   <label className="montserrat-alternates-semibold">
                     Endereço:
                   </label>
-                  <p className="">
-                    {user.endereco}
-                  </p>
+                  <p className="">{user.endereco}</p>
                 </div>
                 <div className="form-group">
                   <label className="montserrat-alternates-semibold">
@@ -139,9 +141,7 @@ const DetalhesUsuario: React.FC = () => {
                   <label className="montserrat-alternates-semibold">
                     Status:
                   </label>
-                  <p className="">
-                    {user.ativo ? "Ativo" : "Inativo"}
-                  </p>
+                  <p className="">{user.ativo ? "Ativo" : "Inativo"}</p>
                 </div>
                 <div className="d-flex g-sm m-top">
                   <button
@@ -160,7 +160,7 @@ const DetalhesUsuario: React.FC = () => {
           <div className="actions">
             <DeletarUsuario
               usuarioId={id ? parseInt(id, 10) : 0}
-              onDeleteSuccess={() => navigate("/usuarios")}
+              onDeleteSuccess={() => navigate("/home_biblio?page=3")}
             />
           </div>
         </div>

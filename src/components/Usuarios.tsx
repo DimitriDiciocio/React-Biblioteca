@@ -113,7 +113,7 @@ const Usuarios: React.FC<{ onCancel?: () => void }> = ({ onCancel }) => {
           result.message || "Usuário atualizado com sucesso!",
           "success"
         );
-        navigate("/usuarios");
+        onCancel?.();
       } else {
         Swal.fire(
           "Erro",
@@ -139,7 +139,7 @@ const Usuarios: React.FC<{ onCancel?: () => void }> = ({ onCancel }) => {
 
       if (response.ok) {
         console.log("Status atualizado com sucesso", result.error);
-        navigate("/usuarios");
+        onCancel?.();
       } else {
         console.error("Erro ao atualizar status:", result.error);
       }

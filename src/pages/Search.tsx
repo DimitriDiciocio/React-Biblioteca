@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import Swal from "sweetalert2";
 import Header from "../components/Header";
@@ -24,8 +24,10 @@ interface Book {
 const Search = () => {
   const { search } = useParams();
   const navigate = useNavigate();
-  const queryParams = new URLSearchParams(window.location.search);
-  const filtros = queryParams.get("filters")?.split(",") || [];
+  const filtros = useMemo(() => {
+    const queryParams = new URLSearchParams(window.location.search);
+    return queryParams.get("filters")?.split(",") || [];
+  }, []);
   const [books, setBooks] = useState<Book[]>([]);
   const [hasSearched, setHasSearched] = useState(false); // Novo estado para controlar a busca
   const token = localStorage.getItem("token");

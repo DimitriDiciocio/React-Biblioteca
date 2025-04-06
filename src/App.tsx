@@ -9,13 +9,11 @@ import Relatorios from "./pages/Relatorios";
 import BookDetail from "./pages/DetalhesLivro";
 import Sair from "./pages/Sair";
 import EditarLivro from "./pages/EditarLivro";
-import MostrarUsuarios from "./pages/MostrarUsuários";
 import PuxarHistorico from "./components/PuxarHistorico";
 import Search from "./pages/Search";
 import CadastroUsuario from "./pages/CadastroUsuario";
 import Carrinho from "./components/Carrinho";
 import HomeBiblio from "./pages/HomeBiblio";
-import Livros from "./pages/Livros";
 import Config from "./pages/Config";
 import SemPermissao from "./pages/SemPermissao";
 import DetalhesUsuario from "./pages/DetalhesUsuario";
@@ -33,13 +31,11 @@ const App: React.FC = () => {
         <Route path="/livro/:id" element={<BookDetail />} />
         <Route path="/editar_livro/:id" element={<EditarLivro />} />
         <Route path="/sair" element={<Sair />} />
-        <Route path="/usuarios" element={<MostrarUsuarios />} />
         <Route path="/historico" element={<PuxarHistorico />} />
         <Route path="/pesquisa/:search" element={<Search />} />
         <Route path="/cadastrar_usuario" element={<CadastroUsuario />} />
         <Route path="/carrinho" element={<Carrinho />} />
         <Route path="/home_biblio" element={<HomeBiblio />} />
-        <Route path="/livros" element={<Livros />} />
         <Route path="/user" element={<Config />} />
         <Route path="/sem-permissao" element={<SemPermissao />} />
         <Route path="/usuarios/:id" element={<DetalhesUsuario/>}/>

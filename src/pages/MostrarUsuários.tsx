@@ -1,12 +1,10 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
-import Header from "../components/Header";
 import { usePermission } from "../components/usePermission";
 
 const MostrarUsuarios: React.FC = () => {
   const navigate = useNavigate();
-  const [loading, setLoading] = useState(false); // Ajuste inicial para false
   const isAllowed = usePermission(2);
   const [users, setUsers] = useState<Usuario[]>([]);
   const [filteredUsers, setFilteredUsers] = useState<Usuario[]>([]);
@@ -21,67 +19,6 @@ const MostrarUsuarios: React.FC = () => {
     ativo: boolean;
     imagem: string;
   }
-
-  const handleEdit = (usuario: Usuario) => {
-    navigate(`/usuarios/${usuario.id_usuario}`);
-  };
-
-  const handleDelete = async (usuario: Usuario) => {
-    const confirmacao = await Swal.fire({
-      title: "Tem certeza?",
-      text: "Essa ação não pode ser desfeita!",
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonColor: "#d33",
-      cancelButtonColor: "#3085d6",
-      confirmButtonText: "Sim, deletar!",
-      cancelButtonText: "Cancelar",
-    });
-
-    if (!confirmacao.isConfirmed) return;
-
-    setLoading(true);
-
-    try {
-      const response = await fetch("http://localhost:5000/deletar_usuario", {
-        method: "DELETE",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-        body: JSON.stringify({ id_usuario: usuario.id_usuario }), // Enviando como JSON
-      });
-
-      if (response.ok) {
-        await Swal.fire(
-          "Deletado!",
-          "O usuário foi removido com sucesso.",
-          "success"
-        );
-        setUsers((prevUsers) =>
-          prevUsers.filter((user) => user.id_usuario !== usuario.id_usuario)
-        );
-        setFilteredUsers((prevFiltered) =>
-          prevFiltered.filter((user) => user.id_usuario !== usuario.id_usuario)
-        );
-      } else {
-        await Swal.fire(
-          "Erro!",
-          "Não foi possível excluir o usuário.",
-          "error"
-        );
-      }
-    } catch (error) {
-      console.error("Erro:", error);
-      await Swal.fire(
-        "Erro!",
-        "Ocorreu um erro ao tentar excluir o usuário.",
-        "error"
-      );
-    } finally {
-      setLoading(false);
-    }
-  };
 
   useEffect(() => {
     async function fetchUsers() {
@@ -99,6 +36,11 @@ const MostrarUsuarios: React.FC = () => {
         setFilteredUsers(data);
       } catch (error) {
         console.error(error);
+        Swal.fire({
+          icon: "error",
+          title: "Erro",
+          text: "Não foi possível carregar os usuários. Tente novamente mais tarde.",
+        });
       }
     }
     fetchUsers();
@@ -108,17 +50,26 @@ const MostrarUsuarios: React.FC = () => {
 
   useEffect(() => {
     if (pesquisa) {
-      const filtered = users.filter(
-        (user) =>
+      const filtered = users.filter((user) => {
+        const tipoUsuario =
+          user.tipo === 1
+        ? "leitor"
+        : user.tipo === 2
+        ? "bibliotecario"
+        : "administrador";
+
+        return (
           user.id_usuario.toString().includes(pesquisa) ||
           user.nome.toLowerCase().includes(pesquisa.toLowerCase()) ||
           user.email.toLowerCase().includes(pesquisa.toLowerCase()) ||
           user.telefone.toLowerCase().includes(pesquisa.toLowerCase()) ||
           user.endereco.toLowerCase().includes(pesquisa.toLowerCase()) ||
-          (user.ativo ? "Ativo" : "Inativo")
-            .toLowerCase()
-            .includes(pesquisa.toLowerCase())
-      );
+          tipoUsuario.includes(pesquisa.toLowerCase()) ||
+          (user.ativo ? "ativo" : "inativo")
+        .toLowerCase()
+        .includes(pesquisa.toLowerCase())
+        );
+      });
       setFilteredUsers(filtered);
     } else {
       setFilteredUsers(users);
@@ -130,10 +81,6 @@ const MostrarUsuarios: React.FC = () => {
 
   return (
     <div>
-      <Header />
-
-      <div className="espaco-vazio"></div>
-
       <h1>Usuários</h1>
       <input
         type="text"

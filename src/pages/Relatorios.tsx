@@ -1,5 +1,4 @@
 import React from "react";
-import Header from "../components/Header";
 import { usePermission } from "../components/usePermission";
 
 const Relatorios: React.FC = () => {
@@ -10,8 +9,6 @@ const Relatorios: React.FC = () => {
 
   return (
     <div>
-      <Header />
-
       <div className="espaco-vazio"></div>
 
       <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100 p-6">

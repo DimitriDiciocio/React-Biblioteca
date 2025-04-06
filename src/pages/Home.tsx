@@ -28,13 +28,17 @@ const Home: React.FC = () => {
           <MostrarLivros />
         </section>
         <div className="space-med-y"></div>
-        <section>
-          <p className="montserrat-alternates-semibold size-titles">
-            Minha Lista
-          </p>
-          <MostrarLivros />
-        </section>
-        <div className="space-med-y"></div>
+        {token && id_user && (
+          <>
+            <section>
+              <p className="montserrat-alternates-semibold size-titles">
+                Minha Lista
+              </p>
+              <MostrarLivros />
+            </section>
+            <div className="space-med-y"></div>
+          </>
+        )}
         {token && id_user && (
           <>
             <section>

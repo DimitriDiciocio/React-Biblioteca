@@ -1,13 +1,9 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-import Header from "../components/Header";
 import DeletarLivro from "../components/DeletarLivro";
 import { usePermission } from "../components/usePermission";
 
 const Livros: React.FC = () => {
   const token = localStorage.getItem("token");
-  const navigate = useNavigate();
-  const [loading, setLoading] = useState(false);
   const [livros, setLivros] = useState<Book[]>([]);
   const [filteredLivros, setFilteredLivros] = useState<Book[]>([]);
   const [pesquisa, setPesquisa] = useState("");
@@ -71,9 +67,6 @@ const Livros: React.FC = () => {
 
   return (
     <div>
-      <Header />
-      <div className="espaco-vazio"></div>
-
       <h1>Gerenciamento de Livros</h1>
       <input
         type="text"

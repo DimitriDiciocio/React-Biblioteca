@@ -21,6 +21,7 @@ interface Book {
   selectedTags: Tag[];
   ano_publicado: string;
   imagem: string;
+  avaliacao: number;
 }
 
 const BookDetail = () => {
@@ -29,6 +30,7 @@ const BookDetail = () => {
   const [disponivelReserva, setDisponivelReserva] = useState(false);
   const [disponivelEmprestimo, setDisponivelEmprestimo] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [userRating, setUserRating] = useState<number | null>(null);
   const navigate = useNavigate();
   const isAllowed = usePermission(1);
   const token = localStorage.getItem("token");
@@ -210,6 +212,42 @@ const BookDetail = () => {
     });
   };
 
+  const handleRating = async (rating: number) => {
+    const newRating = userRating === rating ? 0 : rating;
+    setUserRating(newRating);
+
+    if (newRating === null || newRating === undefined) {
+      Swal.fire("Erro", "Avaliação inválida.", "error");
+      return;
+    }
+
+    try {
+      const response = await fetch(`http://127.0.0.1:5000/avaliarlivro/${id}`, {
+        method: "PUT",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ valor: newRating }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        Swal.fire(
+          "Erro",
+          errorData.message || "Erro ao enviar avaliação",
+          "error"
+        );
+        return;
+      }
+
+      Swal.fire("Sucesso", "Avaliação enviada com sucesso!", "success");
+    } catch (error) {
+      console.error("Erro ao enviar avaliação:", error);
+      Swal.fire("Erro", "Ocorreu um erro ao enviar a avaliação.", "error");
+    }
+  };
+
   if (isAllowed === null) return <p>Verificando permissão...</p>;
   if (!isAllowed) return null;
 
@@ -238,12 +276,18 @@ const BookDetail = () => {
                         id={`star-${star}`}
                         name="star-radio"
                         value={star}
-                        onClick={() => console.log(`Rated ${star} stars`)}
+                        checked={userRating === star}
+                        onChange={() => handleRating(star)}
                       />
                       <label htmlFor={`star-${star}`}>
                         <svg
                           xmlns="http://www.w3.org/2000/svg"
                           viewBox="0 0 24 24"
+                          fill={
+                            userRating && userRating >= star
+                              ? "#FFD700"
+                              : "#ccc"
+                          }
                         >
                           <path
                             pathLength="360"
@@ -255,7 +299,7 @@ const BookDetail = () => {
                   ))}
                 </div>
                 <div>
-                  <p className="montserrat-alternates-semibold">0.0</p>
+                  <p className="montserrat-alternates-semibold">{book.avaliacao}</p>
                 </div>
               </div>
             </div>
@@ -291,28 +335,31 @@ const BookDetail = () => {
               </p>
             </div>
             <div className="d-flex g-sm m-top">
-              <button
-                className="learn-more"
-                onClick={disponivelEmprestimo ? handleEmprestimo : undefined}
-              >
-                <span className="circle" aria-hidden="true">
-                  <span className="icon arrow"></span>
-                </span>
-                <span className="button-text montserrat-alternates-semibold">
-                  Emprestar
-                </span>
-              </button>
-              <button
-                className="learn-more"
-                onClick={disponivelReserva ? handleAgendamento : undefined}
-              >
-                <span className="circle purple" aria-hidden="true">
-                  <span className="icon arrow"></span>
-                </span>
-                <span className="button-text montserrat-alternates-semibold">
-                  Reservar
-                </span>
-              </button>
+              {disponivelEmprestimo && (
+                <button className="learn-more" onClick={handleEmprestimo}>
+                  <span className="circle" aria-hidden="true">
+                    <span className="icon arrow"></span>
+                  </span>
+                  <span className="button-text montserrat-alternates-semibold">
+                    Emprestar
+                  </span>
+                </button>
+              )}
+              {disponivelReserva && (
+                <button className="learn-more" onClick={handleAgendamento}>
+                  <span className="circle purple" aria-hidden="true">
+                    <span className="icon arrow"></span>
+                  </span>
+                  <span className="button-text montserrat-alternates-semibold">
+                    Reservar
+                  </span>
+                </button>
+              )}
+              {!disponivelEmprestimo && !disponivelReserva && (
+                <p className="montserrat-alternates-semibold">
+                  Você já emprestou este livro.
+                </p>
+              )}
             </div>
           </div>
         </section>

@@ -1518,3 +1518,98 @@ ul {
   box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
   border: 2px solid #0056d2;
 }
+
+/* From Uiverse.io by thomas-m-njuguna */
+.btn-cont {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: auto;
+  background-color: #1e1e1e;
+  margin: 0;
+  border: 1px solid #ffff;
+  border-radius: 10px;
+}
+.buttonGear {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 10px;
+  border-radius: 5px;
+  position: relative;
+  transition: background-color 0.2s ease;
+}
+.buttonGear:hover .tooltip {
+  background-color: rgba(255, 255, 255, 0.1);
+  visibility: visible;
+  opacity: 1;
+}
+.settings-btn {
+  display: block;
+  transition: transform 0.4s ease-in;
+}
+.settings-btn:hover {
+  transform: rotate(60deg);
+}
+.settings-btn:active {
+  animation: rot 1s linear infinite;
+}
+@keyframes rot {
+  from {
+    transform: rotate(-100deg);
+  }
+  to {
+    transform: rotate(180deg);
+  }
+}
+.tooltip {
+  visibility: hidden;
+  width: 120px;
+  background-color: black;
+  color: #fff;
+  text-align: center;
+  border-radius: 5px;
+  padding: 5px;
+  position: absolute;
+  z-index: 1;
+  bottom: 125%;
+  left: 50%;
+  margin-left: -60px;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+/* Estilos para os botões e layout da página */
+.botao-home-biblio {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 200px;
+  height: 200px;
+  background-color: var(--azul-claro);
+  border: 2px solid var(--azul-escuro);
+  border-radius: 15px;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s, box-shadow 0.3s;
+  cursor: pointer;
+}
+
+.botao-home-biblio:hover {
+  transform: translateY(-10px);
+  box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);
+}
+
+.titulo-botao-home-biblio {
+  font-size: 18px;
+  font-weight: bold;
+  color: var(--azul-escuro);
+  margin-bottom: 10px;
+  text-align: center;
+}
+
+.descricao-botao-home-biblio {
+  font-size: 14px;
+  color: var(--preto);
+  text-align: center;
+}

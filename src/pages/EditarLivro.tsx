@@ -31,42 +31,6 @@ const EditarLivro = () => {
   const token = localStorage.getItem("token");
 
   useEffect(() => {
-    const tokenIsActive = async () => {
-      if (!token) {
-        navigate("/login");
-        return;
-      }
-
-      try {
-        const response = await fetch("http://127.0.0.1:5000/token", {
-          method: "POST",
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-        });
-
-        const result = await response.json();
-
-        if (!response.ok) {
-          Swal.fire({
-            icon: "error",
-            title: "Erro",
-            text: result.error || "Erro na verificação do token",
-          });
-          localStorage.removeItem("token");
-          navigate("/login");
-        }
-      } catch (error) {
-        console.error("Erro ao verificar token:", error);
-        navigate("/login");
-      }
-    };
-
-    tokenIsActive();
-  }, [navigate, token]);
-
-  useEffect(() => {
     const fetchBookData = async () => {
       try {
         const response = await fetch(`http://127.0.0.1:5000/livros/${id}`, {
@@ -119,36 +83,6 @@ const EditarLivro = () => {
     fetchBookData();
   }, [navigate, id, token]);
 
-  useEffect(() => {
-    const temPermissao = async () => {
-      try {
-        const response = await fetch("http://127.0.0.1:5000/tem_permissao", {
-          method: "GET",
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-        });
-
-        const result = await response.json();
-
-        if (!response.ok) {
-          Swal.fire({
-            icon: "error",
-            title: "Erro",
-            text: result.error || "Essa pagina é restrita",
-          });
-          navigate("/");
-        }
-      } catch (error) {
-        console.error("Essa página é restrita:", error);
-        navigate("/");
-      }
-    };
-
-    temPermissao();
-  }, [navigate, token]);
-
   const onDrop = useCallback((acceptedFiles: File[]) => {
     const file = acceptedFiles[0];
     if (file) {
@@ -165,6 +99,10 @@ const EditarLivro = () => {
 
   const handleTagsChange = (tags: Tag[]) => {
     setSelectedTags(tags);
+  };
+
+  const handleRemoveImage = () => {
+    setImagemPreview(null);
   };
 
   const handleEdicao = async (e: React.FormEvent) => {
@@ -226,147 +164,199 @@ const EditarLivro = () => {
   if (!isAllowed) return null;
 
   return (
-    <div className="pagina-edicao-livro">
+    <div>
       <Header />
-
-      <div className="espaco-vazio"></div>
-
-      <main className="container-fluid">
-        <section className="row align-items-center">
-          <div className="col-2"></div>
-          <div className="col-4">
+      <main className="background-blue">
+        <div className="space-sm-y"></div>
+        <section className="d-flex center-x size-medium g-30">
+          <div>
             <div
               {...getRootProps()}
-              className="dropzone"
-              style={{
-                border: "2px dashed #ccc",
-                padding: "20px",
-                textAlign: "center",
-                cursor: "pointer",
-                borderRadius: "10px",
-                width: "300px",
-                height: "400px",
-              }}
+              className="border-book4 dropzone"
+              id="dropzone"
             >
               <input {...getInputProps()} />
               {imagemPreview ? (
-                <img
-                  src={imagemPreview}
-                  alt="Imagem de capa"
-                  style={{
-                    width: "100%",
-                    height: "100%",
-                    maxHeight: "100%",
-                    objectFit: "cover",
-                    right: "100px",
-                  }}
-                />
+                <>
+                  <img src={imagemPreview} alt="Imagem de capa" />
+                  <button
+                    onClick={(event) => {
+                      event.stopPropagation();
+                      handleRemoveImage();
+                    }}
+                    style={{
+                      position: "absolute",
+                      top: "0px",
+                      right: "0px",
+                      background: "rgba(0, 0, 0, 0.5)",
+                      color: "white",
+                      border: "none",
+                      borderRadius: "50%",
+                      width: "30px",
+                      height: "30px",
+                      cursor: "pointer",
+                    }}
+                  >
+                    X
+                  </button>
+                </>
               ) : (
-                <p>Arraste uma imagem ou clique para selecionar</p>
+                <div className="dz-message">
+                  <p>
+                    Arraste e solte a capa do livro aqui ou clique para
+                    selecionar
+                  </p>
+                </div>
               )}
             </div>
           </div>
 
-          <div className="col-6">
-            <div className="row">
-              <div className="formulario col-12">
-                <form onSubmit={handleEdicao}>
-                  <p>Título</p>
+          <div>
+            <div className="formulario">
+              <form onSubmit={handleEdicao} className="w-656">
+                <div className="form-group">
+                  <label className="montserrat-alternates-semibold">
+                    Título do Livro:
+                  </label>
                   <input
-                    className="nome-edita"
+                    className="input montserrat-alternates-semibold"
                     type="text"
                     value={titulo}
                     onChange={(e) => setTitulo(e.target.value)}
                     required
                   />
-                  <p>Autor</p>
-                  <input
-                    className="email-edita"
-                    type="text"
-                    value={autor}
-                    onChange={(e) => setAutor(e.target.value)}
-                    required
+                </div>
+
+                <div className="d-flex g-20">
+                  <div className="form-group">
+                    <label className="montserrat-alternates-semibold">
+                      Autor:
+                    </label>
+                    <input
+                      className="input montserrat-alternates-semibold"
+                      type="text"
+                      value={autor}
+                      onChange={(e) => setAutor(e.target.value)}
+                      required
+                    />
+                  </div>
+                  <div className="form-group">
+                    <label className="montserrat-alternates-semibold">
+                      Ano Publicado:
+                    </label>
+                    <input
+                      className="input montserrat-alternates-semibold"
+                      type="number"
+                      value={anoPublicado}
+                      onChange={(e) => setAnoPublicado(e.target.value)}
+                      required
+                    />
+                  </div>
+
+                  <div className="form-group">
+                    <label className="montserrat-alternates-semibold">
+                      ISBN:
+                    </label>
+                    <input
+                      className="input montserrat-alternates-semibold"
+                      type="text"
+                      value={isbn}
+                      onChange={(e) => setIsbn(e.target.value)}
+                      required
+                    />
+                  </div>
+                </div>
+
+                <div className="d-flex g-20 w-192">
+                  <div className="form-group">
+                    <label className="montserrat-alternates-semibold">
+                      Idioma:
+                    </label>
+                    <select
+                      className="input montserrat-alternates-semibold"
+                      value={idiomas}
+                      onChange={(e) => setIdiomas(e.target.value)}
+                      required
+                    >
+                      <option value="">Idioma</option>
+                      <option value="Português">Português</option>
+                      <option value="Inglês">Inglês</option>
+                      <option value="Espanhol">Espanhol</option>
+                      <option value="Francês">Francês</option>
+                    </select>
+                  </div>
+
+                  <div className="form-group">
+                    <label className="montserrat-alternates-semibold">
+                      Categoria:
+                    </label>
+                    <select
+                      className="input montserrat-alternates-semibold"
+                      value={categoria}
+                      onChange={(e) => setCategoria(e.target.value)}
+                      required
+                    >
+                      <option value="">Selecione uma categoria</option>
+                      <option value="Livro">Livro</option>
+                      <option value="Artigo Científico">
+                        Artigo Científico
+                      </option>
+                      <option value="Jornal">Jornal</option>
+                      <option value="Quadrinhos">Quadrinhos</option>
+                    </select>
+                  </div>
+                  <div className="form-group">
+                    <label className="montserrat-alternates-semibold">
+                      Estoque:
+                    </label>
+                    <input
+                      className="input montserrat-alternates-semibold"
+                      type="number"
+                      value={qtd_disponivel}
+                      onChange={(e) => setQtd_disponivel(e.target.value)}
+                      required
+                    />
+                  </div>
+                </div>
+
+                <div className="form-group">
+                  <label className="montserrat-alternates-semibold">
+                    Tags:
+                  </label>
+                  <Tags
+                    selectedTags={selectedTags}
+                    onTagsChange={handleTagsChange}
                   />
-                  <p>Categoria</p>
-                  <select
-                    className="botao-fundo-transparente w-50"
-                    name="categoria"
-                    value={categoria}
-                    onChange={(e) => setCategoria(e.target.value)}
-                    required
-                  >
-                    <option value="">Selecione uma categoria</option>
-                    <option value="Livro">Livro</option>
-                    <option value="Artigo Científico">Artigo Científico</option>
-                    <option value="Jornal">Jornal</option>
-                    <option value="Quadrinhos">Quadrinhos</option>
-                  </select>
-                  <p>ISBN</p>
-                  <input
-                    className="fone-edita"
-                    type="text"
-                    value={isbn}
-                    onChange={(e) => setIsbn(e.target.value)}
-                    required
-                  />
-                  <p>Quantidade disponível</p>
-                  <input
-                    className="fone-edita"
-                    type="number"
-                    value={qtd_disponivel}
-                    onChange={(e) => setQtd_disponivel(e.target.value)}
-                    required
-                  />
-                  <p>Idiomas</p>
-                  <select
-                    className="botao-fundo-transparente w-50"
-                    name="idiomas"
-                    value={idiomas}
-                    onChange={(e) => setIdiomas(e.target.value)}
-                    required
-                  >
-                    <option value="">Idioma</option>
-                    <option value="Português">Português</option>
-                    <option value="Inglês">Inglês</option>
-                    <option value="Espanhol">Espanhol</option>
-                    <option value="Francês">Francês</option>
-                  </select>
-                  <p>Ano publicado</p>
-                  <input
-                    className="fone-edita"
-                    type="number"
-                    value={anoPublicado}
-                    onChange={(e) => setAnoPublicado(e.target.value)}
-                    required
-                  />
-                  <p>Descrição</p>
-                  <input
-                    className="fone-edita"
-                    type="text"
+                </div>
+
+                <div className="form-group">
+                  <label className="montserrat-alternates-semibold">
+                    Descrição:
+                  </label>
+                  <textarea
+                    className="input montserrat-alternates-semibold"
                     value={descricao}
                     onChange={(e) => setDescricao(e.target.value)}
                     required
-                  />
-                  <p>Tags</p>
-                  <Tags
-                    onTagsChange={handleTagsChange}
-                    selectedTags={selectedTags}
-                  />
+                  ></textarea>
+                </div>
 
-                  <div className="d-flex-bit cc">
-                    <button
-                      type="button"
-                      className="botao-fundo-transparente"
-                      onClick={() => navigate("/")}
-                    >
-                      Cancelar
-                    </button>
-                    <button className="botao-fundo-azul" type="submit">
-                      Salvar
-                    </button>
-                  </div>
-                </form>
-              </div>
+                <div className="d-flex g-sm m-top">
+                  <button
+                    type="submit"
+                    className="salvar montserrat-alternates-semibold"
+                  >
+                    <span>Salvar</span>
+                  </button>
+                  <button
+                    type="reset"
+                    className="salvar cancelar montserrat-alternates-semibold"
+                    onClick={() => navigate("/")}
+                  >
+                    <span>Cancelar</span>
+                  </button>
+                </div>
+              </form>
             </div>
           </div>
         </section>

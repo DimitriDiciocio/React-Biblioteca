@@ -1,18 +1,20 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import Swal from 'sweetalert2';
-import '../index.css';
-import { usePermission } from '../components/usePermission';
+import React, { useCallback, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import Swal from "sweetalert2";
+import "../index.css";
+import { usePermission } from "../components/usePermission";
+import { useDropzone } from "react-dropzone";
 
 const CadastroUsuario: React.FC = () => {
-  const [nome, setNome] = useState('');
-  const [email, setEmail] = useState('');
-  const [telefone, setTelefone] = useState('');
-  const [endereco, setEndereco] = useState('');
-  const [senha, setSenha] = useState('');
-  const [confirmSenha, setConfirmSenha] = useState('');
+  const [nome, setNome] = useState("");
+  const [email, setEmail] = useState("");
+  const [telefone, setTelefone] = useState("");
+  const [endereco, setEndereco] = useState("");
+  const [senha, setSenha] = useState("");
+  const [confirmSenha, setConfirmSenha] = useState("");
   const [tipo, setTipo] = useState(1);
   const [imagem, setImagem] = useState<File | null>(null);
+  const [imagemPreview, setImagemPreview] = useState<string | null>(null);
   const navigate = useNavigate();
   const isAllowed = usePermission(3);
 
@@ -20,21 +22,21 @@ const CadastroUsuario: React.FC = () => {
     e.preventDefault();
 
     const formData = new FormData();
-    formData.append('nome', nome);
-    formData.append('email', email);
-    formData.append('telefone', telefone);
-    formData.append('endereco', endereco);
-    formData.append('senha', senha);
-    formData.append('confirmSenha', confirmSenha);
-    formData.append('tipo', tipo.toString());
+    formData.append("nome", nome);
+    formData.append("email", email);
+    formData.append("telefone", telefone);
+    formData.append("endereco", endereco);
+    formData.append("senha", senha);
+    formData.append("confirmSenha", confirmSenha);
+    formData.append("tipo", tipo.toString());
 
     if (imagem) {
-      formData.append('imagem', imagem);
+      formData.append("imagem", imagem);
     }
 
     try {
-      const response = await fetch('http://127.0.0.1:5000/cadastro', {
-        method: 'POST',
+      const response = await fetch("http://127.0.0.1:5000/cadastro", {
+        method: "POST",
         body: formData,
       });
 
@@ -42,164 +44,222 @@ const CadastroUsuario: React.FC = () => {
 
       if (!response.ok) {
         await Swal.fire({
-          title: 'Erro no cadastro',
+          title: "Erro no cadastro",
           text: data.message,
-          icon: 'error',
-          confirmButtonColor: '#d33',
+          icon: "error",
+          confirmButtonColor: "#d33",
         });
       } else {
         await Swal.fire({
-          title: 'Cadastro realizado com sucesso',
+          title: "Cadastro realizado com sucesso",
           text: data.message,
-          icon: 'success',})
+          icon: "success",
+        });
       }
-      navigate("/")
+      navigate("/");
     } catch (error) {
       await Swal.fire({
-        title: 'Erro de conexão!',
-        text: 'Não foi possível se conectar ao servidor.' + String(error),
-        icon: 'error',
-        confirmButtonColor: '#d33',
+        title: "Erro de conexão!",
+        text: "Não foi possível se conectar ao servidor." + String(error),
+        icon: "error",
+        confirmButtonColor: "#d33",
       });
     }
+  };
+
+  const onDrop = useCallback((acceptedFiles: File[]) => {
+    const file = acceptedFiles[0];
+    if (file) {
+      setImagem(file);
+      setImagemPreview(URL.createObjectURL(file)); // Exibir a imagem escolhida
+    }
+  }, []);
+
+  const { getRootProps, getInputProps } = useDropzone({
+    onDrop,
+    accept: { "image/*": [] },
+    multiple: false,
+  });
+
+  const handleRemoveImage = () => {
+    setImagemPreview(null);
+    setImagem(null);
   };
 
   if (isAllowed === null) return <p>Verificando permissão...</p>;
   if (!isAllowed) return null;
 
   return (
-    <div className="overflow-hidden pagina-cadastro colorBack">
+    <div className="pagina-edicao-usuario">
+      <div className="space-med-y"></div>
 
-      <div className="video-bg">
-        <video autoPlay loop muted>
-          <source src="../../assets/video/libris-login.mp4" type="video/mp4" />
-        </video>
-      </div>
-      
-      <section>
-        <div className="row row-centraliza">
-          <div className="col-1"></div>
-
-          <div className="col-4 modal-login centraliza">
-            <div className="col modal-login2" style={{ backgroundColor: 'white' }}>
-              <div className="centraliza">
-                <img src="assets/img/logo-azul.png" alt="Logo Libris" />
-              </div>
-
-              <div className="centraliza">
-                <h1>CADASTRO</h1>
-              </div>
-
-              <form className="centraliza" onSubmit={handleCadastro} encType="multipart/form-data">
-                <div className="coluna gap-ss">
-                  <label htmlFor="name">Nome de Usuário</label>
-                  <input
-                    type="text"
-                    id="name"
-                    className="botao-fundo-transparente"
-                    value={nome}
-                    onChange={(e) => setNome(e.target.value)}
-                    required
+      <main className="background-blue">
+        <section className="d-flex center-x size-medium g-30">
+          <div>
+            <div
+              {...getRootProps()}
+              className="dropzone border-book4"
+              style={{
+                borderRadius: "50%",
+                width: "450px",
+                height: "450px",
+                position: "relative",
+                borderStyle: "dashed",
+                padding: "0",
+              }}
+            >
+              <input {...getInputProps()} />
+              {imagemPreview ? (
+                <>
+                  <img
+                    src={imagemPreview}
+                    alt="Imagem de capa"
+                    style={{
+                      width: "100%",
+                      height: "100%",
+                      borderRadius: "50%",
+                      objectFit: "cover",
+                    }}
                   />
-
-                  <label htmlFor="email">Email</label>
-                  <input
-                    type="email"
-                    id="email"
-                    className="botao-fundo-transparente"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    required
-                  />
-
-                  <label htmlFor="telefone">Telefone</label>
-                  <input
-                    type="number"
-                    id="telefone"
-                    className="botao-fundo-transparente"
-                    value={telefone}
-                    onChange={(e) => setTelefone(e.target.value)}
-                    required
-                  />
-
-                  <label htmlFor="endereco">Endereço</label>
-                  <input
-                    type="text"
-                    id="endereco"
-                    className="botao-fundo-transparente"
-                    value={endereco}
-                    onChange={(e) => setEndereco(e.target.value)}
-                    required
-                  />
-
-                  <label htmlFor="senha">Senha</label>
-                  <input
-                    type="password"
-                    id="senha"
-                    className="botao-fundo-transparente"
-                    value={senha}
-                    onChange={(e) => setSenha(e.target.value)}
-                    required
-                  />
-
-                  <label htmlFor="confirmSenha">Confirmar senha</label>
-                  <input
-                    type="password"
-                    id="confirmSenha"
-                    className="botao-fundo-transparente"
-                    value={confirmSenha}
-                    onChange={(e) => setConfirmSenha(e.target.value)}
-                    required
-                  />
-
-                  <label htmlFor="imagem">Imagem de Perfil (opcional)</label>
-                  <input
-                    type="file"
-                    id="imagem"
-                    className="botao-fundo-transparente"
-                    accept="image/*"
-                    onChange={(e) => setImagem(e.target.files ? e.target.files[0] : null)}
-                  />
-
-                  <label>Tipo</label>
-                  <select
-                      value={tipo}
-                      onChange={(e) => setTipo(Number(e.target.value))}
-                      className="botao-fundo-transparente"
+                  <button
+                    type="button"
+                    className="remove-image-button"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleRemoveImage();
+                    }}
+                    style={{
+                      position: "absolute",
+                      top: "10px",
+                      right: "10px",
+                      backgroundColor: "transparent",
+                      border: "none",
+                      cursor: "pointer",
+                    }}
                   >
-                      <option value="1">Usuário</option>
-                      <option value="2">Bibliotecário</option>
-                      <option value="3">Administrador</option>
-                  </select>
-                  
-
-                  <div className='centraliza mg-top-s submit'>
-                    <div className="gap-s centraliza direita">
-                      <button type="submit" className="botao-fundo-azul">
-                        Cadastrar
-                      </button>
-                    </div>
-
-                    <div className="gap-s centraliza">
-                      <button
-                        type="button"
-                        className="botao-fundo-transparente text-decoration-none"
-                        onClick={() => navigate('/')}
-                      >
-                        Cancelar
-                      </button>
-                    </div>
-                  </div>
+                    X
+                  </button>
+                </>
+              ) : (
+                <div className="dz-message">
+                  <p>Arraste ou clique para selecionar</p>
                 </div>
-              </form>
+              )}
             </div>
           </div>
 
-          <div className="col-1"></div>
-
-          {/* Exibição de Livros */}
-        </div>
-      </section>
+          <div>
+            <form onSubmit={handleCadastro} className="w-656">
+              <div className="form-group">
+                <label className="montserrat-alternates-semibold">Nome:</label>
+                <input
+                  className="input montserrat-alternates-semibold"
+                  type="text"
+                  name="nome"
+                  placeholder="Nome"
+                  value={nome}
+                  onChange={(e) => setNome(e.target.value)}
+                  required
+                />
+              </div>
+              <div className="form-group">
+                <label className="montserrat-alternates-semibold">Email:</label>
+                <input
+                  className="input montserrat-alternates-semibold"
+                  type="email"
+                  name="email"
+                  placeholder="Email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  required
+                />
+              </div>
+              <div className="form-group">
+                <label className="montserrat-alternates-semibold">
+                  Telefone:
+                </label>
+                <input
+                  className="input montserrat-alternates-semibold"
+                  type="number"
+                  name="telefone"
+                  placeholder="Telefone"
+                  value={telefone}
+                  onChange={(e) => setTelefone(e.target.value)}
+                  required
+                />
+              </div>
+              <div className="form-group">
+                <label className="montserrat-alternates-semibold">
+                  Endereço:
+                </label>
+                <input
+                  className="input montserrat-alternates-semibold"
+                  type="text"
+                  name="endereco"
+                  placeholder="Endereço"
+                  value={endereco}
+                  onChange={(e) => setEndereco(e.target.value)}
+                  required
+                />
+              </div>
+              <div className="form-group">
+                <label className="montserrat-alternates-semibold">Senha:</label>
+                <input
+                  className="input montserrat-alternates-semibold"
+                  type="password"
+                  name="senha"
+                  placeholder="Senha"
+                  value={senha}
+                  onChange={(e) => setSenha(e.target.value)}
+                  required
+                />
+              </div>
+              <div className="form-group">
+                <label className="montserrat-alternates-semibold">
+                  Confirmar Senha:
+                </label>
+                <input
+                  className="input montserrat-alternates-semibold"
+                  type="password"
+                  name="confirmSenha"
+                  placeholder="Confirmar Senha"
+                  value={confirmSenha}
+                  onChange={(e) => setConfirmSenha(e.target.value)}
+                  required
+                />
+              </div>
+              <div className="form-group">
+                <label className="montserrat-alternates-semibold">Tipo:</label>
+                <select
+                  className="input montserrat-alternates-semibold"
+                  value={tipo}
+                  onChange={(e) => setTipo(Number(e.target.value))}
+                  required
+                >
+                  <option value="1">Usuário</option>
+                  <option value="2">Bibliotecário</option>
+                  <option value="3">Administrador</option>
+                </select>
+              </div>
+              <div className="d-flex g-sm m-top">
+                <button
+                  type="submit"
+                  className="salvar montserrat-alternates-semibold"
+                >
+                  <span>Cadastrar</span>
+                </button>
+                <button
+                  type="button"
+                  className="salvar cancelar montserrat-alternates-semibold"
+                  onClick={() => navigate("/")}
+                >
+                  <span>Cancelar</span>
+                </button>
+              </div>
+            </form>
+          </div>
+        </section>
+      </main>
     </div>
   );
 };

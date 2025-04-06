@@ -1,7 +1,7 @@
 import React, { useCallback, useState, useEffect } from "react";
 import Header from "../components/Header";
 import { useDropzone } from "react-dropzone";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { usePermission } from "../components/usePermission";
 import EditarUsuario from "../components/EditarUsuario";
 import TrocarSenha from "../components/TrocarSenha";
@@ -13,12 +13,11 @@ const Config: React.FC = () => {
   const [nome, setNome] = useState("");
   const [imagemPreview, setImagemPreview] = useState("");
   const navigate = useNavigate();
-  const [page, setPage] = useState(1);
+  const location = useLocation();
   const isAllowed = usePermission(1);
   const token = localStorage.getItem("token");
 
   const switchPage = (page: number) => {
-    setPage(page);
     document.querySelectorAll(".nav-lateral li a").forEach((li, index) => {
       li.classList.toggle("active", index === page - 1);
     });
@@ -28,8 +27,12 @@ const Config: React.FC = () => {
   };
 
   useEffect(() => {
-    switchPage(1); // Set default page to "Início"
-  }, []);
+    const queryParams = new URLSearchParams(location.search);
+    const page = parseInt(queryParams.get("page") || "1", 10);
+    if (!isNaN(page)) {
+      switchPage(page);
+    }
+  }, [location.search]);
 
   const onDrop = useCallback((acceptedFiles: File[]) => {
     const file = acceptedFiles[0];
@@ -38,7 +41,7 @@ const Config: React.FC = () => {
     }
   }, []);
 
-  const { getRootProps, getInputProps } = useDropzone({
+  useDropzone({
     onDrop,
     accept: { "image/*": [] },
     multiple: false,
