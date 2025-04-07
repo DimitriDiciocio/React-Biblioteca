@@ -147,12 +147,12 @@ const Cadastro: React.FC = () => {
   return (
     <div className="body-cadastro">
       <header className="header-login">
-        <img
-          src="assets/img/LIBRIS.png"
-          alt="LIBRIS"
-          className="logo"
-          onClick={() => navigate("/")}
-        />
+          <p
+            className="delius-regular"
+            onClick={() => navigate("/")}
+            style={{cursor: "pointer"}}
+          >Read Raccoon
+          </p>
       </header>
       <main className="container-cadastro">
         <div

@@ -18,12 +18,13 @@ const Livros: React.FC = () => {
     qtd_disponivel: number;
     descricao: string;
     imagem: string;
+    disponivel: boolean;
   }
 
   useEffect(() => {
     async function fetchLivros() {
       try {
-        const response = await fetch("http://127.0.0.1:5000/livros", {
+        const response = await fetch("http://127.0.0.1:5000/livrosadm", {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
@@ -84,6 +85,7 @@ const Livros: React.FC = () => {
             <th>Qtd. Disponível</th>
             <th>Descrição</th>
             <th>Imagem</th>
+            <th>Disponivel</th>
             <th>Ação</th>
           </tr>
         </thead>
@@ -104,6 +106,7 @@ const Livros: React.FC = () => {
                   width="50"
                 />
               </td>
+              <td>{book.disponivel ? "Disponivel" : "Indisponivel"}</td>
               <td>
                 <button
                   onClick={() => handleOpenBook(book)}

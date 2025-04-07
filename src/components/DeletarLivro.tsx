@@ -28,7 +28,7 @@ const DeletarLivro: React.FC<DeletarLivroProps> = ({ id_livro }) => {
         
         try {
             const response = await fetch('http://localhost:5000/excluir_livro', {
-                method: 'DELETE',
+                method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${localStorage.getItem('token')}`,
@@ -36,9 +36,11 @@ const DeletarLivro: React.FC<DeletarLivroProps> = ({ id_livro }) => {
                 body: JSON.stringify({ id_livro }), 
             });
 
+            const data = await response.json();
+
             if (response.ok) {
-                await Swal.fire('Deletado!', 'O livro foi removido com sucesso.', 'success');
-                navigate('/');
+                await Swal.fire('Alterado!', data.message, 'success');
+                navigate('/home_biblio?page=5');
             } else {
                 await Swal.fire('Erro!', 'Não foi possível excluir o livro.', 'error');
             }

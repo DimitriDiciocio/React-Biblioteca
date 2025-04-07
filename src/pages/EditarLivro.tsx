@@ -219,7 +219,7 @@ const EditarLivro = () => {
                     Título do Livro:
                   </label>
                   <input
-                    className="input montserrat-alternates-semibold"
+                    className="input-p montserrat-alternates-semibold"
                     type="text"
                     value={titulo}
                     onChange={(e) => setTitulo(e.target.value)}
@@ -233,7 +233,7 @@ const EditarLivro = () => {
                       Autor:
                     </label>
                     <input
-                      className="input montserrat-alternates-semibold"
+                      className="input-p montserrat-alternates-semibold"
                       type="text"
                       value={autor}
                       onChange={(e) => setAutor(e.target.value)}
@@ -242,10 +242,10 @@ const EditarLivro = () => {
                   </div>
                   <div className="form-group">
                     <label className="montserrat-alternates-semibold">
-                      Ano Publicado:
+                      Publicação:
                     </label>
                     <input
-                      className="input montserrat-alternates-semibold"
+                      className="input-p montserrat-alternates-semibold"
                       type="number"
                       value={anoPublicado}
                       onChange={(e) => setAnoPublicado(e.target.value)}
@@ -258,7 +258,7 @@ const EditarLivro = () => {
                       ISBN:
                     </label>
                     <input
-                      className="input montserrat-alternates-semibold"
+                      className="input-p montserrat-alternates-semibold"
                       type="text"
                       value={isbn}
                       onChange={(e) => setIsbn(e.target.value)}
@@ -267,13 +267,13 @@ const EditarLivro = () => {
                   </div>
                 </div>
 
-                <div className="d-flex g-20 w-192">
+                <div className="d-flex g-20 ">
                   <div className="form-group">
                     <label className="montserrat-alternates-semibold">
                       Idioma:
                     </label>
                     <select
-                      className="input montserrat-alternates-semibold"
+                      className="input-p montserrat-alternates-semibold"
                       value={idiomas}
                       onChange={(e) => setIdiomas(e.target.value)}
                       required
@@ -291,7 +291,7 @@ const EditarLivro = () => {
                       Categoria:
                     </label>
                     <select
-                      className="input montserrat-alternates-semibold"
+                      className="input-p montserrat-alternates-semibold"
                       value={categoria}
                       onChange={(e) => setCategoria(e.target.value)}
                       required
@@ -310,7 +310,7 @@ const EditarLivro = () => {
                       Estoque:
                     </label>
                     <input
-                      className="input montserrat-alternates-semibold"
+                      className="input-p montserrat-alternates-semibold"
                       type="number"
                       value={qtd_disponivel}
                       onChange={(e) => setQtd_disponivel(e.target.value)}
@@ -334,7 +334,7 @@ const EditarLivro = () => {
                     Descrição:
                   </label>
                   <textarea
-                    className="input montserrat-alternates-semibold"
+                    className="input-p montserrat-alternates-semibold"
                     value={descricao}
                     onChange={(e) => setDescricao(e.target.value)}
                     required
@@ -351,7 +351,7 @@ const EditarLivro = () => {
                   <button
                     type="reset"
                     className="salvar cancelar montserrat-alternates-semibold"
-                    onClick={() => navigate("/")}
+                    onClick={() => navigate("/home_biblio?page=5")}
                   >
                     <span>Cancelar</span>
                   </button>

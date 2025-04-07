@@ -64,7 +64,12 @@ const Login: React.FC = () => {
   return (
     <div className="body-login">
       <header className="header-login">
-        <img src="assets/img/LIBRIS.png" alt="LIBRIS" className="logo" onClick={() => navigate("/")}/>
+          <p
+            className="delius-regular"
+            onClick={() => navigate("/")}
+            style={{cursor: "pointer"}}
+          >Read Raccoon
+          </p>      
       </header>
       <main className='login-container'>
         <img src="assets/img/pandavermelho.png" alt="Avatar"/>
