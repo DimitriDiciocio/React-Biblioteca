@@ -62,7 +62,7 @@ const Cadastro: React.FC = () => {
     const formData = new FormData();
     formData.append("nome", nome);
     formData.append("email", email);
-    formData.append("telefone", telefone.replace(/\D/g, "")); // Remove formatting
+    formData.append("telefone", telefone.replace(/\D/g, "")); // Send numeric-only
     formData.append("endereco", endereco);
     formData.append("senha", senha);
     formData.append("confirmSenha", confirmSenha);
@@ -116,14 +116,7 @@ const Cadastro: React.FC = () => {
   };
 
   const formatTelefone = (value: string) => {
-    // Remove all non-numeric characters
     const numericValue = value.replace(/\D/g, "");
-    // Handle deletion by skipping formatting characters
-    const cursorPosition = value.length - 1;
-    if (value[cursorPosition] === "-" || value[cursorPosition] === ")") {
-      return value.slice(0, cursorPosition);
-    }
-    // Format as (DDD) 12345-6789
     if (numericValue.length <= 10) {
       return numericValue.replace(/(\d{2})(\d{4})(\d{0,4})/, "($1) $2-$3");
     }

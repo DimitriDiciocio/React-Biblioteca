@@ -16,6 +16,8 @@ const Config: React.FC = () => {
   const location = useLocation();
   const isAllowed = usePermission(1);
   const token = localStorage.getItem("token");
+  const queryParams = new URLSearchParams(window.location.search);
+  const page = queryParams.get("page")?.split(",");
 
   const switchPage = (page: number) => {
     document.querySelectorAll(".nav-lateral li a").forEach((li, index) => {
@@ -25,6 +27,10 @@ const Config: React.FC = () => {
       pageElement.classList.toggle("active", index === page - 1);
     });
   };
+
+  useEffect(() => {
+    switchPage(Number(page));
+  }, [page]);
 
   useEffect(() => {
     const queryParams = new URLSearchParams(location.search);
@@ -96,6 +102,15 @@ const Config: React.FC = () => {
     fetchUserData();
   }, [navigate, token]);
 
+  const isValidImage = (url: string) => {
+    try {
+      const parsedUrl = new URL(url);
+      return parsedUrl.protocol === "http:" || parsedUrl.protocol === "https:";
+    } catch {
+      return false;
+    }
+  };
+
   if (isAllowed === null) return <p>Verificando permissão...</p>;
   if (!isAllowed) return null;
 
@@ -133,11 +148,13 @@ const Config: React.FC = () => {
         </aside>
         <section className="content montserrat-alternates-semibold">
           <div className="page active">
-            <img
-              src={imagemPreview}
-              alt="Foto de perfil"
-              className="foto-perfil"
-            />
+            {imagemPreview && isValidImage(imagemPreview) && (
+              <img
+                src={imagemPreview}
+                alt="Foto de perfil"
+                className="foto-perfil"
+              />
+            )}
             <p>Olá! {nome}</p>
             <form>
               <div className="p-relative">
@@ -154,7 +171,6 @@ const Config: React.FC = () => {
             <TrocarSenha />
           </div>
           <div className="page">
-            <p>Gerenciar Livros</p>
             <Carrinho />
           </div>
           <div className="page">

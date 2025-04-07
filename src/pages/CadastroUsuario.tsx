@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 import "../index.css";
@@ -15,8 +15,21 @@ const CadastroUsuario: React.FC = () => {
   const [tipo, setTipo] = useState(1);
   const [imagem, setImagem] = useState<File | null>(null);
   const [imagemPreview, setImagemPreview] = useState<string | null>(null);
+  const [cidadesBrasil, setCidadesBrasil] = useState<string[]>([]);
   const navigate = useNavigate();
   const isAllowed = usePermission(3);
+
+  const formatTelefone = (value: string) => {
+    const numericValue = value.replace(/\D/g, "");
+    const cursorPosition = value.length - 1;
+    if (value[cursorPosition] === "-" || value[cursorPosition] === ")") {
+      return value.slice(0, cursorPosition);
+    }
+    if (numericValue.length <= 10) {
+      return numericValue.replace(/(\d{2})(\d{4})(\d{0,4})/, "($1) $2-$3");
+    }
+    return numericValue.replace(/(\d{2})(\d{5})(\d{0,4})/, "($1) $2-$3");
+  };
 
   const handleCadastro = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -24,7 +37,7 @@ const CadastroUsuario: React.FC = () => {
     const formData = new FormData();
     formData.append("nome", nome);
     formData.append("email", email);
-    formData.append("telefone", telefone);
+    formData.append("telefone", telefone.replace(/\D/g, "")); // Remove formatting
     formData.append("endereco", endereco);
     formData.append("senha", senha);
     formData.append("confirmSenha", confirmSenha);
@@ -55,8 +68,17 @@ const CadastroUsuario: React.FC = () => {
           text: data.message,
           icon: "success",
         });
+        // Clear form fields and reset image preview
+        setNome("");
+        setEmail("");
+        setTelefone("");
+        setEndereco("");
+        setSenha("");
+        setConfirmSenha("");
+        setTipo(1);
+        setImagem(null);
+        setImagemPreview(null);
       }
-      navigate("/");
     } catch (error) {
       await Swal.fire({
         title: "Erro de conexão!",
@@ -85,6 +107,56 @@ const CadastroUsuario: React.FC = () => {
     setImagemPreview(null);
     setImagem(null);
   };
+
+  const handleCancelar = () => {
+    setNome("");
+    setEmail("");
+    setTelefone("");
+    setEndereco("");
+    setSenha("");
+    setConfirmSenha("");
+    setTipo(1);
+    setImagem(null);
+    setImagemPreview(null);
+  };
+
+  useEffect(() => {
+    const fetchCidades = async () => {
+      if (endereco.trim().length === 0) {
+        setCidadesBrasil([]);
+        return;
+      }
+
+      try {
+        const response = await fetch(
+          "https://servicodados.ibge.gov.br/api/v1/localidades/municipios"
+        );
+        if (response.ok) {
+          const data = await response.json();
+          setCidadesBrasil(
+            data
+              .map(
+                (cidade: {
+                  nome: string;
+                  microrregiao: { mesorregiao: { UF: { sigla: string } } };
+                }) =>
+                  `${cidade.nome} - ${cidade.microrregiao.mesorregiao.UF.sigla}`
+              )
+              .filter((cidade: string) =>
+                cidade.toLowerCase().includes(endereco.toLowerCase())
+              )
+              .slice(0, 8)
+          );
+        } else {
+          console.error("Erro ao buscar cidades:", response.statusText);
+        }
+      } catch (error) {
+        console.error("Erro ao buscar cidades:", error);
+      }
+    };
+
+    fetchCidades();
+  }, [endereco]);
 
   if (isAllowed === null) return <p>Verificando permissão...</p>;
   if (!isAllowed) return null;
@@ -180,11 +252,11 @@ const CadastroUsuario: React.FC = () => {
                 </label>
                 <input
                   className="input montserrat-alternates-semibold"
-                  type="number"
+                  type="text"
                   name="telefone"
                   placeholder="Telefone"
                   value={telefone}
-                  onChange={(e) => setTelefone(e.target.value)}
+                  onChange={(e) => setTelefone(formatTelefone(e.target.value))}
                   required
                 />
               </div>
@@ -199,8 +271,14 @@ const CadastroUsuario: React.FC = () => {
                   placeholder="Endereço"
                   value={endereco}
                   onChange={(e) => setEndereco(e.target.value)}
+                  list="cidades"
                   required
                 />
+                <datalist id="cidades">
+                  {cidadesBrasil.map((cidade, index) => (
+                    <option key={index} value={cidade} />
+                  ))}
+                </datalist>
               </div>
               <div className="form-group">
                 <label className="montserrat-alternates-semibold">Senha:</label>
@@ -251,7 +329,7 @@ const CadastroUsuario: React.FC = () => {
                 <button
                   type="button"
                   className="salvar cancelar montserrat-alternates-semibold"
-                  onClick={() => navigate("/")}
+                  onClick={handleCancelar}
                 >
                   <span>Cancelar</span>
                 </button>

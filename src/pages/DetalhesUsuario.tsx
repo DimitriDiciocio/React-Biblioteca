@@ -21,6 +21,7 @@ const DetalhesUsuario: React.FC = () => {
   const [user, setUser] = useState<User | null>(null);
   const [isEditing, setIsEditing] = useState(false);
   const navigate = useNavigate();
+  const [imagemPreview, setImagemPreview] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -35,6 +36,20 @@ const DetalhesUsuario: React.FC = () => {
         if (!response.ok) throw new Error("Erro ao buscar usuário");
         const data = await response.json();
         setUser(data);
+        if (data.imagem) {
+          const imagemUrl = `http://127.0.0.1:5000/uploads/usuarios/${data.imagem}`;
+      
+          fetch(imagemUrl)
+            .then(async (imgResponse) => {
+              if (imgResponse.ok) {
+                setImagemPreview(imagemUrl);
+              }
+            })
+            .catch(() => {
+              console.log("Imagem não encontrada");
+            });
+        }
+
       } catch (error) {
         console.error(error);
         Swal.fire(
@@ -52,6 +67,15 @@ const DetalhesUsuario: React.FC = () => {
 
   const imageUrl = `http://127.0.0.1:5000/uploads/usuarios/${user.imagem}`;
 
+  const isValidImage = (url: string) => {
+    try {
+      const parsedUrl = new URL(url);
+      return parsedUrl.protocol === "http:" || parsedUrl.protocol === "https:";
+    } catch {
+      return false;
+    }
+  };
+
   return (
     <div>
       <Header />
@@ -67,7 +91,7 @@ const DetalhesUsuario: React.FC = () => {
           alignItems: "center",
         }}
       >
-        &lt; {/* HTML entity for < */}
+        &lt;
       </button>
       <h1>Detalhes do Usuário</h1>
       {isEditing ? (
@@ -88,16 +112,18 @@ const DetalhesUsuario: React.FC = () => {
                     padding: "0",
                   }}
                 >
-                  <img
-                    src={imageUrl}
-                    alt={user.nome}
-                    style={{
-                      width: "100%",
-                      height: "100%",
-                      borderRadius: "50%",
-                      objectFit: "cover",
-                    }}
-                  />
+                  {imagemPreview && isValidImage(imagemPreview) && (
+                    <img
+                      src={imageUrl}
+                      alt={user.nome}
+                      style={{
+                        width: "100%",
+                        height: "100%",
+                        borderRadius: "50%",
+                        objectFit: "cover",
+                      }}
+                    />
+                  )}
                 </div>
               </div>
               <div className="w-656">

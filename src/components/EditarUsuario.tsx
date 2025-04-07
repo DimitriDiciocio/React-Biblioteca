@@ -17,20 +17,26 @@ const EditarUsuario: React.FC = () => {
   const [originalEmail, setOriginalEmail] = useState("");
   const [originalTelefone, setOriginalTelefone] = useState("");
   const [originalEndereco, setOriginalEndereco] = useState("");
+  const [cidadesBrasil, setCidadesBrasil] = useState<string[]>([]);
   const navigate = useNavigate();
   const token = localStorage.getItem("token");
   const isAllowed = usePermission(1);
 
   const formatTelefone = (value: string) => {
     const numericValue = value.replace(/\D/g, "");
-    const cursorPosition = value.length - 1;
-    if (value[cursorPosition] === "-" || value[cursorPosition] === ")") {
-      return value.slice(0, cursorPosition);
-    }
     if (numericValue.length <= 10) {
       return numericValue.replace(/(\d{2})(\d{4})(\d{0,4})/, "($1) $2-$3");
     }
     return numericValue.replace(/(\d{2})(\d{5})(\d{0,4})/, "($1) $2-$3");
+  };
+
+  const isValidImage = (url: string) => {
+    try {
+      const parsedUrl = new URL(url);
+      return parsedUrl.protocol === "http:" || parsedUrl.protocol === "https:";
+    } catch {
+      return false;
+    }
   };
 
   useEffect(() => {
@@ -49,7 +55,7 @@ const EditarUsuario: React.FC = () => {
         if (response.ok) {
           setNome(data.nome);
           setEmail(data.email);
-          setTelefone(formatTelefone(data.telefone));
+          setTelefone(formatTelefone(data.telefone)); // Format for display
           setEndereco(data.endereco);
 
           // Save original values
@@ -62,9 +68,16 @@ const EditarUsuario: React.FC = () => {
             const imagemUrl = `http://127.0.0.1:5000/uploads/usuarios/${data.imagem}`;
 
             fetch(imagemUrl)
-              .then((imgResponse) => {
+              .then(async (imgResponse) => {
                 if (imgResponse.ok) {
                   setImagemPreview(imagemUrl);
+
+                  // Convert the image URL to a File object
+                  const blob = await imgResponse.blob();
+                  const file = new File([blob], data.imagem, {
+                    type: blob.type,
+                  });
+                  setImagem(file); // Set the image file
                 }
               })
               .catch(() => {
@@ -89,6 +102,44 @@ const EditarUsuario: React.FC = () => {
 
     fetchUserData();
   }, [navigate, token]);
+
+  useEffect(() => {
+    const fetchCidades = async () => {
+      if (endereco.trim().length === 0) {
+        setCidadesBrasil([]);
+        return;
+      }
+
+      try {
+        const response = await fetch(
+          "https://servicodados.ibge.gov.br/api/v1/localidades/municipios"
+        );
+        if (response.ok) {
+          const data = await response.json();
+          setCidadesBrasil(
+            data
+              .map(
+                (cidade: {
+                  nome: string;
+                  microrregiao: { mesorregiao: { UF: { sigla: string } } };
+                }) =>
+                  `${cidade.nome} - ${cidade.microrregiao.mesorregiao.UF.sigla}`
+              )
+              .filter((cidade: string) =>
+                cidade.toLowerCase().includes(endereco.toLowerCase())
+              )
+              .slice(0, 8)
+          );
+        } else {
+          console.error("Erro ao buscar cidades:", response.statusText);
+        }
+      } catch (error) {
+        console.error("Erro ao buscar cidades:", error);
+      }
+    };
+
+    fetchCidades();
+  }, [endereco]);
 
   const onDrop = useCallback((acceptedFiles: File[]) => {
     const file = acceptedFiles[0];
@@ -115,7 +166,7 @@ const EditarUsuario: React.FC = () => {
     const formData = new FormData();
     formData.append("nome", nome);
     formData.append("email", email);
-    formData.append("telefone", telefone);
+    formData.append("telefone", telefone.replace(/\D/g, "")); // Send numeric-only
     formData.append("endereco", endereco);
 
     if (imagem) {
@@ -165,10 +216,61 @@ const EditarUsuario: React.FC = () => {
 
       <main className="background-blue">
         <section className="d-flex center-x size-medium g-30 ">
-        {isEditing ? (
-          <div>
+          {isEditing ? (
+            <div>
+              <div
+                {...getRootProps()}
+                className="dropzone border-book4"
+                style={{
+                  borderRadius: "50%",
+                  width: "300px",
+                  height: "300px",
+                  position: "relative",
+                  borderStyle: "dashed",
+                  padding: "0",
+                }}
+              >
+                <input {...getInputProps()} />
+                {imagemPreview ? (
+                  <>
+                    <img
+                      src={imagemPreview || undefined}
+                      alt="Imagem de perfil"
+                      style={{
+                        width: "100%",
+                        height: "100%",
+                        borderRadius: "50%",
+                        objectFit: "cover",
+                      }}
+                    />
+                    <button
+                      type="button"
+                      className="remove-image-button"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleRemoveImage();
+                      }}
+                      style={{
+                        position: "absolute",
+                        top: "10px",
+                        right: "10px",
+                        backgroundColor: "transparent",
+                        border: "none",
+                        cursor: "pointer",
+                      }}
+                    >
+                      X
+                    </button>
+                  </>
+                ) : (
+                  <div className="dz-message">
+                    <p>Arraste ou clique para selecionar</p>
+                  </div>
+                )}
+              </div>
+            </div>
+          ) : (
             <div
-              {...getRootProps()}
               className="dropzone border-book4"
               style={{
                 borderRadius: "50%",
@@ -179,72 +281,24 @@ const EditarUsuario: React.FC = () => {
                 padding: "0",
               }}
             >
-              <input {...getInputProps()} />
-              {imagemPreview ? (
-                <>
-                  <img
-                    src={imagemPreview || undefined}
-                    alt="Imagem de perfil"
-                    style={{
-                      width: "100%",
-                      height: "100%",
-                      borderRadius: "50%",
-                      objectFit: "cover",
-                    }}
-                  />
-                  <button
-                    type="button"
-                    className="remove-image-button"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleRemoveImage();
-                    }}
-                    style={{
-                      position: "absolute",
-                      top: "10px",
-                      right: "10px",
-                      backgroundColor: "transparent",
-                      border: "none",
-                      cursor: "pointer",
-                    }}
-                  >
-                    X
-                  </button>
-                </>
-              ) : (
-                <div className="dz-message">
-                  <p>Arraste ou clique para selecionar</p>
-                </div>
+              {imagemPreview && isValidImage(imagemPreview) && (
+                <img
+                  src={imagemPreview}
+                  alt="Imagem de perfil"
+                  style={{
+                    width: "100%",
+                    height: "100%",
+                    borderRadius: "50%",
+                    objectFit: "cover",
+                  }}
+                />
               )}
             </div>
-          </div>
-        ) : (
-          <div className="dropzone border-book4"
-          style={{
-            borderRadius: "50%",
-            width: "300px",
-            height: "300px",
-            position: "relative",
-            borderStyle: "dashed",
-            padding: "0",
-          }}>
-            <img
-              src={imagemPreview || ""}
-              alt="Imagem de perfil"
-              style={{
-                width: "100%",
-                height: "100%",
-                borderRadius: "50%",
-                objectFit: "cover",
-              }}
-            />
-          </div>
-        )}
+          )}
 
           <div>
             {!isEditing ? (
               <div className="w-656">
-                
                 <div className="form-group">
                   <label className="montserrat-alternates-semibold">
                     Nome:
@@ -335,8 +389,14 @@ const EditarUsuario: React.FC = () => {
                     value={endereco}
                     onChange={(e) => setEndereco(e.target.value)}
                     className="input montserrat-alternates-semibold"
+                    list="cidades"
                     required
                   />
+                  <datalist id="cidades">
+                    {cidadesBrasil.map((cidade, index) => (
+                      <option key={index} value={cidade} />
+                    ))}
+                  </datalist>
                 </div>
 
                 <div className="d-flex g-sm m-top">

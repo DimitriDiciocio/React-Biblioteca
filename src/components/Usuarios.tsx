@@ -40,8 +40,21 @@ const Usuarios: React.FC<{ onCancel?: () => void }> = ({ onCancel }) => {
   const [telefone, setTelefone] = useState(user.telefone);
   const [endereco, setEndereco] = useState(user.endereco);
   const [imagem, setImagem] = useState<File | null>(null);
-  const [imagemPreview, setImagemPreview] = useState("");
+  const [imagemPreview, setImagemPreview] = useState<string | null>(null);
   const isAllowed = usePermission(3);
+  const [cidadesBrasil, setCidadesBrasil] = useState<string[]>([]);
+
+  const formatTelefone = (value: string) => {
+    const numericValue = value.replace(/\D/g, "");
+    const cursorPosition = value.length - 1;
+    if (value[cursorPosition] === "-" || value[cursorPosition] === ")") {
+      return value.slice(0, cursorPosition);
+    }
+    if (numericValue.length <= 10) {
+      return numericValue.replace(/(\d{2})(\d{4})(\d{0,4})/, "($1) $2-$3");
+    }
+    return numericValue.replace(/(\d{2})(\d{5})(\d{0,4})/, "($1) $2-$3");
+  };
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -57,18 +70,36 @@ const Usuarios: React.FC<{ onCancel?: () => void }> = ({ onCancel }) => {
       setUser(data);
       setNome(data.nome);
       setEmail(data.email);
-      setTelefone(data.telefone);
+      setTelefone(formatTelefone(data.telefone));
       setEndereco(data.endereco);
       setTipo(data.tipo);
       setAtivo(data.ativo);
+
+      if (data.imagem) {
+        const imagemUrl = `http://127.0.0.1:5000/uploads/usuarios/${data.imagem}`;
+
+        try {
+          const imgResponse = await fetch(imagemUrl);
+          if (imgResponse.ok) {
+            setImagemPreview(imagemUrl);
+
+            // Convert the image URL to a File object
+            const blob = await imgResponse.blob();
+            const file = new File([blob], data.imagem, {
+              type: blob.type,
+            });
+            setImagem(file); // Set the image file
+          } else {
+            console.log("Imagem não encontrada");
+          }
+        } catch (error) {
+          console.error("Erro ao carregar imagem:", error);
+        }
+      }
     };
 
     fetchUserData();
   }, [id, token]);
-
-  useEffect(() => {
-    setImagemPreview(`http://127.0.0.1:5000/uploads/usuarios/${user.imagem}`);
-  }, [user.imagem]);
 
   const [texto, setTexto] = useState("");
   useEffect(() => {
@@ -85,7 +116,7 @@ const Usuarios: React.FC<{ onCancel?: () => void }> = ({ onCancel }) => {
     const formData = new FormData();
     formData.append("nome", nome);
     formData.append("email", email);
-    formData.append("telefone", telefone);
+    formData.append("telefone", telefone.replace(/\D/g, "")); // Send numeric-only
     formData.append("endereco", endereco);
     formData.append("tipo", tipo.toString());
 
@@ -169,8 +200,56 @@ const Usuarios: React.FC<{ onCancel?: () => void }> = ({ onCancel }) => {
   });
 
   const handleRemoveImage = () => {
-    setImagemPreview("");
+    setImagem(null);
+    setImagemPreview(null);
   };
+
+  const isValidImage = (url: string) => {
+    try {
+      const parsedUrl = new URL(url);
+      return parsedUrl.protocol === "http:" || parsedUrl.protocol === "https:";
+    } catch {
+      return false;
+    }
+  };
+
+  useEffect(() => {
+    const fetchCidades = async () => {
+      if (endereco.trim().length === 0) {
+        setCidadesBrasil([]);
+        return;
+      }
+
+      try {
+        const response = await fetch(
+          "https://servicodados.ibge.gov.br/api/v1/localidades/municipios"
+        );
+        if (response.ok) {
+          const data = await response.json();
+          setCidadesBrasil(
+            data
+              .map(
+                (cidade: {
+                  nome: string;
+                  microrregiao: { mesorregiao: { UF: { sigla: string } } };
+                }) =>
+                  `${cidade.nome} - ${cidade.microrregiao.mesorregiao.UF.sigla}`
+              )
+              .filter((cidade: string) =>
+                cidade.toLowerCase().includes(endereco.toLowerCase())
+              )
+              .slice(0, 8)
+          );
+        } else {
+          console.error("Erro ao buscar cidades:", response.statusText);
+        }
+      } catch (error) {
+        console.error("Erro ao buscar cidades:", error);
+      }
+    };
+
+    fetchCidades();
+  }, [endereco]);
 
   if (isAllowed === null) return <p>Verificando permissão...</p>;
   if (!isAllowed) return null;
@@ -198,14 +277,14 @@ const Usuarios: React.FC<{ onCancel?: () => void }> = ({ onCancel }) => {
                 {imagemPreview ? (
                   <>
                     <img
-                    src={imagemPreview}
-                    alt="Imagem de perfil"
-                    style={{
-                      width: "100%",
-                      height: "100%",
-                      borderRadius: "50%",
-                      objectFit: "cover",
-                    }}
+                      src={imagemPreview}
+                      alt="Imagem de perfil"
+                      style={{
+                        width: "100%",
+                        height: "100%",
+                        borderRadius: "50%",
+                        objectFit: "cover",
+                      }}
                     />
                     <button
                       onClick={(event) => {
@@ -266,7 +345,7 @@ const Usuarios: React.FC<{ onCancel?: () => void }> = ({ onCancel }) => {
                 <input
                   type="text"
                   value={telefone}
-                  onChange={(e) => setTelefone(e.target.value)}
+                  onChange={(e) => setTelefone(formatTelefone(e.target.value))}
                   className="input montserrat-alternates-semibold"
                   required
                 />
@@ -280,8 +359,14 @@ const Usuarios: React.FC<{ onCancel?: () => void }> = ({ onCancel }) => {
                   value={endereco}
                   onChange={(e) => setEndereco(e.target.value)}
                   className="input montserrat-alternates-semibold"
+                  list="cidades"
                   required
                 />
+                <datalist id="cidades">
+                  {cidadesBrasil.map((cidade, index) => (
+                    <option key={index} value={cidade} />
+                  ))}
+                </datalist>
               </div>
               <div className="form-group">
                 <label className="montserrat-alternates-semibold">Tipo:</label>

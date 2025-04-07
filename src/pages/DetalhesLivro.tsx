@@ -4,7 +4,6 @@ import Swal from "sweetalert2";
 import Header from "../components/Header";
 import MostrarLivros from "../components/MostrarLivros";
 import { usePermission } from "../components/usePermission";
-
 interface Tag {
   id: number;
   nome: string;
@@ -29,6 +28,7 @@ const BookDetail = () => {
   const [book, setBook] = useState<Book | null>(null);
   const [disponivelReserva, setDisponivelReserva] = useState(false);
   const [disponivelEmprestimo, setDisponivelEmprestimo] = useState(false);
+  const [mensagemIndisponivel, setMensagemIndisponivel] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [userRating, setUserRating] = useState<number | null>(null);
   const navigate = useNavigate();
@@ -61,6 +61,20 @@ const BookDetail = () => {
   useEffect(() => {
     const verificarDisponibilidade = async () => {
       try {
+        const responseEmprestimo = await fetch(
+          `http://127.0.0.1:5000/verificar_emprestimo/${id}`,
+          {
+            method: "GET",
+            headers: {
+              Authorization: `Bearer ${token}`,
+              "Content-Type": "application/json",
+            },
+          }
+        );
+        const dataEmprestimo = await responseEmprestimo.json();
+
+        setDisponivelEmprestimo(dataEmprestimo.disponivel);
+
         const responseReserva = await fetch(
           `http://127.0.0.1:5000/verificar_reserva/${id}`,
           {
@@ -74,18 +88,10 @@ const BookDetail = () => {
         const dataReserva = await responseReserva.json();
         setDisponivelReserva(dataReserva.disponivel);
 
-        const responseEmprestimo = await fetch(
-          `http://127.0.0.1:5000/verificar_emprestimo/${id}`,
-          {
-            method: "GET",
-            headers: {
-              Authorization: `Bearer ${token}`,
-              "Content-Type": "application/json",
-            },
-          }
-        );
-        const dataEmprestimo = await responseEmprestimo.json();
-        setDisponivelEmprestimo(dataEmprestimo.disponivel);
+        if (!dataReserva.disponivel && dataReserva.mensagem) {
+          setMensagemIndisponivel(dataReserva.mensagem);
+        }
+
       } catch (error) {
         console.error("Erro ao verificar disponibilidade:", error);
       }
@@ -197,7 +203,7 @@ const BookDetail = () => {
             cancelButtonText: "Procurar mais livros",
           }).then((result) => {
             if (result.isConfirmed) {
-              navigate("/carrinho");
+              navigate("/user?page=4");
             }
           });
         } catch (error) {
@@ -355,10 +361,21 @@ const BookDetail = () => {
                   </span>
                 </button>
               )}
-              {!disponivelEmprestimo && !disponivelReserva && (
-                <p className="montserrat-alternates-semibold">
-                  Você já emprestou este livro.
-                </p>
+              {!disponivelEmprestimo && !disponivelReserva && mensagemIndisponivel && (
+                <div
+                  style={{
+                    backgroundColor: "#f8d7da",
+                    color: "#721c24",
+                    border: "1px solid #f5c6cb",
+                    padding: "10px 15px",
+                    borderRadius: "8px",
+                    marginTop: "1rem",
+                    fontWeight: "bold",
+                    maxWidth: "400px"
+                  }}
+                >
+                  {mensagemIndisponivel}
+                </div>
               )}
             </div>
           </div>
