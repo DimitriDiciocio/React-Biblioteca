@@ -43,6 +43,12 @@
 .s-between {
   justify-content: space-between;
 }
+.s-between-y {
+  align-content: space-between;
+}
+.s-around-y {
+  align-content: space-around;
+}
 .s-around {
   justify-content: space-around;
 }
@@ -747,6 +753,18 @@ button:hover .button-text {
 }
 .input {
   height: 40px;
+  width: 25vw;
+  border-radius: 8px;
+  border: 2px solid hsl(236, 92%, 66%);
+  outline: none;
+  transition: 200ms ease-in;
+  padding-left: 1rem;
+  font-size: 13.3px;
+}
+
+.input-p {
+  height: 40px;
+  width: 100%;
   border-radius: 8px;
   border: 2px solid hsl(236, 92%, 66%);
   outline: none;
@@ -765,18 +783,11 @@ button:hover .button-text {
   opacity: 0.5;
 }
 
-.input:focus:invalid {
-  border-color: red;
-}
-
-.input:invalid {
-  border-color: red;
-}
-
 .form-group {
   display: flex;
   flex-direction: column;
   margin-bottom: 15px;
+  width: 100%;
 }
 
 .form-group label {
@@ -902,7 +913,7 @@ textarea.input {
 
 .nav-lateral a {
   display: block;
-  padding: 25px 25px;
+  padding: 1vw 2.5vw;
   color: #2c3e50;
   text-decoration: none;
   font-family: "Montserrat Alternates", sans-serif;
@@ -1140,8 +1151,6 @@ textarea.input {
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 100vh;
-  overflow: hidden;
 }
 
 .header-login {
@@ -1181,7 +1190,7 @@ textarea.input {
 
 .h2-cadastro {
   margin: 15px 0;
-  font-size: 22px;
+  font-size: 30px;
 }
 
 .inputGroup {
@@ -1335,9 +1344,9 @@ textarea.input {
   border-radius: 10px;
   box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
   text-align: center;
-  width: 400px;
+  width: 500px;
   border: 2px solid #0056d2;
-  margin-top: 70px;
+  margin: 70px 0px;
 }
 
 .image-upload {
@@ -1356,11 +1365,11 @@ textarea.input {
 }
 
 .w-656 {
-  width: 656px;
+  width: 32.81vw;
 }
 
 .w-192 {
-  width: 192px;
+  width: 10vw;
 }
 
 .none {
@@ -1743,4 +1752,17 @@ ul {
     width: 30px;
     height: 45px;
   }
+}
+
+
+.menor {
+  transform: scale(0.8)
+}
+
+.delius-regular {
+  font-family: "Delius", cursive;
+  font-weight: 600;
+  font-style: normal;
+  color: var(--preto);
+  font-size: xx-large;
 }

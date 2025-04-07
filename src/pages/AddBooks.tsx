@@ -116,6 +116,55 @@ const AddBooks: React.FC = () => {
     setImage(null);
   };
 
+  function preencherFormularioLivro(dados) {
+    const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+  
+    async function preencher() {
+      const form = document.querySelector("form");
+      if (!form) return alert("Formulário não encontrado!");
+  
+      // Função auxiliar para preencher campo de texto
+      const setInput = (name, value) => {
+        const input = form.querySelector(`[name="${name}"]`);
+        if (input) {
+          input.value = value;
+          input.dispatchEvent(new Event("input", { bubbles: true }));
+        }
+      };
+  
+      // Função auxiliar para selecionar um valor em <select>
+      const setSelect = (name, value) => {
+        const select = form.querySelector(`[name="${name}"]`);
+        if (select) {
+          select.value = value;
+          select.dispatchEvent(new Event("change", { bubbles: true }));
+        }
+      };
+  
+      // Preenchendo os campos
+      setInput("titulo", dados.titulo);
+      setInput("autor", dados.autor);
+      setInput("ano_publicado", dados.ano_publicado);
+      setInput("isbn", dados.isbn);
+      setSelect("idiomas", dados.idiomas);
+      setSelect("categoria", dados.categoria);
+      setInput("qtd_disponivel", dados.qtd_disponivel);
+      setInput("descricao", dados.descricao);
+  
+      // Tags - simulando inserção (supondo que seja input manual)
+      const tagsInput = document.querySelector(".form-group textarea"); // Apenas exemplo se não houver outro input de tags
+      if (tagsInput && dados.tags.length > 0) {
+        tagsInput.value += `\nTags: ${dados.tags.join(", ")}`;
+        tagsInput.dispatchEvent(new Event("input", { bubbles: true }));
+      }
+  
+      console.log("✅ Formulário preenchido com sucesso!");
+    }
+  
+    preencher();
+  }
+  
+
   if (isAllowed === null) return <p>Verificando permissão...</p>;
   if (!isAllowed) return null;
 
@@ -173,7 +222,7 @@ const AddBooks: React.FC = () => {
                   Título do Livro:
                 </label>
                 <input
-                  className="input montserrat-alternates-semibold"
+                  className="input-p montserrat-alternates-semibold"
                   type="text"
                   name="titulo"
                   placeholder="Título"
@@ -189,7 +238,7 @@ const AddBooks: React.FC = () => {
                     Autor:
                   </label>
                   <input
-                    className="input montserrat-alternates-semibold"
+                    className="input-p montserrat-alternates-semibold"
                     type="text"
                     name="autor"
                     placeholder="Autor"
@@ -200,10 +249,10 @@ const AddBooks: React.FC = () => {
                 </div>
                 <div className="form-group">
                   <label className="montserrat-alternates-semibold">
-                    Ano Publicado:
+                    Publicação:
                   </label>
                   <input
-                    className="input montserrat-alternates-semibold"
+                    className="input-p montserrat-alternates-semibold"
                     type="number"
                     name="ano_publicado"
                     placeholder="Ano"
@@ -218,7 +267,7 @@ const AddBooks: React.FC = () => {
                     ISBN:
                   </label>
                   <input
-                    className="input montserrat-alternates-semibold"
+                    className="input-p montserrat-alternates-semibold"
                     type="number"
                     name="isbn"
                     placeholder="ISBN"
@@ -228,13 +277,13 @@ const AddBooks: React.FC = () => {
                   />
                 </div>
               </div>
-              <div className="d-flex g-20 w-192">
+              <div className="d-flex g-20">
                 <div className="form-group">
                   <label className="montserrat-alternates-semibold">
                     Idioma:
                   </label>
                   <select
-                    className="input montserrat-alternates-semibold"
+                    className="input-p montserrat-alternates-semibold"
                     name="idiomas"
                     value={formData.idiomas}
                     onChange={handleChange}
@@ -253,7 +302,7 @@ const AddBooks: React.FC = () => {
                     Categoria:
                   </label>
                   <select
-                    className="input montserrat-alternates-semibold"
+                    className="input-p montserrat-alternates-semibold"
                     name="categoria"
                     value={formData.categoria}
                     onChange={handleChange}
@@ -271,7 +320,7 @@ const AddBooks: React.FC = () => {
                     Estoque:
                   </label>
                   <input
-                    className="input montserrat-alternates-semibold"
+                    className="input-p montserrat-alternates-semibold"
                     type="number"
                     name="qtd_disponivel"
                     placeholder="Quantidade"
@@ -303,7 +352,7 @@ const AddBooks: React.FC = () => {
                   Descrição:
                 </label>
                 <textarea
-                  className="input montserrat-alternates-semibold"
+                  className="input-p montserrat-alternates-semibold"
                   name="descricao"
                   placeholder="Descrição do livro"
                   value={formData.descricao}

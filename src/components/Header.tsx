@@ -2,6 +2,7 @@ import { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Modal from "./Modal";
 import Swal from "sweetalert2";
+import { Pointer } from "lucide-react";
 
 const Header: React.FC = () => {
   const navigate = useNavigate();
@@ -109,12 +110,12 @@ const Header: React.FC = () => {
     <div>
       <header>
         <div className="d-flex s-between center-y header">
-          <img
-            src="../assets/img/LIBRIS.png"
-            alt="LIBRIS"
-            className="logo"
+          <p
+            className="delius-regular"
             onClick={() => navigate("/")}
-          />
+            style={{cursor: "pointer"}}
+          >Read Raccoon
+          </p>
           <form
             onSubmit={(e) => {
               e.preventDefault();
@@ -173,11 +174,13 @@ const Header: React.FC = () => {
                   alt="Usuário"
                   onClick={toggleModal}
                   className="user-button"
+                  style={{cursor: "pointer"}}
                 />
               ) : (
                 <button
                   className="btn-secondary"
                   onClick={() => navigate("/login")}
+                  style={{cursor: "pointer"}}
                 >
                   Sign In
                 </button>

@@ -121,25 +121,25 @@ const Config: React.FC = () => {
         <aside className="sidebar">
           <nav className="nav-lateral">
             <ul>
-              <li onClick={() => switchPage(1)}>
+              <li onClick={() => navigate("/user?page=1")}>
                 <a className="active">Início</a>
               </li>
-              <li onClick={() => switchPage(2)}>
+              <li onClick={() => navigate("/user?page=2")}>
                 <a>Informações Pessoais</a>
               </li>
-              <li onClick={() => switchPage(3)}>
+              <li onClick={() => navigate("/user?page=3")}>
                 <a>Segurança</a>
               </li>
-              <li onClick={() => switchPage(4)}>
+              <li onClick={() => navigate("/user?page=4")}>
                 <a>Gerenciar Livros</a>
               </li>
-              <li onClick={() => switchPage(5)}>
+              <li onClick={() => navigate("/user?page=5")}>
                 <a>Minha Lista</a>
               </li>
-              <li onClick={() => switchPage(6)}>
+              <li onClick={() => navigate("/user?page=6")}>
                 <a>Histórico</a>
               </li>
-              <div className="space-xxbig-y"></div>
+              <div className="space-sm-y"></div>
               <li className="highlight" onClick={() => navigate("/sair")}>
                 <a>Sair</a>
               </li>
@@ -163,8 +163,6 @@ const Config: React.FC = () => {
             </form>
           </div>
           <div className="page">
-            <p>Informações Pessoais</p>
-            <p>Informações sobre você e suas preferências</p>
             <EditarUsuario />
           </div>
           <div className="page">
@@ -177,7 +175,6 @@ const Config: React.FC = () => {
             <p>Minha Lista</p>
           </div>
           <div className="page">
-            <p>Histórico</p>
             <PuxarHistorico />
           </div>
         </section>

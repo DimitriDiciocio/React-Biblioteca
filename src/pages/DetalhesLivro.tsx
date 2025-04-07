@@ -145,7 +145,7 @@ const BookDetail = () => {
             cancelButtonText: "Procurar mais livros",
           }).then((result) => {
             if (result.isConfirmed) {
-              navigate("/carrinho");
+              navigate("/user?page=4");
             }
           });
         } catch (error) {

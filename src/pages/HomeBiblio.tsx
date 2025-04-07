@@ -81,32 +81,34 @@ const HomeBiblio: React.FC = () => {
       <main className="background-blue">
         <aside className="sidebar">
           <nav className="nav-lateral">
-            <ul>
-              <li onClick={() => switchPage(1)}>
-                <a className="active">Início</a>
-              </li>
-              <li onClick={() => switchPage(2)}>
-                <a>Cadastrar Usuários</a>
-              </li>
-              <li onClick={() => switchPage(3)}>
-                <a>Gerenciar Usuários</a>
-              </li>
-              <li onClick={() => switchPage(4)}>
-                <a>Cadastrar Livros</a>
-              </li>
-              <li onClick={() => switchPage(5)}>
-                <a>Gerenciar Livros</a>
-              </li>
-              <li onClick={() => switchPage(6)}>
-                <a>Movimentações</a>
-              </li>
-              <li onClick={() => switchPage(7)}>
-                <a>Relatórios</a>
-              </li>
-              <li onClick={() => switchPage(8)}>
-                <a>Configurações</a>
-              </li>
-              <div className="space-xxbig-y"></div>
+            <ul className="">
+              <div>
+                <li onClick={() => navigate("/home_biblio?page=1")}>
+                  <a className="active">Início</a>
+                </li>
+                <li onClick={() => navigate("/home_biblio?page=2")}>
+                  <a>Cadastrar Usuários</a>
+                </li>
+                <li onClick={() => navigate("/home_biblio?page=3")}>
+                  <a>Gerenciar Usuários</a>
+                </li>
+                <li onClick={() => navigate("/home_biblio?page=4")}>
+                  <a>Cadastrar Livros</a>
+                </li>
+                <li onClick={() => navigate("/home_biblio?page=5")}>
+                  <a>Gerenciar Livros</a>
+                </li>
+                <li onClick={() => navigate("/home_biblio?page=6")}>
+                  <a>Movimentações</a>
+                </li>
+                <li onClick={() => navigate("/home_biblio?page=7")}>
+                  <a>Relatórios</a>
+                </li>
+                <li onClick={() => navigate("/home_biblio?page=8")}>
+                  <a>Configurações</a>
+                </li>
+              </div>
+              <div className="space-sm-y"></div>
               <li className="highlight" onClick={() => navigate("/sair")}>
                 <a>Sair</a>
               </li>
@@ -129,7 +131,7 @@ const HomeBiblio: React.FC = () => {
                 />
               </div>
             </form>
-            <div className="d-flex g-20 m-top-70">
+            <div className="d-flex g-20 m-top-70 flex-wrap">
               {filteredButtons.map((button, index) => (
                 <button
                   key={index}

@@ -175,9 +175,10 @@ const CadastroUsuario: React.FC = () => {
                 borderRadius: "50%",
                 width: "450px",
                 height: "450px",
-                position: "relative",
+                position: "static",
                 borderStyle: "dashed",
                 padding: "0",
+                marginLeft: "240px",
               }}
             >
               <input {...getInputProps()} />
@@ -201,9 +202,9 @@ const CadastroUsuario: React.FC = () => {
                       handleRemoveImage();
                     }}
                     style={{
-                      position: "absolute",
-                      top: "10px",
-                      right: "10px",
+                      position: "relative",
+                      top: "-35vw",
+                      right: "-30vw",
                       backgroundColor: "transparent",
                       border: "none",
                       cursor: "pointer",
