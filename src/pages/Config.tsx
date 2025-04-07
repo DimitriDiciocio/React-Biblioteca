@@ -121,26 +121,26 @@ const Config: React.FC = () => {
         <aside className="sidebar">
           <nav className="nav-lateral">
             <ul>
-              <li onClick={() => navigate("/user?page=1")}>
+              <li onClick={() => navigate("/user?page=1")} className="pointer">
                 <a className="active">Início</a>
               </li>
-              <li onClick={() => navigate("/user?page=2")}>
+              <li onClick={() => navigate("/user?page=2")} className="pointer">
                 <a>Informações Pessoais</a>
               </li>
-              <li onClick={() => navigate("/user?page=3")}>
+              <li onClick={() => navigate("/user?page=3")} className="pointer">
                 <a>Segurança</a>
               </li>
-              <li onClick={() => navigate("/user?page=4")}>
+              <li onClick={() => navigate("/user?page=4")} className="pointer">
                 <a>Gerenciar Livros</a>
               </li>
-              <li onClick={() => navigate("/user?page=5")}>
+              <li onClick={() => navigate("/user?page=5")} className="pointer">
                 <a>Minha Lista</a>
               </li>
-              <li onClick={() => navigate("/user?page=6")}>
+              <li onClick={() => navigate("/user?page=6")} className="pointer">
                 <a>Histórico</a>
               </li>
               <div className="space-sm-y"></div>
-              <li className="highlight" onClick={() => navigate("/sair")}>
+              <li className="highlight pointer" onClick={() => navigate("/sair")} >
                 <a>Sair</a>
               </li>
             </ul>

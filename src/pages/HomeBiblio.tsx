@@ -83,33 +83,33 @@ const HomeBiblio: React.FC = () => {
           <nav className="nav-lateral">
             <ul className="">
               <div>
-                <li onClick={() => navigate("/home_biblio?page=1")}>
+                <li onClick={() => navigate("/home_biblio?page=1")} className="pointer">
                   <a className="active">Início</a>
                 </li>
-                <li onClick={() => navigate("/home_biblio?page=2")}>
+                <li onClick={() => navigate("/home_biblio?page=2")} className="pointer">
                   <a>Cadastrar Usuários</a>
                 </li>
-                <li onClick={() => navigate("/home_biblio?page=3")}>
+                <li onClick={() => navigate("/home_biblio?page=3")} className="pointer">
                   <a>Gerenciar Usuários</a>
                 </li>
-                <li onClick={() => navigate("/home_biblio?page=4")}>
+                <li onClick={() => navigate("/home_biblio?page=4")} className="pointer">
                   <a>Cadastrar Livros</a>
                 </li>
-                <li onClick={() => navigate("/home_biblio?page=5")}>
+                <li onClick={() => navigate("/home_biblio?page=5")} className="pointer">
                   <a>Gerenciar Livros</a>
                 </li>
-                <li onClick={() => navigate("/home_biblio?page=6")}>
+                <li onClick={() => navigate("/home_biblio?page=6")} className="pointer">
                   <a>Movimentações</a>
                 </li>
-                <li onClick={() => navigate("/home_biblio?page=7")}>
+                <li onClick={() => navigate("/home_biblio?page=7")} className="pointer">
                   <a>Relatórios</a>
                 </li>
-                <li onClick={() => navigate("/home_biblio?page=8")}>
+                <li onClick={() => navigate("/home_biblio?page=8")} className="pointer">
                   <a>Configurações</a>
                 </li>
               </div>
               <div className="space-sm-y"></div>
-              <li className="highlight" onClick={() => navigate("/sair")}>
+              <li className="highlight pointer" onClick={() => navigate("/sair")}>
                 <a>Sair</a>
               </li>
             </ul>

@@ -21,6 +21,7 @@ interface Book {
   ano_publicado: string;
   imagem: string;
   avaliacao: number;
+  idiomas: string;
 }
 
 const BookDetail = () => {
@@ -268,11 +269,25 @@ const BookDetail = () => {
               alt={book.titulo}
             />
           </div>
-          <div>
+          <div className="d-flex-column">
             <div className="d-flex s-between center-y m-top">
               <p className="montserrat-alternates-semibold big-size">
                 {book.titulo}
               </p>
+            </div>
+            <div>
+              <div className="d-flex">
+                {book.selectedTags.map((tag) => (
+                  <p
+                    key={tag.id}
+                    className="tag montserrat-alternates-semibold m-right"
+                  >
+                    {tag.nome}
+                  </p>
+                ))}
+              </div>
+            </div>
+            <div>
               <div className="d-flex center-y">
                 <div className="rating">
                   {[5, 4, 3, 2, 1].map((star) => (
@@ -304,36 +319,33 @@ const BookDetail = () => {
                     </React.Fragment>
                   ))}
                 </div>
+                
                 <div>
                   <p className="montserrat-alternates-semibold">{book.avaliacao}</p>
                 </div>
               </div>
             </div>
             <div className="d-flex s-between">
-              <p className="montserrat-alternates-semibold">{book.autor}</p>
+              <p className="montserrat-alternates-semibold"><strong>Autor: </strong>{book.autor}</p>
+              </div>
+              <div>
               <p className="montserrat-alternates-semibold">
-                {book.ano_publicado}
+              <strong>Ano Publicado: </strong> {book.ano_publicado}
               </p>
-              <p className="montserrat-alternates-semibold">{book.isbn}</p>
+              </div>
+              <div>
+              <p className="montserrat-alternates-semibold"><strong>ISBN: </strong> {book.isbn}</p>
             </div>
             <div className="d-flex s-between">
-              <p className="montserrat-alternates-semibold">Pt-BR</p>
-              <p className="montserrat-alternates-semibold">{book.categoria}</p>
-              <p className="montserrat-alternates-semibold">
-                Estoque Disponível: {book.qtd_disponivel}
-              </p>
+              <p className="montserrat-alternates-semibold"><strong>Idioma: </strong> {book.idiomas}</p>
+              </div>
+              <div>
+              <p className="montserrat-alternates-semibold"><strong>Categoria: </strong> {book.categoria}</p>
             </div>
             <div>
-              <div className="d-flex m-top">
-                {book.selectedTags.map((tag) => (
-                  <p
-                    key={tag.id}
-                    className="tag montserrat-alternates-semibold m-right"
-                  >
-                    {tag.nome}
-                  </p>
-                ))}
-              </div>
+              <p className="montserrat-alternates-semibold">
+              <strong>Estoque Disponível: </strong> {book.qtd_disponivel}
+              </p>
             </div>
             <div>
               <p className="montserrat-alternates-semibold m-top width-desc">
