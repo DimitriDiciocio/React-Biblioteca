@@ -1,5 +1,13 @@
 import React, { useEffect, useState } from "react";
-import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from "recharts";
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  Tooltip,
+  ResponsiveContainer,
+  CartesianGrid,
+} from "recharts";
 
 interface Usuario {
   id: number;
@@ -9,8 +17,12 @@ interface Usuario {
   endereco: string;
 }
 
-export default function RelatorioUsuarios() {
+interface DadosGrafico {
+  estado: string;
+  quantidade: number;
+}
 
+export default function RelatorioUsuarios() {
   const [usuarios, setUsuarios] = useState<Usuario[]>([]);
   const [loading, setLoading] = useState(false);
 
@@ -27,23 +39,87 @@ export default function RelatorioUsuarios() {
     }
   };
 
+  const gerarPDF = async () => {
+    try {
+      const response = await fetch("http://localhost:5000/relatorio/gerar/usuarios", {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error("Falha ao gerar o relatório de usuários.");
+      }
+
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+
+      const link = document.createElement("a");
+      link.href = url;
+      link.setAttribute("download", "relatorio_usuarios.pdf");
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+    } catch (error) {
+      console.error("Erro ao gerar relatório de usuários:", error);
+    }
+  };
+
   useEffect(() => {
     buscarUsuarios();
   }, []);
 
   return (
     <div style={{ padding: "24px", maxWidth: "1000px", margin: "0 auto" }}>
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "20px" }}>
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          marginBottom: "20px",
+        }}
+      >
         <h1 style={{ fontSize: "24px", fontWeight: "bold" }}>Relatório de Usuários</h1>
-        <button 
-          onClick={buscarUsuarios} 
-          disabled={loading} 
-          style={{ padding: "8px 16px", backgroundColor: "#2473D9", color: "white", border: "none", borderRadius: "4px", cursor: "pointer" }}>
-          {loading ? "Atualizando..." : "Atualizar"}
-        </button>
+        <div style={{ display: "flex", gap: "10px" }}>
+          <button
+            onClick={gerarPDF}
+            style={{
+              padding: "8px 16px",
+              backgroundColor: "#2473D9",
+              color: "white",
+              border: "none",
+              borderRadius: "4px",
+              cursor: "pointer",
+            }}
+          >
+            Gerar PDF
+          </button>
+          <button
+            onClick={buscarUsuarios}
+            disabled={loading}
+            style={{
+              padding: "8px 16px",
+              backgroundColor: "#2473D9",
+              color: "white",
+              border: "none",
+              borderRadius: "4px",
+              cursor: "pointer",
+            }}
+          >
+            {loading ? "Atualizando..." : "Atualizar"}
+          </button>
+        </div>
       </div>
 
-      <div style={{ overflowX: "auto", border: "1px solid #ddd", borderRadius: "8px", marginBottom: "24px" }}>
+      <div
+        style={{
+          overflowX: "auto",
+          border: "1px solid #ddd",
+          borderRadius: "8px",
+          marginBottom: "24px",
+        }}
+      >
         <table style={{ width: "100%", borderCollapse: "collapse" }}>
           <thead>
             <tr style={{ backgroundColor: "#f0f0f0" }}>
@@ -67,7 +143,9 @@ export default function RelatorioUsuarios() {
       </div>
 
       <div style={{ padding: "16px", border: "1px solid #ddd", borderRadius: "8px" }}>
-        <h2 style={{ fontSize: "18px", fontWeight: "bold", marginBottom: "16px" }}>Usuários por Estado (simulado)</h2>
+        <h2 style={{ fontSize: "18px", fontWeight: "bold", marginBottom: "16px" }}>
+          Usuários por Estado (simulado)
+        </h2>
         <ResponsiveContainer width="100%" height={300}>
           <BarChart data={gerarDadosGrafico(usuarios)}>
             <CartesianGrid strokeDasharray="3 3" />
@@ -82,16 +160,14 @@ export default function RelatorioUsuarios() {
   );
 }
 
-interface DadosGrafico {
-    estado: string;
-    quantidade: number;
-}
-
 function gerarDadosGrafico(usuarios: Usuario[]): DadosGrafico[] {
-    const estados: Record<string, number> = {};
-    usuarios.forEach(({ endereco }) => {
-        const estado = endereco?.split(",").pop()?.trim() || "Desconhecido";
-        estados[estado] = (estados[estado] || 0) + 1;
-    });
-    return Object.entries(estados).map(([estado, quantidade]) => ({ estado, quantidade }));
+  const estados: Record<string, number> = {};
+  usuarios.forEach(({ endereco }) => {
+    const estado = endereco?.split(",").pop()?.trim() || "Desconhecido";
+    estados[estado] = (estados[estado] || 0) + 1;
+  });
+  return Object.entries(estados).map(([estado, quantidade]) => ({
+    estado,
+    quantidade,
+  }));
 }

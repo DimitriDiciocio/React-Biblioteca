@@ -14,10 +14,12 @@ const HomeBiblio: React.FC = () => {
   const navigate = useNavigate();
   const isAllowed = usePermission(2);
   const [search, setSearch] = useState("");
-  const page = Number(new URLSearchParams(window.location.search).get("page"));
   const [hasAdminPermission, setHasAdminPermission] = useState(false);
   const [isPermissionChecked, setIsPermissionChecked] = useState(false);
+  const [isReadyToRender, setIsReadyToRender] = useState(false);
+  const page = Number(new URLSearchParams(window.location.search).get("page")) || 1;
 
+  // Verifica permissão de administrador
   useEffect(() => {
     async function checkPermission() {
       try {
@@ -25,20 +27,17 @@ const HomeBiblio: React.FC = () => {
           headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
         });
 
-        const responseData = await response.json();
+        const data = await response.json();
 
         if (response.ok) {
           setHasAdminPermission(true);
         } else {
-          if (responseData.verificacao === 4) {
+          if (data.verificacao === 4) {
             setHasAdminPermission(false);
-          } else if (
-            responseData.verificacao === 1 ||
-            responseData.verificacao === 2 ||
-            responseData.verificacao === 3
-          ) {
+          } else if ([1, 2, 3].includes(data.verificacao)) {
             localStorage.removeItem("token");
             localStorage.removeItem("userId");
+            navigate("/login");
           }
         }
       } catch {
@@ -51,65 +50,38 @@ const HomeBiblio: React.FC = () => {
     checkPermission();
   }, [navigate]);
 
+  // Aguarda permissão + DOM montado
   useEffect(() => {
-    switchPage(page);
-  }, [page]);
+    if (isPermissionChecked && isAllowed !== null) {
+      // Garante que o DOM da sidebar e páginas esteja montado
+      const timeout = setTimeout(() => {
+        setIsReadyToRender(true);
+      }, 50); // pequeno delay para garantir render completo
+
+      return () => clearTimeout(timeout);
+    }
+  }, [isPermissionChecked, isAllowed]);
+
+  // Quando estiver pronto, aplica a página correta
+  useEffect(() => {
+    if (isReadyToRender) {
+      switchPage(page);
+    }
+  }, [isReadyToRender, page]);
 
   const switchPage = (page: number) => {
-    document.querySelectorAll(".nav-lateral li").forEach((li) => {
-      li.querySelector("a")?.classList.remove("active");
+    document.querySelectorAll(".nav-lateral li a").forEach((a) => {
+      a.classList.remove("active");
     });
 
-    const activeNavItem = document.querySelector(`.nav-lateral li[data-page="${page}"] a`);
-    if (activeNavItem) activeNavItem.classList.add("active");
+    const activeNav = document.querySelector(`.nav-lateral li[data-page="${page}"] a`);
+    if (activeNav) activeNav.classList.add("active");
 
-    document.querySelectorAll(".page").forEach((pageElement) => {
-      pageElement.classList.remove("active");
-    });
+    document.querySelectorAll(".page").forEach((p) => p.classList.remove("active"));
 
     const activePage = document.querySelector(`.page[data-page="${page}"]`);
     if (activePage) activePage.classList.add("active");
   };
-
-  const filteredButtons = [
-    hasAdminPermission && {
-      title: "Cadastrar Usuário",
-      description: "Aqui você pode cadastrar um novo usuário",
-      onClick: () => switchPage(2),
-    },
-    hasAdminPermission && {
-      title: "Gerenciar Usuários",
-      description: "Aqui você pode ver a lista de usuários e editar suas informações",
-      onClick: () => switchPage(3),
-    },
-    {
-      title: "Cadastrar Livro",
-      description: "Aqui você pode cadastrar um novo livro na Libris",
-      onClick: () => switchPage(4),
-    },
-    {
-      title: "Gerenciar Livros",
-      description: "Aqui você pode ver os livros e editar suas informações",
-      onClick: () => switchPage(5),
-    },
-    {
-      title: "Movimentações",
-      description: "Aqui você pode acompanhar as movimentações da biblioteca",
-      onClick: () => switchPage(6),
-    },
-    {
-      title: "Relatórios",
-      description: "Aqui você poderá gerar um relatório dos usuários e livros no formato PDF",
-      onClick: () => switchPage(7),
-    },
-    hasAdminPermission && {
-      title: "Configurações",
-      description: "Aqui você pode ajustar as configurações do sistema",
-      onClick: () => switchPage(8),
-    },
-  ]
-    .filter(Boolean)
-    .filter((button) => button!.title.toLowerCase().includes(search.toLowerCase()));
 
   const Sair = () => {
     localStorage.removeItem("id_user");
@@ -117,8 +89,70 @@ const HomeBiblio: React.FC = () => {
     navigate("/login");
   };
 
-  if (isAllowed === null) return <p>Verificando permissão...</p>;
-  if (!isAllowed) return null;
+  const filteredButtons = [
+    hasAdminPermission && {
+      title: "Cadastrar Usuário",
+      description: "Aqui você pode cadastrar um novo usuário",
+      onClick: () => navigate("/home_biblio?page=2"),
+    },
+    hasAdminPermission && {
+      title: "Gerenciar Usuários",
+      description: "Aqui você pode ver a lista de usuários e editar suas informações",
+      onClick: () => navigate("/home_biblio?page=3"),
+    },
+    {
+      title: "Cadastrar Livro",
+      description: "Aqui você pode cadastrar um novo livro na Libris",
+      onClick: () => navigate("/home_biblio?page=4"),
+    },
+    {
+      title: "Gerenciar Livros",
+      description: "Aqui você pode ver os livros e editar suas informações",
+      onClick: () => navigate("/home_biblio?page=5"),
+    },
+    {
+      title: "Movimentações",
+      description: "Aqui você pode acompanhar as movimentações da biblioteca",
+      onClick: () => navigate("/home_biblio?page=6"),
+    },
+    {
+      title: "Relatórios",
+      description: "Aqui você poderá gerar um relatório dos usuários e livros no formato PDF",
+      onClick: () => navigate("/home_biblio?page=7"),
+    },
+    hasAdminPermission && {
+      title: "Configurações",
+      description: "Aqui você pode ajustar as configurações do sistema",
+      onClick: () => navigate("/home_biblio?page=8"),
+    },
+  ]
+    .filter(Boolean)
+    .filter((button) => button!.title.toLowerCase().includes(search.toLowerCase()));
+
+  if (!isPermissionChecked || isAllowed === null || !isReadyToRender) {
+    return (
+      <div className="d-flex center-x center-y" style={{height: "100vh"}}>
+        <div aria-label="Orange and tan hamster running in a metal wheel" role="img" className="wheel-and-hamster">
+          <div className="wheel"></div>
+          <div className="hamster">
+            <div className="hamster__body">
+              <div className="hamster__head">
+                <div className="hamster__ear"></div>
+                <div className="hamster__eye"></div>
+                <div className="hamster__nose"></div>
+              </div>
+              <div className="hamster__limb hamster__limb--fr"></div>
+              <div className="hamster__limb hamster__limb--fl"></div>
+              <div className="hamster__limb hamster__limb--br"></div>
+              <div className="hamster__limb hamster__limb--bl"></div>
+              <div className="hamster__tail"></div>
+            </div>
+          </div>
+          <div className="spoke"></div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div>

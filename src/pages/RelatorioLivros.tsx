@@ -38,6 +38,33 @@ export default function RelatorioLivros() {
     }
   };
 
+  const relatorioPDF = async () => {
+    try {
+      const response = await fetch("http://localhost:5000/relatorio/gerar/livros", {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error("Falha ao gerar o relatório.");
+      }
+
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+
+      const link = document.createElement("a");
+      link.href = url;
+      link.setAttribute("download", "relatorio_livros.pdf");
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+    } catch (error) {
+      console.error("Erro ao gerar relatório:", error);
+    }
+  };
+
   useEffect(() => {
     buscarLivros();
   }, []);
@@ -46,12 +73,35 @@ export default function RelatorioLivros() {
     <div style={{ padding: "24px", maxWidth: "1000px", margin: "0 auto" }}>
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "20px" }}>
         <h1 style={{ fontSize: "24px", fontWeight: "bold" }}>Relatório de Livros</h1>
-        <button 
-          onClick={buscarLivros} 
-          disabled={loading} 
-          style={{ padding: "8px 16px", backgroundColor: "#2473D9", color: "white", border: "none", borderRadius: "4px", cursor: "pointer" }}>
-          {loading ? "Atualizando..." : "Atualizar"}
-        </button>
+        <div style={{ display: "flex", gap: "10px" }}>
+          <button
+            onClick={relatorioPDF}
+            style={{
+              padding: "8px 16px",
+              backgroundColor: "#2473D9",
+              color: "white",
+              border: "none",
+              borderRadius: "4px",
+              cursor: "pointer",
+            }}
+          >
+            <span>Gerar PDF</span>
+          </button>
+          <button
+            onClick={buscarLivros}
+            disabled={loading}
+            style={{
+              padding: "8px 16px",
+              backgroundColor: "#2473D9",
+              color: "white",
+              border: "none",
+              borderRadius: "4px",
+              cursor: "pointer",
+            }}
+          >
+            {loading ? "Atualizando..." : "Atualizar"}
+          </button>
+        </div>
       </div>
 
       <div style={{ overflowX: "auto", border: "1px solid #ddd", borderRadius: "8px", marginBottom: "24px" }}>
