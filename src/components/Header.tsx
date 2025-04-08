@@ -147,7 +147,7 @@ const Header: React.FC = () => {
           <div>
             <nav className="d-flex">
               {hasBibliotecarioPermission && (
-                <div onClick={() => navigate("/home_biblio")}>
+                <div onClick={() => navigate("/home_biblio?page=1")}>
                   <button className="button">
                     <svg
                       className="settings-btn"

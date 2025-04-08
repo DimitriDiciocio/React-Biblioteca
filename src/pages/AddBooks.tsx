@@ -4,7 +4,6 @@ import { useDropzone } from "react-dropzone";
 import "../index.css";
 import Swal from "sweetalert2";
 import Tags from "../components/Tags";
-import Header from "../components/Header";
 import { usePermission } from "../components/usePermission";
 
 interface Tag {

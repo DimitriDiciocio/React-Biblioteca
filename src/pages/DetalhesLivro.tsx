@@ -237,21 +237,8 @@ const BookDetail = () => {
         },
         body: JSON.stringify({ valor: newRating }),
       });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        Swal.fire(
-          "Erro",
-          errorData.message || "Erro ao enviar avaliação",
-          "error"
-        );
-        return;
-      }
-
-      Swal.fire("Sucesso", "Avaliação enviada com sucesso!", "success");
     } catch (error) {
       console.error("Erro ao enviar avaliação:", error);
-      Swal.fire("Erro", "Ocorreu um erro ao enviar a avaliação.", "error");
     }
   };
 
