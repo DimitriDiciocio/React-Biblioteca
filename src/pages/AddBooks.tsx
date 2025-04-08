@@ -324,7 +324,7 @@ const AddBooks: React.FC = () => {
                     onChange={handleChange}
                     required
                   >
-                    <option value="">Selecione uma categoria</option>
+                    <option value="">Opções</option>
                     <option value="Livro">Livro</option>
                     <option value="Artigo Científico">Artigo Científico</option>
                     <option value="Jornal">Jornal</option>
@@ -352,7 +352,6 @@ const AddBooks: React.FC = () => {
                   style={{
                     width: "913px",
                     maxWidth: "100%",
-                    height: "50px",
                     padding: "0",
                   }}
                 >

@@ -734,6 +734,7 @@ button:hover .button-text {
   font-family: "Montserrat Alternates", sans-serif;
   font-size: medium;
   padding: 5px;
+  text-align: center;
 }
 .dropzone .dz-message {
   display: flex;
