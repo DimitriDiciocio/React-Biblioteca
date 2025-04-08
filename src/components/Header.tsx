@@ -183,12 +183,14 @@ const Header: React.FC = () => {
                   style={{cursor: "pointer"}}
                 />
               ) : (
-                <button
-                  className="btn-secondary"
-                  onClick={() => navigate("/login")}
-                  style={{cursor: "pointer"}}
-                >
-                  Sign In
+                <button className="button-sign-in"
+                onClick={() => navigate("/login")}
+                >  
+                    Sign in
+                    <div className="arrow-wrapper">
+                        <div className="arrow"></div>
+                
+                    </div>
                 </button>
               )}
             </nav>
