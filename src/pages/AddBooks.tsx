@@ -162,6 +162,23 @@ const AddBooks: React.FC = () => {
   
     preencher();
   }
+
+  const handleCancelar = () => {
+    setFormData({
+      titulo: "",
+      autor: "",
+      categoria: "",
+      isbn: "",
+      qtd_disponivel: "",
+      descricao: "",
+      idiomas: "",
+      ano_publicado: "",
+    });
+    setImage(null);
+    setImagemPreview(null);
+    setSelectedTags([]);
+  };
+  
   
 
   if (isAllowed === null) return <p>Verificando permissão...</p>;
@@ -357,6 +374,7 @@ const AddBooks: React.FC = () => {
                   value={formData.descricao}
                   onChange={handleChange}
                   required
+                  maxLength={600}
                 ></textarea>
               </div>
 
@@ -368,11 +386,11 @@ const AddBooks: React.FC = () => {
                   <span>Adicionar</span>
                 </button>
                 <button
-                  type="reset"
+                  type="button"
                   className="salvar cancelar montserrat-alternates-semibold"
-                  onClick={() => navigate("/")}
+                  onClick={handleCancelar}
                 >
-                  <span>Cancelar</span>
+                  <span>Limpar</span>
                 </button>
               </div>
             </form>
