@@ -1221,6 +1221,18 @@ textarea.input {
   text-align: left;
 }
 
+.inputGroup select {
+  font-size: 100%;
+  padding: 0.8em;
+  padding-right: 40px;
+  outline: none;
+  border: 2px solid #0056d2;
+  background-color: transparent;
+  border-radius: 20px;
+  width: 100%;
+  text-align: left;
+}
+
 .inputGroup label {
   font-size: 100%;
   position: absolute;

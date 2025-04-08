@@ -168,7 +168,7 @@ const Cadastro: React.FC = () => {
       <main className="container-cadastro">
         <div
           {...getRootProps()}
-          className="image-upload menor"
+          className="image-upload"
           style={{
             border: "2px dashed #ccc",
             textAlign: "center",
@@ -203,7 +203,7 @@ const Cadastro: React.FC = () => {
               </button>
             </>
           ) : (
-            <p className="m-top-70 menor">
+            <p className="m-top-70">
               Arraste uma imagem ou clique para selecionar
             </p>
           )}
@@ -211,7 +211,7 @@ const Cadastro: React.FC = () => {
         <h2 className="h2-cadastro">Cadastro</h2>
 
         <form onSubmit={handleCadastro} className="d-flex-column">
-          <div className="d-flex gap-5 menor">
+          <div className="d-flex gap-5">
             <div>
               <div className="inputGroup">
                 <input
@@ -234,7 +234,6 @@ const Cadastro: React.FC = () => {
                 <label htmlFor="name">E-mail:</label>
               </div>
               <div className="inputGroup">
-                <label>Estado (UF):</label>
                 <select
                   value={uf}
                   onChange={(e) => setUf(e.target.value)}
@@ -249,7 +248,6 @@ const Cadastro: React.FC = () => {
                 </select>
               </div>
               <div className="inputGroup">
-                <label>Cidade:</label>
                 <select
                   value={cidade}
                   onChange={(e) => setCidade(e.target.value)}

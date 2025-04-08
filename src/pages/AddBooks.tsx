@@ -373,6 +373,7 @@ const AddBooks: React.FC = () => {
                   placeholder="Descrição do livro"
                   value={formData.descricao}
                   onChange={handleChange}
+                  maxLength={600}
                   required
                   maxLength={600}
                 ></textarea>
