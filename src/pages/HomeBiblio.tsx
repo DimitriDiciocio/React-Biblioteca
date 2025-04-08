@@ -60,7 +60,8 @@ const HomeBiblio: React.FC = () => {
     },
     {
       title: "Relatórios",
-      description: "Aqui você poderá gerar um relatório dos usuários e livros no formato PDF",
+      description:
+        "Aqui você poderá gerar um relatório dos usuários e livros no formato PDF",
       onClick: () => switchPage(7),
     },
     {
@@ -71,6 +72,13 @@ const HomeBiblio: React.FC = () => {
   ].filter((button) =>
     button.title.toLowerCase().includes(search.toLowerCase())
   );
+
+  const Sair = () => {
+    localStorage.removeItem("id_user");
+    localStorage.removeItem("token");
+    navigate("/login")
+  }
+
 
   if (isAllowed === null) return <p>Verificando permissão...</p>;
   if (!isAllowed) return null;
@@ -83,33 +91,60 @@ const HomeBiblio: React.FC = () => {
           <nav className="nav-lateral">
             <ul className="">
               <div>
-                <li onClick={() => navigate("/home_biblio?page=1")} className="pointer">
+                <li
+                  onClick={() => navigate("/home_biblio?page=1")}
+                  className="pointer"
+                >
                   <a className="active">Início</a>
                 </li>
-                <li onClick={() => navigate("/home_biblio?page=2")} className="pointer">
+                <li
+                  onClick={() => navigate("/home_biblio?page=2")}
+                  className="pointer"
+                >
                   <a>Cadastrar Usuários</a>
                 </li>
-                <li onClick={() => navigate("/home_biblio?page=3")} className="pointer">
+                <li
+                  onClick={() => navigate("/home_biblio?page=3")}
+                  className="pointer"
+                >
                   <a>Gerenciar Usuários</a>
                 </li>
-                <li onClick={() => navigate("/home_biblio?page=4")} className="pointer">
+                <li
+                  onClick={() => navigate("/home_biblio?page=4")}
+                  className="pointer"
+                >
                   <a>Cadastrar Livros</a>
                 </li>
-                <li onClick={() => navigate("/home_biblio?page=5")} className="pointer">
+                <li
+                  onClick={() => navigate("/home_biblio?page=5")}
+                  className="pointer"
+                >
                   <a>Gerenciar Livros</a>
                 </li>
-                <li onClick={() => navigate("/home_biblio?page=6")} className="pointer">
+                <li
+                  onClick={() => navigate("/home_biblio?page=6")}
+                  className="pointer"
+                >
                   <a>Movimentações</a>
                 </li>
-                <li onClick={() => navigate("/home_biblio?page=7")} className="pointer">
+                <li
+                  onClick={() => navigate("/home_biblio?page=7")}
+                  className="pointer"
+                >
                   <a>Relatórios</a>
                 </li>
-                <li onClick={() => navigate("/home_biblio?page=8")} className="pointer">
+                <li
+                  onClick={() => navigate("/home_biblio?page=8")}
+                  className="pointer"
+                >
                   <a>Configurações</a>
                 </li>
               </div>
               <div className="space-sm-y"></div>
-              <li className="highlight pointer" onClick={() => navigate("/sair")}>
+              <li
+                className="highlight pointer"
+                onClick={() => Sair()}
+              >
                 <a>Sair</a>
               </li>
             </ul>

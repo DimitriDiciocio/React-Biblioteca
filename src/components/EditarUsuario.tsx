@@ -9,15 +9,20 @@ const EditarUsuario: React.FC = () => {
   const [nome, setNome] = useState("");
   const [email, setEmail] = useState("");
   const [telefone, setTelefone] = useState("");
-  const [endereco, setEndereco] = useState("");
   const [imagem, setImagem] = useState<File | null>(null);
   const [imagemPreview, setImagemPreview] = useState<string | null>(null);
   const [isEditing, setIsEditing] = useState(false);
   const [originalNome, setOriginalNome] = useState("");
   const [originalEmail, setOriginalEmail] = useState("");
   const [originalTelefone, setOriginalTelefone] = useState("");
-  const [originalEndereco, setOriginalEndereco] = useState("");
   const [cidadesBrasil, setCidadesBrasil] = useState<string[]>([]);
+  const [uf, setUf] = useState("");
+  const [cidade, setCidade] = useState("");
+  const [ufsBrasil, setUfsBrasil] = useState<string[]>([]);
+  const [endereco, setEndereco] = useState("");
+  const [originalEndereco, setOriginalEndereco] = useState("");
+  const [originalUf, setOriginalUf] = useState("");
+  const [originalCidade, setOriginalCidade] = useState("");
   const navigate = useNavigate();
   const token = localStorage.getItem("token");
   const isAllowed = usePermission(1);
@@ -56,7 +61,7 @@ const EditarUsuario: React.FC = () => {
           setNome(data.nome);
           setEmail(data.email);
           setTelefone(formatTelefone(data.telefone)); // Format for display
-          setEndereco(data.endereco);
+          setEndereco(data.endereco); // Set the address state
 
           // Save original values
           setOriginalNome(data.nome);
@@ -104,32 +109,39 @@ const EditarUsuario: React.FC = () => {
   }, [navigate, token]);
 
   useEffect(() => {
+    const fetchUfs = async () => {
+      try {
+        const response = await fetch(
+          "https://servicodados.ibge.gov.br/api/v1/localidades/estados"
+        );
+        if (response.ok) {
+          const data = await response.json();
+          setUfsBrasil(data.map((uf: { sigla: string }) => uf.sigla));
+        } else {
+          console.error("Erro ao buscar UFs:", response.statusText);
+        }
+      } catch (error) {
+        console.error("Erro ao buscar UFs:", error);
+      }
+    };
+
+    fetchUfs();
+  }, []);
+
+  useEffect(() => {
     const fetchCidades = async () => {
-      if (endereco.trim().length === 0) {
+      if (!uf) {
         setCidadesBrasil([]);
         return;
       }
 
       try {
         const response = await fetch(
-          "https://servicodados.ibge.gov.br/api/v1/localidades/municipios"
+          `https://servicodados.ibge.gov.br/api/v1/localidades/estados/${uf}/municipios`
         );
         if (response.ok) {
           const data = await response.json();
-          setCidadesBrasil(
-            data
-              .map(
-                (cidade: {
-                  nome: string;
-                  microrregiao: { mesorregiao: { UF: { sigla: string } } };
-                }) =>
-                  `${cidade.nome} - ${cidade.microrregiao.mesorregiao.UF.sigla}`
-              )
-              .filter((cidade: string) =>
-                cidade.toLowerCase().includes(endereco.toLowerCase())
-              )
-              .slice(0, 8)
-          );
+          setCidadesBrasil(data.map((cidade: { nome: string }) => cidade.nome));
         } else {
           console.error("Erro ao buscar cidades:", response.statusText);
         }
@@ -139,6 +151,16 @@ const EditarUsuario: React.FC = () => {
     };
 
     fetchCidades();
+  }, [uf]);
+
+  useEffect(() => {
+    if (endereco) {
+      const [cidadePart, ufPart] = endereco.split(" - ");
+      setCidade(cidadePart || "");
+      setUf(ufPart || "");
+      setOriginalUf(ufPart || ""); // Save original UF
+      setOriginalCidade(cidadePart || ""); // Save original city
+    }
   }, [endereco]);
 
   const onDrop = useCallback((acceptedFiles: File[]) => {
@@ -163,11 +185,12 @@ const EditarUsuario: React.FC = () => {
   const handleEdicao = async (e: React.FormEvent) => {
     e.preventDefault();
 
+    const enderecoCompleto = `${cidade} - ${uf}`; // Combine city and UF
     const formData = new FormData();
     formData.append("nome", nome);
     formData.append("email", email);
     formData.append("telefone", telefone.replace(/\D/g, "")); // Send numeric-only
-    formData.append("endereco", endereco);
+    formData.append("endereco", enderecoCompleto); // Update address field
 
     if (imagem) {
       formData.append("imagem", imagem);
@@ -204,6 +227,8 @@ const EditarUsuario: React.FC = () => {
     setEmail(originalEmail);
     setTelefone(originalTelefone);
     setEndereco(originalEndereco);
+    setUf(originalUf); // Revert UF to original
+    setCidade(originalCidade); // Revert city to original
     setIsEditing(false);
   };
 
@@ -382,21 +407,41 @@ const EditarUsuario: React.FC = () => {
 
                 <div className="form-group">
                   <label className="montserrat-alternates-semibold">
-                    Endereço:
+                    Estado (UF):
                   </label>
-                  <input
-                    type="text"
-                    value={endereco}
-                    onChange={(e) => setEndereco(e.target.value)}
+                  <select
                     className="input montserrat-alternates-semibold"
-                    list="cidades"
+                    value={uf}
+                    onChange={(e) => setUf(e.target.value)}
                     required
-                  />
-                  <datalist id="cidades">
-                    {cidadesBrasil.map((cidade, index) => (
-                      <option key={index} value={cidade} />
+                  >
+                    <option value="">Selecione o estado</option>
+                    {ufsBrasil.map((uf, index) => (
+                      <option key={index} value={uf}>
+                        {uf}
+                      </option>
                     ))}
-                  </datalist>
+                  </select>
+                </div>
+
+                <div className="form-group">
+                  <label className="montserrat-alternates-semibold">
+                    Cidade:
+                  </label>
+                  <select
+                    className="input montserrat-alternates-semibold"
+                    value={cidade}
+                    onChange={(e) => setCidade(e.target.value)}
+                    required
+                    disabled={!uf}
+                  >
+                    <option value="">Selecione a cidade</option>
+                    {cidadesBrasil.map((cidade, index) => (
+                      <option key={index} value={cidade}>
+                        {cidade}
+                      </option>
+                    ))}
+                  </select>
                 </div>
 
                 <div className="d-flex g-sm m-top">

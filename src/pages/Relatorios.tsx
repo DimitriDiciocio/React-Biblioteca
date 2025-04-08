@@ -1,37 +1,47 @@
-import React from "react";
-import { usePermission } from "../components/usePermission";
+import React, { useState } from "react";
+import RelatorioLivros from "./RelatorioLivros";
+import RelatorioUsuarios from "../components/RelatorioUsuarios";
 
-const Relatorios: React.FC = () => {
-  const isAllowed = usePermission(2);
-
-  if (isAllowed === null) return <p>Verificando permissão...</p>;
-  if (!isAllowed) return null;
+export default function PaginaRelatorios() {
+  const [mostrar, setMostrar] = useState("livros");
 
   return (
-    <div>
-      <div className="d-flex-column center-y center-x gap-5">
-        <h1>Gerar Relatórios</h1>
-        <div className="space-y-4">
-          <a
-            href="http://127.0.0.1:5000/relatorio/livros"
-            target="_blank"
-            rel="noopener noreferrer"
-            className=""
-          >
-            Visualizar Relatório de Livros
-          </a>
-          <a
-            href="http://127.0.0.1:5000/relatorio/usuarios"
-            target="_blank"
-            rel="noopener noreferrer"
-            className=""
-          >
-            Visualizar Relatório de Usuários
-          </a>
-        </div>
+    <div style={{ padding: "24px", maxWidth: "1000px", margin: "0 auto" }}>
+      <div style={{ display: "flex", justifyContent: "center", gap: "12px", marginBottom: "20px" }}>
+        <button
+          onClick={() => setMostrar("livros")}
+          style={{
+            padding: "8px 16px",
+            backgroundColor: mostrar === "livros" ? "#2473D9" : "#ccc",
+            color: mostrar === "livros" ? "white" : "black",
+            border: "none",
+            borderRadius: "4px",
+            cursor: "pointer"
+          }}
+        >
+          Relatório de Livros
+        </button>
+        <button
+          onClick={() => setMostrar("usuarios")}
+          style={{
+            padding: "8px 16px",
+            backgroundColor: mostrar === "usuarios" ? "#2473D9" : "#ccc",
+            color: mostrar === "usuarios" ? "white" : "black",
+            border: "none",
+            borderRadius: "4px",
+            cursor: "pointer"
+          }}
+        >
+          Relatório de Usuários
+        </button>
+      </div>
+
+      <div style={{ display: mostrar === "livros" ? "block" : "none" }}>
+        <RelatorioLivros />
+      </div>
+      <div style={{ display: mostrar === "usuarios" ? "block" : "none" }}>
+        <RelatorioUsuarios />
       </div>
     </div>
   );
-};
-
-export default Relatorios;
+}

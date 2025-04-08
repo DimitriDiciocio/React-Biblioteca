@@ -18,9 +18,26 @@ const MostrarUsuarios: React.FC = () => {
     tipo: number;
     ativo: boolean;
     imagem: string;
+    imagemPreview?: string | null;
   }
 
   useEffect(() => {
+    async function fetchImagePreview(user: Usuario) {
+      try {
+        const response = await fetch(
+          `http://127.0.0.1:5000/uploads/usuarios/${user.imagem}`,
+          {
+            method: "HEAD",
+          }
+        );
+        return response.ok
+          ? `http://127.0.0.1:5000/uploads/usuarios/${user.imagem}`
+          : null;
+      } catch {
+        return null;
+      }
+    }
+
     async function fetchUsers() {
       try {
         const response = await fetch("http://127.0.0.1:5000/usuarios", {
@@ -32,8 +49,16 @@ const MostrarUsuarios: React.FC = () => {
         });
         if (!response.ok) throw new Error("Erro ao buscar usuários");
         const data = await response.json();
-        setUsers(data);
-        setFilteredUsers(data);
+
+        const usersWithImagePreview = await Promise.all(
+          data.map(async (user: Usuario) => ({
+            ...user,
+            imagemPreview: await fetchImagePreview(user),
+          }))
+        );
+
+        setUsers(usersWithImagePreview);
+        setFilteredUsers(usersWithImagePreview);
       } catch (error) {
         console.error(error);
         Swal.fire({
@@ -53,10 +78,10 @@ const MostrarUsuarios: React.FC = () => {
       const filtered = users.filter((user) => {
         const tipoUsuario =
           user.tipo === 1
-        ? "leitor"
-        : user.tipo === 2
-        ? "bibliotecario"
-        : "administrador";
+            ? "leitor"
+            : user.tipo === 2
+            ? "bibliotecario"
+            : "administrador";
 
         return (
           user.id_usuario.toString().includes(pesquisa) ||
@@ -66,8 +91,8 @@ const MostrarUsuarios: React.FC = () => {
           user.endereco.toLowerCase().includes(pesquisa.toLowerCase()) ||
           tipoUsuario.includes(pesquisa.toLowerCase()) ||
           (user.ativo ? "ativo" : "inativo")
-        .toLowerCase()
-        .includes(pesquisa.toLowerCase())
+            .toLowerCase()
+            .includes(pesquisa.toLowerCase())
         );
       });
       setFilteredUsers(filtered);
@@ -80,57 +105,60 @@ const MostrarUsuarios: React.FC = () => {
   if (!isAllowed) return null;
 
   return (
-    <div>
-      <h1>Usuários</h1>
+    <div className="usuarios-container">
+      <h1 className="page-title">Usuários</h1>
       <input
         type="text"
         placeholder="Pesquisar usuários"
+        className="input pesquisa"
         onChange={(e) => setPesquisa(e.target.value)}
       />
-
-      <table className="table table-bordered">
-        <thead>
-          <tr>
-            <th>ID</th>
-            <th>Nome</th>
-            <th>Email</th>
-            <th>Telefone</th>
-            <th>Endereço</th>
-            <th>Tipo</th>
-            <th>Status</th>
-            <th>Ação</th>
-          </tr>
-        </thead>
-        <tbody>
-          {filteredUsers.map((user) => {
-            return (
-              <tr key={user.id_usuario}>
-                <td>{user.id_usuario}</td>
-                <td>{user.nome}</td>
-                <td>{user.email}</td>
-                <td>{user.telefone}</td>
-                <td>{user.endereco}</td>
-                <td>
-                  {user.tipo === 1
-                    ? "Leitor"
-                    : user.tipo === 2
-                    ? "Bibliotecário"
-                    : "Administrador"}
-                </td>
-                <td>{user.ativo ? "Ativo" : "Inativo"}</td>
-                <td className="gap-botao">
-                  <button
-                    onClick={() => navigate(`/usuarios/${user.id_usuario}`)}
-                    className="btn btn-secondary"
-                  >
-                    <span className="material-icons">launch</span>
-                  </button>
-                </td>
-              </tr>
-            );
-          })}
-        </tbody>
-      </table>
+      <div className="usuarios-grid">
+        {filteredUsers.map((user) => (
+          <div key={user.id_usuario} className="usuario-card">
+            {user.imagemPreview ? (
+              <img
+                src={user.imagemPreview}
+                alt={user.nome}
+                className="usuario-imagem"
+              />
+            ) : (
+              <div className="usuario-imagem-placeholder">Sem imagem</div>
+            )}
+            <div className="usuario-info">
+              <h3>{user.nome}</h3>
+              <p>
+                <strong>Email:</strong> {user.email}
+              </p>
+              <p>
+                <strong>Telefone:</strong> {user.telefone}
+              </p>
+              <p>
+                <strong>Endereço:</strong> {user.endereco}
+              </p>
+              <p>
+                <strong>Tipo:</strong>{" "}
+                {user.tipo === 1
+                  ? "Leitor"
+                  : user.tipo === 2
+                  ? "Bibliotecário"
+                  : "Administrador"}
+              </p>
+              <p>
+                <strong>Status:</strong> {user.ativo ? "Ativo" : "Inativo"}
+              </p>
+              <div className="usuario-acoes">
+                <button
+                  onClick={() => navigate(`/usuarios/${user.id_usuario}`)}
+                  className="btn btn-secondary"
+                >
+                  <span className="material-icons">launch</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
     </div>
   );
 };

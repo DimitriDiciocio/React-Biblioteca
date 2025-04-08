@@ -110,6 +110,12 @@ const Config: React.FC = () => {
       return false;
     }
   };
+  
+  const Sair = () => {
+    localStorage.removeItem("id_user");
+    localStorage.removeItem("token");
+    navigate("/login")
+  }
 
   if (isAllowed === null) return <p>Verificando permissão...</p>;
   if (!isAllowed) return null;
@@ -140,7 +146,7 @@ const Config: React.FC = () => {
                 <a>Histórico</a>
               </li>
               <div className="space-sm-y"></div>
-              <li className="highlight pointer" onClick={() => navigate("/sair")} >
+              <li className="highlight pointer" onClick={() => Sair()} >
                 <a>Sair</a>
               </li>
             </ul>

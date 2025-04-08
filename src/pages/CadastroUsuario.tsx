@@ -9,13 +9,15 @@ const CadastroUsuario: React.FC = () => {
   const [nome, setNome] = useState("");
   const [email, setEmail] = useState("");
   const [telefone, setTelefone] = useState("");
-  const [endereco, setEndereco] = useState("");
   const [senha, setSenha] = useState("");
   const [confirmSenha, setConfirmSenha] = useState("");
   const [tipo, setTipo] = useState(1);
   const [imagem, setImagem] = useState<File | null>(null);
   const [imagemPreview, setImagemPreview] = useState<string | null>(null);
   const [cidadesBrasil, setCidadesBrasil] = useState<string[]>([]);
+  const [uf, setUf] = useState("");
+  const [cidade, setCidade] = useState("");
+  const [ufsBrasil, setUfsBrasil] = useState<string[]>([]);
   const navigate = useNavigate();
   const isAllowed = usePermission(3);
 
@@ -34,11 +36,12 @@ const CadastroUsuario: React.FC = () => {
   const handleCadastro = async (e: React.FormEvent) => {
     e.preventDefault();
 
+    const enderecoCompleto = `${cidade} - ${uf}`;
     const formData = new FormData();
     formData.append("nome", nome);
     formData.append("email", email);
     formData.append("telefone", telefone.replace(/\D/g, "")); // Remove formatting
-    formData.append("endereco", endereco);
+    formData.append("endereco", enderecoCompleto);
     formData.append("senha", senha);
     formData.append("confirmSenha", confirmSenha);
     formData.append("tipo", tipo.toString());
@@ -72,12 +75,13 @@ const CadastroUsuario: React.FC = () => {
         setNome("");
         setEmail("");
         setTelefone("");
-        setEndereco("");
         setSenha("");
         setConfirmSenha("");
         setTipo(1);
         setImagem(null);
         setImagemPreview(null);
+        setUf("");
+        setCidade("");
       }
     } catch (error) {
       await Swal.fire({
@@ -112,41 +116,49 @@ const CadastroUsuario: React.FC = () => {
     setNome("");
     setEmail("");
     setTelefone("");
-    setEndereco("");
     setSenha("");
     setConfirmSenha("");
     setTipo(1);
     setImagem(null);
     setImagemPreview(null);
+    setUf("");
+    setCidade("");
   };
 
   useEffect(() => {
+    const fetchUfs = async () => {
+      try {
+        const response = await fetch(
+          "https://servicodados.ibge.gov.br/api/v1/localidades/estados"
+        );
+        if (response.ok) {
+          const data = await response.json();
+          setUfsBrasil(data.map((uf: { sigla: string }) => uf.sigla));
+        } else {
+          console.error("Erro ao buscar UFs:", response.statusText);
+        }
+      } catch (error) {
+        console.error("Erro ao buscar UFs:", error);
+      }
+    };
+
+    fetchUfs();
+  }, []);
+
+  useEffect(() => {
     const fetchCidades = async () => {
-      if (endereco.trim().length === 0) {
+      if (!uf) {
         setCidadesBrasil([]);
         return;
       }
 
       try {
         const response = await fetch(
-          "https://servicodados.ibge.gov.br/api/v1/localidades/municipios"
+          `https://servicodados.ibge.gov.br/api/v1/localidades/estados/${uf}/municipios`
         );
         if (response.ok) {
           const data = await response.json();
-          setCidadesBrasil(
-            data
-              .map(
-                (cidade: {
-                  nome: string;
-                  microrregiao: { mesorregiao: { UF: { sigla: string } } };
-                }) =>
-                  `${cidade.nome} - ${cidade.microrregiao.mesorregiao.UF.sigla}`
-              )
-              .filter((cidade: string) =>
-                cidade.toLowerCase().includes(endereco.toLowerCase())
-              )
-              .slice(0, 8)
-          );
+          setCidadesBrasil(data.map((cidade: { nome: string }) => cidade.nome));
         } else {
           console.error("Erro ao buscar cidades:", response.statusText);
         }
@@ -156,7 +168,7 @@ const CadastroUsuario: React.FC = () => {
     };
 
     fetchCidades();
-  }, [endereco]);
+  }, [uf]);
 
   if (isAllowed === null) return <p>Verificando permissão...</p>;
   if (!isAllowed) return null;
@@ -263,23 +275,40 @@ const CadastroUsuario: React.FC = () => {
               </div>
               <div className="form-group">
                 <label className="montserrat-alternates-semibold">
-                  Endereço:
+                  Estado (UF):
                 </label>
-                <input
+                <select
                   className="input montserrat-alternates-semibold"
-                  type="text"
-                  name="endereco"
-                  placeholder="Endereço"
-                  value={endereco}
-                  onChange={(e) => setEndereco(e.target.value)}
-                  list="cidades"
+                  value={uf}
+                  onChange={(e) => setUf(e.target.value)}
                   required
-                />
-                <datalist id="cidades">
-                  {cidadesBrasil.map((cidade, index) => (
-                    <option key={index} value={cidade} />
+                >
+                  <option value="">Selecione o estado</option>
+                  {ufsBrasil.map((uf, index) => (
+                    <option key={index} value={uf}>
+                      {uf}
+                    </option>
                   ))}
-                </datalist>
+                </select>
+              </div>
+              <div className="form-group">
+                <label className="montserrat-alternates-semibold">
+                  Cidade:
+                </label>
+                <select
+                  className="input montserrat-alternates-semibold"
+                  value={cidade}
+                  onChange={(e) => setCidade(e.target.value)}
+                  required
+                  disabled={!uf}
+                >
+                  <option value="">Selecione a cidade</option>
+                  {cidadesBrasil.map((cidade, index) => (
+                    <option key={index} value={cidade}>
+                      {cidade}
+                    </option>
+                  ))}
+                </select>
               </div>
               <div className="form-group">
                 <label className="montserrat-alternates-semibold">Senha:</label>

@@ -102,6 +102,12 @@ const Header: React.FC = () => {
     setModalOpen(!modalOpen);
   };
 
+  const Sair = () => {
+    localStorage.removeItem("id_user");
+    localStorage.removeItem("token");
+    navigate("/login")
+  }
+
   if (!isPermissionChecked) {
     return null;
   }
@@ -206,10 +212,10 @@ const Header: React.FC = () => {
             <button className="btn-primary" onClick={() => navigate("/user")}>
               Gerenciar Conta
             </button>
-            <button className="btn-secondary" onClick={() => navigate("/sair")}>
+            <button className="btn-secondary">
               Trocar de Conta
             </button>
-            <button className="btn-secondary" onClick={() => navigate("/sair")}>
+            <button className="btn-secondary" onClick={() => Sair()}>
               Sair
             </button>
           </div>

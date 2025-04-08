@@ -8,44 +8,53 @@ const Cadastro: React.FC = () => {
   const [nome, setNome] = useState("");
   const [email, setEmail] = useState("");
   const [telefone, setTelefone] = useState("");
-  const [endereco, setEndereco] = useState("");
   const [senha, setSenha] = useState("");
   const [confirmSenha, setConfirmSenha] = useState("");
-  const tipo = "1"
+  const tipo = "1";
   const [imagem, setImagem] = useState<File | null>(null);
   const [imagemPreview, setImagemPreview] = useState<string | null>(null);
   const [mostrarSenha, setMostrarSenha] = useState(false);
   const [mostrarConfirmSenha, setMostrarConfirmSenha] = useState(false);
   const [cidadesBrasil, setCidadesBrasil] = useState<string[]>([]);
+  const [uf, setUf] = useState("");
+  const [cidade, setCidade] = useState("");
+  const [ufsBrasil, setUfsBrasil] = useState<string[]>([]);
   const navigate = useNavigate();
 
   useEffect(() => {
+    const fetchUfs = async () => {
+      try {
+        const response = await fetch(
+          "https://servicodados.ibge.gov.br/api/v1/localidades/estados"
+        );
+        if (response.ok) {
+          const data = await response.json();
+          setUfsBrasil(data.map((uf: { sigla: string }) => uf.sigla));
+        } else {
+          console.error("Erro ao buscar UFs:", response.statusText);
+        }
+      } catch (error) {
+        console.error("Erro ao buscar UFs:", error);
+      }
+    };
+
+    fetchUfs();
+  }, []);
+
+  useEffect(() => {
     const fetchCidades = async () => {
-      if (endereco.trim().length === 0) {
+      if (!uf) {
         setCidadesBrasil([]);
         return;
       }
 
       try {
         const response = await fetch(
-          "https://servicodados.ibge.gov.br/api/v1/localidades/municipios"
+          `https://servicodados.ibge.gov.br/api/v1/localidades/estados/${uf}/municipios`
         );
         if (response.ok) {
           const data = await response.json();
-          setCidadesBrasil(
-            data
-              .map(
-                (cidade: {
-                  nome: string;
-                  microrregiao: { mesorregiao: { UF: { sigla: string } } };
-                }) =>
-                  `${cidade.nome} - ${cidade.microrregiao.mesorregiao.UF.sigla}`
-              )
-              .filter((cidade: string) =>
-                cidade.toLowerCase().includes(endereco.toLowerCase())
-              )
-              .slice(0, 8) // Limit the number of suggestions to 10
-          );
+          setCidadesBrasil(data.map((cidade: { nome: string }) => cidade.nome));
         } else {
           console.error("Erro ao buscar cidades:", response.statusText);
         }
@@ -55,16 +64,17 @@ const Cadastro: React.FC = () => {
     };
 
     fetchCidades();
-  }, [endereco]);
+  }, [uf]);
 
   const handleCadastro = async (e: React.FormEvent) => {
     e.preventDefault();
 
+    const enderecoCompleto = `${cidade} - ${uf}`; // Combine city and UF
     const formData = new FormData();
     formData.append("nome", nome);
     formData.append("email", email);
     formData.append("telefone", telefone.replace(/\D/g, "")); // Send numeric-only
-    formData.append("endereco", endereco);
+    formData.append("endereco", enderecoCompleto); // Update address field
     formData.append("tipo", tipo);
     formData.append("senha", senha);
     formData.append("confirmSenha", confirmSenha);
@@ -147,12 +157,13 @@ const Cadastro: React.FC = () => {
   return (
     <div className="body-cadastro">
       <header className="header-login">
-          <p
-            className="delius-regular"
-            onClick={() => navigate("/")}
-            style={{cursor: "pointer"}}
-          >Read Raccoon
-          </p>
+        <p
+          className="delius-regular"
+          onClick={() => navigate("/")}
+          style={{ cursor: "pointer" }}
+        >
+          Read Raccoon
+        </p>
       </header>
       <main className="container-cadastro">
         <div
@@ -223,20 +234,35 @@ const Cadastro: React.FC = () => {
                 <label htmlFor="name">E-mail:</label>
               </div>
               <div className="inputGroup">
-                <input
-                  type="text"
+                <label>Estado (UF):</label>
+                <select
+                  value={uf}
+                  onChange={(e) => setUf(e.target.value)}
                   required
-                  autoComplete="off"
-                  list="cidades"
-                  value={endereco}
-                  onChange={(e) => setEndereco(e.target.value)}
-                />
-                <label htmlFor="name">Endereço:</label>
-                <datalist id="cidades">
-                  {cidadesBrasil.map((cidade, index) => (
-                    <option key={index} value={cidade} />
+                >
+                  <option value="">Selecione o estado</option>
+                  {ufsBrasil.map((uf, index) => (
+                    <option key={index} value={uf}>
+                      {uf}
+                    </option>
                   ))}
-                </datalist>
+                </select>
+              </div>
+              <div className="inputGroup">
+                <label>Cidade:</label>
+                <select
+                  value={cidade}
+                  onChange={(e) => setCidade(e.target.value)}
+                  required
+                  disabled={!uf}
+                >
+                  <option value="">Selecione a cidade</option>
+                  {cidadesBrasil.map((cidade, index) => (
+                    <option key={index} value={cidade}>
+                      {cidade}
+                    </option>
+                  ))}
+                </select>
               </div>
             </div>
             <div>

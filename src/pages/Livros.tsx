@@ -1,11 +1,10 @@
 import { useState, useEffect } from "react";
-import DeletarLivro from "../components/DeletarLivro";
+import DeletarLivro from "../components/AlterarDisponibilidade";
 import { usePermission } from "../components/usePermission";
 
 const Livros: React.FC = () => {
   const token = localStorage.getItem("token");
   const [livros, setLivros] = useState<Book[]>([]);
-  const [filteredLivros, setFilteredLivros] = useState<Book[]>([]);
   const [pesquisa, setPesquisa] = useState("");
   const isAllowed = usePermission(2);
 
@@ -21,105 +20,97 @@ const Livros: React.FC = () => {
     disponivel: boolean;
   }
 
-  useEffect(() => {
-    async function fetchLivros() {
-      try {
-        const response = await fetch("http://127.0.0.1:5000/livrosadm", {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-        });
-        if (!response.ok) throw new Error("Erro ao buscar livros");
-        const data = await response.json();
-        setLivros(data);
-        setFilteredLivros(data);
-      } catch (error) {
-        console.error(error);
-      }
+  const fetchLivros = async () => {
+    try {
+      const response = await fetch("http://127.0.0.1:5000/livrosadm", {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      if (!response.ok) throw new Error("Erro ao buscar livros");
+      const data = await response.json();
+      setLivros(data);
+    } catch (error) {
+      console.error(error);
     }
+  };
+
+  useEffect(() => {
     fetchLivros();
   }, [token]);
 
-  useEffect(() => {
-    if (pesquisa) {
-      const filtered = livros.filter(
+  const filteredLivros = pesquisa
+    ? livros.filter(
         (book) =>
           book.id.toString().includes(pesquisa) ||
           book.titulo.toLowerCase().includes(pesquisa.toLowerCase()) ||
           book.autor.toLowerCase().includes(pesquisa.toLowerCase()) ||
           book.categoria.toLowerCase().includes(pesquisa.toLowerCase()) ||
           book.isbn.includes(pesquisa)
-      );
-      setFilteredLivros(filtered);
-    } else {
-      setFilteredLivros(livros);
-    }
-  }, [pesquisa, livros]);
-
-  const handleOpenBook = (book: Book) => {
-    const url = `/editar_livro/${book.id}`;
-    window.location.href = url;
-  };
+      )
+    : livros;
 
   if (isAllowed === null) return <p>Verificando permissão...</p>;
   if (!isAllowed) return null;
 
   return (
-    <div>
-      <h1>Gerenciamento de Livros</h1>
+    <div className="livros-container">
+      <h1 className="page-title">Gerenciamento de Livros</h1>
       <input
         type="text"
         placeholder="Pesquisar livros"
+        className="input pesquisa"
         onChange={(e) => setPesquisa(e.target.value)}
       />
-      <table className="table table-bordered">
-        <thead>
-          <tr>
-            <th>ID</th>
-            <th>Título</th>
-            <th>Autor</th>
-            <th>Categoria</th>
-            <th>ISBN</th>
-            <th>Qtd. Disponível</th>
-            <th>Descrição</th>
-            <th>Imagem</th>
-            <th>Disponivel</th>
-            <th>Ação</th>
-          </tr>
-        </thead>
-        <tbody>
-          {filteredLivros.map((book) => (
-            <tr key={book.id}>
-              <td>{book.id}</td>
-              <td>{book.titulo}</td>
-              <td>{book.autor}</td>
-              <td>{book.categoria}</td>
-              <td>{book.isbn}</td>
-              <td>{book.qtd_disponivel}</td>
-              <td>{book.descricao}</td>
-              <td>
-                <img
-                  src={`http://127.0.0.1:5000/uploads/livros/${book.imagem}`}
-                  alt={book.titulo}
-                  width="50"
-                />
-              </td>
-              <td>{book.disponivel ? "Disponivel" : "Indisponivel"}</td>
-              <td>
+      <div
+        className={`livros-grid ${
+          filteredLivros.length === 1
+            ? "single-book"
+            : filteredLivros.length === 2
+            ? "two-books"
+            : filteredLivros.length === 3
+            ? "three-books"
+            : ""
+        }`}
+      >
+        {filteredLivros.map((book) => (
+          <div key={book.id} className="livro-card">
+            <img
+              src={`http://127.0.0.1:5000/uploads/livros/${book.imagem}`}
+              alt={book.titulo}
+              className="livro-imagem"
+            />
+            <div className="livro-info">
+              <h3>{book.titulo}</h3>
+              <p>
+                <strong>Autor:</strong> {book.autor}
+              </p>
+              <p>
+                <strong>Categoria:</strong> {book.categoria}
+              </p>
+              <p>
+                <strong>ISBN:</strong> {book.isbn}
+              </p>
+              <p>
+                <strong>Disponível:</strong> {book.disponivel ? "Sim" : "Não"}
+              </p>
+              <div className="livro-acoes">
                 <button
-                  onClick={() => handleOpenBook(book)}
+                  onClick={() =>
+                    (window.location.href = `/editar_livro/${book.id}`)
+                  }
                   className="btn btn-primary"
                 >
                   <span className="material-icons">edit</span>
                 </button>
-                <DeletarLivro id_livro={book.id} />
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+                <DeletarLivro id_livro={book.id} onStatusChange={fetchLivros} />
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
     </div>
   );
 };
