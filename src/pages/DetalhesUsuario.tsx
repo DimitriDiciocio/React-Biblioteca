@@ -94,6 +94,12 @@ const DetalhesUsuario: React.FC = () => {
         &lt;
       </button>
       <h1>Detalhes do Usuário</h1>
+      <div className="actions">
+        <DeletarUsuario
+          usuarioId={id ? parseInt(id, 10) : 0}
+          onDeleteSuccess={() => navigate("/home_biblio?page=3")}
+        />
+      </div>
       {isEditing ? (
         <Usuarios onCancel={() => setIsEditing(false)} />
       ) : (
@@ -183,12 +189,6 @@ const DetalhesUsuario: React.FC = () => {
           </main>
           <h2>Empréstimos</h2>
           {id && <EmprestimoPorUsuario userId={id} />}
-          <div className="actions">
-            <DeletarUsuario
-              usuarioId={id ? parseInt(id, 10) : 0}
-              onDeleteSuccess={() => navigate("/home_biblio?page=3")}
-            />
-          </div>
         </div>
       )}
     </div>

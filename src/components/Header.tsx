@@ -202,7 +202,7 @@ const Header: React.FC = () => {
         <Modal onClose={toggleModal} size="small">
           <div className="modal-body">
             <img
-              src={imagemPreview || undefined}
+              src={imagemPreview || "../assets/img/user.png"}
               alt="Usuário"
               className="user-button"
             />

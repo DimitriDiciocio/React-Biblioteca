@@ -4,6 +4,7 @@ import Swal from "sweetalert2";
 import Header from "../components/Header";
 import MostrarLivros from "../components/MostrarLivros";
 import { usePermission } from "../components/usePermission";
+import Footer from "../components/Footer";
 interface Tag {
   id: number;
   nome: string;
@@ -388,6 +389,7 @@ const BookDetail = () => {
         </section>
         <div className="oval"></div>
       </main>
+      <Footer/>
     </div>
   );
 };
