@@ -331,7 +331,11 @@ nav img {
   gap: 10px;
   font-size: large;
 }
-
+.d-flex-column-no-font{
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
 /* owl */
 .owl-nav {
   position: absolute;
@@ -728,6 +732,8 @@ button:hover .button-text {
 }
 .dropzone .dz-message p {
   font-family: "Montserrat Alternates", sans-serif;
+  font-size: medium;
+  padding: 5px;
 }
 .dropzone .dz-message {
   display: flex;

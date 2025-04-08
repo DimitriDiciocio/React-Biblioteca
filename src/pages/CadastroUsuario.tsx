@@ -175,22 +175,20 @@ const CadastroUsuario: React.FC = () => {
 
   return (
     <div className="pagina-edicao-usuario">
-      <div className="space-med-y"></div>
 
       <main className="background-blue">
-        <section className="d-flex center-x size-medium g-30">
-          <div>
+        <section className="center-x size-medium d-flex-column-no-font">
+          <div className="d-flex center-x">
             <div
               {...getRootProps()}
               className="dropzone border-book4"
               style={{
                 borderRadius: "50%",
-                width: "450px",
-                height: "450px",
+                width: "150px",
+                height: "150px",
                 position: "static",
                 borderStyle: "dashed",
                 padding: "0",
-                marginLeft: "240px",
               }}
             >
               <input {...getInputProps()} />
@@ -233,123 +231,132 @@ const CadastroUsuario: React.FC = () => {
             </div>
           </div>
 
-          <div>
-            <form onSubmit={handleCadastro} className="w-656">
-              <div className="form-group">
-                <label className="montserrat-alternates-semibold">Nome:</label>
-                <input
-                  className="input montserrat-alternates-semibold"
-                  type="text"
-                  name="nome"
-                  placeholder="Nome"
-                  value={nome}
-                  onChange={(e) => setNome(e.target.value)}
-                  required
-                />
+          <div className="d-flex center-x">
+            <form onSubmit={handleCadastro}>
+              <div className="d-flex g-sm">
+                <div className="column1-form">
+                  <div className="form-group">
+                    <label className="montserrat-alternates-semibold">Nome:</label>
+                    <input
+                      className="input montserrat-alternates-semibold"
+                      type="text"
+                      name="nome"
+                      placeholder="Nome"
+                      value={nome}
+                      onChange={(e) => setNome(e.target.value)}
+                      required
+                    />
+                  </div>
+                  <div className="form-group">
+                    <label className="montserrat-alternates-semibold">
+                      Telefone:
+                    </label>
+                    <input
+                      className="input montserrat-alternates-semibold"
+                      type="text"
+                      name="telefone"
+                      placeholder="Telefone"
+                      value={telefone}
+                      onChange={(e) => setTelefone(formatTelefone(e.target.value))}
+                      required
+                    />
+                  </div>
+                  <div className="form-group">
+                    <label className="montserrat-alternates-semibold">
+                      Estado (UF):
+                    </label>
+                    <select
+                      className="input montserrat-alternates-semibold"
+                      value={uf}
+                      onChange={(e) => setUf(e.target.value)}
+                      required
+                    >
+                      <option value="">Selecione o estado</option>
+                      {ufsBrasil.map((uf, index) => (
+                        <option key={index} value={uf}>
+                          {uf}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                  <div className="form-group">
+                    <label className="montserrat-alternates-semibold">Senha:</label>
+                    <input
+                      className="input montserrat-alternates-semibold"
+                      type="password"
+                      name="senha"
+                      placeholder="Senha"
+                      value={senha}
+                      onChange={(e) => setSenha(e.target.value)}
+                      required
+                    />
+                  </div>
+                </div>
+                <div className="column2-form">
+                  <div className="form-group">
+                    <label className="montserrat-alternates-semibold">Email:</label>
+                    <input
+                      className="input montserrat-alternates-semibold"
+                      type="email"
+                      name="email"
+                      placeholder="Email"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      required
+                    />
+                  </div>
+                  <div className="form-group">
+                    <label className="montserrat-alternates-semibold">Tipo:</label>
+                    <select
+                      className="input montserrat-alternates-semibold"
+                      value={tipo}
+                      onChange={(e) => setTipo(Number(e.target.value))}
+                      required
+                    >
+                      <option value="1">Usuário</option>
+                      <option value="2">Bibliotecário</option>
+                      <option value="3">Administrador</option>
+                    </select>
+                  </div>
+                  <div className="form-group">
+                    <label className="montserrat-alternates-semibold">
+                      Cidade:
+                    </label>
+                    <select
+                      className="input montserrat-alternates-semibold"
+                      value={cidade}
+                      onChange={(e) => setCidade(e.target.value)}
+                      required
+                      disabled={!uf}
+                    >
+                      <option value="">Selecione a cidade</option>
+                      {cidadesBrasil.map((cidade, index) => (
+                        <option key={index} value={cidade}>
+                          {cidade}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                  <div className="form-group">
+                    <label className="montserrat-alternates-semibold">
+                      Confirmar Senha:
+                    </label>
+                    <input
+                      className="input montserrat-alternates-semibold"
+                      type="password"
+                      name="confirmSenha"
+                      placeholder="Confirmar Senha"
+                      value={confirmSenha}
+                      onChange={(e) => setConfirmSenha(e.target.value)}
+                      required
+                    />
+                  </div>
+                </div>
               </div>
-              <div className="form-group">
-                <label className="montserrat-alternates-semibold">Email:</label>
-                <input
-                  className="input montserrat-alternates-semibold"
-                  type="email"
-                  name="email"
-                  placeholder="Email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  required
-                />
-              </div>
-              <div className="form-group">
-                <label className="montserrat-alternates-semibold">
-                  Telefone:
-                </label>
-                <input
-                  className="input montserrat-alternates-semibold"
-                  type="text"
-                  name="telefone"
-                  placeholder="Telefone"
-                  value={telefone}
-                  onChange={(e) => setTelefone(formatTelefone(e.target.value))}
-                  required
-                />
-              </div>
-              <div className="form-group">
-                <label className="montserrat-alternates-semibold">
-                  Estado (UF):
-                </label>
-                <select
-                  className="input montserrat-alternates-semibold"
-                  value={uf}
-                  onChange={(e) => setUf(e.target.value)}
-                  required
-                >
-                  <option value="">Selecione o estado</option>
-                  {ufsBrasil.map((uf, index) => (
-                    <option key={index} value={uf}>
-                      {uf}
-                    </option>
-                  ))}
-                </select>
-              </div>
-              <div className="form-group">
-                <label className="montserrat-alternates-semibold">
-                  Cidade:
-                </label>
-                <select
-                  className="input montserrat-alternates-semibold"
-                  value={cidade}
-                  onChange={(e) => setCidade(e.target.value)}
-                  required
-                  disabled={!uf}
-                >
-                  <option value="">Selecione a cidade</option>
-                  {cidadesBrasil.map((cidade, index) => (
-                    <option key={index} value={cidade}>
-                      {cidade}
-                    </option>
-                  ))}
-                </select>
-              </div>
-              <div className="form-group">
-                <label className="montserrat-alternates-semibold">Senha:</label>
-                <input
-                  className="input montserrat-alternates-semibold"
-                  type="password"
-                  name="senha"
-                  placeholder="Senha"
-                  value={senha}
-                  onChange={(e) => setSenha(e.target.value)}
-                  required
-                />
-              </div>
-              <div className="form-group">
-                <label className="montserrat-alternates-semibold">
-                  Confirmar Senha:
-                </label>
-                <input
-                  className="input montserrat-alternates-semibold"
-                  type="password"
-                  name="confirmSenha"
-                  placeholder="Confirmar Senha"
-                  value={confirmSenha}
-                  onChange={(e) => setConfirmSenha(e.target.value)}
-                  required
-                />
-              </div>
-              <div className="form-group">
-                <label className="montserrat-alternates-semibold">Tipo:</label>
-                <select
-                  className="input montserrat-alternates-semibold"
-                  value={tipo}
-                  onChange={(e) => setTipo(Number(e.target.value))}
-                  required
-                >
-                  <option value="1">Usuário</option>
-                  <option value="2">Bibliotecário</option>
-                  <option value="3">Administrador</option>
-                </select>
-              </div>
-              <div className="d-flex g-sm m-top">
+
+
+
+              <div className="d-flex g-sm m-top center-x">
                 <button
                   type="submit"
                   className="salvar montserrat-alternates-semibold"
@@ -361,7 +368,7 @@ const CadastroUsuario: React.FC = () => {
                   className="salvar cancelar montserrat-alternates-semibold"
                   onClick={handleCancelar}
                 >
-                  <span>Cancelar</span>
+                  <span>Limpar</span>
                 </button>
               </div>
             </form>

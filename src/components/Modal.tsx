@@ -14,9 +14,9 @@ const Modal: React.FC<ModalProps> = ({ onClose, children, size }) => {
         className={`modal-content ${size || ""}`}
         onClick={(e) => e.stopPropagation()}
       >
-        <button className="modal-close" onClick={onClose}>
+        <a className="modal-close pointer text-decoration-none" onClick={onClose}>
           X
-        </button>
+        </a>
         {children}
       </div>
     </div>,

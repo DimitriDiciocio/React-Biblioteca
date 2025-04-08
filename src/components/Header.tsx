@@ -212,9 +212,7 @@ const Header: React.FC = () => {
             <button className="btn-primary" onClick={() => navigate("/user")}>
               Gerenciar Conta
             </button>
-            <button className="btn-secondary">
-              Trocar de Conta
-            </button>
+
             <button className="btn-secondary" onClick={() => Sair()}>
               Sair
             </button>
