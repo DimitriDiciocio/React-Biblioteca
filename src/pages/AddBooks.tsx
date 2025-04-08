@@ -221,7 +221,7 @@ const AddBooks: React.FC = () => {
                   </button>
                 </>
               ) : (
-                <div className="dz-message">
+                <div className="dz-message pointer">
                   <p>
                     Arraste e solte a capa do livro aqui ou clique para
                     selecionar

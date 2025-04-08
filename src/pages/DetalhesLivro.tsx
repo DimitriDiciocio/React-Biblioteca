@@ -332,7 +332,7 @@ const BookDetail = () => {
             </div>
             <div>
               <p className="montserrat-alternates-semibold">
-              <strong>Estoque Disponível: </strong> {book.qtd_disponivel}
+              <strong>Estoque: </strong> {book.qtd_disponivel}
               </p>
             </div>
             <div>

@@ -224,7 +224,7 @@ const CadastroUsuario: React.FC = () => {
                   </button>
                 </>
               ) : (
-                <div className="dz-message">
+                <div className="dz-message pointer">
                   <p>Arraste ou clique para selecionar</p>
                 </div>
               )}
