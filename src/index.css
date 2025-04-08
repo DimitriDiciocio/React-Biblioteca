@@ -287,13 +287,19 @@ nav img {
   font-size: x-large;
   margin-top: 2px;
   text-align: center;
-  width: 250px;
+  max-width: 300px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 .book-title-formatation {
   font-size: larger;
   margin-top: 2px;
   text-align: center;
-  width: 175px;
+  max-width: 200px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 .book-color-name {
   color: var(--azul-escuro);
