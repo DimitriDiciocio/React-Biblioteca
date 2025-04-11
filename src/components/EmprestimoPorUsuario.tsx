@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import DevolverEmprestimo from "./DevolverEmprestimo"; // Import the DevolverEmprestimo component
+import DevolverEmprestimo from "./DevolverEmprestimo.tsx"; // Import the DevolverEmprestimo component
 import AtenderReserva from "./AtenderReserva"; // Importa o componente AtenderReserva
 
 interface EmprestimoAtivo {

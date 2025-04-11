@@ -1,0 +1,157 @@
+/* General Layout */
+.container {
+  padding: 20px;
+  background-color: #f9f9f9;
+  min-height: 100vh;
+  max-width: 1200px; /* Set a maximum width for the container */
+  margin: 0 auto; /* Center the container horizontally */
+  overflow-x: hidden; /* Prevent horizontal overflow */
+}
+
+.header {
+  display: flex;
+  flex-wrap: wrap; /* Allow wrapping for smaller screens */
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.title {
+  font-size: 24px;
+  font-weight: bold;
+  color: #2473d9;
+  word-wrap: break-word; /* Ensure long words wrap properly */
+  max-width: 100%; /* Prevent overflow */
+}
+
+.filters {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 20px;
+  margin-bottom: 20px;
+  max-width: 100%; /* Ensure filters stay within the container */
+}
+
+.input,
+.select {
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  font-size: 14px;
+  width: 100%;
+  box-sizing: border-box; /* Ensure padding doesn't cause overflow */
+}
+
+.button {
+  background-color: #007bff;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.button:hover {
+  background-color: #0056b3;
+}
+
+/* Table Section */
+.table-container {
+  background-color: white;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.table th,
+.table td {
+  padding: 10px;
+  text-align: left;
+  border-bottom: 1px solid #ddd;
+}
+
+.table th {
+  background-color: #f5f5f5;
+  font-weight: bold;
+  color: #333;
+}
+
+.table tr:hover {
+  background-color: #f1f1f1;
+}
+
+.tag {
+  display: inline-block;
+  padding: 5px 10px;
+  font-size: 12px;
+  font-weight: bold;
+  border-radius: 5px;
+  text-align: center;
+}
+
+.tag.emprestimo {
+  background-color: #d0e7ff; /* Azul */
+  color: #004a99;
+}
+
+.tag.reserva {
+  background-color: #d0f0d0; /* Verde */
+  color: #1b5e20;
+}
+
+.tag.devolvido,
+.tag.devolucao,
+.tag.atendido {
+  background-color: #e0d6f5; /* Roxo */
+  color: #5e35b1;
+}
+
+.tag.emEspera {
+  background-color: #ffe6cc; /* Laranja */
+  color: #e65100;
+}
+
+.tag.pendente {
+  background-color: #ffe6cc; /* Laranja */
+  color: #e65100;
+}
+
+.tag.ativo {
+  background-color: #fff9c4; /* Amarelo */
+  color: #f57f17;
+}
+
+.tag.cancelado,
+.tag.cancelada,
+.tag.expirado {
+  background-color: #ffd6d6; /* Vermelho */
+  color: #b71c1c;
+}
+
+.actions {
+  display: flex;
+  gap: 10px;
+}
+
+.action-button {
+  background-color: #007bff;
+  color: white;
+  padding: 5px 10px;
+  border: none;
+  border-radius: 5px;
+  font-size: 12px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.action-button:hover {
+  background-color: #0056b3;
+}

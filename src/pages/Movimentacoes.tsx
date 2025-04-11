@@ -1,107 +1,374 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState } from "react";
+import styles from "./Movimentacoes.module.css";
+import { useNavigate } from "react-router-dom";
+import { handleDevolverEmprestimo } from "../components/DevolverEmprestimo";
+import { atenderReserva } from "../services/atenderReservaService";
+import { atenderEmprestimo } from "../services/atenderEmprestimoService";
 
-type Emprestimo = {
-  id_emprestimo: number;
+type Movimentacao = {
+  tipo: string;
+  id: number;
   usuario: string;
   titulo: string;
-  data_retirada: string | null;
-  data_devolver: string | null;
+  data_evento: number;
+  data_evento_str: string;
   status: string;
-};
-
-type Reserva = {
-  id_reserva: number;
-  usuario: string;
-  titulo: string;
-  data_criacao: string | null;
-  data_validade: string | null;
-  status: string;
-};
-
-type MovimentacoesResponse = {
-  emprestimos: Record<string, Emprestimo[]>;
-  reservas: Record<string, Reserva[]>;
-};
-
-// Mapeia o status para uma cor de destaque
-const statusColors: Record<string, string> = {
-  'PENDENTE': 'bg-yellow-100 text-yellow-800',
-  'ATIVO': 'bg-blue-100 text-blue-800',
-  'CANCELADO': 'bg-red-100 text-red-800',
-  'DEVOLVIDO': 'bg-green-100 text-green-800',
-
-  'EM ESPERA': 'bg-purple-100 text-purple-800',
-  'CANCELADA': 'bg-red-200 text-red-900',
-  'EXPIRADA': 'bg-gray-200 text-gray-800',
-  'ATENDIDA': 'bg-green-200 text-green-800',
+  data_devolver?: number | null;
+  data_devolvida?: number | null;
+  data_criacao?: number | null;
+  data_retirada?: number | null;
+  data_validade?: number | null; // Adiciona o campo data_validade
 };
 
 const Movimentacoes: React.FC = () => {
-  const [data, setData] = useState<MovimentacoesResponse | null>(null);
+  const [data, setData] = useState<Movimentacao[] | null>(null);
+  const [filteredData, setFilteredData] = useState<Movimentacao[] | null>(null);
   const [loading, setLoading] = useState(true);
+  const [filters, setFilters] = useState({
+    usuario: "",
+    titulo: "",
+    tipo: "",
+    dataInicio: "",
+    dataFim: "",
+    desdeInicio: true,
+    ateAgora: true,
+  });
+
+  const navigate = useNavigate();
 
   useEffect(() => {
-    fetch('http://localhost:5000/movimentacoes', {
+    fetch("http://localhost:5000/movimentacoes", {
       method: "GET",
       headers: {
         Authorization: `Bearer ${localStorage.getItem("token")}`,
       },
     })
-      .then(res => res.json())
-      .then((json: MovimentacoesResponse) => {
-        setData(json);
+      .then((res) => res.json())
+      .then((json: Movimentacao[]) => {
+        // A resposta já está agrupada e ordenada do mais recente para o mais antigo
+        const parsedData = json.map((item) => ({
+          ...item,
+          data_evento: new Date(item.data_evento_str).getTime(),
+          data_criacao: item.data_criacao
+            ? new Date(item.data_criacao).getTime()
+            : null,
+          data_retirada: item.data_retirada
+            ? new Date(item.data_retirada).getTime()
+            : null,
+          data_devolver: item.data_devolver
+            ? new Date(item.data_devolver).getTime()
+            : null,
+          data_devolvida: item.data_devolvida
+            ? new Date(item.data_devolvida).getTime()
+            : null,
+          data_validade: item.data_validade
+            ? new Date(item.data_validade).getTime()
+            : null, // Processa o campo data_validade
+        }));
+
+        setData(parsedData);
+        setFilteredData(parsedData);
         setLoading(false);
       })
       .catch((err) => {
-        console.error('Erro ao buscar movimentações:', err);
+        console.error("Erro ao buscar movimentações:", err);
         setLoading(false);
       });
   }, []);
 
-  if (loading) return <p className="text-center mt-10">Carregando movimentações...</p>;
+  useEffect(() => {
+    if (!data) return;
+
+    const filtered = data.filter((m) => {
+      const matchesUsuario = m.usuario
+        .toLowerCase()
+        .includes(filters.usuario.toLowerCase());
+      const matchesTitulo = m.titulo
+        .toLowerCase()
+        .includes(filters.titulo.toLowerCase());
+      const matchesTipo =
+        !filters.tipo ||
+        (filters.tipo === "emprestimo" &&
+          m.tipo === "emprestimo" &&
+          m.status !== "DEVOLVIDO") ||
+        (filters.tipo === "devolucao" &&
+          m.tipo === "emprestimo" &&
+          m.status === "DEVOLVIDO") ||
+        (filters.tipo !== "emprestimo" && filters.tipo === m.tipo);
+
+      const dataEvento = m.data_evento;
+      const dataInicio = filters.dataInicio
+        ? new Date(filters.dataInicio).getTime()
+        : 0;
+      const dataFim = filters.dataFim
+        ? new Date(filters.dataFim).getTime()
+        : Infinity;
+
+      const matchesData =
+        (filters.desdeInicio || dataEvento >= dataInicio) &&
+        (filters.ateAgora || dataEvento <= dataFim);
+
+      return matchesUsuario && matchesTitulo && matchesTipo && matchesData;
+    });
+
+    setFilteredData(filtered);
+  }, [filters, data]);
+
+  const handleFilterChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ) => {
+    const { name, value, type } = e.target as HTMLInputElement;
+    const checked = (e.target as HTMLInputElement).checked;
+    setFilters((prev) => ({
+      ...prev,
+      [name]: type === "checkbox" ? checked : value,
+    }));
+  };
+
+  const formatDate = (timestamp: number | null): string => {
+    if (!timestamp) return "—";
+    const d = new Date(timestamp);
+    return d.toLocaleString("pt-BR", {
+      day: "2-digit",
+      month: "2-digit",
+      year: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+  };
+
+  const getDescriptiveTipo = (tipo: string, status: string): string => {
+    if (tipo === "emprestimo" && status === "DEVOLVIDO") {
+      return "Devolução";
+    }
+    switch (tipo) {
+      case "emprestimo":
+        return "Empréstimo";
+      case "reserva":
+        return "Reserva";
+      default:
+        return tipo;
+    }
+  };
+
+  const getStatusClass = (status: string, tipo: string): string => {
+    switch (status.toUpperCase()) {
+      case "PENDENTE":
+        return styles.pendente;
+      case "ATIVO":
+        return tipo === "emprestimo" ? styles.ativo : styles.devolvido; // "ATIVO" for attended loans
+      case "ATENDIDA":
+        return styles.devolvido; // "ATENDIDA" for attended reservations
+      case "DEVOLVIDO":
+        return styles.devolvido;
+      case "CANCELADO":
+      case "CANCELADA":
+      case "EXPIRADO":
+        return styles.cancelado;
+      case "EM ESPERA":
+        return styles.emEspera; // Transform "em espera" to "emEspera"
+      default:
+        return "";
+    }
+  };
+
+  if (loading)
+    return <p className="text-center mt-10">Carregando movimentações...</p>;
 
   return (
-    <div className="p-6 space-y-10">
-      <section>
-        <h2 className="text-3xl font-bold text-blue-700 mb-4">📚 Empréstimos</h2>
-        {Object.entries(data?.emprestimos || {}).map(([status, emprestimos]) => (
-          <div key={status} className="mb-6">
-            <h3 className={`text-xl font-semibold px-3 py-1 inline-block rounded ${statusColors[status] || 'bg-gray-100 text-black'}`}>
-              {status}
-            </h3>
-            <ul className="mt-3 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {emprestimos.map((e) => (
-                <li key={e.id_emprestimo} className="border rounded-xl p-4 shadow bg-white space-y-1">
-                  <p><strong>Usuário:</strong> {e.usuario}</p>
-                  <p><strong>Título:</strong> {e.titulo}</p>
-                  <p><strong>Retirada:</strong> {e.data_retirada || '—'}</p>
-                  <p><strong>Devolver:</strong> {e.data_devolver || '—'}</p>
-                </li>
-              ))}
-            </ul>
-          </div>
-        ))}
+    <div className={styles.container}>
+      <div className={styles.header}>
+        <h1 className={styles.title}>Movimentações</h1>
+      </div>
+      <section className={styles.filters}>
+        <input
+          type="text"
+          name="usuario"
+          placeholder="Pesquisar por usuário"
+          className={styles.input}
+          value={filters.usuario}
+          onChange={handleFilterChange}
+        />
+        <input
+          type="text"
+          name="titulo"
+          placeholder="Pesquisar por título"
+          className={styles.input}
+          value={filters.titulo}
+          onChange={handleFilterChange}
+        />
+        <input
+          type="date"
+          name="dataInicio"
+          className={styles.input}
+          value={filters.dataInicio}
+          onChange={handleFilterChange}
+        />
+        <input
+          type="date"
+          name="dataFim"
+          className={styles.input}
+          value={filters.dataFim}
+          onChange={handleFilterChange}
+        />
+        <select
+          name="tipo"
+          className={styles.select}
+          value={filters.tipo}
+          onChange={handleFilterChange}
+        >
+          <option value="">Todos os tipos</option>
+          <option value="emprestimo">Empréstimo</option>
+          <option value="reserva">Reserva</option>
+          <option value="devolucao">Devolução</option>
+        </select>
       </section>
 
-      <section>
-        <h2 className="text-3xl font-bold text-green-700 mb-4">📖 Reservas</h2>
-        {Object.entries(data?.reservas || {}).map(([status, reservas]) => (
-          <div key={status} className="mb-6">
-            <h3 className={`text-xl font-semibold px-3 py-1 inline-block rounded ${statusColors[status] || 'bg-gray-100 text-black'}`}>
-              {status}
-            </h3>
-            <ul className="mt-3 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {reservas.map((r) => (
-                <li key={r.id_reserva} className="border rounded-xl p-4 shadow bg-white space-y-1">
-                  <p><strong>Usuário:</strong> {r.usuario}</p>
-                  <p><strong>Título:</strong> {r.titulo}</p>
-                  <p><strong>Criação:</strong> {r.data_criacao || '—'}</p>
-                  <p><strong>Validade:</strong> {r.data_validade || '—'}</p>
-                </li>
-              ))}
-            </ul>
-          </div>
-        ))}
+      <section className={styles["table-container"]}>
+        <table className={styles.table}>
+          <thead>
+            <tr>
+              <th>Livro</th>
+              <th>Usuário</th>
+              <th>Tipo de Movimentação</th>
+              <th>Data Criação</th>
+              <th>Data Devolver</th>
+              <th>Data Devolvida</th>
+              <th>Data Retirada</th>
+              <th>Data Validade</th> {/* Adiciona o cabeçalho da nova coluna */}
+              <th>Status</th>
+              <th>Ações</th>
+            </tr>
+          </thead>
+          <tbody>
+            {filteredData?.map((m) => (
+              <tr key={`${m.tipo}-${m.id}`}>
+                <td>{m.titulo}</td>
+                <td>{m.usuario}</td>
+                <td>
+                  <span
+                    className={`${styles.tag} ${
+                      m.tipo === "emprestimo" && m.status === "DEVOLVIDO"
+                        ? styles.devolucao
+                        : m.tipo === "emprestimo"
+                        ? styles.emprestimo
+                        : m.tipo === "reserva"
+                        ? styles.reserva
+                        : styles.devolucao
+                    }`}
+                  >
+                    {getDescriptiveTipo(m.tipo, m.status)}
+                  </span>
+                </td>
+                <td>{formatDate(m.data_criacao ?? null)}</td>
+                <td>{formatDate(m.data_devolver ?? null)}</td>
+                <td>{formatDate(m.data_devolvida ?? null)}</td>
+                <td>{formatDate(m.data_retirada ?? null)}</td>
+                <td>{formatDate(m.data_validade ?? null)}</td>
+                <td>
+                  <span
+                    className={`${styles.tag} ${getStatusClass(
+                      m.status,
+                      m.tipo
+                    )}`}
+                  >
+                    {m.status}
+                  </span>
+                </td>
+                <td>
+                  {m.tipo === "emprestimo" &&
+                    m.status !== "DEVOLVIDO" &&
+                    m.status !== "PENDENTE" && (
+                      <button
+                        className={styles["action-button"]}
+                        onClick={() =>
+                          handleDevolverEmprestimo(
+                            String(m.id),
+                            navigate,
+                            () => {
+                              setData((prevData) => {
+                                if (!prevData) return null;
+                                return prevData.map((item) =>
+                                  item.id === m.id
+                                    ? { ...item, status: "DEVOLVIDO" }
+                                    : item
+                                );
+                              });
+                            }
+                          )
+                        }
+                      >
+                        Devolver
+                      </button>
+                    )}
+                  {m.tipo === "reserva" && m.status === "EM ESPERA" && (
+                    <button
+                      className={styles["action-button"]}
+                      onClick={async () => {
+                        const success = await atenderReserva(
+                          String(m.id),
+                          navigate
+                        );
+                        if (success) {
+                          setData((prevData) => {
+                            if (!prevData) return null;
+                            return prevData.map((item) =>
+                              item.id === m.id
+                                ? { ...item, status: "ATENDIDA" }
+                                : item
+                            );
+                          });
+                        }
+                      }}
+                    >
+                      Atender
+                    </button>
+                  )}
+                  {m.tipo === "reserva" && m.status === "PENDENTE" && (
+                    <button
+                      className={styles["action-button"]}
+                      onClick={() => {
+                        setData((prevData) => {
+                          if (!prevData) return null;
+                          return prevData.map((item) =>
+                            item.id === m.id
+                              ? { ...item, status: "CANCELADO" }
+                              : item
+                          );
+                        });
+                      }}
+                    >
+                      Cancelar
+                    </button>
+                  )}
+                  {m.tipo === "emprestimo" && m.status === "PENDENTE" && (
+                    <button
+                      className={styles["action-button"]}
+                      onClick={async () => {
+                        const success = await atenderEmprestimo(
+                          String(m.id),
+                          navigate
+                        );
+                        if (success) {
+                          setData((prevData) => {
+                            if (!prevData) return null;
+                            return prevData.map((item) =>
+                              item.id === m.id
+                                ? { ...item, status: "ATIVO" }
+                                : item
+                            );
+                          });
+                        }
+                      }}
+                    >
+                      Atender
+                    </button>
+                  )}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
       </section>
     </div>
   );
