@@ -384,20 +384,51 @@ nav img {
   .change .owl-item {
     width: 210px !important;
   }
-}
-@media (max-width: 850px) {
-  .p-relative input {
-    width: 400px;
+  .header-phone{
+    display: none;
+  }
+  .input-phone{
+    display: none !important;
   }
 }
-@media (max-width: 710px) {
+@media (max-width: 1010px) {
+  .p-relative input {
+    width: 280px;
+  }
+}
+@media (max-width: 745px) {
   .p-relative input {
     width: 250px;
   }
 }
-@media (max-width: 590px) {
+@media (max-width: 710px) {
   .p-relative input {
-    width: 150px;
+    width: 200px;
+  }
+}
+@media (max-width: 660px) {
+  .space-sm {
+    width: 10px;
+  }
+  .p-relative input{
+    width: 175px;
+  }
+}
+@media (max-width: 600px) {
+  .input-laptop {
+    display: none;
+  }
+  .input-phone{
+    display: flex !important;
+  }
+  .p-relative input{
+    width: 475px;
+  }
+  .header-phone{
+    display: block;
+  }
+  .fake-header{
+    height: 167px;
   }
 }
 @media (max-width: 500px) {
@@ -407,6 +438,22 @@ nav img {
   .logo {
     height: 30px;
   }
+  .p-relative input {
+    width: 350px;
+  }
+}
+@media (max-width: 480px) {
+  .p-relative input {
+    width: 300px;
+  }
+  .button{
+    width: 45px;
+    height: 45px;
+  }
+  .user-button{
+    width: 46px !important;
+    height: 46px !important;
+  }
 }
 @media (max-width: 430px) {
   .space-sm {
@@ -415,8 +462,10 @@ nav img {
 }
 @media (max-width: 400px) {
   .p-relative input {
-    width: 140px;
-    font-size: 12px;
+    width: 230px;
+  }
+  .delius-regular{
+    font-size: x-large !important;
   }
   .logo {
     height: 20px;
@@ -425,9 +474,25 @@ nav img {
     height: 35px;
   }
 }
+@media (max-width: 360px) {
+  .button{
+    width: 40px;
+    height: 40px;
+  }
+  .user-button{
+    width: 41px !important;
+    height: 41px !important;
+  }
+}
 @media (max-width: 350px) {
   .space-sm {
-    width: 2px;
+    width: 5px;
+  }
+  .header{
+    height: 70px;
+  }
+  .fake-header{
+    height: 137px;
   }
   .border-book2 img {
     border-radius: 15px;
@@ -445,12 +510,10 @@ nav img {
     height: 30px;
   }
   .p-relative input {
-    width: 120px;
-    font-size: 12px;
+    width: 220px;
   }
-  .p-relative input {
-    width: 120px;
-    font-size: 12px;
+  .delius-regular{
+    font-size: larger !important;
   }
 }
 

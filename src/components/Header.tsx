@@ -122,7 +122,7 @@ const Header: React.FC = () => {
             style={{cursor: "pointer"}}
           >Read Raccoon
           </p>
-          <form
+          <form className="input-laptop"
             onSubmit={(e) => {
               e.preventDefault();
               const query = (
@@ -196,6 +196,33 @@ const Header: React.FC = () => {
             </nav>
           </div>
         </div>
+        <div className="d-flex s-between input-phone">
+          <div></div>
+          <form
+              onSubmit={(e) => {
+                e.preventDefault();
+                const query = (
+                  document.getElementById("campo-busca") as HTMLInputElement
+                )?.value;
+                const filters = Array.from(
+                  document.querySelectorAll(".filter-checkbox:checked")
+                ).map((checkbox) => (checkbox as HTMLInputElement).value);
+                navigate(`/pesquisa/${query}?filters=${filters.join(",")}`);
+              }}
+            >
+              <div className="p-relative">
+                <input
+                  id="campo-busca"
+                  required
+                  type="text"
+                  placeholder="Pesquisar..."
+                />
+                <span id="avancada"></span>
+              </div>
+          </form>
+          <div></div>
+        </div>
+        <div className="space-sm-y header-phone"></div>
         <div className="divisor-line"></div>
       </header>
       <div className="fake-header"></div>
