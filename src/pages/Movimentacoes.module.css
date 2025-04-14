@@ -10,7 +10,7 @@
 
 .header {
   display: flex;
-  flex-wrap: wrap; /* Allow wrapping for smaller screens */
+  flex-wrap: wrap;
   justify-content: space-between;
   align-items: center;
   margin-bottom: 20px;
@@ -20,8 +20,8 @@
   font-size: 24px;
   font-weight: bold;
   color: #2473d9;
-  word-wrap: break-word; /* Ensure long words wrap properly */
-  max-width: 100%; /* Prevent overflow */
+  word-wrap: break-word;
+  max-width: 100%;
 }
 
 .filters {
@@ -29,7 +29,7 @@
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
   gap: 20px;
   margin-bottom: 20px;
-  max-width: 100%; /* Ensure filters stay within the container */
+  max-width: 100%;
 }
 
 .input,

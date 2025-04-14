@@ -9,6 +9,7 @@ import Configuracoes from "./Configuracoes";
 import AddBooks from "./AddBooks";
 import CadastroUsuario from "./CadastroUsuario";
 import Relatorios from "./Relatorios";
+import Multas from "../components/Multas";
 
 const HomeBiblio: React.FC = () => {
   const navigate = useNavigate();
@@ -116,14 +117,19 @@ const HomeBiblio: React.FC = () => {
       onClick: () => navigate("/home_biblio?page=6"),
     },
     {
+      title: "Multas",
+      description: "Aqui você acompanhar as multas da biblioteca",
+      onClick: () => navigate("/home_biblio?page=7"),
+    },
+    {
       title: "Relatórios",
       description: "Aqui você poderá gerar um relatório dos usuários e livros no formato PDF",
-      onClick: () => navigate("/home_biblio?page=7"),
+      onClick: () => navigate("/home_biblio?page=8"),
     },
     hasAdminPermission && {
       title: "Configurações",
       description: "Aqui você pode ajustar as configurações do sistema",
-      onClick: () => navigate("/home_biblio?page=8"),
+      onClick: () => navigate("/home_biblio?page=9"),
     },
   ]
     .filter(Boolean)
@@ -184,10 +190,13 @@ const HomeBiblio: React.FC = () => {
                 <a>Movimentações</a>
               </li>
               <li data-page="7" onClick={() => navigate("/home_biblio?page=7")} className="pointer">
+                <a>Multas</a>
+              </li>
+              <li data-page="8" onClick={() => navigate("/home_biblio?page=8")} className="pointer">
                 <a>Relatórios</a>
               </li>
               {hasAdminPermission && (
-                <li data-page="8" onClick={() => navigate("/home_biblio?page=8")} className="pointer">
+                <li data-page="9" onClick={() => navigate("/home_biblio?page=9")} className="pointer">
                   <a>Configurações</a>
                 </li>
               )}
@@ -237,8 +246,9 @@ const HomeBiblio: React.FC = () => {
           <div className="page" data-page="5"><Livros /></div>
           <div className="page" data-page="6"><Movimentacoes /></div>
           <div className="page" data-page="7"><Relatorios /></div>
+          <div className="page" data-page="8"><Multas /></div>
           {hasAdminPermission && (
-            <div className="page" data-page="8"><Configuracoes /></div>
+            <div className="page" data-page="9"><Configuracoes /></div>
           )}
         </section>
       </main>

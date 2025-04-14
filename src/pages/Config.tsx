@@ -8,6 +8,7 @@ import TrocarSenha from "../components/TrocarSenha";
 import Carrinho from "../components/Carrinho";
 import PuxarHistorico from "../components/PuxarHistorico";
 import Swal from "sweetalert2";
+import MultasByUser from "../components/MultasByUser";
 
 const Config: React.FC = () => {
   const [nome, setNome] = useState("");
@@ -145,6 +146,9 @@ const Config: React.FC = () => {
               <li onClick={() => navigate("/user?page=6")} className="pointer">
                 <a>Histórico</a>
               </li>
+              <li onClick={() => navigate("/user?page=7")} className="pointer">
+                <a>Minhas Multas</a>
+              </li>
               <div className="space-sm-y"></div>
               <li className="highlight pointer" onClick={() => Sair()} >
                 <a>Sair</a>
@@ -182,6 +186,9 @@ const Config: React.FC = () => {
           </div>
           <div className="page">
             <PuxarHistorico />
+          </div>
+          <div className="page">
+            <MultasByUser />
           </div>
         </section>
       </main>
