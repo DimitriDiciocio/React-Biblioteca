@@ -2775,3 +2775,32 @@ ul {
     gap: 10px;
   }
 }
+@media (max-width: 768px) {
+  footer .d-flex.s-around {
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+  }
+
+  footer section.d-flex-column {
+    align-items: center;
+    text-align: center;
+  }
+
+  footer .icon-footer {
+    width: 30px;
+    height: auto;
+  }
+
+  .padding-left-footer {
+    padding-left: 10px;
+  }
+
+  .texto-invertido p {
+    font-size: 14px;
+  }
+
+  .delius-regular {
+    font-size: 20px !important;
+  }
+}
