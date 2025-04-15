@@ -44,68 +44,68 @@ const EditarUsuario: React.FC = () => {
     }
   };
 
-  useEffect(() => {
-    const fetchUserData = async () => {
-      try {
-        const response = await fetch(`http://127.0.0.1:5000/user`, {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-        });
+  async function recuperaDados() {
+    try {
+      const response = await fetch(`http://127.0.0.1:5000/user`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      });
 
-        const data = await response.json();
+      const data = await response.json();
 
-        if (response.ok) {
-          setNome(data.nome);
-          setEmail(data.email);
-          setTelefone(formatTelefone(data.telefone)); // Format for display
-          setEndereco(data.endereco); // Set the address state
+      if (response.ok) {
+        setNome(data.nome);
+        setEmail(data.email);
+        setTelefone(formatTelefone(data.telefone)); // Format for display
+        setEndereco(data.endereco); // Set the address state
 
-          // Save original values
-          setOriginalNome(data.nome);
-          setOriginalEmail(data.email);
-          setOriginalTelefone(formatTelefone(data.telefone));
-          setOriginalEndereco(data.endereco);
+        // Save original values
+        setOriginalNome(data.nome);
+        setOriginalEmail(data.email);
+        setOriginalTelefone(formatTelefone(data.telefone));
+        setOriginalEndereco(data.endereco);
 
-          if (data.imagem) {
-            const imagemUrl = `http://127.0.0.1:5000/uploads/usuarios/${data.imagem}`;
+        if (data.imagem) {
+          const imagemUrl = `http://127.0.0.1:5000/uploads/usuarios/${data.imagem}`;
 
-            fetch(imagemUrl)
-              .then(async (imgResponse) => {
-                if (imgResponse.ok) {
-                  setImagemPreview(imagemUrl);
+          fetch(imagemUrl)
+            .then(async (imgResponse) => {
+              if (imgResponse.ok) {
+                setImagemPreview(imagemUrl);
 
-                  // Convert the image URL to a File object
-                  const blob = await imgResponse.blob();
-                  const file = new File([blob], data.imagem, {
-                    type: blob.type,
-                  });
-                  setImagem(file); // Set the image file
-                }
-              })
-              .catch(() => {
-                console.log("Imagem não encontrada");
-              });
-          }
-        } else {
-          Swal.fire({
-            title: "Erro ao buscar dados do usuário",
-            text: data.message,
-            icon: "error",
-          });
+                // Convert the image URL to a File object
+                const blob = await imgResponse.blob();
+                const file = new File([blob], data.imagem, {
+                  type: blob.type,
+                });
+                setImagem(file); // Set the image file
+              }
+            })
+            .catch(() => {
+              console.log("Imagem não encontrada");
+            });
         }
-      } catch (error) {
+      } else {
         Swal.fire({
-          title: "Erro de conexão com o servidor",
-          text: String(error),
+          title: "Erro ao buscar dados do usuário",
+          text: data.message,
           icon: "error",
         });
       }
-    };
+    } catch (error) {
+      Swal.fire({
+        title: "Erro de conexão com o servidor",
+        text: String(error),
+        icon: "error",
+      });
+    }
+  }
 
-    fetchUserData();
+  useEffect(() => {
+    recuperaDados()
   }, [navigate, token]);
 
   useEffect(() => {
