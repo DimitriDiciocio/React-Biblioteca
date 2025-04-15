@@ -221,27 +221,37 @@ const BookDetail = () => {
   };
 
   const handleRating = async (rating: number) => {
-    const newRating = userRating === rating ? 0 : rating;
-    setUserRating(newRating);
-
+    const newRating = userRating === rating ? 0 : rating; // Alterna a avaliação (0 se o mesmo for clicado novamente)
+    setUserRating(newRating); // Atualiza a avaliação no frontend
+  
     if (newRating === null || newRating === undefined) {
       Swal.fire("Erro", "Avaliação inválida.", "error");
       return;
     }
-
+  
     try {
+      // Envia a avaliação para a API
       const response = await fetch(`http://127.0.0.1:5000/avaliarlivro/${id}`, {
-        method: "PUT",
+        method: "POST",
         headers: {
-          Authorization: `Bearer ${token}`,
+          Authorization: `Bearer ${token}`, // Envia o token para a autenticação
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ valor: newRating }),
+        body: JSON.stringify({ valor: newRating }), // Corpo da requisição com a avaliação
       });
+  
+      if (!response.ok) {
+        const errorData = await response.json();
+        Swal.fire("Erro", errorData.error || "Erro ao enviar avaliação", "error");
+        return;
+      }
+      window.location.reload()
+
     } catch (error) {
       console.error("Erro ao enviar avaliação:", error);
+      Swal.fire("Erro", "Ocorreu um erro ao tentar enviar a avaliação.", "error");
     }
-  };
+  };  
 
   if (isAllowed === null) return <p>Verificando permissão...</p>;
   if (!isAllowed) return null;
