@@ -303,7 +303,7 @@ nav img {
   font-size: larger;
   margin-top: 2px;
   text-align: center;
-  max-width: 200px;
+  max-width: 180px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -2738,4 +2738,40 @@ ul {
 .z-index-high{
   position: relative;
   z-index: 120;
+}
+
+@media (max-width: 651px) {
+  .pagina-livro-informa .d-flex.center-x.size-medium.g-30 {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .border-book3 {
+    width: 200px;
+    height: auto;
+    display: flex;
+    justify-content: center;
+  }
+  
+  .border-book3 img {
+    width: 190px;
+    height: auto;
+    border-radius: 15px;
+  }
+
+  .d-flex-column {
+    align-items: center;
+    text-align: center;
+  }
+
+  .width-desc {
+    max-width: 90%;
+  }
+
+  .big-size {
+    font-size: 28px !important; /* Tamanho reduzido do título */
+  }
+  .pagina-livro-informa .d-flex.center-x.size-medium.g-30 {
+    gap: 10px;
+  }
 }
