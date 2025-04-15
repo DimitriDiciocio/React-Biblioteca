@@ -245,8 +245,8 @@ const HomeBiblio: React.FC = () => {
           <div className="page" data-page="4"><AddBooks /></div>
           <div className="page" data-page="5"><Livros /></div>
           <div className="page" data-page="6"><Movimentacoes /></div>
-          <div className="page" data-page="7"><Relatorios /></div>
-          <div className="page" data-page="8"><Multas /></div>
+          <div className="page" data-page="7"><Multas /></div>
+          <div className="page" data-page="8"><Relatorios /></div>
           {hasAdminPermission && (
             <div className="page" data-page="9"><Configuracoes /></div>
           )}

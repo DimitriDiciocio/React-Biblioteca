@@ -1260,9 +1260,8 @@ textarea.input {
 }
 
 .login-container img {
-  width: 100px;
-  height: 100px;
-  border-radius: 50%;
+  width: 200px;
+  height: 200px;
   object-fit: cover;
 }
 
@@ -1321,6 +1320,7 @@ textarea.input {
   transition: all 0.3s ease;
   color: rgb(100, 100, 100);
   background: #fffefe;
+  z-index: 500;
 }
 
 .inputGroup input:focus ~ label,
@@ -1369,6 +1369,7 @@ textarea.input {
   align-items: center;
   justify-content: center;
   cursor: pointer;
+  z-index: 300;
 }
 
 .eye-container svg {
@@ -2530,4 +2531,211 @@ ul {
   font-weight: bold;
   border-radius: var(--border-radius);
   text-align: center;
+}
+
+.btn-container {
+  --pupil-color: #FFF;
+  --pupil-move: 20%;
+  --sensor-height: 25dvmax; 
+  --sensor-width: calc(var(--sensor-height) * 82.84 / 100);
+  display: flex;
+  gap: 22px;
+}
+.btn-button {
+  --back-color: #000;
+}
+.btn-lid {
+  --back-color: transparent;
+}
+
+/**********/
+/* Styles */
+/**********/
+
+/* Container */
+.btn-container {
+  position: relative;
+}
+
+/* Button */
+.btn-button {
+  background: #000;
+  border: 1px solid #000;
+  border-radius: 10rem;
+  cursor: pointer;
+  padding: 0.5rem;
+  position: relative;
+  z-index: 150;
+  width: 20px;
+  height: 14px;
+  display: flex;              /* Alinha a pupila */
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-button:hover,
+.btn-button:hover .btn-lid {
+  animation: squint 100ms forwards;
+}
+.btn-button:active .btn-pupil {
+  animation: agitate 100ms infinite 500ms;
+  border-width: 0.15rem;  /* igual ao padrão */
+  padding: 0.15rem;      /* igual ao padrão */
+}
+
+.btn-lid {
+  border-radius: 10rem;
+  height: 100%;
+  left: 0;
+  position: absolute;
+  top: 0;
+  width: 100%;
+  z-index: 101;
+}
+
+
+.btn-pupil {
+  background: #FFF;
+  border: 0.2rem solid var(--pupil-color); /* menor que 0.4rem */
+  border-radius: 10rem;
+  padding: 0.15rem; /* menor que 0.35rem */
+  transition: all 200ms ease-out;
+}
+/* Sensors */
+.btn-sensor {
+  clip-path: polygon(0 0, 100% 0, 50% 100%, 0 0);
+  height: var(--sensor-height); 
+  left: calc(50% - var(--sensor-width) / 2);
+  overflow: hidden;
+  position: absolute;
+  top: calc(50% - var(--sensor-height) / 2);
+  transform: rotate(calc(var(--a) * 1deg))
+    translateY(calc(var(--sensor-height) * -50 / 100));
+  width: var(--sensor-width);
+  z-index: 99;
+}
+
+/************/
+/* Tracking */
+/************/
+
+.sensor-n:hover ~ .btn-button .btn-pupil {
+  transform: translateX(0) translateY(calc(-3 * var(--pupil-move)));
+}
+.sensor-ne:hover ~ .btn-button .btn-pupil {
+  transform: translateX(calc(2 * var(--pupil-move)))
+    translateY(calc(-2 * var(--pupil-move)));
+}
+.sensor-e:hover ~ .btn-button .btn-pupil {
+  transform: translateX(calc(3 * var(--pupil-move))) translateY(0);
+}
+.sensor-se:hover ~ .btn-button .btn-pupil {
+  transform: translateX(calc(2 * var(--pupil-move)))
+    translateY(calc(2 * var(--pupil-move)));
+}
+.sensor-s:hover ~ .btn-button .btn-pupil {
+  transform: translateX(0) translateY(calc(3 * var(--pupil-move)));
+}
+.sensor-sw:hover ~ .btn-button .btn-pupil {
+  transform: translateX(calc(-2 * var(--pupil-move)))
+    translateY(calc(2 * var(--pupil-move)));
+}
+.sensor-w:hover ~ .btn-button .btn-pupil {
+  transform: translateX(calc(-3 * var(--pupil-move))) translateY(0);
+}
+.sensor-nw:hover ~ .btn-button .btn-pupil {
+  transform: translateX(calc(-2 * var(--pupil-move)))
+    translateY(calc(-2 * var(--pupil-move)));
+}
+
+/**************/
+/* Animations */
+/**************/
+@keyframes agitate {
+  0% {
+    transform: scale(1.05) translate(0%, -5%);
+  }
+
+  25% {
+    transform: scale(1.05) translate(-5%, 5%);
+  }
+
+  50% {
+    transform: scale(1.05) translate(5%, -3%);
+  }
+
+  75% {
+    transform: scale(1.05) translate(-5%, -3%);
+  }
+
+  100% {
+    transform: scale(1.05) translate(5%, 5%);
+  }
+}
+
+@keyframes squint {
+  0% {
+    background: var(--back-color);
+  }
+
+  25% {
+    background: linear-gradient(
+      0deg,
+      #000 0% 9%,
+      var(--back-color) 10% 90%,
+      #000 91% 100%
+    );
+  }
+
+  50% {
+    background: linear-gradient(
+      0deg,
+      #000 0% 18%,
+      var(--back-color) 19% 81%,
+      #000 82% 100%
+    );
+  }
+
+  75% {
+    background: linear-gradient(
+      0deg,
+      #000 0% 27%,
+      var(--back-color) 28% 72%,
+      #000 73% 100%
+    );
+  }
+
+  100% {
+    background: linear-gradient(
+      0deg,
+      #000 0% 35%,
+      var(--back-color) 36% 64%,
+      #000 65% 100%
+    );
+  }
+}
+.p-absolute{
+  position: absolute;
+}
+.avatar-container {
+  position: relative;
+  width: 100px;
+  height: 0px;
+  margin: 0 auto 10px auto;
+  top: -90px;
+  left: 18px;
+}
+
+.avatar-container img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+  display: block;
+}
+
+
+.z-index-high{
+  position: relative;
+  z-index: 120;
 }

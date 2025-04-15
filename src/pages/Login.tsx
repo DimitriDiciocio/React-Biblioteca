@@ -63,25 +63,46 @@ const Login: React.FC = () => {
 
   return (
     <div className="body-login">
-      <header className="header-login">
-          <p
-            className="delius-regular"
-            onClick={() => navigate("/")}
-            style={{cursor: "pointer"}}
-          >Read Raccoon
-          </p>      
-      </header>
-      <main className='login-container'>
-        <img src="assets/img/pandavermelho.png" alt="Avatar"/>
+    <header className="header-login">
+      <p
+        className="delius-regular"
+        onClick={() => navigate("/")}
+        style={{cursor: "pointer"}}
+      >Read Raccoon
+      </p>      
+    </header>
+    <main className='login-container'>
+      <img src="assets/img/red-raccoon.png" alt=""/>
+      <div className="avatar-container center-x">
+        <input type="checkbox" hidden />
+        <div className="btn-container">
+          <div style={{"--a": 0}} className="btn-sensor sensor-n"></div>
+          <div style={{"--a": 45}} className="btn-sensor sensor-ne"></div>
+          <div style={{"--a": 90}} className="btn-sensor sensor-e"></div>
+          <div style={{"--a": 135}} className="btn-sensor sensor-se"></div>
+          <div style={{"--a": 180}} className="btn-sensor sensor-s"></div>
+          <div style={{"--a": 225}} className="btn-sensor sensor-sw"></div>
+          <div style={{"--a": 270}} className="btn-sensor sensor-w"></div>
+          <div style={{"--a": 315}} className="btn-sensor sensor-nw"></div>
+          <button className="btn-button">
+            <div className="btn-lid"></div>
+            <div className="btn-pupil"></div>
+          </button>
+          <button className="btn-button">
+            <div className="btn-lid"></div>
+            <div className="btn-pupil"></div>
+          </button>
+        </div>
+      </div>
         <h2 className="h2-login">LOGIN</h2>
 
         <form onSubmit={handleLogin}>
           <div className="inputGroup">
-              <input type="text" required autoComplete="off"  value={email} onChange={(e) => setEmail(e.target.value)}/>
+              <input type="text" required autoComplete="off" className='z-index-high'  value={email} onChange={(e) => setEmail(e.target.value)}/>
               <label>E-mail:</label>
           </div>
           <div className="inputGroup">
-                <input type={mostrarSenha ? 'text' : 'password'} id="senha" required autoComplete="off" value={senha} onChange={(e) => setSenha(e.target.value)}/>
+                <input type={mostrarSenha ? 'text' : 'password'} className='z-index-high' id="senha" required autoComplete="off" value={senha} onChange={(e) => setSenha(e.target.value)}/>
                 <label>Senha:</label>
                 <input type="checkbox" id="togglePassword" checked={mostrarSenha} hidden/>
                 <div className="eye-container" onClick={veSenha}>
@@ -93,12 +114,12 @@ const Login: React.FC = () => {
                     </svg>
                 </div>
             </div>
-            <button type="submit" className='button-login'>Entrar</button>
+            <button type="submit" className='button-login z-index-high'>Entrar</button>
         </form>
         <div className="space-lilsm-y"></div>
-        <a className='register text-decoration-none cursor-pointer' onClick={() => navigate("/cadastro")}>Não possuo uma conta</a>
+        <a className='register text-decoration-none cursor-pointer z-index-high' onClick={() => navigate("/cadastro")}>Não possuo uma conta</a>
       </main>
-    </div>
+  </div>
   );
 };
 
