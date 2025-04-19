@@ -1,13 +1,21 @@
 import React, { useState } from "react";
-import RelatorioLivros from "./RelatorioLivros";
+import RelatorioLivros from "../components/RelatorioLivros";
 import RelatorioUsuarios from "../components/RelatorioUsuarios";
+import RelatorioMultas from "../components/RelatorioMultas";
 
 export default function PaginaRelatorios() {
   const [mostrar, setMostrar] = useState("livros");
 
   return (
     <div style={{ padding: "24px", maxWidth: "1000px", margin: "0 auto" }}>
-      <div style={{ display: "flex", justifyContent: "center", gap: "12px", marginBottom: "20px" }}>
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "center",
+          gap: "12px",
+          marginBottom: "20px",
+        }}
+      >
         <button
           onClick={() => setMostrar("livros")}
           style={{
@@ -16,7 +24,7 @@ export default function PaginaRelatorios() {
             color: mostrar === "livros" ? "white" : "black",
             border: "none",
             borderRadius: "4px",
-            cursor: "pointer"
+            cursor: "pointer",
           }}
         >
           Relatório de Livros
@@ -29,10 +37,23 @@ export default function PaginaRelatorios() {
             color: mostrar === "usuarios" ? "white" : "black",
             border: "none",
             borderRadius: "4px",
-            cursor: "pointer"
+            cursor: "pointer",
           }}
         >
           Relatório de Usuários
+        </button>
+        <button
+          onClick={() => setMostrar("multas")}
+          style={{
+            padding: "8px 16px",
+            backgroundColor: mostrar === "multas" ? "#2473D9" : "#ccc",
+            color: mostrar === "multas" ? "white" : "black",
+            border: "none",
+            borderRadius: "4px",
+            cursor: "pointer",
+          }}
+        >
+          Relatório de Multas
         </button>
       </div>
 
@@ -41,6 +62,9 @@ export default function PaginaRelatorios() {
       </div>
       <div style={{ display: mostrar === "usuarios" ? "block" : "none" }}>
         <RelatorioUsuarios />
+      </div>
+      <div style={{ display: mostrar === "multas" ? "block" : "none" }}>
+        <RelatorioMultas />
       </div>
     </div>
   );

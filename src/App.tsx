@@ -5,7 +5,7 @@ import Cadastro from "./pages/Cadastro";
 import AddBooks from "./pages/AddBooks";
 import Home from "./pages/Home";
 import EditarUsuario from "./components/EditarUsuario";
-import Relatorios from "./pages/RelatorioLivros";
+import Relatorios from "./components/RelatorioLivros";
 import BookDetail from "./pages/DetalhesLivro";
 import Sair from "./pages/Sair";
 import EditarLivro from "./pages/EditarLivro";

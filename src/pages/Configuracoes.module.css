@@ -1,0 +1,88 @@
+.container {
+  padding: 20px;
+  background-color: var(--azul-claro);
+  border-radius: var(--border-radius);
+  box-shadow: 0 4px 8px var(--card-shadow);
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.title {
+  font-size: 24px;
+  font-weight: bold;
+  color: var(--azul-escuro);
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.description {
+  font-size: 16px;
+  color: var(--text-color);
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.subtitle {
+  font-size: 20px;
+  font-weight: bold;
+  color: var(--azul-escuro);
+  margin-bottom: 10px;
+}
+
+.inputGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  position: relative;
+}
+
+.inputLabel {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.input {
+  padding: 10px;
+  padding-left: 30px; /* Add space for the "R$" label */
+  border: 1px solid var(--azul-escuro);
+  border-radius: var(--border-radius);
+  font-size: 16px;
+}
+
+.inputLabel > input {
+  flex: 1;
+}
+
+.inputLabel > span {
+  position: absolute;
+  left: 10px;
+  font-size: 16px;
+  color: var(--azul-escuro);
+}
+
+label {
+  margin-bottom: 5px; /* Add spacing between label and input */
+}
+
+.button {
+  padding: 10px 20px;
+  background-color: var(--azul-escuro);
+  color: var(--branco);
+  border: none;
+  border-radius: var(--border-radius);
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: bold;
+  transition: background-color var(--transition);
+}
+
+.button:hover {
+  background-color: var(--roxo);
+}

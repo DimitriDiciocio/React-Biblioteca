@@ -30,7 +30,9 @@ const BookDetail = () => {
   const [book, setBook] = useState<Book | null>(null);
   const [disponivelReserva, setDisponivelReserva] = useState(false);
   const [disponivelEmprestimo, setDisponivelEmprestimo] = useState(false);
-  const [mensagemIndisponivel, setMensagemIndisponivel] = useState<string | null>(null);
+  const [mensagemIndisponivel, setMensagemIndisponivel] = useState<
+    string | null
+  >(null);
   const [loading, setLoading] = useState(true);
   const [userRating, setUserRating] = useState<number | null>(null);
   const navigate = useNavigate();
@@ -93,12 +95,39 @@ const BookDetail = () => {
         if (!dataReserva.disponivel && dataReserva.mensagem) {
           setMensagemIndisponivel(dataReserva.mensagem);
         }
-
       } catch (error) {
         console.error("Erro ao verificar disponibilidade:", error);
       }
     };
     verificarDisponibilidade();
+  }, [id, token]);
+
+  useEffect(() => {
+    const fetchUserRating = async () => {
+      try {
+        const response = await fetch(
+          `http://127.0.0.1:5000/livros/${id}/avaliacao`,
+          {
+            method: "GET",
+            headers: {
+              Authorization: `Bearer ${token}`,
+              "Content-Type": "application/json",
+            },
+          }
+        );
+
+        if (response.ok) {
+          const data = await response.json();
+          setUserRating(data.valor_total); // Set the user's rating
+        } else {
+          console.log("Usuário ainda não avaliou este livro.");
+        }
+      } catch (error) {
+        console.error("Erro ao buscar avaliação do usuário:", error);
+      }
+    };
+
+    fetchUserRating();
   }, [id, token]);
 
   if (loading) return <p>Carregando...</p>;
@@ -223,35 +252,42 @@ const BookDetail = () => {
   const handleRating = async (rating: number) => {
     const newRating = userRating === rating ? 0 : rating; // Alterna a avaliação (0 se o mesmo for clicado novamente)
     setUserRating(newRating); // Atualiza a avaliação no frontend
-  
+
     if (newRating === null || newRating === undefined) {
       Swal.fire("Erro", "Avaliação inválida.", "error");
       return;
     }
-  
+
     try {
       // Envia a avaliação para a API
       const response = await fetch(`http://127.0.0.1:5000/avaliarlivro/${id}`, {
         method: "POST",
         headers: {
-          Authorization: `Bearer ${token}`, // Envia o token para a autenticação
+          Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ valor: newRating }), // Corpo da requisição com a avaliação
+        body: JSON.stringify({ valor: newRating }),
       });
-  
+
       if (!response.ok) {
         const errorData = await response.json();
-        Swal.fire("Erro", errorData.error || "Erro ao enviar avaliação", "error");
+        Swal.fire(
+          "Erro",
+          errorData.error || "Erro ao enviar avaliação",
+          "error"
+        );
         return;
       }
-      window.location.reload()
-
+      window.location.reload();
     } catch (error) {
       console.error("Erro ao enviar avaliação:", error);
-      Swal.fire("Erro", "Ocorreu um erro ao tentar enviar a avaliação.", "error");
+      Swal.fire(
+        "Erro",
+        "Ocorreu um erro ao tentar enviar a avaliação.",
+        "error"
+      );
     }
-  };  
+  };
 
   if (isAllowed === null) return <p>Verificando permissão...</p>;
   if (!isAllowed) return null;
@@ -317,32 +353,43 @@ const BookDetail = () => {
                     </React.Fragment>
                   ))}
                 </div>
-                
+
                 <div>
-                  <p className="montserrat-alternates-semibold">{book.avaliacao}</p>
+                  <p className="montserrat-alternates-semibold">
+                    {book.avaliacao}
+                  </p>
                 </div>
               </div>
             </div>
             <div className="d-flex s-between">
-              <p className="montserrat-alternates-semibold"><strong>Autor: </strong>{book.autor}</p>
-              </div>
-              <div>
               <p className="montserrat-alternates-semibold">
-              <strong>Ano Publicado: </strong> {book.ano_publicado}
+                <strong>Autor: </strong>
+                {book.autor}
               </p>
-              </div>
-              <div>
-              <p className="montserrat-alternates-semibold"><strong>ISBN: </strong> {book.isbn}</p>
-            </div>
-            <div className="d-flex s-between">
-              <p className="montserrat-alternates-semibold"><strong>Idioma: </strong> {book.idiomas}</p>
-              </div>
-              <div>
-              <p className="montserrat-alternates-semibold"><strong>Categoria: </strong> {book.categoria}</p>
             </div>
             <div>
               <p className="montserrat-alternates-semibold">
-              <strong>Estoque: </strong> {book.qtd_disponivel}
+                <strong>Ano Publicado: </strong> {book.ano_publicado}
+              </p>
+            </div>
+            <div>
+              <p className="montserrat-alternates-semibold">
+                <strong>ISBN: </strong> {book.isbn}
+              </p>
+            </div>
+            <div className="d-flex s-between">
+              <p className="montserrat-alternates-semibold">
+                <strong>Idioma: </strong> {book.idiomas}
+              </p>
+            </div>
+            <div>
+              <p className="montserrat-alternates-semibold">
+                <strong>Categoria: </strong> {book.categoria}
+              </p>
+            </div>
+            <div>
+              <p className="montserrat-alternates-semibold">
+                <strong>Estoque: </strong> {book.qtd_disponivel}
               </p>
             </div>
             <div className="d-flex center-x">
@@ -371,22 +418,24 @@ const BookDetail = () => {
                   </span>
                 </button>
               )}
-              {!disponivelEmprestimo && !disponivelReserva && mensagemIndisponivel && (
-                <div
-                  style={{
-                    backgroundColor: "#f8d7da",
-                    color: "#721c24",
-                    border: "1px solid #f5c6cb",
-                    padding: "10px 15px",
-                    borderRadius: "8px",
-                    marginTop: "1rem",
-                    fontWeight: "bold",
-                    maxWidth: "400px"
-                  }}
-                >
-                  {mensagemIndisponivel}
-                </div>
-              )}
+              {!disponivelEmprestimo &&
+                !disponivelReserva &&
+                mensagemIndisponivel && (
+                  <div
+                    style={{
+                      backgroundColor: "#f8d7da",
+                      color: "#721c24",
+                      border: "1px solid #f5c6cb",
+                      padding: "10px 15px",
+                      borderRadius: "8px",
+                      marginTop: "1rem",
+                      fontWeight: "bold",
+                      maxWidth: "400px",
+                    }}
+                  >
+                    {mensagemIndisponivel}
+                  </div>
+                )}
             </div>
           </div>
         </section>
@@ -399,7 +448,7 @@ const BookDetail = () => {
         </section>
         <div className="oval"></div>
       </main>
-      <Footer/>
+      <Footer />
     </div>
   );
 };

@@ -384,10 +384,10 @@ nav img {
   .change .owl-item {
     width: 210px !important;
   }
-  .header-phone{
+  .header-phone {
     display: none;
   }
-  .input-phone{
+  .input-phone {
     display: none !important;
   }
 }
@@ -410,7 +410,7 @@ nav img {
   .space-sm {
     width: 10px;
   }
-  .p-relative input{
+  .p-relative input {
     width: 175px;
   }
 }
@@ -418,16 +418,16 @@ nav img {
   .input-laptop {
     display: none;
   }
-  .input-phone{
+  .input-phone {
     display: flex !important;
   }
-  .p-relative input{
+  .p-relative input {
     width: 475px;
   }
-  .header-phone{
+  .header-phone {
     display: block;
   }
-  .fake-header{
+  .fake-header {
     height: 167px;
   }
 }
@@ -446,11 +446,11 @@ nav img {
   .p-relative input {
     width: 300px;
   }
-  .button{
+  .button {
     width: 45px;
     height: 45px;
   }
-  .user-button{
+  .user-button {
     width: 46px !important;
     height: 46px !important;
   }
@@ -464,7 +464,7 @@ nav img {
   .p-relative input {
     width: 230px;
   }
-  .delius-regular{
+  .delius-regular {
     font-size: x-large !important;
   }
   .logo {
@@ -475,11 +475,11 @@ nav img {
   }
 }
 @media (max-width: 360px) {
-  .button{
+  .button {
     width: 40px;
     height: 40px;
   }
-  .user-button{
+  .user-button {
     width: 41px !important;
     height: 41px !important;
   }
@@ -488,10 +488,10 @@ nav img {
   .space-sm {
     width: 5px;
   }
-  .header{
+  .header {
     height: 70px;
   }
-  .fake-header{
+  .fake-header {
     height: 137px;
   }
   .border-book2 img {
@@ -512,7 +512,7 @@ nav img {
   .p-relative input {
     width: 220px;
   }
-  .delius-regular{
+  .delius-regular {
     font-size: larger !important;
   }
 }
@@ -2534,9 +2534,9 @@ ul {
 }
 
 .btn-container {
-  --pupil-color: #FFF;
+  --pupil-color: #fff;
   --pupil-move: 20%;
-  --sensor-height: 25dvmax; 
+  --sensor-height: 25dvmax;
   --sensor-width: calc(var(--sensor-height) * 82.84 / 100);
   display: flex;
   gap: 22px;
@@ -2568,7 +2568,7 @@ ul {
   z-index: 150;
   width: 20px;
   height: 14px;
-  display: flex;              /* Alinha a pupila */
+  display: flex; /* Alinha a pupila */
   align-items: center;
   justify-content: center;
 }
@@ -2579,8 +2579,8 @@ ul {
 }
 .btn-button:active .btn-pupil {
   animation: agitate 100ms infinite 500ms;
-  border-width: 0.15rem;  /* igual ao padrão */
-  padding: 0.15rem;      /* igual ao padrão */
+  border-width: 0.15rem; /* igual ao padrão */
+  padding: 0.15rem; /* igual ao padrão */
 }
 
 .btn-lid {
@@ -2593,9 +2593,8 @@ ul {
   z-index: 101;
 }
 
-
 .btn-pupil {
-  background: #FFF;
+  background: #fff;
   border: 0.2rem solid var(--pupil-color); /* menor que 0.4rem */
   border-radius: 10rem;
   padding: 0.15rem; /* menor que 0.35rem */
@@ -2604,7 +2603,7 @@ ul {
 /* Sensors */
 .btn-sensor {
   clip-path: polygon(0 0, 100% 0, 50% 100%, 0 0);
-  height: var(--sensor-height); 
+  height: var(--sensor-height);
   left: calc(50% - var(--sensor-width) / 2);
   overflow: hidden;
   position: absolute;
@@ -2714,7 +2713,7 @@ ul {
     );
   }
 }
-.p-absolute{
+.p-absolute {
   position: absolute;
 }
 .avatar-container {
@@ -2734,8 +2733,7 @@ ul {
   display: block;
 }
 
-
-.z-index-high{
+.z-index-high {
   position: relative;
   z-index: 120;
 }
@@ -2752,7 +2750,7 @@ ul {
     display: flex;
     justify-content: center;
   }
-  
+
   .border-book3 img {
     width: 190px;
     height: auto;
@@ -2803,4 +2801,61 @@ ul {
   .delius-regular {
     font-size: 20px !important;
   }
+}
+
+/* Multas Table Styles */
+.multas-container {
+  padding: 20px;
+  background-color: var(--azul-claro);
+  border-radius: var(--border-radius);
+  box-shadow: 0 4px 8px var(--card-shadow);
+}
+
+.multas-title {
+  font-size: 24px;
+  font-weight: bold;
+  color: var(--azul-escuro);
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.multas-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+}
+
+.multas-table th,
+.multas-table td {
+  border: 1px solid var(--azul-escuro);
+  padding: 10px;
+  text-align: center;
+}
+
+.multas-table th {
+  background-color: var(--azul-escuro);
+  color: var(--branco);
+  font-weight: bold;
+}
+
+.multas-button {
+  background-color: var(--azul-escuro);
+  color: var(--branco);
+  border: none;
+  padding: 8px 12px;
+  border-radius: var(--border-radius);
+  cursor: pointer;
+  transition: background-color var(--transition);
+}
+
+.multas-button:hover {
+  background-color: var(--roxo);
+}
+
+.multas-loading,
+.multas-empty {
+  text-align: center;
+  font-size: 18px;
+  color: var(--text-color);
+  margin-top: 20px;
 }
