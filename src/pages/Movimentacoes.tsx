@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { handleDevolverEmprestimo } from "../components/DevolverEmprestimo";
 import { atenderReserva } from "../services/atenderReservaService";
 import { atenderEmprestimo } from "../services/atenderEmprestimoService";
+import { cancelarReserva } from "../services/cancelarReserva";
 
 type Movimentacao = {
   tipo: string;
@@ -329,15 +330,21 @@ const Movimentacoes: React.FC = () => {
                   {m.tipo === "reserva" && m.status === "PENDENTE" && (
                     <button
                       className={styles["action-button"]}
-                      onClick={() => {
-                        setData((prevData) => {
-                          if (!prevData) return null;
-                          return prevData.map((item) =>
-                            item.id === m.id
-                              ? { ...item, status: "CANCELADO" }
-                              : item
-                          );
-                        });
+                      onClick={async () => {
+                        const success = await cancelarReserva(
+                          String(m.id),
+                          navigate
+                        );
+                        if (success) {
+                          setData((prevData) => {
+                            if (!prevData) return null;
+                            return prevData.map((item) =>
+                              item.id === m.id
+                                ? { ...item, status: "CANCELADA" }
+                                : item
+                            );
+                          });
+                        }
                       }}
                     >
                       Cancelar
