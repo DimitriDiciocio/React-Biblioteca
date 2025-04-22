@@ -92,6 +92,9 @@
 .text-decoration-none {
   text-decoration: none;
 }
+.m-top-5{
+  margin-top: 5px;
+}
 .m-top {
   margin-top: 20px;
 }
@@ -1225,8 +1228,7 @@ textarea.input {
   display: flex;
   flex-direction: column;
   align-items: center;
-  height: 100vh;
-  overflow: hidden;
+  min-height: 100vh;
 }
 
 .body-cadastro {
@@ -2742,12 +2744,14 @@ ul {
   z-index: 120;
 }
 
-@media (max-width: 651px) {
+@media (max-width: 701px) {
   .pagina-livro-informa .d-flex.center-x.size-medium.g-30 {
     flex-direction: column;
     align-items: center;
   }
-
+  .center-x-responsive{
+    justify-content: center;
+  }
   .border-book3 {
     width: 200px;
     height: auto;
@@ -2767,7 +2771,7 @@ ul {
   }
 
   .width-desc {
-    max-width: 90%;
+    max-width: 80%;
   }
 
   .big-size {

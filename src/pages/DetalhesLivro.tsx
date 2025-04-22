@@ -310,11 +310,11 @@ const BookDetail = () => {
               </p>
             </div>
             <div>
-              <div className="d-flex">
+              <div className="d-flex g-sm center-x-responsive f-wrap">
                 {book.selectedTags.map((tag) => (
                   <p
                     key={tag.id}
-                    className="tag montserrat-alternates-semibold m-right"
+                    className="tag montserrat-alternates-semibold"
                   >
                     {tag.nome}
                   </p>
@@ -392,8 +392,8 @@ const BookDetail = () => {
                 <strong>Estoque: </strong> {book.qtd_disponivel}
               </p>
             </div>
-            <div className="d-flex center-x">
-              <p className="montserrat-alternates-semibold m-top width-desc">
+            <div className="d-flex">
+              <p className="montserrat-alternates-semibold m-top-5 width-desc">
                 {book.descricao}
               </p>
             </div>
