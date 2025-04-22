@@ -178,6 +178,7 @@ const CadastroUsuario: React.FC = () => {
 
       <main className="background-blue">
         <section className="center-x size-medium d-flex-column-no-font">
+          <i className="fa-solid fa-arrow-left arrow-back"  onClick={() => navigate("/home_biblio?page=1")}></i>
           <div className="d-flex center-x">
             <div
               {...getRootProps()}

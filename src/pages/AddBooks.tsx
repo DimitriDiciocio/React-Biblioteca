@@ -190,6 +190,7 @@ const AddBooks: React.FC = () => {
         <div className="space-sm-y"></div>
         <section className="d-flex center-x size-medium g-30">
           <div>
+          <i className="fa-solid fa-arrow-left arrow-back"  onClick={() => navigate("/home_biblio?page=1")}></i>
             <div
               {...getRootProps()}
               className="border-book4 dropzone"

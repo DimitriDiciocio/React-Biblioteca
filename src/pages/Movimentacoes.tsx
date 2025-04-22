@@ -177,6 +177,8 @@ const Movimentacoes: React.FC = () => {
 
   return (
     <div className={styles.container}>
+      <i className="fa-solid fa-arrow-left arrow-back"  onClick={() => navigate("/home_biblio?page=1")}></i>
+      <div className="space-sm"></div>
       <div className={styles.header}>
         <h1 className={styles.title}>Movimentações</h1>
       </div>

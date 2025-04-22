@@ -19,6 +19,7 @@ const HomeBiblio: React.FC = () => {
   const [isPermissionChecked, setIsPermissionChecked] = useState(false);
   const [isReadyToRender, setIsReadyToRender] = useState(false);
   const page = Number(new URLSearchParams(window.location.search).get("page")) || 1;
+  const [userName, setUserName] = useState("");
 
   // Verifica permissão de administrador
   useEffect(() => {
@@ -50,7 +51,29 @@ const HomeBiblio: React.FC = () => {
 
     checkPermission();
   }, [navigate]);
-
+  
+  useEffect(() => {
+    const fetchUserName = async () => {
+      const userId = localStorage.getItem("id_user");
+      if (!userId) return;
+  
+      try {
+        const response = await fetch(`http://127.0.0.1:5000/user/${userId}`, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        });
+        if (!response.ok) throw new Error("Erro ao buscar usuário");
+  
+        const data = await response.json();
+        setUserName(data.nome);
+      } catch (error) {
+        console.error("Erro ao buscar nome do usuário:", error);
+      }
+    };
+  
+    fetchUserName();
+  }, []);
   // Aguarda permissão + DOM montado
   useEffect(() => {
     if (isPermissionChecked && isAllowed !== null) {
@@ -210,8 +233,8 @@ const HomeBiblio: React.FC = () => {
 
         <section className="content montserrat-alternates-semibold">
           <div className="page active" data-page="1">
-            <h1 className="size-titles">Funções de Admin, Quer fazer algo?..</h1>
-            <form>
+          <h1 className="size-titles2">Olá, {userName}! O que deseja fazer?</h1>
+            <form className="d-flex responsive-class">
               <div className="p-relative">
                 <input
                   required
@@ -222,7 +245,7 @@ const HomeBiblio: React.FC = () => {
                 />
               </div>
             </form>
-            <div className="d-flex g-20 m-top-70 flex-wrap">
+            <div className="d-flex g-20 m-top-70 flex-wrap responsive-class">
               {filteredButtons.map((button, index) => (
                 <button
                   key={index}

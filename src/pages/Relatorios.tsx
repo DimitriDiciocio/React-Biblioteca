@@ -1,13 +1,17 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import RelatorioLivros from "../components/RelatorioLivros";
 import RelatorioUsuarios from "../components/RelatorioUsuarios";
 import RelatorioMultas from "../components/RelatorioMultas";
 
 export default function PaginaRelatorios() {
   const [mostrar, setMostrar] = useState("livros");
+  const navigate = useNavigate();
 
   return (
     <div style={{ padding: "24px", maxWidth: "1000px", margin: "0 auto" }}>
+      <i className="fa-solid fa-arrow-left arrow-back"  onClick={() => navigate("/home_biblio?page=1")}></i>
+      <div className="space-sm-y"></div>
       <div
         style={{
           display: "flex",

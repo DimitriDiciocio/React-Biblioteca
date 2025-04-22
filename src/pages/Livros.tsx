@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import DeletarLivro from "../components/AlterarDisponibilidade";
 import { usePermission } from "../components/usePermission";
 
@@ -7,6 +8,7 @@ const Livros: React.FC = () => {
   const [livros, setLivros] = useState<Book[]>([]);
   const [pesquisa, setPesquisa] = useState("");
   const isAllowed = usePermission(2);
+  const navigate = useNavigate();
 
   interface Book {
     id: number;
@@ -57,6 +59,7 @@ const Livros: React.FC = () => {
 
   return (
     <div className="livros-container">
+      <i className="fa-solid fa-arrow-left arrow-back"  onClick={() => navigate("/home_biblio?page=1")}></i>
       <h1 className="page-title">Gerenciamento de Livros</h1>
       <input
         type="text"

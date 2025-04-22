@@ -89,7 +89,7 @@ const Search = () => {
   return (
     <div>
       <Header />
-      <aside className={`sidebar ${isSidebarOpen ? "open" : "closed"}`}>
+      <aside className={`sidebarSearch ${isSidebarOpen ? "open" : "closed"}`}>
         <button className="toggle-btn" onClick={toggleSidebar}>
           {isSidebarOpen ? "✕" : "☰"}
         </button>

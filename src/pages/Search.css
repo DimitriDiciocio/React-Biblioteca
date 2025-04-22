@@ -37,7 +37,7 @@
     display: flex;
   }
   
-  .sidebar {
+  .sidebarSearch {
     position: fixed;
     top: 70px; /* ajustar conforme o Header */
     left: 0;
@@ -48,11 +48,11 @@
     overflow: hidden;
   }
   
-  .sidebar.open {
+  .sidebarSearch.open {
     width: 250px;
   }
   
-  .sidebar.closed {
+  .sidebarSearch.closed {
     width: 40px;
   }
   
@@ -81,12 +81,11 @@
     height: 100%;
   }
   
-  .sidebar.closed ~ .main-content {
+  .sidebarSearch.closed ~ .main-content {
     margin-left: 40px;
   }
-
   
-  .sidebar {
+  .sidebarSearch {
     position: fixed;
     top: 70px;
     left: 0;
@@ -100,7 +99,7 @@
     overflow-y: auto;
   }
   
-  .sidebar.closed {
+  .sidebarSearch.closed {
     width: 50px;
     padding: 20px 5px;
   }

@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 import styles from "./Configuracoes.module.css";
 
@@ -11,6 +12,7 @@ const Configuracoes: React.FC = () => {
     valor_base: 0,
     valor_acrescimo: 0,
   });
+  const navigate = useNavigate();
 
   useEffect(() => {
     // Fetch current values from the API
@@ -106,6 +108,7 @@ const Configuracoes: React.FC = () => {
 
   return (
     <div className={styles.container}>
+      <i className="fa-solid fa-arrow-left arrow-back"  onClick={() => navigate("/home_biblio?page=1")}></i>
       <h2 className={styles.title}>Configurações</h2>
       <p className={styles.description}>
         Ajuste as configurações do sistema aqui.

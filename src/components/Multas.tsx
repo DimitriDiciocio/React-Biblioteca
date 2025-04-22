@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 
 interface Multa {
@@ -17,6 +18,7 @@ const Multas: React.FC = () => {
   const [multas, setMultas] = useState<Multa[]>([]);
   const [loading, setLoading] = useState(true);
   const token = localStorage.getItem("token");
+  const navigate = useNavigate();
 
   useEffect(() => {
     fetch("http://localhost:5000/multas", {
@@ -71,6 +73,7 @@ const Multas: React.FC = () => {
 
   return (
     <div className="multas-container">
+      <i className="fa-solid fa-arrow-left arrow-back"  onClick={() => navigate("/home_biblio?page=1")}></i>
       <h1 className="multas-title">Lista de Multas</h1>
       {loading ? (
         <p className="multas-loading">Carregando...</p>
