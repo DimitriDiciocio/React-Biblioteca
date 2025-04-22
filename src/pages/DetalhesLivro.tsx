@@ -392,7 +392,7 @@ const BookDetail = () => {
                 <strong>Estoque: </strong> {book.qtd_disponivel}
               </p>
             </div>
-            <div className="d-flex">
+            <div className="d-flex center-x-responsive">
               <p className="montserrat-alternates-semibold m-top-5 width-desc">
                 {book.descricao}
               </p>
