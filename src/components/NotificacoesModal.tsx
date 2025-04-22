@@ -3,12 +3,12 @@ import { useNotification } from "../services/useNotification";
 import NotificacoesList from "./NotificacoesList";
 
 const NotificacoesModal: React.FC = () => {
-  const { notes, loading, refetch } = useNotification();
+  const { notes, loading } = useNotification();
 
   return (
-    <div style={{ background: "#fff", padding: "1rem", borderRadius: "8px", width: "300px" }}>
+    <div style={{ background: "#fff", padding: "1rem", borderRadius: "8px"}}>
       <h3>Notificações</h3>
-      {loading ? <p>Carregando...</p> : <NotificacoesList notes={notes} onAtualizar={refetch} />}
+      {loading ? <p>Carregando...</p> : <NotificacoesList notes={notes} />}
     </div>
   );
 };

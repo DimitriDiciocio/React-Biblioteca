@@ -189,7 +189,7 @@ const Config: React.FC = () => {
             <p>Minha Lista</p>
           </div>
           <div className="page">
-            <PuxarHistorico />
+            {/* <PuxarHistorico /> */}
           </div>
           <div className="page">
             <MultasByUser />
