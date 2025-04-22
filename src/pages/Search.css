@@ -1,0 +1,154 @@
+.filtro-btn {
+    margin: 10px 20px;
+    padding: 10px 20px;
+    background-color: #0077cc;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background 0.3s ease;
+  }
+  
+  .filtro-btn:hover {
+    background-color: #005fa3;
+  }
+  
+  .filtros-aside {
+    transition: all 0.3s ease;
+    background-color: #f5f5f5;
+    padding: 20px;
+    max-width: 300px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    margin: 10px 20px;
+  }
+  
+  .filtros-aside.fechado {
+    display: none;
+  }
+  
+  .filtros-aside.aberto {
+    display: block;
+  }
+  
+
+  .search-container {
+    display: flex;
+  }
+  
+  .sidebar {
+    position: fixed;
+    top: 70px; /* ajustar conforme o Header */
+    left: 0;
+    height: 100%;
+    background-color: #f3f3f3;
+    border-right: 1px solid #ccc;
+    transition: width 0.3s ease;
+    overflow: hidden;
+  }
+  
+  .sidebar.open {
+    width: 250px;
+  }
+  
+  .sidebar.closed {
+    width: 40px;
+  }
+  
+  .toggle-btn {
+    position: absolute;
+    top: 40px;
+    right: 35px;
+    transform: translateX(100%);
+    background-color: #0077cc;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 8px 0px 0px 8px;
+    cursor: pointer;
+    z-index: 1001;
+  }
+  
+  .filter-content {
+    padding: 20px;
+  }
+  
+  .main-content {
+    margin-left: 250px;
+    padding: 20px;
+    transition: margin-left 0.3s ease;
+    height: 100%;
+  }
+  
+  .sidebar.closed ~ .main-content {
+    margin-left: 40px;
+  }
+
+  
+  .sidebar {
+    position: fixed;
+    top: 70px;
+    left: 0;
+    height: 100%;
+    width: 260px;
+    background-color: #f5f7fb;
+    border-right: 1px solid #e0e0e0;
+    padding: 20px;
+    transition: all 0.3s ease-in-out;
+    z-index: 10;
+    overflow-y: auto;
+  }
+  
+  .sidebar.closed {
+    width: 50px;
+    padding: 20px 5px;
+  }
+  
+  .toggle-btn {
+    position: absolute;
+    top: 40px;
+    left: 100%;
+    transform: translateX(-45px);
+    width: 40px;
+    height: 40px;
+    background-color: #1f2937;
+    color: white;
+    border: none;
+    cursor: pointer;
+    font-size: 18px;
+    border-radius: 50%;
+    z-index: 20;
+  }
+  
+  .filter-content {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  
+  .filter-content select,
+  .filter-content input {
+    padding: 8px;
+    font-size: 14px;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    background-color: white;
+  }
+  
+  .confirmar-btn {
+    margin-top: 10px;
+    padding: 10px;
+    background-color: #2563eb;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.2s ease-in-out;
+  }
+  
+  .confirmar-btn:hover {
+    background-color: #1d4ed8;
+  }
+  

@@ -15,6 +15,10 @@ const Header: React.FC = () => {
     useState(false);
   const [isPermissionChecked, setIsPermissionChecked] = useState(false); // New state
 
+  const handleFiltroClick = () => {
+    navigate('/pesquisa/');
+  };
+
   useEffect(() => {
     async function checkPermission() {
       try {
@@ -137,11 +141,10 @@ const Header: React.FC = () => {
             <div className="p-relative">
               <input
                 id="campo-busca"
-                required
                 type="text"
                 placeholder="Pesquisar..."
               />
-              <span id="avancada"></span>
+              <span id="avancada" onClick={handleFiltroClick}></span>
             </div>
           </form>
           <div>

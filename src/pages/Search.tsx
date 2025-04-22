@@ -3,6 +3,8 @@ import { useNavigate, useParams } from "react-router-dom";
 import Swal from "sweetalert2";
 import Header from "../components/Header";
 import { usePermission } from "../components/usePermission";
+import './Search.css';
+import Tags from "../components/Tags";
 
 interface Tag {
   id: number;
@@ -24,18 +26,24 @@ interface Book {
 const Search = () => {
   const { search } = useParams();
   const navigate = useNavigate();
-  const filtros = useMemo(() => {
-    const queryParams = new URLSearchParams(window.location.search);
-    return queryParams.get("filters")?.split(",") || [];
-  }, []);
-  const [books, setBooks] = useState<Book[]>([]);
-  const [hasSearched, setHasSearched] = useState(false); // Novo estado para controlar a busca
   const token = localStorage.getItem("token");
   const isAllowed = usePermission(1);
+  const [selectedTags, setSelectedTags] = useState<Tag[]>([]);
 
-  const handleOpenBook = (book: Book) => {
-    navigate(`/livro/${book.id}`);
-  };
+  const [books, setBooks] = useState<Book[]>([]);
+  const [hasSearched, setHasSearched] = useState(false);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+
+  const [formData, setFormData] = useState({
+    tag: "",
+    autor: "",
+    ano_publicacao: "",
+    isbn: "",
+    categoria: "",
+    idioma: "",
+  });
+
+  const toggleSidebar = () => setIsSidebarOpen((prev) => !prev);
 
   useEffect(() => {
     const searchBooks = async () => {
@@ -48,38 +56,32 @@ const Search = () => {
           },
           body: JSON.stringify({
             pesquisa: search,
-            filtros: filtros,
-          }),
+            filtros: {
+              ...formData,
+              tags: selectedTags.map(tag => tag.nome),
+            }
+          }),          
         });
 
         if (!response.ok) {
           const errorMessage = await response.json();
-          Swal.fire({
-            icon: "error",
-            title: "Erro",
-            text: errorMessage.error || "Erro ao buscar livros",
-          });
-          return;
+          throw new Error(errorMessage.message || "Erro na requisição.");
         }
 
         const data = await response.json();
-        setBooks(data.resultados); // Definindo os livros obtidos
-        setHasSearched(true); // Marcar que a busca foi realizada
+        setBooks(data.resultados);
       } catch (error) {
-        const errorMessage =
-          (error as Error).message || "Erro ao buscar livros";
-        Swal.fire({
-          icon: "error",
-          title: "Erro",
-          text: errorMessage,
-        });
+        console.error("Erro ao buscar livros:", error);
+        setBooks([]);
       }
     };
 
-    if (!hasSearched) {
-      searchBooks();
-    }
-  }, [search, filtros, token, hasSearched]);
+    searchBooks();
+  }, [search, formData, selectedTags, token]);
+
+  const handleTagsChange = (tags: Tag[]) => {
+    setSelectedTags(tags);
+  };
 
   if (isAllowed === null) return <p>Verificando permissão...</p>;
   if (!isAllowed) return null;
@@ -87,24 +89,78 @@ const Search = () => {
   return (
     <div>
       <Header />
-      <div className="espaco-vazio"></div>
-
-      <h1>Search Page</h1>
-      {books.map((book, index) => {
-        const imageUrl = `http://127.0.0.1:5000/uploads/livros/${book.imagem}`;
-        return (
-          <div
-            key={index}
-            className="livro col-12"
-            onClick={() => handleOpenBook(book)}
-            style={{ cursor: "pointer" }}
-          >
-            <img className="capa-livro" src={imageUrl} alt={book.titulo} />
-            <p className="nome-livro">{book.titulo}</p>
-            <p className="nome-livro">{book.autor}</p>
+      <aside className={`sidebar ${isSidebarOpen ? "open" : "closed"}`}>
+        <button className="toggle-btn" onClick={toggleSidebar}>
+          {isSidebarOpen ? "✕" : "☰"}
+        </button>
+        {isSidebarOpen && (
+          <div className="filter-content">
+            <label className="montserrat-alternates-semibold">Tags:</label>
+            <div
+              style={{
+                width: "913px",
+                maxWidth: "100%",
+                padding: "0",
+              }}
+            >
+              <Tags
+                selectedTags={selectedTags}
+                onTagsChange={handleTagsChange}
+              />
+            </div>
+            <input type="text" placeholder="Autor..." value={formData.autor} onChange={(e) => setFormData(prev => ({ ...prev, autor: e.target.value }))} />
+            <input type="text" placeholder="Ano de publicação..." value={formData.ano_publicacao} onChange={(e) => setFormData(prev => ({ ...prev, ano_publicacao: e.target.value }))} />
+            <input type="text" placeholder="ISBN..." value={formData.isbn} onChange={(e) => setFormData(prev => ({ ...prev, isbn: e.target.value }))} />
+            <select value={formData.categoria} onChange={(e) => setFormData(prev => ({ ...prev, categoria: e.target.value }))}>
+              <option value="">Categoria</option>
+              <option value="Livro">Livro</option>
+              <option value="Artigo Científico">Artigo Científico</option>
+              <option value="Jornal">Jornal</option>
+              <option value="Quadrinhos">Quadrinhos</option>
+            </select>
+            <select value={formData.idioma} onChange={(e) => setFormData(prev => ({ ...prev, idioma: e.target.value }))}>
+              <option value="">Idioma</option>
+              <option value="Português">Português</option>
+              <option value="Inglês">Inglês</option>
+              <option value="Espanhol">Espanhol</option>
+              <option value="Francês">Francês</option>
+            </select>
           </div>
-        );
-      })}
+        )}
+      </aside>
+
+      <main className="main-content background-blue">
+        <div className=
+        {`livros-grid ${
+          books.length === 1
+            ? "single-book"
+            : books.length === 2
+            ? "two-books"
+            : books.length === 3
+            ? "three-books"
+            : ""
+        }`}
+        >
+          {books.map((book, index) => (
+            <div key={index} className="livro-card" onClick={() => navigate(`/livro/${book.id}`)}>
+              <img
+                src={`http://127.0.0.1:5000/uploads/livros/${book.imagem}`}
+                alt={book.titulo}
+                className="livro-imagem"
+              />
+              <div className="livro-info">
+                <h3>{book.titulo}</h3>
+                <p><strong>Autor:</strong> {book.autor}</p>
+                <p><strong>Categoria:</strong> {book.categoria}</p>
+                <p><strong>ISBN:</strong> {book.isbn}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+        {books.length === 0 && (
+          <p className="mensagem-erro">Nenhum livro encontrado.</p>
+        )}
+      </main>
     </div>
   );
 };

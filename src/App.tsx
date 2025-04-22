@@ -33,6 +33,7 @@ const App: React.FC = () => {
         <Route path="/sair" element={<Sair />} />
         <Route path="/historico" element={<PuxarHistorico />} />
         <Route path="/pesquisa/:search" element={<Search />} />
+        <Route path="/pesquisa/" element={<Search />} />
         <Route path="/cadastrar_usuario" element={<CadastroUsuario />} />
         <Route path="/carrinho" element={<Carrinho />} />
         <Route path="/home_biblio" element={<HomeBiblio />} />
