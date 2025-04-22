@@ -77,6 +77,9 @@
 .space-sm {
   width: 30px;
 }
+.space-ssm-y {
+  height: 15px;
+}
 .space-sm-y {
   height: 30px;
 }
@@ -709,6 +712,11 @@ p {
 .g-30 {
   gap: 30px;
 }
+.gerenciar{
+  background-color: var(--branco);
+  border-radius: 20px;
+  height: 40px;
+}
 /* From Uiverse.io by cssbuttons-io */
 button {
   position: relative;
@@ -1137,15 +1145,6 @@ textarea.input {
   justify-content: center;
 }
 
-.modal-content {
-  background: white;
-  padding: 20px;
-  border-radius: 10px;
-  width: 350px;
-  text-align: center;
-  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
-  position: relative; /* Para posicionar corretamente o botão de fechar */
-}
 
 /* Posicionando o botão 'X' dentro do modal */
 .close {
@@ -1488,21 +1487,18 @@ textarea.input {
 }
 
 .modal-content {
+  background: #DFEBFF;
   position: absolute;
   top: 50px; /* Ajusta a posição abaixo do botão */
   right: 10px; /* Mantém alinhado à direita */
   width: 250px; /* Ajuste conforme necessário */
-  background: #f8f9fc;
   border-radius: 12px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   padding: 16px;
+  text-align: center;
   border: 1px solid #d1d5db;
 }
 
-.modal-content button {
-  all: unset;
-  cursor: pointer;
-}
 
 .modal-close {
   position: absolute;
@@ -1511,39 +1507,84 @@ textarea.input {
   font-size: 16px;
   color: #333;
 }
-
-.modal-content img {
-  display: block;
-  margin: 0 auto 8px;
-  width: 60px;
-  height: 60px;
+/* From Uiverse.io by vinodjangid07 */ 
+.Btn-modal {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  width: 45px;
+  height: 45px;
+  border: none;
   border-radius: 50%;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  transition-duration: .3s;
+  box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.199);
+  background-color: rgb(255, 65, 65);
 }
 
-.modal-content p {
-  text-align: center;
-  font-size: 14px;
-  font-weight: bold;
-  margin-bottom: 8px;
-}
-
-.modal-content button {
+/* plus sign */
+.sign {
   width: 100%;
-  padding: 8px;
-  margin-top: 8px;
-  background: #e1e6f0;
-  border-radius: 6px;
-  text-align: center;
+  transition-duration: .3s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-.modal-content button:hover {
-  background: #d1d5db;
+.sign svg {
+  width: 17px;
 }
 
+.sign svg path {
+  fill: white;
+}
+/* text */
+.text-logout {
+  position: absolute;
+  right: 0%;
+  width: 0%;
+  opacity: 0;
+  color: white;
+  font-size: 1.2em;
+  font-weight: 600;
+  transition-duration: .3s;
+}
+/* hover effect on button width */
+.Btn-modal:hover {
+  width: 125px;
+  border-radius: 40px;
+  transition-duration: .3s;
+}
+
+.Btn-modal:hover .sign {
+  width: 30%;
+  transition-duration: .3s;
+  padding-left: 20px;
+}
+/* hover effect button's text */
+.Btn-modal:hover .text-logout {
+  opacity: 1;
+  width: 70%;
+  transition-duration: .3s;
+  padding-right: 10px;
+}
+/* button click effect*/
+.Btn-modal:active {
+  transform: translate(2px ,2px);
+}
 .user-button {
   border-radius: 50%;
   width: 51px;
   height: 51px;
+  border: 2px solid black;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+.user-button2 {
+  border-radius: 50%;
+  width: 70px;
+  height: 70px;
   border: 2px solid black;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
