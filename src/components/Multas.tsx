@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
+import { pagarMulta } from "../services/multaService";
 
 interface Multa {
   id_multa: number;
@@ -43,37 +44,27 @@ const Multas: React.FC = () => {
       });
   }, [token]);
 
-  const handlePagarMulta = (id_multa: number) => {
-    fetch(`http://localhost:5000/multa/${id_multa}/atender`, {
-      method: "PUT",
-      headers: {
-        Authorization: `Bearer ${token}`,
-        "Content-Type": "application/json",
-      },
-    })
-      .then((res) => {
-        if (!res.ok) {
-          throw new Error("Erro ao pagar multa.");
-        }
-        return res.json();
-      })
-      .then(() => {
-        setMultas((prevMultas) =>
-          prevMultas.map((multa) =>
-            multa.id_multa === id_multa ? { ...multa, pago: true } : multa
-          )
-        );
-        Swal.fire("Sucesso", "Multa paga com sucesso.", "success");
-      })
-      .catch((err) => {
-        console.error("Erro ao pagar multa:", err);
-        Swal.fire("Erro", "Erro ao pagar multa.", "error");
-      });
+  const handlePagarMulta = async (id_multa: number) => {
+    try {
+      await pagarMulta(id_multa);
+      setMultas((prevMultas) =>
+        prevMultas.map((multa) =>
+          multa.id_multa === id_multa ? { ...multa, pago: true } : multa
+        )
+      );
+      Swal.fire("Sucesso", "Multa paga com sucesso.", "success");
+    } catch (err) {
+      console.error("Erro ao pagar multa:", err);
+      Swal.fire("Erro", "Erro ao pagar multa.", "error");
+    }
   };
 
   return (
     <div className="multas-container">
-      <i className="fa-solid fa-arrow-left arrow-back"  onClick={() => navigate("/home_biblio?page=1")}></i>
+      <i
+        className="fa-solid fa-arrow-left arrow-back"
+        onClick={() => navigate("/home_biblio?page=1")}
+      ></i>
       <h1 className="multas-title">Lista de Multas</h1>
       {loading ? (
         <p className="multas-loading">Carregando...</p>

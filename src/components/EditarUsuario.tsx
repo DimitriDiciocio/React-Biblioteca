@@ -29,6 +29,10 @@ const EditarUsuario: React.FC = () => {
 
   const formatTelefone = (value: string) => {
     const numericValue = value.replace(/\D/g, "");
+    const cursorPosition = value.length - 1;
+    if (value[cursorPosition] === "-" || value[cursorPosition] === ")") {
+      return value.slice(0, cursorPosition);
+    }
     if (numericValue.length <= 10) {
       return numericValue.replace(/(\d{2})(\d{4})(\d{0,4})/, "($1) $2-$3");
     }
@@ -374,6 +378,7 @@ const EditarUsuario: React.FC = () => {
                     onChange={(e) => setNome(e.target.value)}
                     className="input montserrat-alternates-semibold"
                     required
+                    maxLength={255}
                   />
                 </div>
 
@@ -387,6 +392,7 @@ const EditarUsuario: React.FC = () => {
                     onChange={(e) => setEmail(e.target.value)}
                     className="input montserrat-alternates-semibold"
                     required
+                    maxLength={255}
                   />
                 </div>
 
@@ -402,6 +408,7 @@ const EditarUsuario: React.FC = () => {
                     }
                     className="input montserrat-alternates-semibold"
                     required
+                    maxLength={15}
                   />
                 </div>
 

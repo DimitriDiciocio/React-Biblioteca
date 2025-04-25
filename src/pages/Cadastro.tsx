@@ -271,6 +271,7 @@ const Cadastro: React.FC = () => {
                   autoComplete="off"
                   value={telefone}
                   onChange={(e) => setTelefone(formatTelefone(e.target.value))}
+                  maxLength={15}
                 />
                 <label htmlFor="name">Telefone:</label>
               </div>

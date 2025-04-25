@@ -244,7 +244,7 @@ const Header: React.FC = () => {
           </div>
           <div className="space-ssm-y"></div>
           <button className="gerenciar">
-              <p className="montserrat-alternates-semibold size-medium">Gerenciar conta</p>
+              <p className="montserrat-alternates-semibold size-medium" onClick={() => navigate("/user")}>Gerenciar conta</p>
             </button>
           <div className="d-flex center-x">
 

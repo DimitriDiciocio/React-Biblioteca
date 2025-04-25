@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
 import DevolverEmprestimo from "./DevolverEmprestimo.tsx"; // Import the DevolverEmprestimo component
 import AtenderReserva from "./AtenderReserva"; // Importa o componente AtenderReserva
+import { pagarMulta } from "../services/multaService";
+import Swal from "sweetalert2";
 
 interface EmprestimoAtivo {
   id_livro: number;
@@ -25,7 +27,7 @@ interface ReservaAtiva {
   status: string;
 }
 
-interface MultaPendente {
+interface Multa {
   id_multa: number;
   valor_base: number;
   valor_acrescimo: number;
@@ -38,7 +40,8 @@ interface Historico {
   emprestimos_ativos: EmprestimoAtivo[];
   emprestimos_concluidos: EmprestimoConcluido[];
   reservas_ativas: ReservaAtiva[];
-  multas_pendentes: MultaPendente[];
+  multas_pendentes: Multa[];
+  multas_concluidas: Multa[];
 }
 
 interface EmprestimoPorUsuarioProps {
@@ -48,6 +51,16 @@ interface EmprestimoPorUsuarioProps {
 const HistoricoById: React.FC<EmprestimoPorUsuarioProps> = ({ userId }) => {
   const [historico, setHistorico] = useState<Historico | null>(null);
   const [error, setError] = useState<string | null>(null);
+
+  const handlePagarMulta = async (id_multa:number) => {
+      try {
+        await pagarMulta(id_multa);
+        Swal.fire("Sucesso", "Multa paga com sucesso.", "success");
+      } catch (err) {
+        console.error("Erro ao pagar multa:", err);
+        Swal.fire("Erro", "Erro ao pagar multa.", "error");
+      }
+    };
 
   useEffect(() => {
     const fetchHistorico = async () => {
@@ -165,6 +178,25 @@ const HistoricoById: React.FC<EmprestimoPorUsuarioProps> = ({ userId }) => {
       <h2>Multas Pendentes</h2>
       <ul>
         {historico.multas_pendentes.map((multa) => (
+          <div>
+            <li key={multa.id_multa}>
+              <p>ID da Multa: {multa.id_multa}</p>
+              <p>Valor Base: {multa.valor_base}</p>
+              <p>Valor Acréscimo: {multa.valor_acrescimo}</p>
+              <p>Total: {multa.total}</p>
+              <p>ID do Empréstimo: {multa.id_emprestimo}</p>
+              <p>Pago: {multa.pago ? "Sim" : "Não"}</p>
+            </li>
+            <button onClick={() => handlePagarMulta(multa.id_multa)} className="detalhes-usuario-button">
+              Pagar Multa
+            </button>
+          </div>
+        ))}
+      </ul>
+
+      <h2>Multas Concluídas</h2>
+      <ul>
+        {historico.multas_concluidas.map((multa) => (
           <li key={multa.id_multa}>
             <p>ID da Multa: {multa.id_multa}</p>
             <p>Valor Base: {multa.valor_base}</p>

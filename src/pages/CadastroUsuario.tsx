@@ -40,7 +40,7 @@ const CadastroUsuario: React.FC = () => {
     const formData = new FormData();
     formData.append("nome", nome);
     formData.append("email", email);
-    formData.append("telefone", telefone.replace(/\D/g, "")); // Remove formatting
+    formData.append("telefone", telefone.replace(/\D/g, ""));
     formData.append("endereco", enderecoCompleto);
     formData.append("senha", senha);
     formData.append("confirmSenha", confirmSenha);
@@ -260,6 +260,7 @@ const CadastroUsuario: React.FC = () => {
                       value={telefone}
                       onChange={(e) => setTelefone(formatTelefone(e.target.value))}
                       required
+                      maxLength={15}
                     />
                   </div>
                   <div className="form-group">
