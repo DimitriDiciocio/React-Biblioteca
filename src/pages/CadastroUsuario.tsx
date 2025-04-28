@@ -232,7 +232,7 @@ const CadastroUsuario: React.FC = () => {
             </div>
           </div>
 
-          <div className="d-flex center-x">
+          <div className="d-flex center-x m-home-biblio">
             <form onSubmit={handleCadastro}>
               <div className="d-flex g-sm">
                 <div className="column1-form">

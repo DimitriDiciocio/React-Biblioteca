@@ -21,7 +21,7 @@ const MostrarTop: React.FC = () => {
   useEffect(() => {
     async function fetchBooks() {
       try {
-        const response = await fetch("http://127.0.0.1:5000/livros");
+        const response = await fetch("http://127.0.0.1:5000/livros/10dasemana");
         if (!response.ok) throw new Error("Erro ao buscar livros");
 
         const data = await response.json();

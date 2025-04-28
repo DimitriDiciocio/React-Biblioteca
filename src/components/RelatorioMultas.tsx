@@ -112,9 +112,11 @@ export default function RelatorioMultas() {
           justifyContent: "space-between",
           alignItems: "center",
           marginBottom: "20px",
+          gap: "10px",
         }}
+        className="relatorio-title"
       >
-        <h1 style={{ fontSize: "24px", fontWeight: "bold" }}>
+        <h1 style={{ fontSize: "16px", fontWeight: "bold" }}>
           Relatório de Multas
         </h1>
         <div style={{ display: "flex", gap: "10px" }}>
@@ -122,7 +124,7 @@ export default function RelatorioMultas() {
             onClick={gerarPDF}
             disabled={loading}
             style={{
-              padding: "8px 16px",
+              padding: "8px 3px",
               backgroundColor: "#2473D9",
               color: "white",
               border: "none",
@@ -138,7 +140,7 @@ export default function RelatorioMultas() {
             }
             disabled={loading}
             style={{
-              padding: "8px 16px",
+              padding: "8px 3px",
               backgroundColor: "#2473D9",
               color: "white",
               border: "none",

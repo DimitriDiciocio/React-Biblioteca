@@ -90,6 +90,7 @@ const Search = () => {
     <div>
       <Header />
       <aside className={`sidebarSearch ${isSidebarOpen ? "open" : "closed"}`}>
+        
         <button className="toggle-btn" onClick={toggleSidebar}>
           {isSidebarOpen ? "✕" : "☰"}
         </button>
@@ -142,7 +143,7 @@ const Search = () => {
         }`}
         >
           {books.map((book, index) => (
-            <div key={index} className="livro-card" onClick={() => navigate(`/livro/${book.id}`)}>
+            <div key={index} className="livro-card pointer" onClick={() => navigate(`/livro/${book.id}`)}>
               <img
                 src={`http://127.0.0.1:5000/uploads/livros/${book.imagem}`}
                 alt={book.titulo}

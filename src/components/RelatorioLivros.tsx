@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from "recharts";
+import "../index.css";
 
 interface Tag {
   id: number;
@@ -71,13 +72,13 @@ export default function RelatorioLivros() {
 
   return (
     <div style={{ padding: "24px", maxWidth: "1000px", margin: "0 auto" }}>
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "20px" }}>
-        <h1 style={{ fontSize: "24px", fontWeight: "bold" }}>Relatório de Livros</h1>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "20px", gap: "10px" }}className="relatorio-title">
+        <h1 style={{ fontSize: "16px", fontWeight: "bold" }}>Relatório de Livros</h1>
         <div style={{ display: "flex", gap: "10px" }}>
           <button
             onClick={relatorioPDF}
             style={{
-              padding: "8px 16px",
+              padding: "8px 5px",
               backgroundColor: "#2473D9",
               color: "white",
               border: "none",
@@ -91,7 +92,7 @@ export default function RelatorioLivros() {
             onClick={buscarLivros}
             disabled={loading}
             style={{
-              padding: "8px 16px",
+              padding: "8px 5px",
               backgroundColor: "#2473D9",
               color: "white",
               border: "none",

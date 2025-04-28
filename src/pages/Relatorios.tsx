@@ -23,7 +23,7 @@ export default function PaginaRelatorios() {
         <button
           onClick={() => setMostrar("livros")}
           style={{
-            padding: "8px 16px",
+            padding: "8px 3px",
             backgroundColor: mostrar === "livros" ? "#2473D9" : "#ccc",
             color: mostrar === "livros" ? "white" : "black",
             border: "none",
@@ -36,7 +36,7 @@ export default function PaginaRelatorios() {
         <button
           onClick={() => setMostrar("usuarios")}
           style={{
-            padding: "8px 16px",
+            padding: "8px 3px",
             backgroundColor: mostrar === "usuarios" ? "#2473D9" : "#ccc",
             color: mostrar === "usuarios" ? "white" : "black",
             border: "none",
@@ -49,7 +49,7 @@ export default function PaginaRelatorios() {
         <button
           onClick={() => setMostrar("multas")}
           style={{
-            padding: "8px 16px",
+            padding: "8px 3px",
             backgroundColor: mostrar === "multas" ? "#2473D9" : "#ccc",
             color: mostrar === "multas" ? "white" : "black",
             border: "none",

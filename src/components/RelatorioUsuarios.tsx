@@ -78,14 +78,16 @@ export default function RelatorioUsuarios() {
           justifyContent: "space-between",
           alignItems: "center",
           marginBottom: "20px",
+          gap: "10px",  
         }}
+        className="relatorio-title"
       >
-        <h1 style={{ fontSize: "24px", fontWeight: "bold" }}>Relatório de Usuários</h1>
+        <h1 style={{ fontSize: "16px", fontWeight: "bold" }}>Relatório de Usuários</h1>
         <div style={{ display: "flex", gap: "10px" }}>
           <button
             onClick={gerarPDF}
             style={{
-              padding: "8px 16px",
+              padding: "8px 5px",
               backgroundColor: "#2473D9",
               color: "white",
               border: "none",
@@ -99,7 +101,7 @@ export default function RelatorioUsuarios() {
             onClick={buscarUsuarios}
             disabled={loading}
             style={{
-              padding: "8px 16px",
+              padding: "8px 5px",
               backgroundColor: "#2473D9",
               color: "white",
               border: "none",

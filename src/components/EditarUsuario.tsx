@@ -244,7 +244,7 @@ const EditarUsuario: React.FC = () => {
       <div className="space-xxbig-y"></div>
 
       <main className="background-blue">
-        <section className="d-flex center-x size-medium g-30 ">
+        <section className="d-flex center-x center-y size-medium g-30 ">
           {isEditing ? (
             <div>
               <div
@@ -300,7 +300,7 @@ const EditarUsuario: React.FC = () => {
             </div>
           ) : (
             <div
-              className="dropzone border-book4"
+              className="dropzone border-book4 dropzone-responsive"
               style={{
                 borderRadius: "50%",
                 width: "300px",
