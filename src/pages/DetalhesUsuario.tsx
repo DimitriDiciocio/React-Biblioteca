@@ -125,7 +125,7 @@ const DetalhesUsuario: React.FC = () => {
               <section className="d-flex center-x size-medium g-30">
                 <div>
                   <div
-                    className="dropzone border-book4"
+                    className="dropzone border-book4 dropzone-responsive"
                     style={{
                       borderRadius: "50%",
                       width: "300px",

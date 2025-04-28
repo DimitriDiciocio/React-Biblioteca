@@ -2983,3 +2983,12 @@ ul {
     width: auto !important;
   }
 }
+
+@media (max-width: 440px) {
+  .inputGroup label{
+    font-size: 70%;
+  }
+  .inputGroup select{
+    font-size: 90%;
+  }
+}
