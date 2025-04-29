@@ -3046,3 +3046,185 @@ ul {
   justify-content: flex-start; /* ou space-between, se houver mais conteúdo */
   gap: 8px; /* controla a distância entre o ícone e o texto */
 }
+
+/* Histórico Container */
+.historico-container {
+  background-color: #e9f6ff;
+  padding: 2rem;
+  border-radius: 8px;
+  margin: 1rem;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Títulos das seções */
+.historico-container h2 {
+  display: flex;
+  align-items: center;
+  font-size: 1.8rem;
+  font-weight: bold;
+  margin-bottom: 1.5rem;
+  border-bottom: 1px solid #999;
+  padding-bottom: 0.5rem;
+}
+
+.historico-container h2::before {
+  content: "🔄";
+  margin-right: 10px;
+}
+
+.historico-container h3 {
+  font-size: 1.2rem;
+  margin-top: 2rem;
+  margin-bottom: 1rem;
+}
+
+/* Blocos de item */
+.historico-item {
+  background-color: #fff;
+  border: 1px solid #ccc;
+  padding: 1rem;
+  margin-bottom: 1rem;
+  border-radius: 6px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+/* Texto */
+.historico-item p {
+  margin: 0.3rem 0;
+}
+
+/* Multas com destaque */
+.historico-item.multa p strong {
+  color: #c62828;
+}
+
+/* Layout geral */
+.espaco-vazio {
+  height: 20px;
+}
+
+/* Botões de ação fictícios (para visual semelhante ao “Limpar” e “Apagar”) */
+button.limpar-btn, .apagar-btn {
+  background-color: transparent;
+  border: none;
+  color: #007bff;
+  cursor: pointer;
+  font-size: 0.9rem;
+  float: right;
+}
+
+.apagar-btn {
+  color: #e53935;
+  font-size: 1.1rem;
+}
+
+/* Responsividade simples */
+@media (max-width: 768px) {
+  .historico-container {
+    padding: 1rem;
+  }
+}
+.historico-bloco {
+  background-color: #ffffff;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  padding: 1rem;
+  max-height: 200px;
+  overflow: auto;
+  margin-bottom: 1.5rem;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.barra-pesquisa {
+  width: 100%;
+  padding: 0.5rem;
+  margin-bottom: 0.8rem;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 1rem;
+}
+
+.notificacoes-container {
+  padding: 20px;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.sem-notificacoes {
+  text-align: center;
+  font-size: 18px;
+  color: #888;
+}
+
+.notificacoes-lista {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.notificacao-item {
+  background-color: #fff;
+  border-radius: 8px;
+  padding: 15px;
+  margin-bottom: 10px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s ease;
+}
+
+.notificacao-item.nova {
+  border-left: 4px solid #ff6f61;
+}
+
+.notificacao-item:hover {
+  transform: translateY(-5px);
+}
+
+.notificacao-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.notificacao-titulo {
+  font-size: 20px;
+  font-weight: bold;
+  margin: 0;
+  color: #333;
+}
+
+.notificacao-data {
+  font-size: 14px;
+  color: #999;
+}
+
+.notificacao-mensagem {
+  margin-top: 10px;
+  font-size: 16px;
+  color: #555;
+}
+
+.nova {
+  color: #ff6f61;
+  font-weight: bold;
+  margin-right: 10px;
+}
+
+.notificacao-actions {
+  margin-top: 10px;
+}
+
+.marcar-como-lida-btn {
+  padding: 8px 12px;
+  background-color: var(--azul-escuro);
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.marcar-como-lida-btn:hover {
+  background-color: var(--roxo);
+}

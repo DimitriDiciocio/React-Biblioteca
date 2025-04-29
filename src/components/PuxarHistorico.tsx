@@ -73,6 +73,18 @@ const PuxarHistorico = () => {
         puxarHistorico();
     }, [token]);
 
+    const [filtros, setFiltros] = useState({
+        emprestimosAtivos: "",
+        emprestimosConcluidos: "",
+        reservasAtivas: "",
+        multasPendentes: "",
+        multasConcluidas: ""
+      });
+      
+      const handleFiltroChange = (campo, valor) => {
+        setFiltros({ ...filtros, [campo]: valor.toLowerCase() });
+      };
+
     if (isAllowed === null) return <p>Verificando permissão...</p>;
     if (!isAllowed) return null;
     if (loading) return <p>Carregando...</p>;
@@ -81,95 +93,131 @@ const PuxarHistorico = () => {
 
     return (
         <div>
-            <div className="espaco-vazio"></div>
-            <div className="historico-container">
-                <h2>Histórico da Biblioteca</h2>
-
-                {/* Empréstimos Ativos */}
-                <section>
-                    <h3>📚 Empréstimos Ativos</h3>
-                    {historico.emprestimos_ativos.length > 0 ? (
-                        historico.emprestimos_ativos.map((item) => (
-                            <div key={item.id_emprestimo} className="historico-item">
-                                <p><strong>{item.titulo}</strong> - {item.autor}</p>
-                                <p>Retirado: {item.data_retirada}</p>
-                                <p>Devolver até: {item.data_devolver}</p>
-                            </div>
-                        ))
-                    ) : (
-                        <p>Nenhum empréstimo ativo.</p>
-                    )}
-                </section>
-
-                {/* Empréstimos Concluídos */}
-                <section>
-                    <h3>📖 Empréstimos Concluídos</h3>
-                    {historico.emprestimos_concluidos.length > 0 ? (
-                        historico.emprestimos_concluidos.map((item) => (
-                            <div key={item.id_emprestimo} className="historico-item">
-                                <p><strong>{item.titulo}</strong> - {item.autor}</p>
-                                <p>Retirado: {item.data_retirada}</p>
-                                <p>Devolvido: {item.data_devolvido}</p>
-                            </div>
-                        ))
-                    ) : (
-                        <p>Nenhum empréstimo concluído.</p>
-                    )}
-                </section>
-
-                {/* Reservas Ativas */}
-                <section>
-                    <h3>📝 Reservas Ativas</h3>
-                    {historico.reservas_ativas.length > 0 ? (
-                        historico.reservas_ativas.map((item) => (
-                            <div key={item.id_reserva} className="historico-item">
-                                <p><strong>{item.titulo}</strong> - {item.autor}</p>
-                                <p>Reservado em: {item.data_criacao}</p>
-                                <p>Válido até: {item.data_validade}</p>
-                            </div>
-                        ))
-                    ) : (
-                        <p>Nenhuma reserva ativa.</p>
-                    )}
-                </section>
-
-                {/* Multas Pendentes */}
-                <section>
-                    <h3>💰 Multas Pendentes</h3>
-                    {historico.multas_pendentes.length > 0 ? (
-                        historico.multas_pendentes.map((multa) => (
-                            <div key={multa.id_multa} className="historico-item multa">
-                                <p><strong>Empréstimo #{multa.id_emprestimo}</strong></p>
-                                <p>Valor Base: R$ {multa.valor_base}</p>
-                                <p>Acrescimo: R$ {multa.valor_acrescimo}</p>
-                                <p>Total: <strong>R$ {multa.total}</strong></p>
-                            </div>
-                        ))
-                    ) : (
-                        <p>Nenhuma multa pendente.</p>
-                    )}
-                </section>
-
-                {/* Multas Concluídas */}
-                <section>
-                    <h3>✅ Multas Concluídas</h3>
-                    {historico.multas_concluidas.length > 0 ? (
-                        historico.multas_concluidas.map((multa) => (
-                            <div key={multa.id_multa} className="historico-item multa">
-                                <p><strong>Empréstimo #{multa.id_emprestimo}</strong></p>
-                                <p>Valor Base: R$ {multa.valor_base}</p>
-                                <p>Acrescimo: R$ {multa.valor_acrescimo}</p>
-                                <p>Total: <strong>R$ {multa.total}</strong></p>
-                                <p>Status: Pago</p>
-                            </div>
-                        ))
-                    ) : (
-                        <p>Nenhuma multa concluída.</p>
-                    )}
-                </section>
-            </div>
+          <div className="espaco-vazio"></div>
+          <div className="historico-container">
+            <h2>Histórico da Biblioteca</h2>
+      
+            {/* Empréstimos Ativos */}
+            <section>
+              <h3>📚 Empréstimos Ativos</h3>
+              <input
+                type="text"
+                placeholder="Pesquisar título ou autor..."
+                className="barra-pesquisa"
+                value={filtros.emprestimosAtivos}
+                onChange={(e) => handleFiltroChange("emprestimosAtivos", e.target.value)}
+              />
+              <div className="historico-bloco">
+                {historico.emprestimos_ativos.filter((item) =>
+                  `${item.titulo} ${item.autor}`.toLowerCase().includes(filtros.emprestimosAtivos)
+                ).map((item) => (
+                  <div key={item.id_emprestimo} className="historico-item">
+                    <p><strong>{item.titulo}</strong> - {item.autor}</p>
+                    <p>Retirado: {item.data_retirada}</p>
+                    <p>Devolver até: {item.data_devolver}</p>
+                  </div>
+                ))}
+              </div>
+            </section>
+      
+            {/* Empréstimos Concluídos */}
+            <section>
+              <h3>📖 Empréstimos Concluídos</h3>
+              <input
+                type="text"
+                placeholder="Pesquisar título ou autor..."
+                className="barra-pesquisa"
+                value={filtros.emprestimosConcluidos}
+                onChange={(e) => handleFiltroChange("emprestimosConcluidos", e.target.value)}
+              />
+              <div className="historico-bloco">
+                {historico.emprestimos_concluidos.filter((item) =>
+                  `${item.titulo} ${item.autor}`.toLowerCase().includes(filtros.emprestimosConcluidos)
+                ).map((item) => (
+                  <div key={item.id_emprestimo} className="historico-item">
+                    <p><strong>{item.titulo}</strong> - {item.autor}</p>
+                    <p>Retirado: {item.data_retirada}</p>
+                    <p>Devolvido: {item.data_devolvido}</p>
+                  </div>
+                ))}
+              </div>
+            </section>
+      
+            {/* Reservas Ativas */}
+            <section>
+              <h3>📝 Reservas Ativas</h3>
+              <input
+                type="text"
+                placeholder="Pesquisar título ou autor..."
+                className="barra-pesquisa"
+                value={filtros.reservasAtivas}
+                onChange={(e) => handleFiltroChange("reservasAtivas", e.target.value)}
+              />
+              <div className="historico-bloco">
+                {historico.reservas_ativas.filter((item) =>
+                  `${item.titulo} ${item.autor}`.toLowerCase().includes(filtros.reservasAtivas)
+                ).map((item) => (
+                  <div key={item.id_reserva} className="historico-item">
+                    <p><strong>{item.titulo}</strong> - {item.autor}</p>
+                    <p>Reservado em: {item.data_criacao}</p>
+                    <p>Válido até: {item.data_validade}</p>
+                  </div>
+                ))}
+              </div>
+            </section>
+      
+            {/* Multas Pendentes */}
+            <section>
+              <h3>💰 Multas Pendentes</h3>
+              <input
+                type="text"
+                placeholder="Pesquisar por empréstimo..."
+                className="barra-pesquisa"
+                value={filtros.multasPendentes}
+                onChange={(e) => handleFiltroChange("multasPendentes", e.target.value)}
+              />
+              <div className="historico-bloco">
+                {historico.multas_pendentes.filter((multa) =>
+                  `Empréstimo #${multa.id_emprestimo}`.toLowerCase().includes(filtros.multasPendentes)
+                ).map((multa) => (
+                  <div key={multa.id_multa} className="historico-item multa">
+                    <p><strong>Empréstimo #{multa.id_emprestimo}</strong></p>
+                    <p>Valor Base: R$ {multa.valor_base}</p>
+                    <p>Acrescimo: R$ {multa.valor_acrescimo}</p>
+                    <p>Total: <strong>R$ {multa.total}</strong></p>
+                  </div>
+                ))}
+              </div>
+            </section>
+      
+            {/* Multas Concluídas */}
+            <section>
+              <h3>✅ Multas Concluídas</h3>
+              <input
+                type="text"
+                placeholder="Pesquisar por empréstimo..."
+                className="barra-pesquisa"
+                value={filtros.multasConcluidas}
+                onChange={(e) => handleFiltroChange("multasConcluidas", e.target.value)}
+              />
+              <div className="historico-bloco">
+                {historico.multas_concluidas.filter((multa) =>
+                  `Empréstimo #${multa.id_emprestimo}`.toLowerCase().includes(filtros.multasConcluidas)
+                ).map((multa) => (
+                  <div key={multa.id_multa} className="historico-item multa">
+                    <p><strong>Empréstimo #{multa.id_emprestimo}</strong></p>
+                    <p>Valor Base: R$ {multa.valor_base}</p>
+                    <p>Acrescimo: R$ {multa.valor_acrescimo}</p>
+                    <p>Total: <strong>R$ {multa.total}</strong></p>
+                    <p>Status: Pago</p>
+                  </div>
+                ))}
+              </div>
+            </section>
+          </div>
         </div>
-    );
+      );
+      
 };
 
 export default PuxarHistorico;
