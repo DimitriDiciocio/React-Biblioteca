@@ -116,6 +116,7 @@ const Configuracoes: React.FC = () => {
       <form onSubmit={handleSubmit} className={styles.form}>
         <h3 className={styles.subtitle}>Atualizar Valores</h3>
         <div className={styles.inputGroup}>
+          <label>Valor Base</label>
           <label className={styles.inputLabel}>
             R$
             <input
@@ -134,6 +135,7 @@ const Configuracoes: React.FC = () => {
           </label>
         </div>
         <div className={styles.inputGroup}>
+          <label>Valor Acrescimo</label>
           <label className={styles.inputLabel}>
             R$
             <input

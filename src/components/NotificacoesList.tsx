@@ -1,6 +1,6 @@
 import React from "react";
 import { Note } from "../services/useNotification";
-import { marcarComoLida } from "../services/useNotification"; // certifique-se de exportar
+import { marcarComoLida } from "../services/useNotification";
 
 interface Props {
   notes: Note[];
