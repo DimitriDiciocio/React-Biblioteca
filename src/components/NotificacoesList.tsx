@@ -30,7 +30,7 @@ const NotificacoesList: React.FC<Props> = ({ notes, onAtualizar }) => {
         .slice() // Cria uma cópia do array original para não modificar o original
         .reverse() // Inverte a ordem
         .map((note) => (
-          <li key={note.id_notificacao} className={`notificacao-item ${!note.lida ? 'nova' : ''}`}>
+          <li key={note.id_notificacao} className={`notificacao-item ${!note.lida ? 'nova' : ''} fundo-site`}>
             <div className="notificacao-header">
               <h3 className="notificacao-titulo">{note.titulo}</h3>
               <small className="notificacao-data">{note.data_adicionada}</small>
