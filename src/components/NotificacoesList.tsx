@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { Note } from "../services/useNotification";
 import { marcarComoLida } from "../services/useNotification";
 
@@ -8,18 +8,25 @@ interface Props {
 }
 
 const NotificacoesList: React.FC<Props> = ({ notes, onAtualizar }) => {
+  const [localNotes, setLocalNotes] = useState(notes);
+
   const handleMarcarComoLida = async (id: number) => {
     await marcarComoLida(id);
+    setLocalNotes((prevNotes) =>
+      prevNotes.map((note) =>
+        note.id_notificacao === id ? { ...note, lida: true } : note
+      )
+    );
     if (onAtualizar) onAtualizar();
   };
 
   return (
 <div className="notificacoes-container">
-  {notes.length === 0 ? (
+  {localNotes.length === 0 ? (
     <p className="sem-notificacoes">Sem notificações.</p>
   ) : (
     <ul className="notificacoes-lista">
-      {notes
+      {localNotes
         .slice() // Cria uma cópia do array original para não modificar o original
         .reverse() // Inverte a ordem
         .map((note) => (
