@@ -29,7 +29,12 @@ export default function RelatorioUsuarios() {
   const buscarUsuarios = async () => {
     setLoading(true);
     try {
-      const response = await fetch("http://localhost:5000/relatorio/usuarios");
+      const response = await fetch("http://localhost:5000/relatorio/usuarios", {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      });
       const data = await response.json();
       setUsuarios(data.usuarios);
     } catch (error) {

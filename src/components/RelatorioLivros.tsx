@@ -29,7 +29,11 @@ export default function RelatorioLivros() {
   const buscarLivros = async () => {
     setLoading(true);
     try {
-      const response = await fetch("http://localhost:5000/relatorio/livros");
+      const response = await fetch("http://localhost:5000/relatorio/livros", {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      });
       const data = await response.json();
       setLivros(data.livros);
     } catch (error) {

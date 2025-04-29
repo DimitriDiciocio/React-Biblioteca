@@ -17,7 +17,12 @@ export default function RelatorioMultas() {
   const buscarMultas = async () => {
     setLoading(true);
     try {
-      const response = await fetch("http://localhost:5000/relatorio/multas");
+      const response = await fetch("http://localhost:5000/relatorio/multas", {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      });
       const data = await response.json();
       setMultas(
         data.multas.map((multa: any) => ({
@@ -25,7 +30,7 @@ export default function RelatorioMultas() {
           telefone: multa[1],
           nome: multa[2],
           id_emprestimo: multa[3],
-          data_devolver: multa[4],
+          data_devolver: multa[4]
         }))
       );
     } catch (error) {
@@ -71,7 +76,12 @@ export default function RelatorioMultas() {
           ? "http://localhost:5000/relatorio/gerar/multas"
           : "http://localhost:5000/relatorio/gerar/multas/pendentes";
 
-      const response = await fetch(endpoint);
+      const response = await fetch(endpoint, {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      });
 
       if (!response.ok) {
         throw new Error("Falha ao gerar o relatório.");
