@@ -3,7 +3,6 @@ import { useParams, useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 import Header from "../components/Header";
 import MostrarLivros from "../components/MostrarLivros";
-import { usePermission } from "../components/usePermission";
 import Footer from "../components/Footer";
 interface Tag {
   id: number;
@@ -30,14 +29,37 @@ const BookDetail = () => {
   const [book, setBook] = useState<Book | null>(null);
   const [disponivelReserva, setDisponivelReserva] = useState(false);
   const [disponivelEmprestimo, setDisponivelEmprestimo] = useState(false);
-  const [mensagemIndisponivel, setMensagemIndisponivel] = useState<
-    string | null
-  >(null);
+  const [mensagemIndisponivel, setMensagemIndisponivel] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [userRating, setUserRating] = useState<number | null>(null);
+  const [isAllowed, setIsAllowed] = useState<boolean>(false);
   const navigate = useNavigate();
   const token = localStorage.getItem("token");
 
+  useEffect(() => {
+    async function checkPermission() {
+      if (!token) {
+        setIsAllowed(false);
+        return;
+      }
+
+      try {
+        const response = await fetch(`http://127.0.0.1:5000/tem_permissao/1`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+
+        if (response.ok) {
+          setIsAllowed(true);
+        } else {
+          setIsAllowed(false);
+        }
+      } catch {
+        setIsAllowed(false);
+      }
+    }
+
+    checkPermission();
+  }, [token]);
 
   useEffect(() => {
     async function fetchBook() {
@@ -45,7 +67,7 @@ const BookDetail = () => {
         const response = await fetch(`http://127.0.0.1:5000/livros/${id}`, {
           method: "GET",
           headers: {
-            Authorization: `Bearer ${token}`,
+            Authorization: token ? `Bearer ${token}` : "",
             "Content-Type": "application/json",
           },
         });
@@ -59,11 +81,12 @@ const BookDetail = () => {
         setLoading(false);
       }
     }
+
     fetchBook();
   }, [id, token]);
 
   const verificarDisponibilidade = async () => {
-    if (!token || isAllowed === false) return;
+    if (!token || !isAllowed) return;
 
     try {
       const responseEmprestimo = await fetch(
@@ -101,10 +124,10 @@ const BookDetail = () => {
   };
 
   useEffect(() => {
-    if (token) {
+    if (token && isAllowed) {
       verificarDisponibilidade();
     }
-  }, [id, token]);
+  }, [id, token, isAllowed]);
 
   useEffect(() => {
     const fetchUserRating = async () => {
@@ -114,7 +137,7 @@ const BookDetail = () => {
           {
             method: "GET",
             headers: {
-              Authorization: `Bearer ${token}`,
+              Authorization: token ? `Bearer ${token}` : "",
               "Content-Type": "application/json",
             },
           }
@@ -131,23 +154,26 @@ const BookDetail = () => {
       }
     };
 
-    if (token) {
-      fetchUserRating();
-    }
+    fetchUserRating();
   }, [id, token]);
 
   if (loading) return <p>Carregando...</p>;
   if (!book) return <p>Livro não encontrado.</p>;
 
   const handleAgendamento = async () => {
-    if (!token || isAllowed === false) {
-      navigate("/login");
+    if (!token) {
+      Swal.fire("Erro", "Você precisa estar logado para reservar.", "error");
+      return;
+    }
+
+    if (!isAllowed) {
+      Swal.fire("Erro", "Você não tem permissão para realizar esta ação.", "error");
       return;
     }
 
     Swal.fire({
       title: "Quer Reservar?",
-      text: `Você quer adicionar ${book.titulo} ao carrinho de reservas?`,
+      text: `Você quer adicionar ${book?.titulo} ao carrinho de reservas?`,
       icon: "question",
       showCancelButton: true,
       confirmButtonColor: "#4562D6",
@@ -164,7 +190,7 @@ const BookDetail = () => {
                 Authorization: `Bearer ${token}`,
                 "Content-Type": "application/json",
               },
-              body: JSON.stringify({ id_livro: book.id }),
+              body: JSON.stringify({ id_livro: book?.id }),
             }
           );
 
@@ -191,10 +217,10 @@ const BookDetail = () => {
             }
           });
         } catch (error) {
-          console.error("Erro ao realizar empréstimo:", error);
+          console.error("Erro ao realizar reserva:", error);
           Swal.fire(
             "Erro",
-            "Ocorreu um erro ao tentar emprestar o livro." + String(error),
+            "Ocorreu um erro ao tentar reservar o livro." + String(error),
             "error"
           );
         }
@@ -203,14 +229,19 @@ const BookDetail = () => {
   };
 
   const handleEmprestimo = async () => {
-    if (!token || isAllowed === false) {
-      navigate("/login");
+    if (!token) {
+      Swal.fire("Erro", "Você precisa estar logado para emprestar.", "error");
+      return;
+    }
+
+    if (!isAllowed) {
+      Swal.fire("Erro", "Você não tem permissão para realizar esta ação.", "error");
       return;
     }
 
     Swal.fire({
       title: "Fazer Empréstimo?",
-      text: `Você quer adicionar ${book.titulo} ao carrinho de empréstimos?`,
+      text: `Você quer adicionar ${book?.titulo} ao carrinho de empréstimos?`,
       icon: "question",
       showCancelButton: true,
       confirmButtonColor: "#4562D6",
@@ -227,7 +258,7 @@ const BookDetail = () => {
                 Authorization: `Bearer ${token}`,
                 "Content-Type": "application/json",
               },
-              body: JSON.stringify({ id_livro: book.id }),
+              body: JSON.stringify({ id_livro: book?.id }),
             }
           );
 
@@ -266,8 +297,13 @@ const BookDetail = () => {
   };
 
   const handleRating = async (rating: number) => {
-    if (!token || isAllowed === false) {
+    if (!token) {
       navigate("/login");
+      return;
+    }
+
+    if (!isAllowed) {
+      Swal.fire("Erro", "Você não tem permissão para realizar esta ação.", "error");
       return;
     }
 

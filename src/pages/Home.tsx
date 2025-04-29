@@ -6,7 +6,6 @@ import MostrarTop from "../components/MostrarTop";
 
 const Home: React.FC = () => {
   const token = localStorage.getItem("token");
-  const id_user = localStorage.getItem("id_user");
 
   return (
     <div>
@@ -28,7 +27,7 @@ const Home: React.FC = () => {
           <MostrarLivros />
         </section>
         <div className="space-med-y"></div>
-        {token && id_user && (
+        {token && (
           <>
             <section>
               <p className="montserrat-alternates-semibold size-titles">
@@ -39,7 +38,7 @@ const Home: React.FC = () => {
             <div className="space-med-y"></div>
           </>
         )}
-        {token && id_user && (
+        {token && (
           <>
             <section>
               <p className="montserrat-alternates-semibold size-titles">
@@ -64,7 +63,7 @@ const Home: React.FC = () => {
           <MostrarLivros />
         </section>
         <div className="space-med-y"></div>
-        {token && id_user && (
+        {token && (
           <>
             <section>
               <p className="montserrat-alternates-semibold size-titles">

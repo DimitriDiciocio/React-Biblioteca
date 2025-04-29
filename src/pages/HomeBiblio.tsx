@@ -54,11 +54,9 @@ const HomeBiblio: React.FC = () => {
   
   useEffect(() => {
     const fetchUserName = async () => {
-      const userId = localStorage.getItem("id_user");
-      if (!userId) return;
   
       try {
-        const response = await fetch(`http://127.0.0.1:5000/user/${userId}`, {
+        const response = await fetch(`http://127.0.0.1:5000/user`, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
           },
@@ -108,7 +106,6 @@ const HomeBiblio: React.FC = () => {
   };
 
   const Sair = () => {
-    localStorage.removeItem("id_user");
     localStorage.removeItem("token");
     navigate("/login");
   };

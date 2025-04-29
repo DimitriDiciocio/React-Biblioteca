@@ -110,7 +110,6 @@ const Config: React.FC = () => {
   };
   
   const Sair = () => {
-    localStorage.removeItem("id_user");
     localStorage.removeItem("token");
     navigate("/login")
   }
