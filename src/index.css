@@ -1518,6 +1518,7 @@ textarea.input {
   right: 10px;
   font-size: 16px;
   color: #333;
+  z-index: 1111;
 }
 /* From Uiverse.io by vinodjangid07 */ 
 .Btn-modal {
@@ -3035,4 +3036,13 @@ ul {
     display: flex;
     justify-content: center;
   }
+}
+.icon-config{
+  height: 30px;
+}
+.link-flex {
+  display: flex !important;
+  align-items: center;
+  justify-content: flex-start; /* ou space-between, se houver mais conteúdo */
+  gap: 8px; /* controla a distância entre o ícone e o texto */
 }
