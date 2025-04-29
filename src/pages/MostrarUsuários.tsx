@@ -107,11 +107,11 @@ const MostrarUsuarios: React.FC = () => {
   return (
     <div className="usuarios-container">
       <i className="fa-solid fa-arrow-left arrow-back"  onClick={() => navigate("/home_biblio?page=1")}></i>
-      <h1 className="page-title">Usuários</h1>
-      <input
+      <h1 className="page-title montserrat-alternates">Usuários</h1>
+      <input 
         type="text"
         placeholder="Pesquisar usuários"
-        className="input pesquisa"
+        className="input pesquisa montserrat-alternates"
         onChange={(e) => setPesquisa(e.target.value)}
       />
       <div className="usuarios-grid">
@@ -124,9 +124,9 @@ const MostrarUsuarios: React.FC = () => {
                 className="usuario-imagem"
               />
             ) : (
-              <div className="usuario-imagem-placeholder">Sem imagem</div>
+              <div className="usuario-imagem-placeholder montserrat-alternates">Sem imagem</div>
             )}
-            <div className="usuario-info">
+            <div className="usuario-info montserrat-alternates">
               <h3>{user.nome}</h3>
               <p>
                 <strong>Email:</strong> {user.email}

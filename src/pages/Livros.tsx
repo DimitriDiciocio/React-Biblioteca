@@ -58,17 +58,17 @@ const Livros: React.FC = () => {
   if (!isAllowed) return null;
 
   return (
-    <div className="livros-container">
-      <i className="fa-solid fa-arrow-left arrow-back"  onClick={() => navigate("/home_biblio?page=1")}></i>
-      <h1 className="page-title">Gerenciamento de Livros</h1>
+    <div className="livros-container montserrat-alternates">
+      <i className="fa-solid fa-arrow-left arrow-back montserrat-alternates"  onClick={() => navigate("/home_biblio?page=1")}></i>
+      <h1 className="page-title montserrat-alternates">Gerenciamento de Livros</h1>
       <input
         type="text"
         placeholder="Pesquisar livros"
-        className="input pesquisa"
+        className="input pesquisa montserrat-alternates"
         onChange={(e) => setPesquisa(e.target.value)}
       />
       <div
-        className={`livros-grid ${
+        className={`livros-grid montserrat-alternates ${
           filteredLivros.length === 1
             ? "single-book"
             : filteredLivros.length === 2
@@ -85,7 +85,7 @@ const Livros: React.FC = () => {
               alt={book.titulo}
               className="livro-imagem"
             />
-            <div className="livro-info">
+            <div className="livro-info montserrat-alternates">
               <h3>{book.titulo}</h3>
               <p>
                 <strong>Autor:</strong> {book.autor}

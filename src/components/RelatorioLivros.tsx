@@ -76,10 +76,10 @@ export default function RelatorioLivros() {
 
   return (
     <div style={{ padding: "24px", maxWidth: "1000px", margin: "0 auto" }}>
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "20px", gap: "10px" }}className="relatorio-title">
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "20px", gap: "10px" }}className="relatorio-title montserrat-alternates">
         <h1 style={{ fontSize: "16px", fontWeight: "bold" }}>Relatório de Livros</h1>
         <div style={{ display: "flex", gap: "10px" }}>
-          <button
+          <button className="montserrat-alternates"
             onClick={relatorioPDF}
             style={{
               padding: "8px 5px",
@@ -90,9 +90,9 @@ export default function RelatorioLivros() {
               cursor: "pointer",
             }}
           >
-            <span>Gerar PDF</span>
+            <span className="montserrat-alternates">Gerar PDF</span>
           </button>
-          <button
+          <button className="montserrat-alternates"
             onClick={buscarLivros}
             disabled={loading}
             style={{
@@ -113,19 +113,19 @@ export default function RelatorioLivros() {
         <table style={{ width: "100%", borderCollapse: "collapse" }}>
           <thead>
             <tr style={{ backgroundColor: "#f0f0f0" }}>
-              <th style={{ textAlign: "left", padding: "12px" }}>Título</th>
-              <th style={{ textAlign: "left", padding: "12px" }}>Autor</th>
-              <th style={{ textAlign: "left", padding: "12px" }}>Categoria</th>
-              <th style={{ textAlign: "left", padding: "12px" }}>Disponíveis</th>
+              <th className="montserrat-alternates" style={{ textAlign: "left", padding: "12px" }}>Título</th>
+              <th className="montserrat-alternates" style={{ textAlign: "left", padding: "12px" }}>Autor</th>
+              <th className="montserrat-alternates" style={{ textAlign: "left", padding: "12px" }}>Categoria</th>
+              <th className="montserrat-alternates" style={{ textAlign: "left", padding: "12px" }}>Disponíveis</th>
             </tr>
           </thead>
           <tbody>
             {livros.map((livro) => (
               <tr key={livro.id} style={{ borderBottom: "1px solid #ddd" }}>
-                <td style={{ padding: "10px" }}>{livro.titulo}</td>
-                <td style={{ padding: "10px" }}>{livro.autor}</td>
-                <td style={{ padding: "10px" }}>{livro.categoria}</td>
-                <td style={{ padding: "10px" }}>{livro.qtd_disponivel}</td>
+                <td className="montserrat-alternates" style={{ padding: "10px" }}>{livro.titulo}</td>
+                <td className="montserrat-alternates" style={{ padding: "10px" }}>{livro.autor}</td>
+                <td className="montserrat-alternates" style={{ padding: "10px" }}>{livro.categoria}</td>
+                <td className="montserrat-alternates" style={{ padding: "10px" }}>{livro.qtd_disponivel}</td>
               </tr>
             ))}
           </tbody>
@@ -133,7 +133,7 @@ export default function RelatorioLivros() {
       </div>
 
       <div style={{ padding: "16px", border: "1px solid #ddd", borderRadius: "8px" }}>
-        <h2 style={{ fontSize: "18px", fontWeight: "bold", marginBottom: "16px" }}>Livros por Idioma</h2>
+        <h2 className="montserrat-alternates" style={{ fontSize: "18px", fontWeight: "bold", marginBottom: "16px" }}>Livros por Idioma</h2>
         <ResponsiveContainer width="100%" height={300}>
           <BarChart data={gerarDadosGrafico(livros)}>
             <CartesianGrid strokeDasharray="3 3" />

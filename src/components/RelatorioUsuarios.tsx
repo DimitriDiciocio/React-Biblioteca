@@ -85,11 +85,11 @@ export default function RelatorioUsuarios() {
           marginBottom: "20px",
           gap: "10px",  
         }}
-        className="relatorio-title"
+        className="relatorio-title "
       >
-        <h1 style={{ fontSize: "16px", fontWeight: "bold" }}>Relatório de Usuários</h1>
+        <h1 className="montserrat-alternates" style={{ fontSize: "16px", fontWeight: "bold" }}>Relatório de Usuários</h1>
         <div style={{ display: "flex", gap: "10px" }}>
-          <button
+          <button className="montserrat-alternates"
             onClick={gerarPDF}
             style={{
               padding: "8px 5px",
@@ -102,7 +102,7 @@ export default function RelatorioUsuarios() {
           >
             Gerar PDF
           </button>
-          <button
+          <button className="montserrat-alternates"
             onClick={buscarUsuarios}
             disabled={loading}
             style={{
@@ -130,19 +130,19 @@ export default function RelatorioUsuarios() {
         <table style={{ width: "100%", borderCollapse: "collapse" }}>
           <thead>
             <tr style={{ backgroundColor: "#f0f0f0" }}>
-              <th style={{ textAlign: "left", padding: "12px" }}>Nome</th>
-              <th style={{ textAlign: "left", padding: "12px" }}>E-mail</th>
-              <th style={{ textAlign: "left", padding: "12px" }}>Telefone</th>
-              <th style={{ textAlign: "left", padding: "12px" }}>Endereço</th>
+              <th className="montserrat-alternates" style={{ textAlign: "left", padding: "12px" }}>Nome</th>
+              <th className="montserrat-alternates" style={{ textAlign: "left", padding: "12px" }}>E-mail</th>
+              <th className="montserrat-alternates" style={{ textAlign: "left", padding: "12px" }}>Telefone</th>
+              <th className="montserrat-alternates" style={{ textAlign: "left", padding: "12px" }}>Endereço</th>
             </tr>
           </thead>
           <tbody>
             {usuarios.map((usuario) => (
               <tr key={usuario.id} style={{ borderBottom: "1px solid #ddd" }}>
-                <td style={{ padding: "10px" }}>{usuario.nome}</td>
-                <td style={{ padding: "10px" }}>{usuario.email}</td>
-                <td style={{ padding: "10px" }}>{usuario.telefone}</td>
-                <td style={{ padding: "10px" }}>{usuario.endereco}</td>
+                <td className="montserrat-alternates" style={{ padding: "10px" }}>{usuario.nome}</td>
+                <td className="montserrat-alternates" style={{ padding: "10px" }}>{usuario.email}</td>
+                <td className="montserrat-alternates" style={{ padding: "10px" }}>{usuario.telefone}</td>
+                <td className="montserrat-alternates" style={{ padding: "10px" }}>{usuario.endereco}</td>
               </tr>
             ))}
           </tbody>
@@ -150,7 +150,7 @@ export default function RelatorioUsuarios() {
       </div>
 
       <div style={{ padding: "16px", border: "1px solid #ddd", borderRadius: "8px" }}>
-        <h2 style={{ fontSize: "18px", fontWeight: "bold", marginBottom: "16px" }}>
+        <h2 className="montserrat-alternates" style={{ fontSize: "18px", fontWeight: "bold", marginBottom: "16px" }}>
           Usuários por Estado (simulado)
         </h2>
         <ResponsiveContainer width="100%" height={300}>

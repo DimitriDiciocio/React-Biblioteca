@@ -46,7 +46,6 @@ const Movimentacoes: React.FC = () => {
     })
       .then((res) => res.json())
       .then((json: Movimentacao[]) => {
-        // A resposta já está agrupada e ordenada do mais recente para o mais antigo
         const parsedData = json.map((item) => ({
           ...item,
           data_evento: new Date(item.data_evento_str).getTime(),
@@ -181,7 +180,7 @@ const Movimentacoes: React.FC = () => {
       <i className="fa-solid fa-arrow-left arrow-back"  onClick={() => navigate("/home_biblio?page=1")}></i>
       <div className="space-sm"></div>
       <div className={styles.header}>
-        <h1 className={styles.title}>Movimentações</h1>
+        <h1 className={styles.title }>Movimentações</h1>
       </div>
       <section className={styles.filters}>
         <input

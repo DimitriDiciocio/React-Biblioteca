@@ -22,6 +22,7 @@ export default function PaginaRelatorios() {
       >
         <button
           onClick={() => setMostrar("livros")}
+          className="montserrat-alternates"
           style={{
             padding: "8px 3px",
             backgroundColor: mostrar === "livros" ? "#2473D9" : "#ccc",
@@ -35,6 +36,7 @@ export default function PaginaRelatorios() {
         </button>
         <button
           onClick={() => setMostrar("usuarios")}
+          className="montserrat-alternates"
           style={{
             padding: "8px 3px",
             backgroundColor: mostrar === "usuarios" ? "#2473D9" : "#ccc",
@@ -47,6 +49,7 @@ export default function PaginaRelatorios() {
           Relatório de Usuários
         </button>
         <button
+          className="montserrat-alternates"
           onClick={() => setMostrar("multas")}
           style={{
             padding: "8px 3px",

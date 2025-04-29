@@ -65,13 +65,13 @@ const Multas: React.FC = () => {
         className="fa-solid fa-arrow-left arrow-back"
         onClick={() => navigate("/home_biblio?page=1")}
       ></i>
-      <h1 className="multas-title">Lista de Multas</h1>
+      <h1 className="multas-title montserrat-alternates">Lista de Multas</h1>
       {loading ? (
-        <p className="multas-loading">Carregando...</p>
+        <p className="multas-loading montserrat-alternates">Carregando...</p>
       ) : multas.length === 0 ? (
-        <p className="multas-empty">Nenhuma multa encontrada.</p>
+        <p className="multas-empty montserrat-alternates">Nenhuma multa encontrada.</p>
       ) : (
-        <table className="multas-table">
+        <table className="multas-table montserrat-alternates">
           <thead>
             <tr>
               <th>Nome</th>

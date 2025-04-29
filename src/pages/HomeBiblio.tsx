@@ -183,7 +183,7 @@ const HomeBiblio: React.FC = () => {
   return (
     <div>
       <Header />
-      <main className="background-blue">
+      <main className="background-blue ">
         <aside className="sidebar">
           <nav className="nav-lateral">
             <ul>
@@ -228,12 +228,12 @@ const HomeBiblio: React.FC = () => {
           </nav>
         </aside>
 
-        <section className="content montserrat-alternates-semibold">
+        <section className="content montserrat-alternates">
           <div className="page active" data-page="1">
-          <h1 className="size-titles2">Olá, {userName}! O que deseja fazer?</h1>
+          <h1 className="size-titles2 montserrat-alternates">Olá, {userName}! O que deseja fazer?</h1>
             <form className="d-flex responsive-class">
               <div className="p-relative">
-                <input
+                <input className="montserrat-alternates"
                   required
                   type="text"
                   placeholder="Pesquisar..."
@@ -249,8 +249,8 @@ const HomeBiblio: React.FC = () => {
                   className="botao-home-biblio"
                   onClick={button!.onClick}
                 >
-                  <span className="titulo-botao-home-biblio">{button!.title}</span>
-                  <span className="descricao-botao-home-biblio">{button!.description}</span>
+                  <span className="titulo-botao-home-biblio montserrat-alternates">{button!.title}</span>
+                  <span className="descricao-botao-home-biblio montserrat-alternates">{button!.description}</span>
                 </button>
               ))}
             </div>

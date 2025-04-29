@@ -115,8 +115,8 @@ export default function RelatorioMultas() {
   }, [abaAtiva]);
 
   return (
-    <div style={{ padding: "24px", maxWidth: "1000px", margin: "0 auto" }}>
-      <div
+    <div className="montserrat-alternates" style={{ padding: "24px", maxWidth: "1000px", margin: "0 auto" }}>
+      <div 
         style={{
           display: "flex",
           justifyContent: "space-between",
@@ -124,13 +124,13 @@ export default function RelatorioMultas() {
           marginBottom: "20px",
           gap: "10px",
         }}
-        className="relatorio-title"
+        className="relatorio-title montserrat-alternates"
       >
         <h1 style={{ fontSize: "16px", fontWeight: "bold" }}>
           Relatório de Multas
         </h1>
         <div style={{ display: "flex", gap: "10px" }}>
-          <button
+          <button className="montserrat-alternates"
             onClick={gerarPDF}
             disabled={loading}
             style={{
@@ -148,7 +148,7 @@ export default function RelatorioMultas() {
             onClick={() =>
               abaAtiva === "geral" ? buscarMultas() : buscarMultasPendentes()
             }
-            disabled={loading}
+            disabled={loading} className="montserrat-alternates"
             style={{
               padding: "8px 3px",
               backgroundColor: "#2473D9",
@@ -163,7 +163,7 @@ export default function RelatorioMultas() {
         </div>
       </div>
 
-      <div
+      <div className="montserrat-alternates"
         style={{
           display: "flex",
           justifyContent: "center",
@@ -211,13 +211,13 @@ export default function RelatorioMultas() {
           <table style={{ width: "100%", borderCollapse: "collapse" }}>
             <thead>
               <tr style={{ backgroundColor: "#f0f0f0" }}>
-                <th style={{ textAlign: "left", padding: "12px" }}>Email</th>
-                <th style={{ textAlign: "left", padding: "12px" }}>Telefone</th>
-                <th style={{ textAlign: "left", padding: "12px" }}>Nome</th>
-                <th style={{ textAlign: "left", padding: "12px" }}>
+                <th className="montserrat-alternates" style={{ textAlign: "left", padding: "12px" }}>Email</th>
+                <th className="montserrat-alternates" style={{ textAlign: "left", padding: "12px" }}>Telefone</th>
+                <th className="montserrat-alternates" style={{ textAlign: "left", padding: "12px" }}>Nome</th>
+                <th className="montserrat-alternates" style={{ textAlign: "left", padding: "12px" }}>
                   ID Empréstimo
                 </th>
-                <th style={{ textAlign: "left", padding: "12px" }}>
+                <th className="montserrat-alternates" style={{ textAlign: "left", padding: "12px" }}> 
                   Data Devolver
                 </th>
               </tr>
@@ -225,11 +225,11 @@ export default function RelatorioMultas() {
             <tbody>
               {multas.map((multa, index) => (
                 <tr key={index} style={{ borderBottom: "1px solid #ddd" }}>
-                  <td style={{ padding: "10px" }}>{multa.email}</td>
-                  <td style={{ padding: "10px" }}>{multa.telefone}</td>
-                  <td style={{ padding: "10px" }}>{multa.nome}</td>
-                  <td style={{ padding: "10px" }}>{multa.id_emprestimo}</td>
-                  <td style={{ padding: "10px" }}>{multa.data_devolver}</td>
+                  <td className="montserrat-alternates" style={{ padding: "10px" }}>{multa.email}</td>
+                  <td className="montserrat-alternates" style={{ padding: "10px" }}>{multa.telefone}</td>
+                  <td className="montserrat-alternates" style={{ padding: "10px" }}>{multa.nome}</td>
+                  <td className="montserrat-alternates" style={{ padding: "10px" }}>{multa.id_emprestimo}</td>
+                  <td className="montserrat-alternates" style={{ padding: "10px" }}>{multa.data_devolver}</td>
                 </tr>
               ))}
             </tbody>
