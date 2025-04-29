@@ -86,11 +86,7 @@ const Config: React.FC = () => {
               });
           }
         } else {
-          Swal.fire({
-            title: "Erro ao buscar dados do usuário",
-            text: data.message,
-            icon: "error",
-          });
+          navigate("/login");
         }
       } catch (error) {
         Swal.fire({

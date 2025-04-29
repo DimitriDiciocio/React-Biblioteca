@@ -36,8 +36,8 @@ const BookDetail = () => {
   const [loading, setLoading] = useState(true);
   const [userRating, setUserRating] = useState<number | null>(null);
   const navigate = useNavigate();
-  const isAllowed = usePermission(1);
   const token = localStorage.getItem("token");
+
 
   useEffect(() => {
     async function fetchBook() {
@@ -62,44 +62,48 @@ const BookDetail = () => {
     fetchBook();
   }, [id, token]);
 
-  useEffect(() => {
-    const verificarDisponibilidade = async () => {
-      try {
-        const responseEmprestimo = await fetch(
-          `http://127.0.0.1:5000/verificar_emprestimo/${id}`,
-          {
-            method: "GET",
-            headers: {
-              Authorization: `Bearer ${token}`,
-              "Content-Type": "application/json",
-            },
-          }
-        );
-        const dataEmprestimo = await responseEmprestimo.json();
+  const verificarDisponibilidade = async () => {
+    if (!token || isAllowed === false) return;
 
-        setDisponivelEmprestimo(dataEmprestimo.disponivel);
-
-        const responseReserva = await fetch(
-          `http://127.0.0.1:5000/verificar_reserva/${id}`,
-          {
-            method: "GET",
-            headers: {
-              Authorization: `Bearer ${token}`,
-              "Content-Type": "application/json",
-            },
-          }
-        );
-        const dataReserva = await responseReserva.json();
-        setDisponivelReserva(dataReserva.disponivel);
-
-        if (!dataReserva.disponivel && dataReserva.mensagem) {
-          setMensagemIndisponivel(dataReserva.mensagem);
+    try {
+      const responseEmprestimo = await fetch(
+        `http://127.0.0.1:5000/verificar_emprestimo/${id}`,
+        {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
         }
-      } catch (error) {
-        console.error("Erro ao verificar disponibilidade:", error);
+      );
+      const dataEmprestimo = await responseEmprestimo.json();
+      setDisponivelEmprestimo(dataEmprestimo.disponivel);
+
+      const responseReserva = await fetch(
+        `http://127.0.0.1:5000/verificar_reserva/${id}`,
+        {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      const dataReserva = await responseReserva.json();
+      setDisponivelReserva(dataReserva.disponivel);
+
+      if (!dataReserva.disponivel && dataReserva.mensagem) {
+        setMensagemIndisponivel(dataReserva.mensagem);
       }
-    };
-    verificarDisponibilidade();
+    } catch (error) {
+      console.error("Erro ao verificar disponibilidade:", error);
+    }
+  };
+
+  useEffect(() => {
+    if (token) {
+      verificarDisponibilidade();
+    }
   }, [id, token]);
 
   useEffect(() => {
@@ -127,13 +131,20 @@ const BookDetail = () => {
       }
     };
 
-    fetchUserRating();
+    if (token) {
+      fetchUserRating();
+    }
   }, [id, token]);
 
   if (loading) return <p>Carregando...</p>;
   if (!book) return <p>Livro não encontrado.</p>;
 
   const handleAgendamento = async () => {
+    if (!token || isAllowed === false) {
+      navigate("/login");
+      return;
+    }
+
     Swal.fire({
       title: "Quer Reservar?",
       text: `Você quer adicionar ${book.titulo} ao carrinho de reservas?`,
@@ -192,6 +203,11 @@ const BookDetail = () => {
   };
 
   const handleEmprestimo = async () => {
+    if (!token || isAllowed === false) {
+      navigate("/login");
+      return;
+    }
+
     Swal.fire({
       title: "Fazer Empréstimo?",
       text: `Você quer adicionar ${book.titulo} ao carrinho de empréstimos?`,
@@ -250,6 +266,11 @@ const BookDetail = () => {
   };
 
   const handleRating = async (rating: number) => {
+    if (!token || isAllowed === false) {
+      navigate("/login");
+      return;
+    }
+
     const newRating = userRating === rating ? 0 : rating; // Alterna a avaliação (0 se o mesmo for clicado novamente)
     setUserRating(newRating); // Atualiza a avaliação no frontend
 
@@ -288,9 +309,6 @@ const BookDetail = () => {
       );
     }
   };
-
-  if (isAllowed === null) return <p>Verificando permissão...</p>;
-  if (!isAllowed) return null;
 
   return (
     <div className="pagina-livro-informa">

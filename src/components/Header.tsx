@@ -84,12 +84,6 @@ const Header: React.FC = () => {
                   console.log("Imagem não encontrada");
                 });
             }
-          } else {
-            Swal.fire({
-              title: "Erro ao buscar dados do usuário",
-              text: data.message,
-              icon: "error",
-            });
           }
         } catch (error) {
           Swal.fire({

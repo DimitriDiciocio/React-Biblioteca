@@ -1,8 +1,6 @@
-import { useEffect, useState, useMemo } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import Swal from "sweetalert2";
 import Header from "../components/Header";
-import { usePermission } from "../components/usePermission";
 import './Search.css';
 import Tags from "../components/Tags";
 
@@ -26,12 +24,9 @@ interface Book {
 const Search = () => {
   const { search } = useParams();
   const navigate = useNavigate();
-  const token = localStorage.getItem("token");
-  const isAllowed = usePermission(1);
   const [selectedTags, setSelectedTags] = useState<Tag[]>([]);
 
   const [books, setBooks] = useState<Book[]>([]);
-  const [hasSearched, setHasSearched] = useState(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
 
   const [formData, setFormData] = useState({
@@ -51,8 +46,7 @@ const Search = () => {
         const response = await fetch("http://127.0.0.1:5000/pesquisa", {
           method: "POST",
           headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json"
           },
           body: JSON.stringify({
             pesquisa: search,
@@ -77,14 +71,11 @@ const Search = () => {
     };
 
     searchBooks();
-  }, [search, formData, selectedTags, token]);
+  }, [search, formData, selectedTags]);
 
   const handleTagsChange = (tags: Tag[]) => {
     setSelectedTags(tags);
   };
-
-  if (isAllowed === null) return <p>Verificando permissão...</p>;
-  if (!isAllowed) return null;
 
   return (
     <div>
