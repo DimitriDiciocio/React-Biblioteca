@@ -186,10 +186,10 @@ const AddBooks: React.FC = () => {
 
   return (
     <div>
-      <main className="background-blue">
+      <main className="background-blue padding-responsive">
         <div className="space-sm-y"></div>
-        <section className="d-flex center-x size-medium g-30">
-          <div>
+        <section className="responsive-container center-x size-medium">
+          <div className="d-flex-responsive">
           <i className="fa-solid fa-arrow-left arrow-back"  onClick={() => navigate("/home_biblio?page=1")}></i>
             <div
               {...getRootProps()}
