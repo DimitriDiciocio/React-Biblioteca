@@ -1,0 +1,36 @@
+.notification-icon-container {
+  position: relative;
+  cursor: pointer;
+}
+
+.notification-icon-container img {
+  width: 24px;
+  height: 24px;
+}
+
+.notification-indicator {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 8px;
+  height: 8px;
+  background-color: red;
+  border-radius: 50%;
+  border: 2px solid white;
+}
+
+.notification-wrapper {
+  position: relative;
+  display: inline-block;
+}
+
+.notification-circle {
+  position: absolute;
+  left: 38px;
+  top: 0;
+  width: 15px;
+  height: 15px;
+  background-color: red;
+  border-radius: 50%;
+  z-index: 1;
+}
