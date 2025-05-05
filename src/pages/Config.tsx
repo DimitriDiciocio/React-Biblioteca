@@ -133,28 +133,24 @@ const Config: React.FC = () => {
           <nav className="nav-lateral">
             <ul>
               <li onClick={() => navigate("/user?page=1")} className="pointer">
-                
-                <a className="active link-flex"><img src={homeIcon} alt="Ícone Início" className="icon-config" />Início</a>
-              </li>
-              <li onClick={() => navigate("/user?page=2")} className="pointer">
                 <a className="link-flex"><img src={infoIcon} alt="Ícone Informações Pessoais" className="icon-config" />Informações Pessoais</a>
               </li>
-              <li onClick={() => navigate("/user?page=3")} className="pointer">
+              <li onClick={() => navigate("/user?page=2")} className="pointer">
                 <a className="link-flex"><img src={securityIcon} alt="Ícone Segurança" className="icon-config" />Segurança</a>
               </li>
-              <li onClick={() => navigate("/user?page=4")} className="pointer">
+              <li onClick={() => navigate("/user?page=3")} className="pointer">
                 <a className="link-flex"><img src={bookIcon} alt="Ícone Gerenciar Livros" className="icon-config" />Gerenciar Livros</a>
               </li>
-              <li onClick={() => navigate("/user?page=5")} className="pointer">
+              <li onClick={() => navigate("/user?page=4")} className="pointer">
                 <a className="link-flex"><img src={listIcon} alt="Ícone Minha Lista" className="icon-config" />Minha Lista</a>
               </li>
-              <li onClick={() => navigate("/user?page=6")} className="pointer">
+              <li onClick={() => navigate("/user?page=5")} className="pointer">
                 <a className="link-flex"><img src={historicIcon} alt="Ícone Histórico" className="icon-config" />Histórico</a>
               </li>
-              <li onClick={() => navigate("/user?page=7")} className="pointer">
+              <li onClick={() => navigate("/user?page=6")} className="pointer">
                 <a className="link-flex"><img src={fineIcon} alt="Ícone Minhas Multas" className="icon-config" />Minhas Multas</a>
               </li>
-              <li onClick={() => navigate("/user?page=8")} className="pointer">
+              <li onClick={() => navigate("/user?page=7")} className="pointer">
                 <a className="link-flex"><img src={notificationIcon} alt="Ícone Notificações" className="icon-config" />Notificações</a>
               </li>
               <div className="space-sm-y"></div>
@@ -166,21 +162,6 @@ const Config: React.FC = () => {
         </aside>
         <section className="content montserrat-alternates-semibold">
           <div className="page active">
-            {imagemPreview && isValidImage(imagemPreview) && (
-              <img
-                src={imagemPreview}
-                alt="Foto de perfil"
-                className="foto-perfil"
-              />
-            )}
-            <p>Olá! {nome}</p>
-            <form>
-              <div className="p-relative">
-                <input required type="text" placeholder="Pesquisar..." />
-              </div>
-            </form>
-          </div>
-          <div className="page">
             <EditarUsuario />
           </div>
           <div className="page">
