@@ -17,6 +17,25 @@ import HomeBiblio from "./pages/HomeBiblio";
 import Config from "./pages/Config";
 import SemPermissao from "./pages/SemPermissao";
 import DetalhesUsuario from "./pages/DetalhesUsuario";
+import { useEffect } from 'react'
+import { useStore } from './store/useStore'
+
+export function NotificacaoListener() {
+  const socket = useStore((s) => s.socket)
+  const adicionarNotificacao = useStore((s) => s.adicionarNotificacao)
+
+  useEffect(() => {
+    socket.on('novaNotificacao', (nova: any) => {
+      adicionarNotificacao(nova)
+    })
+    return () => {
+      socket.off('novaNotificacao')
+    }
+  }, [socket, adicionarNotificacao])
+
+  return null
+}
+
 
 const App: React.FC = () => {
   return (

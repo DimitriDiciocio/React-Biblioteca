@@ -3,10 +3,21 @@ import { useNavigate } from "react-router-dom";
 import Modal from "./Modal";
 import Swal from "sweetalert2";
 import NotificacoesModal from "./NotificacoesModal";
+import { io } from "socket.io-client";
+import { useStore } from "../store/useStore";
+import NotificationIcon from "./NotificationIcon";
 
 const Header: React.FC = () => {
   const navigate = useNavigate();
-  const [modalOpen, setModalOpen] = useState(false);
+  const {
+    modalAberto,
+    setModalAberto,
+    fetchNotificacoes,
+    marcarNotificacaoComoLida,
+    notificacoes,
+    temNotificacoesNovas,
+    setTemNotificacoesNovas,
+  } = useStore();
   const userButtonRef = useRef<HTMLImageElement>(null);
   const [nome, setNome] = useState("");
   const [imagemPreview, setImagemPreview] = useState<string | null>(null);
@@ -97,14 +108,38 @@ const Header: React.FC = () => {
     fetchUserData();
   }, [navigate, token]);
 
-  const toggleModal = () => {
-    setModalOpen(!modalOpen);
-    if (notificacoesOpen) setNotificacoesOpen(false); // Close notifications modal if open
+  useEffect(() => {
+    const socket = io("http://127.0.0.1:5000"); // Substitua pela URL do seu servidor WebSocket
+    socket.on("novaNotificacao", (notificacao) => {
+      const { adicionarNotificacao } = useStore.getState();
+      adicionarNotificacao(notificacao); // Add notification and update state
+    });
+
+    return () => {
+      socket.disconnect();
+    };
+  }, []);
+
+  useEffect(() => {
+    fetchNotificacoes(); // Fetch notifications on component mount
+  }, [fetchNotificacoes]);
+
+  const handleAbrirModal = () => {
+    setModalAberto(!modalAberto);
+    if (!modalAberto) {
+      marcarNotificacaoComoLida(); // Agora marca todas como lidas com o token
+    }
   };
+  
 
   const toggleNotificacoesModal = () => {
     setNotificacoesOpen(!notificacoesOpen);
-    if (modalOpen) setModalOpen(false); // Close user modal if open
+    if (modalAberto) setModalAberto(false);
+    if (!notificacoesOpen) {
+      setTemNotificacoesNovas(false); // Reset the state of new notifications
+      localStorage.setItem("lastViewedNotifications", "0");
+
+    }
   };
 
   const Sair = () => {
@@ -170,23 +205,17 @@ const Header: React.FC = () => {
                   </button>
                 </div>
               )}
-              {token ? (
+              {token && (
                 <>
-                  <div className="space-sm"></div>
-                  <button className="button" onClick={toggleNotificacoesModal}>
-                    <svg viewBox="0 0 448 512" className="bell">
-                      <path d="M224 0c-17.7 0-32 14.3-32 32V49.9C119.5 61.4 64 124.2 64 200v33.4c0 45.4-15.5 89.5-43.8 124.9L5.3 377c-5.8 7.2-6.9 17.1-2.9 25.4S14.8 416 24 416H424c9.2 0 17.6-5.3 21.6-13.6s2.9-18.2-2.9-25.4l-14.9-18.6C399.5 322.9 384 278.8 384 233.4V200c0-75.8-55.5-138.6-128-150.1V32c0-17.7-14.3-32-32-32zm0 96h8c57.4 0 104 46.6 104 104v33.4c0 47.9 13.9 94.6 39.7 134.6H72.3C98.1 328 112 281.3 112 233.4V200c0-57.4 46.6-104 104-104h8zm64 352H224 160c0 17 6.7 33.3 18.7 45.3s28.3 18.7 45.3 18.7s33.3-6.7 45.3-18.7s18.7-28.3 18.7-45.3z"></path>
-                    </svg>
-                  </button>
-                  <div className="space-sm"></div>
+                  <NotificationIcon onClick={toggleNotificacoesModal} />
                 </>
-              ) : null}
+              )}
               {token ? (
                 <img
                   ref={userButtonRef}
                   src={imagemPreview || "../assets/img/user.png"}
                   alt="Usuário"
-                  onClick={toggleModal}
+                  onClick={handleAbrirModal} // Ensure this calls the updated function
                   className="user-button"
                   style={{cursor: "pointer"}}
                 />
@@ -235,8 +264,8 @@ const Header: React.FC = () => {
       </header>
       <div className="fake-header"></div>
 
-      {modalOpen && (
-        <Modal onClose={toggleModal} size="small">
+      {modalAberto && (
+        <Modal onClose={handleAbrirModal} size="small">
           <div className="modal-body">
             <img
               src={imagemPreview || "../assets/img/user.png"}
