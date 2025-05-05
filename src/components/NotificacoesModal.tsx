@@ -14,7 +14,7 @@ const NotificacoesModal: React.FC<NotificacoesModalProps> = ({ onClose }) => {
     <div className={`${styles["notificacoes-modal"]} ${styles["notificacoes-modal-container"]}`}>
       <div className={styles["modal-header"]}>
         <h3>Notificações</h3>
-        <button className={styles["close-button"]} onClick={onClose}>&times;</button>
+        <button className={styles["close-button"]} onClick={onClose}>✕</button>
       </div>
       <div className={styles["modal-content"]}>
         {loading ? <p>Carregando...</p> : <NotificacoesList notes={notes} />}

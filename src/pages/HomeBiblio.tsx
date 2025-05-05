@@ -10,17 +10,7 @@ import AddBooks from "./AddBooks";
 import CadastroUsuario from "./CadastroUsuario";
 import Relatorios from "./Relatorios";
 import Multas from "../components/Multas";
-import { useLocation } from "react-router-dom";
 
-const ScrollToTop = () => {
-  const location = useLocation();
-
-  useEffect(() => {
-    window.scrollTo({ top: 0, behavior: "smooth" }); // ou apenas window.scrollTo(0, 0);
-  }, [location]);
-
-  return null;
-};
 
 const HomeBiblio: React.FC = () => {
   const navigate = useNavigate();
@@ -239,21 +229,27 @@ const HomeBiblio: React.FC = () => {
           </nav>
         </aside>
 
-        <section className="content montserrat-alternates">
+        <section
+  className="content montserrat-alternates"
+  style={{ padding: page === 1 ? "0" : "20px", marginLeft: "240px" }}
+>
           <div className="page active" data-page="1">
-          <h1 className="size-titles2 montserrat-alternates">Olá, {userName}! O que deseja fazer?</h1>
-            <form className="d-flex responsive-class">
-              <div className="p-relative">
-                <input className="montserrat-alternates"
-                  required
-                  type="text"
-                  placeholder="Pesquisar..."
-                  value={search}
-                  onChange={(e) => setSearch(e.target.value)}
-                />
-              </div>
-            </form>
-            <div className="d-flex g-20 m-top-70 flex-wrap responsive-class">
+            <div className="header-biblio d-flex-column-no-font center-x">
+              <h1 className="size-titles2 montserrat-alternates">Olá, {userName}! O que deseja fazer?</h1>
+              <form className="d-flex responsive-class center-x">
+                <div className="p-relative">
+                  <input className="montserrat-alternates"
+                    required
+                    type="text"
+                    placeholder="Pesquisar..."
+                    value={search}
+                    onChange={(e) => setSearch(e.target.value)}
+                  />
+                </div>
+              </form>
+            </div>
+
+            <div className="d-flex g-20 m-top-negative flex-wrap responsive-class center-x">
               {filteredButtons.map((button, index) => (
                 <button
                   key={index}

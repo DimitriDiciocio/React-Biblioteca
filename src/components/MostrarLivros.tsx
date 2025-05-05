@@ -49,9 +49,9 @@ const MostrarLivros: React.FC = () => {
           stagePadding={50}
           responsive={{
             0: { items: 1, nav: false },
-            750: { items: 3, nav: false },
+            480: { items: 3, nav: false },
             950: { items: 4, nav: true },
-            1200: { items: 5, nav: true },
+            1200: { items: 6, nav: true },
           }}
         >
           {books.map((book) => (

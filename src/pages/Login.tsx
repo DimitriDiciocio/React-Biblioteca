@@ -73,7 +73,7 @@ const Login: React.FC = () => {
     </header>
     <main className='login-container'>
       <img src="assets/img/red-raccoon.png" alt=""/>
-      <div className="avatar-container center-x">
+      <div className="avatar-container">
         <input type="checkbox" hidden />
         <div className="btn-container">
           <div style={{"--a": 0}} className="btn-sensor sensor-n"></div>

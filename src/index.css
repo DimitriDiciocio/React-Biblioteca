@@ -127,6 +127,7 @@
 .padding-bigbig{
   padding: 0px 100px;
 }
+
 /* Header */
 
 .header {
@@ -163,6 +164,7 @@ header > div {
   width: 550px;
   border-radius: 15px;
   border: 2px solid var(--preto);
+  background-color: var(--branco);
 }
 
 #avancada {
@@ -1062,8 +1064,10 @@ textarea.input {
 
 /* Ajuste para empurrar os itens da navegação para baixo */
 .nav-lateral ul {
-  list-style: none;
-  padding-top: 20px; /* Adicionando espaçamento no topo da lista */
+  display: flex;
+  flex-direction: column;
+  height: 100%; /* importante */
+  padding-top: 20px; /* se quiser manter */
 }
 
 .nav-lateral a {
@@ -1087,9 +1091,10 @@ textarea.input {
 
 /* Botão "Sair" fixado na parte inferior */
 .nav-lateral .highlight {
-  position: absolute;
+  margin-top: auto;
   width: 100%;
 }
+
 
 .nav-lateral .highlight a {
   color: var(--branco);
@@ -1812,6 +1817,7 @@ ul {
   box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
   transition: transform 0.3s, box-shadow 0.3s;
   cursor: pointer;
+  background-color: var(--branco);
 }
 
 .botao-home-biblio:hover {
@@ -1991,16 +1997,16 @@ ul {
 }
 
 .livros-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 59px;
+  display: flex;
+  gap: 30px;
+  flex-wrap: wrap;
   justify-items: center;
 }
 
 .livro-card {
   display: flex;
   flex-direction: column;
-  width: 300px;
+  width: 260px;
   background: var(--branco);
   border: 2px solid var(--azul-escuro);
   border-radius: 10px;
@@ -2018,7 +2024,7 @@ ul {
   object-fit: cover;
   border-radius: 8px;
   margin-bottom: 10px;
-  height: 400px;
+  height: 350px;
 }
 
 .livro-info {
@@ -3295,4 +3301,31 @@ button.limpar-btn, .apagar-btn {
 }
 .notificacao-item {
   padding: 10px !important;
+}
+
+.toggle-sidebar-button {
+  position: fixed;
+  top: 20px;
+  left: 20px;
+  z-index: 1100;
+  background: var(--azul-escuro);
+  color: white;
+  border: none;
+  font-size: 24px;
+  border-radius: 8px;
+  padding: 5px 10px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+.header-biblio{
+  background-color: #0040CB;
+  color: var(--branco);
+  padding: 30px 0px 0px;
+  text-align: center;
+  height: 230px;
+  justify-content: flex-start;
+
+}
+.m-top-negative{
+  margin-top: -75px;
 }
