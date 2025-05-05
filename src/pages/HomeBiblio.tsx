@@ -10,6 +10,17 @@ import AddBooks from "./AddBooks";
 import CadastroUsuario from "./CadastroUsuario";
 import Relatorios from "./Relatorios";
 import Multas from "../components/Multas";
+import { useLocation } from "react-router-dom";
+
+const ScrollToTop = () => {
+  const location = useLocation();
+
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: "smooth" }); // ou apenas window.scrollTo(0, 0);
+  }, [location]);
+
+  return null;
+};
 
 const HomeBiblio: React.FC = () => {
   const navigate = useNavigate();
@@ -123,7 +134,7 @@ const HomeBiblio: React.FC = () => {
     },
     {
       title: "Cadastrar Livro",
-      description: "Aqui você pode cadastrar um novo livro na Libris",
+      description: "Aqui você pode cadastrar um novo livro no Read Raccoon",
       onClick: () => navigate("/home_biblio?page=4"),
     },
     {

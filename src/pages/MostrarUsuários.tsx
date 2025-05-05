@@ -107,7 +107,7 @@ const MostrarUsuarios: React.FC = () => {
   return (
     <div className="usuarios-container">
       <i className="fa-solid fa-arrow-left arrow-back"  onClick={() => navigate("/home_biblio?page=1")}></i>
-      <h1 className="page-title montserrat-alternates">Usuários</h1>
+      <h1 className="page-title montserrat-alternates-semibold">Usuários</h1>
       <input 
         type="text"
         placeholder="Pesquisar usuários"

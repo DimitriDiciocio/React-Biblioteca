@@ -121,7 +121,7 @@ const Search = () => {
         )}
       </aside>
 
-      <main className="main-content background-blue">
+      <main className="main-content background-blue vh86">
         <div className=
         {`livros-grid ${
           books.length === 1

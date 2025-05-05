@@ -350,7 +350,7 @@ const BookDetail = () => {
     <div className="pagina-livro-informa">
       <Header />
       <main className="background-blue">
-        <section className="d-flex center-x size-medium g-30">
+        <section className="d-flex center-x size-medium g-30 padding-bigbig">
           <div className="border-book3">
             <img
               src={`http://127.0.0.1:5000/uploads/livros/${book.imagem}`}
@@ -443,7 +443,7 @@ const BookDetail = () => {
             </div>
             <div>
               <p className="montserrat-alternates-semibold">
-                <strong>Estoque: </strong> {book.qtd_disponivel}
+                <strong>Estoque Disponível: </strong> {book.qtd_disponivel}
               </p>
             </div>
             <div className="d-flex center-x-responsive">
@@ -499,8 +499,8 @@ const BookDetail = () => {
             Recomendados
           </p>
           <MostrarLivros />
+          <div className="space-med-y"></div>
         </section>
-        <div className="oval"></div>
       </main>
       <Footer />
     </div>

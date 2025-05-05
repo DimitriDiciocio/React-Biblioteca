@@ -69,9 +69,11 @@
   position: relative;
 }
 .center-y {
+  display: flex;
   align-items: center;
 }
 .center-x {
+  display: flex;
   justify-content: center;
 }
 .space-sm {
@@ -91,6 +93,12 @@
 }
 .f-wrap {
   flex-wrap: wrap;
+}
+.preto{
+  color: var(--preto);
+}
+.preto :hover{
+  color: rgba(0, 0, 0, 0.592);
 }
 .text-decoration-none {
   text-decoration: none;
@@ -115,6 +123,9 @@
 }
 .pointer {
   cursor: pointer;
+}
+.padding-bigbig{
+  padding: 0px 100px;
 }
 /* Header */
 
@@ -331,11 +342,15 @@ nav img {
   -webkit-text-fill-color: transparent;
 }
 /* Footer */
+footer{
+  padding: 70px 0px 0px;
+}
 
 .oval {
   height: 100px;
   background-color: var(--branco);
-  border-radius: 50% 50% 0% 0%;
+  border-radius: 0% 0%;
+  
 }
 .texto-invertido {
   direction: rtl;
@@ -362,6 +377,39 @@ nav img {
   display: flex;
   flex-direction: column;
   gap: 10px;
+}
+.read-raccoon{
+  height: 180px;
+  margin-top: -50px;
+  margin-right: 50px;
+  opacity: 90%;
+}
+
+.tooltip-container {
+  position: relative;
+  display: inline-block;
+}
+
+.tooltip-text {
+  visibility: hidden;
+  background-color: #333;
+  color: #fff;
+  padding: 5px 8px;
+  border-radius: 10px;
+  position: absolute;
+  top: -10px;
+  left: 50%;
+  transform: translateX(-50%);
+  white-space: nowrap;
+  z-index: 1;
+  font-size: 12px;
+  opacity: 0;
+  transition: opacity 0.3s ease-in-out;
+}
+
+.tooltip-container:hover .tooltip-text {
+  visibility: visible;
+  opacity: 1;
 }
 /* owl */
 .owl-nav {
@@ -1157,8 +1205,20 @@ textarea.input {
   align-items: center;
   justify-content: center;
 }
-
-
+.cesta{
+  height: 25px;
+}
+.carrinho-btn{
+  gap: 7px;
+  height: 40px;
+  background-color: var(--azul-claro);
+  border-radius: 20px;
+  transition: var(--transition);
+}
+.carrinho-btn:hover{
+  background-color: #c8f2fd;
+  
+}
 /* Posicionando o botão 'X' dentro do modal */
 .close {
   position: absolute;
@@ -1958,6 +2018,7 @@ ul {
   object-fit: cover;
   border-radius: 8px;
   margin-bottom: 10px;
+  height: 400px;
 }
 
 .livro-info {
@@ -2832,6 +2893,9 @@ ul {
     align-items: center;
     gap: 20px;
   }
+  .read-raccoon{
+    margin-right: 0;
+  }
 
   footer section.d-flex-column {
     align-items: center;
@@ -3102,7 +3166,9 @@ ul {
 .espaco-vazio {
   height: 20px;
 }
-
+.espaco-vazio2 {
+  height: 10px;
+}
 /* Botões de ação fictícios (para visual semelhante ao “Limpar” e “Apagar”) */
 button.limpar-btn, .apagar-btn {
   background-color: transparent;

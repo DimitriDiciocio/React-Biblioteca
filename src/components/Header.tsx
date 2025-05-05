@@ -247,9 +247,13 @@ const Header: React.FC = () => {
           </div>
           <div className="space-ssm-y"></div>
           <div className="d-flex-column">
-          <button className="gerenciar">
-              <p className="montserrat-alternates size-medium" onClick={() => navigate("/user")}>Gerenciar conta</p>
+          <button className="gerenciar" onClick={() => navigate("/user")}>
+              <p className="montserrat-alternates size-medium" >Gerenciar conta</p>
             </button>
+            <button className="center-x center-y carrinho-btn" onClick={() => navigate("/user?page=4")}>
+              <img className="cesta" src="../assets/img/cesta.png" alt="" />
+              <p className="montserrat-alternates size-medium" >Carrinho</p>
+          </button>
           <div className="d-flex center-x">
 
             <button className="Btn-modal" onClick={Sair}>

@@ -74,7 +74,6 @@ const Home: React.FC = () => {
             <div className="space-med-y"></div>
           </>
         )}
-        <div className="oval"></div>
       </main>
       <Footer />
     </div>

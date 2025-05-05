@@ -458,7 +458,7 @@ const Carrinho: React.FC = () => {
           )}
           <div className="espaco-vazio2"></div>
           {reservas.length > 0 && (
-            <div className="centraliza">
+            <div className="center-x">
               <button className="botao-acao" onClick={reservarLivros} disabled={reserving}>
                 Reservar Todos
               </button>
@@ -495,7 +495,7 @@ const Carrinho: React.FC = () => {
           )}
           <div className="espaco-vazio2"></div>
           {emprestimos.length > 0 && (
-            <div className="centraliza">
+            <div className="center-x">
               <button className="botao-acao" onClick={emprestarLivros} disabled={borrowing}>
                 Emprestar Todos
               </button>

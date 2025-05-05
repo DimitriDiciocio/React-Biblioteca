@@ -60,7 +60,7 @@ const Livros: React.FC = () => {
   return (
     <div className="livros-container montserrat-alternates">
       <i className="fa-solid fa-arrow-left arrow-back montserrat-alternates"  onClick={() => navigate("/home_biblio?page=1")}></i>
-      <h1 className="page-title montserrat-alternates">Gerenciamento de Livros</h1>
+      <h1 className="page-title montserrat-alternates-semibold">Gerenciamento de Livros</h1>
       <input
         type="text"
         placeholder="Pesquisar livros"
