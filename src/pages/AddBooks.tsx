@@ -115,54 +115,6 @@ const AddBooks: React.FC = () => {
     setImage(null);
   };
 
-  function preencherFormularioLivro(dados) {
-    const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
-  
-    async function preencher() {
-      const form = document.querySelector("form");
-      if (!form) return alert("Formulário não encontrado!");
-  
-      // Função auxiliar para preencher campo de texto
-      const setInput = (name, value) => {
-        const input = form.querySelector(`[name="${name}"]`);
-        if (input) {
-          input.value = value;
-          input.dispatchEvent(new Event("input", { bubbles: true }));
-        }
-      };
-  
-      // Função auxiliar para selecionar um valor em <select>
-      const setSelect = (name, value) => {
-        const select = form.querySelector(`[name="${name}"]`);
-        if (select) {
-          select.value = value;
-          select.dispatchEvent(new Event("change", { bubbles: true }));
-        }
-      };
-  
-      // Preenchendo os campos
-      setInput("titulo", dados.titulo);
-      setInput("autor", dados.autor);
-      setInput("ano_publicado", dados.ano_publicado);
-      setInput("isbn", dados.isbn);
-      setSelect("idiomas", dados.idiomas);
-      setSelect("categoria", dados.categoria);
-      setInput("qtd_disponivel", dados.qtd_disponivel);
-      setInput("descricao", dados.descricao);
-  
-      // Tags - simulando inserção (supondo que seja input manual)
-      const tagsInput = document.querySelector(".form-group textarea"); // Apenas exemplo se não houver outro input de tags
-      if (tagsInput && dados.tags.length > 0) {
-        tagsInput.value += `\nTags: ${dados.tags.join(", ")}`;
-        tagsInput.dispatchEvent(new Event("input", { bubbles: true }));
-      }
-  
-      console.log("✅ Formulário preenchido com sucesso!");
-    }
-  
-    preencher();
-  }
-
   const handleCancelar = () => {
     setFormData({
       titulo: "",
@@ -375,7 +327,6 @@ const AddBooks: React.FC = () => {
                   onChange={handleChange}
                   maxLength={600}
                   required
-                  maxLength={600}
                 ></textarea>
               </div>
 
