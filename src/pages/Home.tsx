@@ -3,6 +3,7 @@ import MostrarLivros from "../components/MostrarLivros";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
 import MostrarTop from "../components/MostrarTop";
+import PorqueVoceLeu from "../components/PorqueVoceLeu";
 
 const Home: React.FC = () => {
   const token = localStorage.getItem("token");
@@ -44,7 +45,7 @@ const Home: React.FC = () => {
               <p className="montserrat-alternates-semibold size-titles">
                 Por que você leu
               </p>
-              <MostrarLivros />
+              <PorqueVoceLeu />
             </section>
             <div className="space-med-y"></div>
           </>
@@ -62,18 +63,6 @@ const Home: React.FC = () => {
           </p>
           <MostrarLivros />
         </section>
-        <div className="space-med-y"></div>
-        {token && (
-          <>
-            <section>
-              <p className="montserrat-alternates-semibold size-titles">
-                Por que você leu
-              </p>
-              <MostrarLivros />
-            </section>
-            <div className="space-med-y"></div>
-          </>
-        )}
       </main>
       <Footer />
     </div>

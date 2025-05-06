@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 import { usePermission } from "../components/usePermission";
@@ -8,6 +8,10 @@ const MostrarUsuarios: React.FC = () => {
   const isAllowed = usePermission(2);
   const [users, setUsers] = useState<Usuario[]>([]);
   const [filteredUsers, setFilteredUsers] = useState<Usuario[]>([]);
+  const [pesquisa, setPesquisa] = useState("");
+  const [page, setPage] = useState(1);
+  const [hasMore, setHasMore] = useState(true);
+  const [filtros, setFiltros] = useState({});
 
   interface Usuario {
     id_usuario: number;
@@ -21,85 +25,115 @@ const MostrarUsuarios: React.FC = () => {
     imagemPreview?: string | null;
   }
 
-  useEffect(() => {
-    async function fetchImagePreview(user: Usuario) {
-      try {
-        const response = await fetch(
-          `http://127.0.0.1:5000/uploads/usuarios/${user.imagem}`,
-          {
-            method: "HEAD",
-          }
-        );
-        return response.ok
-          ? `http://127.0.0.1:5000/uploads/usuarios/${user.imagem}`
-          : null;
-      } catch {
-        return null;
-      }
+  async function fetchImagePreview(user: Usuario) {
+    try {
+      const response = await fetch(
+        `http://127.0.0.1:5000/uploads/usuarios/${user.imagem}`,
+        {
+          method: "HEAD",
+        }
+      );
+      return response.ok
+        ? `http://127.0.0.1:5000/uploads/usuarios/${user.imagem}`
+        : null;
+    } catch {
+      return null;
     }
+  }
 
-    async function fetchUsers() {
-      try {
-        const response = await fetch("http://127.0.0.1:5000/usuarios", {
-          method: "get",
+  async function fetchUsers(pageNumber: number, pesquisaTerm: string = "", filtrosData: any = {}) {
+    try {
+      let url = `http://127.0.0.1:5000/usuarios/${pageNumber}`;
+      let options: RequestInit = {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      };
+
+      if (pesquisaTerm || Object.keys(filtrosData).length > 0) {
+        url = `http://127.0.0.1:5000/usuarios/pesquisa/${pageNumber}`;
+        options = {
+          method: "POST",
           headers: {
             "Content-Type": "application/json",
             Authorization: `Bearer ${localStorage.getItem("token")}`,
           },
-        });
-        if (!response.ok) throw new Error("Erro ao buscar usuários");
-        const data = await response.json();
-
-        const usersWithImagePreview = await Promise.all(
-          data.map(async (user: Usuario) => ({
-            ...user,
-            imagemPreview: await fetchImagePreview(user),
-          }))
-        );
-
-        setUsers(usersWithImagePreview);
-        setFilteredUsers(usersWithImagePreview);
-      } catch (error) {
-        console.error(error);
-        Swal.fire({
-          icon: "error",
-          title: "Erro",
-          text: "Não foi possível carregar os usuários. Tente novamente mais tarde.",
-        });
+          body: JSON.stringify({
+            pesquisa: pesquisaTerm,
+            filtros: filtrosData,
+          }),
+        };
       }
-    }
-    fetchUsers();
-  }, []);
 
-  const [pesquisa, setPesquisa] = useState("");
+      const response = await fetch(url, options);
+      if (!response.ok) {
+        if (response.status === 404) {
+          setHasMore(false);
+        }
+        throw new Error("Erro ao buscar usuários");
+      }
+      const data = await response.json();
+
+      const resultados = data.resultados || data; // Handle both API responses
+      if (resultados.length === 0) {
+        setHasMore(false);
+        return;
+      }
+
+      const usersWithImagePreview = await Promise.all(
+        resultados.map(async (user: Usuario) => ({
+          ...user,
+          imagemPreview: await fetchImagePreview(user),
+        }))
+      );
+
+      setUsers((prevUsers) => {
+        const newUsers = usersWithImagePreview.filter(
+          (newUser) => !prevUsers.some((existingUser) => existingUser.id_usuario === newUser.id_usuario)
+        );
+        return [...prevUsers, ...newUsers];
+      });
+
+      setFilteredUsers((prevFiltered) => {
+        const newFilteredUsers = usersWithImagePreview.filter(
+          (newUser) => !prevFiltered.some((existingUser) => existingUser.id_usuario === newUser.id_usuario)
+        );
+        return [...prevFiltered, ...newFilteredUsers];
+      });
+    } catch (error) {
+      console.error(error);
+    }
+  }
 
   useEffect(() => {
-    if (pesquisa) {
-      const filtered = users.filter((user) => {
-        const tipoUsuario =
-          user.tipo === 1
-            ? "leitor"
-            : user.tipo === 2
-            ? "bibliotecario"
-            : "administrador";
+    fetchUsers(page, pesquisa, filtros);
+  }, [page, pesquisa, filtros]);
 
-        return (
-          user.id_usuario.toString().includes(pesquisa) ||
-          user.nome.toLowerCase().includes(pesquisa.toLowerCase()) ||
-          user.email.toLowerCase().includes(pesquisa.toLowerCase()) ||
-          user.telefone.toLowerCase().includes(pesquisa.toLowerCase()) ||
-          user.endereco.toLowerCase().includes(pesquisa.toLowerCase()) ||
-          tipoUsuario.includes(pesquisa.toLowerCase()) ||
-          (user.ativo ? "ativo" : "inativo")
-            .toLowerCase()
-            .includes(pesquisa.toLowerCase())
-        );
-      });
-      setFilteredUsers(filtered);
-    } else {
-      setFilteredUsers(users);
+  const handleScroll = useCallback(() => {
+    if (
+      window.innerHeight + document.documentElement.scrollTop >=
+      document.documentElement.offsetHeight - 100
+    ) {
+      if (hasMore) {
+        setPage((prevPage) => prevPage + 1);
+      }
     }
-  }, [pesquisa, users]);
+  }, [hasMore]);
+
+  useEffect(() => {
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, [handleScroll]);
+
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setPesquisa(e.target.value);
+    setPage(1);
+    setUsers([]);
+    setFilteredUsers([]);
+    setHasMore(true);
+  };
 
   if (isAllowed === null) return <p>Verificando permissão...</p>;
   if (!isAllowed) return null;
@@ -112,7 +146,7 @@ const MostrarUsuarios: React.FC = () => {
         type="text"
         placeholder="Pesquisar usuários"
         className="input pesquisa montserrat-alternates"
-        onChange={(e) => setPesquisa(e.target.value)}
+        onChange={handleSearchChange}
       />
       <div className="usuarios-grid">
         {filteredUsers.map((user) => (
@@ -160,6 +194,7 @@ const MostrarUsuarios: React.FC = () => {
           </div>
         ))}
       </div>
+      {hasMore && <p>Carregando mais usuários...</p>}
     </div>
   );
 };

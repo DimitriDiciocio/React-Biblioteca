@@ -204,7 +204,7 @@ const HomeBiblio: React.FC = () => {
     <div>
       <Header />
       <main className="background-blue ">
-        <aside className="sidebar">
+        <aside className={`sidebar ${isSidebarOpen ? "open" : "closed"}`}>
           <nav className="nav-lateral">
             <ul>
             <button onClick={toggleSidebar}>
