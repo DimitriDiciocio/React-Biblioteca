@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import styles from "./Movimentacoes.module.css";
 import { useNavigate } from "react-router-dom";
 import { handleDevolverEmprestimo } from "../components/DevolverEmprestimo";
@@ -18,7 +18,7 @@ type Movimentacao = {
   data_devolvida?: number | null;
   data_criacao?: number | null;
   data_retirada?: number | null;
-  data_validade?: number | null; // Adiciona o campo data_validade
+  data_validade?: number | null;
 };
 
 const Movimentacoes: React.FC = () => {
@@ -29,25 +29,45 @@ const Movimentacoes: React.FC = () => {
     usuario: "",
     titulo: "",
     tipo: "",
-    dataInicio: "",
-    dataFim: "",
-    desdeInicio: true,
-    ateAgora: true,
   });
-  const [page, setPage] = useState(1); // Adiciona o estado para controlar a página
+  const [debouncedFilters, setDebouncedFilters] = useState(filters); // Debounced filters
+  const [page, setPage] = useState(1);
+  const [hasMoreData, setHasMoreData] = useState(true); // Track if more data is available
+
+  const observerRef = useRef<HTMLDivElement | null>(null);
+  const debounceTimeout = useRef<NodeJS.Timeout | null>(null);
 
   const navigate = useNavigate();
 
   useEffect(() => {
     const fetchMovimentacoes = async () => {
+      setLoading(true);
       try {
-        const res = await fetch(`http://localhost:5000/movimentacoes/${page}`, {
-          method: "GET",
+        const endpoint =
+          debouncedFilters.usuario || debouncedFilters.titulo || debouncedFilters.tipo
+            ? `http://localhost:5000/movimentacoes/pesquisa/${page}`
+            : `http://localhost:5000/movimentacoes/${page}`;
+        const method = debouncedFilters.usuario || debouncedFilters.titulo || debouncedFilters.tipo ? "POST" : "GET";
+
+        const res = await fetch(endpoint, {
+          method,
           headers: {
+            "Content-Type": "application/json",
             Authorization: `Bearer ${localStorage.getItem("token")}`,
           },
+          body: method === "POST" ? JSON.stringify({
+            pesquisaUsuario: debouncedFilters.usuario,
+            pesquisaTitulo: debouncedFilters.titulo,
+            tipoMovimentacao: debouncedFilters.tipo,
+          }) : null,
         });
         const json: Movimentacao[] = await res.json();
+
+        if (json.length === 0) {
+          setHasMoreData(false); 
+          return;
+        }
+
         const parsedData = json.map((item) => ({
           ...item,
           data_evento: new Date(item.data_evento_str).getTime(),
@@ -65,86 +85,67 @@ const Movimentacoes: React.FC = () => {
             : null,
           data_validade: item.data_validade
             ? new Date(item.data_validade).getTime()
-            : null, // Processa o campo data_validade
+            : null,
         }));
 
         setData((prevData) =>
-          prevData ? [...prevData, ...parsedData] : parsedData
+          page === 1 ? parsedData : [...(prevData || []), ...parsedData]
         );
         setFilteredData((prevData) =>
-          prevData ? [...prevData, ...parsedData] : parsedData
+          page === 1 ? parsedData : [...(prevData || []), ...parsedData]
         );
-        setLoading(false);
       } catch (err) {
         console.error("Erro ao buscar movimentações:", err);
+      } finally {
         setLoading(false);
       }
     };
 
     fetchMovimentacoes();
-  }, [page]); // Atualiza o fetch ao mudar a página
+  }, [page, debouncedFilters]);
 
   useEffect(() => {
-    const handleScroll = () => {
-      if (
-        window.innerHeight + window.scrollY >=
-        document.body.offsetHeight - 100
-      ) {
-        setPage((prevPage) => prevPage + 1); // Incrementa a página ao chegar no final
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting && hasMoreData && !loading) {
+          setPage((prevPage) => prevPage + 1);
+        }
+      },
+      { threshold: 1.0 }
+    );
+
+    if (observerRef.current) {
+      observer.observe(observerRef.current);
+    }
+
+    return () => {
+      if (observerRef.current) {
+        observer.unobserve(observerRef.current);
       }
     };
-
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
-
-  useEffect(() => {
-    if (!data) return;
-
-    const filtered = data.filter((m) => {
-      const matchesUsuario = m.usuario
-        .toLowerCase()
-        .includes(filters.usuario.toLowerCase());
-      const matchesTitulo = m.titulo
-        .toLowerCase()
-        .includes(filters.titulo.toLowerCase());
-      const matchesTipo =
-        !filters.tipo ||
-        (filters.tipo === "emprestimo" &&
-          m.tipo === "emprestimo" &&
-          m.status !== "DEVOLVIDO") ||
-        (filters.tipo === "devolucao" &&
-          m.tipo === "emprestimo" &&
-          m.status === "DEVOLVIDO") ||
-        (filters.tipo !== "emprestimo" && filters.tipo === m.tipo);
-
-      const dataEvento = m.data_evento;
-      const dataInicio = filters.dataInicio
-        ? new Date(filters.dataInicio).getTime()
-        : 0;
-      const dataFim = filters.dataFim
-        ? new Date(filters.dataFim).getTime()
-        : Infinity;
-
-      const matchesData =
-        (filters.desdeInicio || dataEvento >= dataInicio) &&
-        (filters.ateAgora || dataEvento <= dataFim);
-
-      return matchesUsuario && matchesTitulo && matchesTipo && matchesData;
-    });
-
-    setFilteredData(filtered);
-  }, [filters, data]);
+  }, [hasMoreData, loading]);
 
   const handleFilterChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
-    const { name, value, type } = e.target as HTMLInputElement;
-    const checked = (e.target as HTMLInputElement).checked;
+    const { name, value } = e.target;
     setFilters((prev) => ({
       ...prev,
-      [name]: type === "checkbox" ? checked : value,
+      [name]: value,
     }));
+
+    if (debounceTimeout.current) {
+      clearTimeout(debounceTimeout.current);
+    }
+
+    debounceTimeout.current = setTimeout(() => {
+      setDebouncedFilters((prev) => ({
+        ...prev,
+        [name]: value,
+      }));
+      setPage(1);
+      setHasMoreData(true);
+    }, 300); // Debounce delay
   };
 
   const formatDate = (timestamp: number | null): string => {
@@ -178,9 +179,9 @@ const Movimentacoes: React.FC = () => {
       case "PENDENTE":
         return styles.pendente;
       case "ATIVO":
-        return tipo === "emprestimo" ? styles.ativo : styles.devolvido; // "ATIVO" for attended loans
+        return tipo === "emprestimo" ? styles.ativo : styles.devolvido;
       case "ATENDIDA":
-        return styles.devolvido; // "ATENDIDA" for attended reservations
+        return styles.devolvido;
       case "DEVOLVIDO":
         return styles.devolvido;
       case "CANCELADO":
@@ -188,14 +189,28 @@ const Movimentacoes: React.FC = () => {
       case "EXPIRADO":
         return styles.cancelado;
       case "EM ESPERA":
-        return styles.emEspera; // Transform "em espera" to "emEspera"
+        return styles.emEspera;
       default:
         return "";
     }
   };
 
-  if (loading)
-    return <p className="text-center mt-10">Carregando movimentações...</p>;
+  const handleActionUpdate = (id: number, updatedStatus: string) => {
+    setData((prevData) =>
+      prevData
+        ? prevData.map((item) =>
+            item.id === id ? { ...item, status: updatedStatus } : item
+          )
+        : null
+    );
+    setFilteredData((prevData) =>
+      prevData
+        ? prevData.map((item) =>
+            item.id === id ? { ...item, status: updatedStatus } : item
+          )
+        : null
+    );
+  };
 
   return (
     <div className={styles.container}>
@@ -224,20 +239,6 @@ const Movimentacoes: React.FC = () => {
           value={filters.titulo}
           onChange={handleFilterChange}
         />
-        <input
-          type="date"
-          name="dataInicio"
-          className={styles.input}
-          value={filters.dataInicio}
-          onChange={handleFilterChange}
-        />
-        <input
-          type="date"
-          name="dataFim"
-          className={styles.input}
-          value={filters.dataFim}
-          onChange={handleFilterChange}
-        />
         <select
           name="tipo"
           className={styles.select}
@@ -262,7 +263,7 @@ const Movimentacoes: React.FC = () => {
               <th>Data Devolver</th>
               <th>Data Devolvida</th>
               <th>Data Retirada</th>
-              <th>Data Validade</th> {/* Adiciona o cabeçalho da nova coluna */}
+              <th>Data Validade</th>
               <th>Status</th>
               <th>Ações</th>
             </tr>
@@ -309,20 +310,9 @@ const Movimentacoes: React.FC = () => {
                       <button
                         className={styles["action-button"]}
                         onClick={() =>
-                          handleDevolverEmprestimo(
-                            String(m.id),
-                            navigate,
-                            () => {
-                              setData((prevData) => {
-                                if (!prevData) return null;
-                                return prevData.map((item) =>
-                                  item.id === m.id
-                                    ? { ...item, status: "DEVOLVIDO" }
-                                    : item
-                                );
-                              });
-                            }
-                          )
+                          handleDevolverEmprestimo(String(m.id), navigate, () => {
+                            handleActionUpdate(m.id, "DEVOLVIDO");
+                          })
                         }
                       >
                         Devolver
@@ -337,14 +327,7 @@ const Movimentacoes: React.FC = () => {
                           navigate
                         );
                         if (success) {
-                          setData((prevData) => {
-                            if (!prevData) return null;
-                            return prevData.map((item) =>
-                              item.id === m.id
-                                ? { ...item, status: "ATENDIDA" }
-                                : item
-                            );
-                          });
+                          handleActionUpdate(m.id, "ATENDIDA");
                         }
                       }}
                     >
@@ -360,14 +343,7 @@ const Movimentacoes: React.FC = () => {
                           navigate
                         );
                         if (success) {
-                          setData((prevData) => {
-                            if (!prevData) return null;
-                            return prevData.map((item) =>
-                              item.id === m.id
-                                ? { ...item, status: "CANCELADA" }
-                                : item
-                            );
-                          });
+                          handleActionUpdate(m.id, "CANCELADA");
                         }
                       }}
                     >
@@ -383,14 +359,7 @@ const Movimentacoes: React.FC = () => {
                           navigate
                         );
                         if (success) {
-                          setData((prevData) => {
-                            if (!prevData) return null;
-                            return prevData.map((item) =>
-                              item.id === m.id
-                                ? { ...item, status: "ATIVO" }
-                                : item
-                            );
-                          });
+                          handleActionUpdate(m.id, "ATIVO");
                         }
                       }}
                     >
@@ -402,6 +371,7 @@ const Movimentacoes: React.FC = () => {
             ))}
           </tbody>
         </table>
+        <div ref={observerRef} className={styles.observer}></div>
       </section>
     </div>
   );

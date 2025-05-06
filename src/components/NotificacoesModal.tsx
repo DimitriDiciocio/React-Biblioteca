@@ -14,13 +14,24 @@ const NotificacoesModal: React.FC<NotificacoesModalProps> = ({ onClose }) => {
   const { notes, loading } = useNotification();
 
   useEffect(() => {
-    socket.emit("notificacoesVisualizadas"); // Notify backend that notifications were viewed
-    if (notes) {
-      localStorage.setItem("lastViewedNotifications", notes.length.toString()); // Update last viewed notifications count
-    }
+    const marcarTodasComoLidas = async () => {
+      try {
+        await fetch("http://127.0.0.1:5000/notificacoes/ler", {
+          method: "PUT",
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        });
+        socket.emit("notificacoesVisualizadas"); // Notify backend
+      } catch (error) {
+        console.error("Erro ao marcar notificações como lidas:", error);
+      }
+      localStorage.setItem("lastViewedNotifications", notes.length.toString()); // Update localStorage
+    };
+
+    marcarTodasComoLidas();
 
     return () => {
-      // Ensure the socket is not disconnected globally if used elsewhere
       socket.off("notificacoesVisualizadas");
     };
   }, [notes]);
