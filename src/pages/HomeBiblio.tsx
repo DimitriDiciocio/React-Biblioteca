@@ -254,7 +254,7 @@ const HomeBiblio: React.FC = () => {
 
         <section
   className="content montserrat-alternates"
-  style={{ padding: page === 1 ? "0" : "20px", marginLeft: "240px" }}
+  style={{ padding: page === 1 ? "0" : "20px"}}
 >
           <div className="page active" data-page="1">
             <div className="header-biblio d-flex-column-no-font center-x">

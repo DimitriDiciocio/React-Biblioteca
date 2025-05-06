@@ -203,26 +203,27 @@ const Cadastro: React.FC = () => {
               </button>
             </>
           ) : (
-            <p className="m-top-70">
+            <p className="m-top-70-seminterferncia">
               Arraste uma imagem ou clique para selecionar
             </p>
           )}
         </div>
         <h2 className="h2-cadastro">Cadastro</h2>
 
-        <form onSubmit={handleCadastro} className="d-flex-column">
-          <div className="d-flex gap-5">
-            <div>
-              <div className="inputGroup">
+        <form onSubmit={handleCadastro} className="d-flex-column-cadastro">
+        <div className="inputGroup2">
                 <input
                   type="text"
                   required
                   autoComplete="off"
                   value={nome}
                   onChange={(e) => setNome(e.target.value)}
+                  tabIndex={1}
                 />
                 <label htmlFor="name">Nome do Usuário</label>
               </div>
+          <div className="d-flex gap-5-responsive">
+            <div>
               <div className="inputGroup">
                 <input
                   type="email"
@@ -230,6 +231,7 @@ const Cadastro: React.FC = () => {
                   autoComplete="off"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
+                  tabIndex={2}
                 />
                 <label htmlFor="name">E-mail:</label>
               </div>
@@ -238,42 +240,15 @@ const Cadastro: React.FC = () => {
                   value={uf}
                   onChange={(e) => setUf(e.target.value)}
                   required
+                  tabIndex={4}
                 >
-                  <option value="">Selecione o estado</option>
+                  <option value="">Estado</option>
                   {ufsBrasil.map((uf, index) => (
                     <option key={index} value={uf}>
                       {uf}
                     </option>
                   ))}
                 </select>
-              </div>
-              <div className="inputGroup">
-                <select
-                  value={cidade}
-                  onChange={(e) => setCidade(e.target.value)}
-                  required
-                  disabled={!uf}
-                >
-                  <option value="">Selecione a cidade</option>
-                  {cidadesBrasil.map((cidade, index) => (
-                    <option key={index} value={cidade}>
-                      {cidade}
-                    </option>
-                  ))}
-                </select>
-              </div>
-            </div>
-            <div>
-              <div className="inputGroup">
-                <input
-                  type="text"
-                  required
-                  autoComplete="off"
-                  value={telefone}
-                  onChange={(e) => setTelefone(formatTelefone(e.target.value))}
-                  maxLength={15}
-                />
-                <label htmlFor="name">Telefone:</label>
               </div>
               <div className="inputGroup">
                 <input
@@ -283,6 +258,7 @@ const Cadastro: React.FC = () => {
                   autoComplete="off"
                   value={senha}
                   onChange={(e) => setSenha(e.target.value)}
+                  tabIndex={6}
                 />
                 <label>Senha:</label>
                 <input
@@ -308,6 +284,37 @@ const Cadastro: React.FC = () => {
                   </svg>
                 </div>
               </div>
+
+            </div>
+            <div>
+              <div className="inputGroup">
+                <input
+                  type="text"
+                  required
+                  autoComplete="off"
+                  value={telefone}
+                  onChange={(e) => setTelefone(formatTelefone(e.target.value))}
+                  maxLength={15}
+                  tabIndex={3}
+                />
+                <label htmlFor="name">Telefone:</label>
+              </div>
+              <div className="inputGroup">
+                <select
+                  value={cidade}
+                  onChange={(e) => setCidade(e.target.value)}
+                  required
+                  disabled={!uf}
+                  tabIndex={5}
+                >
+                  <option value="">Cidade</option>
+                  {cidadesBrasil.map((cidade, index) => (
+                    <option key={index} value={cidade}>
+                      {cidade}
+                    </option>
+                  ))}
+                </select>
+              </div>
               <div className="inputGroup">
                 <input
                   type={mostrarConfirmSenha ? "text" : "password"}
@@ -316,6 +323,7 @@ const Cadastro: React.FC = () => {
                   autoComplete="off"
                   value={confirmSenha}
                   onChange={(e) => setConfirmSenha(e.target.value)}
+                  tabIndex={7}
                 />
                 <label>Confirmar Senha:</label>
                 <input
