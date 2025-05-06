@@ -130,7 +130,10 @@
 .padding-bigbig{
   padding: 0px 100px;
 }
-
+.jc-end{
+  display: flex;
+  justify-content: end;
+}
 /* Header */
 
 .header {
@@ -1082,15 +1085,15 @@ textarea.input {
   text-decoration: none;
   font-family: "Montserrat Alternates", sans-serif;
   font-weight: bold;
-  transition: transform 0.3s ease, background-color 0.3s ease;
-  border-radius: 8px;
+  transition: transform 0.2s ease, background-color 0.3s ease;
 }
 
 /* Efeito de hover e item ativo */
-.nav-lateral a:hover,
+.nav-lateral a:hover {
+  background-color: #f0f0f0; /* Cor de fundo ao passar o mouse */
+}
 .nav-lateral a.active {
   background-color: white;
-  transform: scale(1.1);
   box-shadow: 4px 4px 8px rgba(0, 0, 0, 0.1); /* Sombra na lateral direita e embaixo */
 }
 
@@ -1104,7 +1107,6 @@ textarea.input {
 .nav-lateral .highlight a {
   color: var(--branco);
   background-color: var(--azul-escuro);
-  border-radius: 0 8px 8px 0;
 }
 .page {
   display: none;
@@ -3475,4 +3477,119 @@ button.limpar-btn, .apagar-btn {
 }
 .gap-5-responsive {
   gap: 3rem;
+}
+.xiii{
+  padding: 5px 0px 0px 0px;
+  font-weight: 1000;
+  font-size: x-large;
+}
+
+/* Animação para descer */
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Animação para subir */
+@keyframes slideUp {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+}
+
+/* Estilo para o submenu visível */
+.submenu {
+  animation: slideDown 0.3s ease forwards;
+  padding-left: 20px; /* Move o submenu mais para a direita */
+  position: relative;
+}
+
+/* Linha vertical azul para cada botão */
+.submenu li::before {
+  content: "";
+  position: absolute;
+  left: -10px; /* Move a linha mais para a direita */
+  top: 0;
+  bottom: 0;
+  width: 3px; /* Espessura da linha */
+  border-radius: 5px;
+  background-color: var(--azul-escuro); /* Cor da linha */
+  transition: left 0.3s ease-in-out; /* Adiciona a transição suave para o retorno */
+}
+
+
+
+/* Estilo para o submenu oculto */
+.submenu-hidden {
+  animation: slideUp 0.3s ease forwards;
+  overflow: hidden; /* Garante que o conteúdo seja ocultado */
+  height: 0; /* Altura zero para ocultar */
+}
+
+/* Corrige a transição de subir */
+.submenu-hidden li {
+  opacity: 0; /* Torna os itens invisíveis */
+  transform: translateY(-20px); /* Move os itens para cima */
+  transition: opacity 0.3s ease, transform 0.3s ease; /* Adiciona a transição */
+}
+
+.submenu li {
+  font-size: 0.85rem; /* Ajusta o tamanho da fonte */
+  padding: 8px 0px; /* Aumenta o espaçamento interno */
+  margin-left: 15px; /* Move os botões para a direita */
+  margin-bottom: 8px; /* Adiciona espaçamento entre os botões */
+  list-style: none; /* Remove os marcadores padrão */
+  height: 40px; /* Aumenta a altura dos botões */
+  line-height: 40px; /* Centraliza o texto verticalmente */
+  display: flex;
+  align-items: center; /* Centraliza no eixo Y */
+  width: 93%; /* Aumenta a largura dos botões */
+  position: relative; /* Necessário para a linha azul */
+  border-radius: 5px; /* Adiciona bordas arredondadas */
+}
+
+.sidebar.closed .submenu li::before {
+  content: none;
+}
+.submenu-button{
+  z-index: 1;
+}
+
+.submenu-button.active {
+  box-shadow: 4px 4px 8px rgba(0, 0, 0, 0.1); /* Sombra para destaque */
+  font-weight: bold; /* Deixa o texto em negrito */
+}
+
+.arrowdown {
+  height: 10px !important;
+  position: absolute;
+  right: 20px; /* Deixa um leve espaço à direita */
+  top: 50%;
+  transform: translateY(-50%); /* Centraliza verticalmente */
+}
+
+/* Oculta o texto dos sub-botões quando a sidebar está fechada */
+.sidebar.closed .submenu li {
+  width: 40px; /* Ajusta a largura para acomodar apenas o ícone */
+  overflow: hidden; /* Oculta o texto que ultrapassa */
+  white-space: nowrap; /* Impede que o texto quebre em várias linhas */
+}
+
+.sidebar.closed .submenu li button {
+  text-indent: -9999px; /* Remove o texto visualmente */
+}
+
+.sidebar.closed .submenu li button::before {
+  text-indent: 0; /* Mantém o ícone visível */
 }

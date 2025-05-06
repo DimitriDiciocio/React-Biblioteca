@@ -134,9 +134,11 @@ const Config: React.FC = () => {
       <aside className={`sidebar ${isSidebarOpen ? "open" : "closed"}`}>
           <nav className="nav-lateral">
             <ul>
-            <button onClick={toggleSidebar}>
-              {isSidebarOpen ? "✕" : "☰"}
-            </button>
+            <div className="jc-end m-right">
+              <button className="xiii" onClick={toggleSidebar}>
+                {isSidebarOpen ? "✕" : "☰"}
+              </button>
+            </div>
               <li onClick={() => navigate("/user?page=1")} className="pointer">
                 <a className="link-flex"><img src={infoIcon} alt="Ícone Informações Pessoais" className="icon-config" /><span>Informações Pessoais</span></a>
               </li>

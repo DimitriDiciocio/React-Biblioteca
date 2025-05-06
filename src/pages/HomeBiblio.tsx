@@ -18,6 +18,7 @@ import pdfIcon from '../../assets/img/pdf-icon.png';
 import fineadmIcon from '../../assets/img/fineadm-icon.png';
 import transitionIcon from '../../assets/img/transition-icon.png';
 import configIcon from '../../assets/img/config-icon.png';
+import arrowDown from "../../assets/img/arrow-down.png";
 
 
 const HomeBiblio: React.FC = () => {
@@ -29,7 +30,21 @@ const HomeBiblio: React.FC = () => {
   const [isReadyToRender, setIsReadyToRender] = useState(false);
   const page = Number(new URLSearchParams(window.location.search).get("page")) || 1;
   const [userName, setUserName] = useState("");
-  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(true);  
+  const [isUsersMenuOpen, setIsUsersMenuOpen] = useState(false);
+  const [isBooksMenuOpen, setIsBooksMenuOpen] = useState(false);
+  const currentPage = Number(new URLSearchParams(window.location.search).get("page")) || 1;
+
+  const toggleUsersMenu = () => {
+    setIsUsersMenuOpen((prev) => !prev);
+    if (!isUsersMenuOpen) setIsBooksMenuOpen(false); // Fecha o menu "Livros" ao abrir "Usuários"
+  };
+
+  const toggleBooksMenu = () => {
+    setIsBooksMenuOpen((prev) => !prev);
+    if (!isBooksMenuOpen) setIsUsersMenuOpen(false); // Fecha o menu "Usuários" ao abrir "Livros"
+  };
+
 
   // Verifica permissão de administrador
   useEffect(() => {
@@ -205,53 +220,66 @@ const HomeBiblio: React.FC = () => {
       <Header />
       <main className="background-blue ">
         <aside className={`sidebar ${isSidebarOpen ? "open" : "closed"}`}>
-          <nav className="nav-lateral">
-            <ul>
-            <button onClick={toggleSidebar}>
-              {isSidebarOpen ? "✕" : "☰"}
-            </button>
-              <li data-page="1" onClick={() => navigate("/home_biblio?page=1")} className="pointer">
-                <a className="active">Início</a>
-              </li>
-              {hasAdminPermission && (
-                <>
-                  <li data-page="2" onClick={() => navigate("/home_biblio?page=2")} className="pointer">
-                    <a>Cadastrar Usuários</a>
-                  </li>
-                  <li data-page="3" onClick={() => navigate("/home_biblio?page=3")} className="pointer">
-                    <a>Gerenciar Usuários</a>
-                  </li>
-                </>
-              )}
-              <li data-page="4" onClick={() => navigate("/home_biblio?page=4")} className="pointer">
-                <a>Cadastrar Livros</a>
-              </li>
-              <li data-page="5" onClick={() => navigate("/home_biblio?page=5")} className="pointer">
-                <a>Gerenciar Livros</a>
-              </li>
-              <li data-page="6" onClick={() => navigate("/home_biblio?page=6")} className="pointer">
-                <a>Movimentações</a>
-              </li>
-              <li data-page="7" onClick={() => navigate("/home_biblio?page=7")} className="pointer">
-                <a>Multas</a>
-              </li>
-              <li data-page="8" onClick={() => navigate("/home_biblio?page=8")} className="pointer">
-                <a>Relatórios</a>
-              </li>
-              {hasAdminPermission && (
-                <li data-page="9" onClick={() => navigate("/home_biblio?page=9")} className="pointer">
-                  <a>Configurações</a>
+            <nav className="nav-lateral">
+              <ul>
+                <div className="jc-end m-right">
+                  <button className="xiii" onClick={toggleSidebar}>
+                    {isSidebarOpen ? "✕" : "☰"}
+                  </button>
+                </div>
+                <li data-page="1" onClick={() => navigate("/home_biblio?page=1")} className="pointer">
+                  <a className="active">Início</a>
                 </li>
-              )}
+                <li className="pointer z-index-high" onClick={toggleUsersMenu}>
+                  <a>Usuários <img className="arrowdown" src={arrowDown}></img></a>
+                </li>
+                <div className={isUsersMenuOpen ? "submenu" : "submenu-hidden"}>
+                  {hasAdminPermission && (
+                    <>
+                      <li data-page="2" onClick={() => navigate("/home_biblio?page=2")} className="pointer">
+                        <button className="submenu-button montserrat-alternates-semibold ">Cadastrar Usuários</button>
+                      </li>
+                      <li data-page="3" onClick={() => navigate("/home_biblio?page=3")} className="pointer">
+                        <button className="submenu-button montserrat-alternates-semibold ">Gerenciar Usuários</button>
+                      </li>
+                    </>
+                  )}
+                </div>
+                <li className="pointer z-index-high" onClick={toggleBooksMenu}>
+                  <a>Livros <img className="arrowdown" src={arrowDown}></img></a>
+                </li>
+                <div className={isBooksMenuOpen ? "submenu" : "submenu-hidden"}>
+                  <>
+                    <li data-page="4" onClick={() => navigate("/home_biblio?page=4")} className="pointer">
+                      <button className="submenu-button montserrat-alternates-semibold ">Cadastrar Livros</button>
+                    </li>
+                    <li data-page="5" onClick={() => navigate("/home_biblio?page=5")} className="pointer">
+                      <button className="submenu-button montserrat-alternates-semibold ">Gerenciar Livros</button>
+                    </li>
+                  </>
+                </div>
+                <li data-page="6" onClick={() => navigate("/home_biblio?page=6")} className="pointer">
+                  <a>Movimentações</a>
+                </li>
+                <li data-page="7" onClick={() => navigate("/home_biblio?page=7")} className="pointer">
+                  <a>Multas</a>
+                </li>
+                <li data-page="8" onClick={() => navigate("/home_biblio?page=8")} className="pointer">
+                  <a>Relatórios</a>
+                </li>
+                {hasAdminPermission && (
+                  <li data-page="9" onClick={() => navigate("/home_biblio?page=9")} className="pointer">
+                    <a>Configurações</a>
+                  </li>
+                )}
               </ul>
               <ul>
                 <li className="highlight pointer" onClick={Sair}>
                   <a>Sair</a>
                 </li>
               </ul>
-          </nav>
-        </aside>
-
+            </nav>
+          </aside>
         <section
   className="content montserrat-alternates"
   style={{ padding: page === 1 ? "0" : "20px"}}
@@ -271,7 +299,6 @@ const HomeBiblio: React.FC = () => {
                 </div>
               </form>
             </div>
-
             <div className="d-flex g-20 m-top-negative flex-wrap responsive-class center-x">
             {filteredButtons.map((button, index) => (
               <button
