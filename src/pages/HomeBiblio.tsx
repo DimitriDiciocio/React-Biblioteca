@@ -19,6 +19,8 @@ import fineadmIcon from '../../assets/img/fineadm-icon.png';
 import transitionIcon from '../../assets/img/transition-icon.png';
 import configIcon from '../../assets/img/config-icon.png';
 import arrowDown from "../../assets/img/arrow-down.png";
+import bannerIcon from "../../assets/img/banner-icon.png";
+import Banners from "../components/Banners";
 
 
 const HomeBiblio: React.FC = () => {
@@ -163,28 +165,34 @@ const HomeBiblio: React.FC = () => {
       onClick: () => navigate("/home_biblio?page=5"),
     },
     {
+      img: bannerIcon,
+      title: "Banners",
+      description: "Aqui você pode adicionar banners para a página inicial",
+      onClick: () => navigate("/home_biblio?page=6"),
+    },
+    {
       img: transitionIcon,
       title: "Movimentações",
       description: "Aqui você pode acompanhar as movimentações da biblioteca",
-      onClick: () => navigate("/home_biblio?page=6"),
+      onClick: () => navigate("/home_biblio?page=7"),
     },
     {
       img: fineadmIcon,
       title: "Multas",
       description: "Aqui você acompanhar as multas da biblioteca",
-      onClick: () => navigate("/home_biblio?page=7"),
+      onClick: () => navigate("/home_biblio?page=8"),
     },
     {
       img: pdfIcon,
       title: "Relatórios",
       description: "Aqui você poderá gerar um relatório dos usuários e livros no formato PDF",
-      onClick: () => navigate("/home_biblio?page=8"),
+      onClick: () => navigate("/home_biblio?page=9"),
     },
     hasAdminPermission && {
       img: configIcon,
       title: "Configurações",
       description: "Aqui você pode ajustar as configurações do sistema",
-      onClick: () => navigate("/home_biblio?page=9"),
+      onClick: () => navigate("/home_biblio?page=10"),
     },
   ]
     .filter(Boolean)
@@ -259,16 +267,19 @@ const HomeBiblio: React.FC = () => {
                   </>
                 </div>
                 <li data-page="6" onClick={() => navigate("/home_biblio?page=6")} className="pointer">
-                  <a>Movimentações</a>
+                  <a>Banners</a>
                 </li>
                 <li data-page="7" onClick={() => navigate("/home_biblio?page=7")} className="pointer">
-                  <a>Multas</a>
+                  <a>Movimentações</a>
                 </li>
                 <li data-page="8" onClick={() => navigate("/home_biblio?page=8")} className="pointer">
+                  <a>Multas</a>
+                </li>
+                <li data-page="9" onClick={() => navigate("/home_biblio?page=9")} className="pointer">
                   <a>Relatórios</a>
                 </li>
                 {hasAdminPermission && (
-                  <li data-page="9" onClick={() => navigate("/home_biblio?page=9")} className="pointer">
+                  <li data-page="10" onClick={() => navigate("/home_biblio?page=10")} className="pointer">
                     <a>Configurações</a>
                   </li>
                 )}
@@ -328,11 +339,12 @@ const HomeBiblio: React.FC = () => {
           )}
           <div className="page" data-page="4"><AddBooks /></div>
           <div className="page" data-page="5"><Livros /></div>
-          <div className="page" data-page="6"><Movimentacoes /></div>
-          <div className="page" data-page="7"><Multas /></div>
-          <div className="page" data-page="8"><Relatorios /></div>
+          <div className="page" data-page="6"><Banners/></div>
+          <div className="page" data-page="7"><Movimentacoes /></div>
+          <div className="page" data-page="8"><Multas /></div>
+          <div className="page" data-page="9"><Relatorios /></div>
           {hasAdminPermission && (
-            <div className="page" data-page="9"><Configuracoes /></div>
+            <div className="page" data-page="10"><Configuracoes /></div>
           )}
         </section>
       </main>
