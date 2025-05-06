@@ -34,18 +34,20 @@ const Movimentacoes: React.FC = () => {
     desdeInicio: true,
     ateAgora: true,
   });
+  const [page, setPage] = useState(1); // Adiciona o estado para controlar a página
 
   const navigate = useNavigate();
 
   useEffect(() => {
-    fetch("http://localhost:5000/movimentacoes", {
-      method: "GET",
-      headers: {
-        Authorization: `Bearer ${localStorage.getItem("token")}`,
-      },
-    })
-      .then((res) => res.json())
-      .then((json: Movimentacao[]) => {
+    const fetchMovimentacoes = async () => {
+      try {
+        const res = await fetch(`http://localhost:5000/movimentacoes/${page}`, {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        });
+        const json: Movimentacao[] = await res.json();
         const parsedData = json.map((item) => ({
           ...item,
           data_evento: new Date(item.data_evento_str).getTime(),
@@ -66,14 +68,34 @@ const Movimentacoes: React.FC = () => {
             : null, // Processa o campo data_validade
         }));
 
-        setData(parsedData);
-        setFilteredData(parsedData);
+        setData((prevData) =>
+          prevData ? [...prevData, ...parsedData] : parsedData
+        );
+        setFilteredData((prevData) =>
+          prevData ? [...prevData, ...parsedData] : parsedData
+        );
         setLoading(false);
-      })
-      .catch((err) => {
+      } catch (err) {
         console.error("Erro ao buscar movimentações:", err);
         setLoading(false);
-      });
+      }
+    };
+
+    fetchMovimentacoes();
+  }, [page]); // Atualiza o fetch ao mudar a página
+
+  useEffect(() => {
+    const handleScroll = () => {
+      if (
+        window.innerHeight + window.scrollY >=
+        document.body.offsetHeight - 100
+      ) {
+        setPage((prevPage) => prevPage + 1); // Incrementa a página ao chegar no final
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
   useEffect(() => {
@@ -177,10 +199,13 @@ const Movimentacoes: React.FC = () => {
 
   return (
     <div className={styles.container}>
-      <i className="fa-solid fa-arrow-left arrow-back"  onClick={() => navigate("/home_biblio?page=1")}></i>
+      <i
+        className="fa-solid fa-arrow-left arrow-back"
+        onClick={() => navigate("/home_biblio?page=1")}
+      ></i>
       <div className="space-sm"></div>
       <div className={styles.header}>
-        <h1 className={styles.title }>Movimentações</h1>
+        <h1 className={styles.title}>Movimentações</h1>
       </div>
       <section className={styles.filters}>
         <input

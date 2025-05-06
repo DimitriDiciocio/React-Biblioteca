@@ -3352,3 +3352,49 @@ button.limpar-btn, .apagar-btn {
   cursor: pointer;
   z-index: 1001;
 }
+
+/* Ajuste para o aside retraído */
+.sidebar.closed {
+  width: 60px; /* Largura reduzida */
+  overflow: hidden; /* Oculta o conteúdo que ultrapassa */
+  transition: width 0.3s ease;
+}
+
+.sidebar.closed .nav-lateral a {
+  text-align: center; /* Centraliza os ícones */
+  padding: 10px 0; /* Ajusta o espaçamento */
+}
+
+.sidebar.closed .nav-lateral a {
+  display: none; /* Oculta os textos */
+}
+
+.sidebar.closed .nav-lateral a img {
+  display: none;
+}
+
+.sidebar.closed .nav-lateral a span{
+  display: none;
+}
+
+/* Ajuste para o conteúdo principal */
+.sidebar.closed ~ .content {
+  margin-left: 60px; /* Ajusta o deslocamento do conteúdo */
+  transition: margin-left 0.3s ease;
+}
+
+/* Botão de alternância */
+.toggle-sidebar-button {
+  position: fixed;
+  top: 20px;
+  left: 20px;
+  z-index: 1100;
+  background: var(--azul-escuro);
+  color: white;
+  border: none;
+  font-size: 24px;
+  border-radius: 8px;
+  padding: 5px 10px;
+  cursor: pointer;
+  transition: 0.3s;
+}

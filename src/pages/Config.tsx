@@ -27,6 +27,9 @@ const Config: React.FC = () => {
   const token = localStorage.getItem("token");
   const queryParams = new URLSearchParams(window.location.search);
   const page = queryParams.get("page")?.split(",");
+  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+
+  const toggleSidebar = () => setIsSidebarOpen((prev) => !prev);
 
   const switchPage = (page: number) => {
     document.querySelectorAll(".nav-lateral li a").forEach((li, index) => {
@@ -128,29 +131,32 @@ const Config: React.FC = () => {
     <div>
       <Header />
       <main className="background-blue">
-        <aside className="sidebar">
+      <aside className={`sidebar ${isSidebarOpen ? "open" : "closed"}`}>
           <nav className="nav-lateral">
             <ul>
+            <button onClick={toggleSidebar}>
+              {isSidebarOpen ? "✕" : "☰"}
+            </button>
               <li onClick={() => navigate("/user?page=1")} className="pointer">
-                <a className="link-flex"><img src={infoIcon} alt="Ícone Informações Pessoais" className="icon-config" />Informações Pessoais</a>
+                <a className="link-flex"><img src={infoIcon} alt="Ícone Informações Pessoais" className="icon-config" /><span>Informações Pessoais</span></a>
               </li>
               <li onClick={() => navigate("/user?page=2")} className="pointer">
-                <a className="link-flex"><img src={securityIcon} alt="Ícone Segurança" className="icon-config" />Segurança</a>
+                <a className="link-flex"><img src={securityIcon} alt="Ícone Segurança" className="icon-config" /><span>Segurança</span></a>
               </li>
               <li onClick={() => navigate("/user?page=3")} className="pointer">
-                <a className="link-flex"><img src={bookIcon} alt="Ícone Gerenciar Livros" className="icon-config" />Gerenciar Livros</a>
+                <a className="link-flex"><img src={bookIcon} alt="Ícone Gerenciar Livros" className="icon-config" /><span>Gerenciar Livros</span></a>
               </li>
               <li onClick={() => navigate("/user?page=4")} className="pointer">
-                <a className="link-flex"><img src={listIcon} alt="Ícone Minha Lista" className="icon-config" />Minha Lista</a>
+                <a className="link-flex"><img src={listIcon} alt="Ícone Minha Lista" className="icon-config" /><span>Minha Lista</span></a>
               </li>
               <li onClick={() => navigate("/user?page=5")} className="pointer">
-                <a className="link-flex"><img src={historicIcon} alt="Ícone Histórico" className="icon-config" />Histórico</a>
+                <a className="link-flex"><img src={historicIcon} alt="Ícone Histórico" className="icon-config" /><span>Histórico</span></a>
               </li>
               <li onClick={() => navigate("/user?page=6")} className="pointer">
-                <a className="link-flex"><img src={fineIcon} alt="Ícone Minhas Multas" className="icon-config" />Minhas Multas</a>
+                <a className="link-flex"><img src={fineIcon} alt="Ícone Minhas Multas" className="icon-config" /><span>Minhas Multas</span></a>
               </li>
               <li onClick={() => navigate("/user?page=7")} className="pointer">
-                <a className="link-flex"><img src={notificationIcon} alt="Ícone Notificações" className="icon-config" />Notificações</a>
+                <a className="link-flex"><img src={notificationIcon} alt="Ícone Notificações" className="icon-config" /><span>Notificações</span></a>
               </li>
               <div className="space-sm-y"></div>
               </ul>

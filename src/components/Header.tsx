@@ -276,7 +276,7 @@ const Header: React.FC = () => {
           </div>
           <div className="space-ssm-y"></div>
           <div className="d-flex-column">
-          <button className="gerenciar" onClick={() => navigate("/user")}>
+          <button className="gerenciar" onClick={() => navigate("/user?page=1")}>
               <p className="montserrat-alternates size-medium" >Gerenciar conta</p>
             </button>
             <button className="center-x center-y carrinho-btn" onClick={() => navigate("/user?page=3")}>
