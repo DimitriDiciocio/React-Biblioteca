@@ -3359,3 +3359,120 @@ button.limpar-btn, .apagar-btn {
   cursor: pointer;
   z-index: 1001;
 }
+
+/* Ajuste para o aside retraído */
+.sidebar.closed {
+  width: 60px; /* Largura reduzida */
+  overflow: hidden; /* Oculta o conteúdo que ultrapassa */
+  transition: width 0.3s ease;
+}
+
+.sidebar.closed .nav-lateral a {
+  text-align: center; /* Centraliza os ícones */
+  padding: 10px 0; /* Ajusta o espaçamento */
+}
+
+.sidebar.closed .nav-lateral a {
+  display: none; /* Oculta os textos */
+}
+
+.sidebar.closed .nav-lateral a img {
+  display: none;
+}
+
+.sidebar.closed .nav-lateral a span{
+  display: none;
+}
+
+/* Ajuste para o conteúdo principal */
+.sidebar.closed ~ .content {
+  margin-left: 60px; /* Ajusta o deslocamento do conteúdo */
+  transition: margin-left 0.3s ease;
+}
+
+/* Botão de alternância */
+.toggle-sidebar-button {
+  position: fixed;
+  top: 20px;
+  left: 20px;
+  z-index: 1100;
+  background: var(--azul-escuro);
+  color: white;
+  border: none;
+  font-size: 24px;
+  border-radius: 8px;
+  padding: 5px 10px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+
+.inputGroup2 {
+  font-family: "Segoe UI", sans-serif;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.inputGroup2 input {
+  font-size: 100%;
+  padding: 0.8em;
+  padding-right: 40px;
+  outline: none;
+  border: 2px solid #0056d2;
+  background-color: transparent;
+  border-radius: 20px;
+  width: 100%;
+  text-align: left;
+}
+
+.inputGroup2 select {
+  font-size: 100%;
+  padding: 0.8em;
+  padding-right: 40px;
+  outline: none;
+  border: 2px solid #0056d2;
+  background-color: transparent;
+  border-radius: 20px;
+  width: 100%;
+  text-align: left;
+}
+
+.inputGroup2 label {
+  font-size: 100%;
+  position: absolute;
+  left: 15px;
+  top: 50%;
+  transform: translateY(-50%);
+  padding: 0.4em;
+  pointer-events: none;
+  transition: all 0.3s ease;
+  color: rgb(100, 100, 100);
+  background: #fffefe;
+  z-index: 500;
+}
+
+.inputGroup2 input:focus ~ label,
+.inputGroup2 input:not([value=""]) ~ label {
+  top: 0;
+  left: 15px;
+  font-size: 12px;
+  color: #0056d2;
+}
+
+.d-flex-column-cadastro{
+  display: flex;
+  flex-direction: column;
+}
+@media (max-width: 440px) {
+  .inputGroup2 label {
+      font-size: 70%;
+  }
+  .gap-5-responsive{
+    gap: 1rem !important;
+  }
+}
+.gap-5-responsive {
+  gap: 3rem;
+}
