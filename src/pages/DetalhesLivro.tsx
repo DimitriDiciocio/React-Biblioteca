@@ -213,7 +213,7 @@ const BookDetail = () => {
             cancelButtonText: "Procurar mais livros",
           }).then((result) => {
             if (result.isConfirmed) {
-              navigate("/user?page=4");
+              navigate("/user?page=3");
             }
           });
         } catch (error) {
@@ -281,7 +281,7 @@ const BookDetail = () => {
             cancelButtonText: "Procurar mais livros",
           }).then((result) => {
             if (result.isConfirmed) {
-              navigate("/user?page=4");
+              navigate("/user?page=3");
             }
           });
         } catch (error) {

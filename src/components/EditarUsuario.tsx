@@ -288,7 +288,7 @@ const EditarUsuario: React.FC = () => {
                         cursor: "pointer",
                       }}
                     >
-                      X
+                      ✕
                     </button>
                   </>
                 ) : (

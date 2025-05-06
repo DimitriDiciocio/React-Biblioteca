@@ -10,7 +10,6 @@ import PuxarHistorico from "../components/PuxarHistorico";
 import Swal from "sweetalert2";
 import MultasByUser from "../components/MultasByUser";
 import NotificacoesPage from "../components/NotificacoesPage";
-import homeIcon from '../../assets/img/home-icon.png';
 import infoIcon from '../../assets/img/info-icon.png';
 import securityIcon from '../../assets/img/security-icon.png';
 import bookIcon from '../../assets/img/book-icon.png';
@@ -154,6 +153,8 @@ const Config: React.FC = () => {
                 <a className="link-flex"><img src={notificationIcon} alt="Ícone Notificações" className="icon-config" />Notificações</a>
               </li>
               <div className="space-sm-y"></div>
+              </ul>
+              <ul>
               <li className="highlight pointer" onClick={() => Sair()} >
                 <a>Sair</a>
               </li>

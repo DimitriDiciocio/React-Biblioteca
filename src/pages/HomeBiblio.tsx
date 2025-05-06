@@ -10,6 +10,14 @@ import AddBooks from "./AddBooks";
 import CadastroUsuario from "./CadastroUsuario";
 import Relatorios from "./Relatorios";
 import Multas from "../components/Multas";
+import userIcon from '../../assets/img/user-icon.png';
+import guserIcon from '../../assets/img/guser-icon.png';
+import plusbookIcon from '../../assets/img/plusbook-icon.png';
+import searchbookIcon from '../../assets/img/searchbook-icon.png';
+import pdfIcon from '../../assets/img/pdf-icon.png';
+import fineadmIcon from '../../assets/img/fineadm-icon.png';
+import transitionIcon from '../../assets/img/transition-icon.png';
+import configIcon from '../../assets/img/config-icon.png';
 
 
 const HomeBiblio: React.FC = () => {
@@ -21,6 +29,7 @@ const HomeBiblio: React.FC = () => {
   const [isReadyToRender, setIsReadyToRender] = useState(false);
   const page = Number(new URLSearchParams(window.location.search).get("page")) || 1;
   const [userName, setUserName] = useState("");
+  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
 
   // Verifica permissão de administrador
   useEffect(() => {
@@ -106,6 +115,8 @@ const HomeBiblio: React.FC = () => {
     if (activePage) activePage.classList.add("active");
   };
 
+  const toggleSidebar = () => setIsSidebarOpen((prev) => !prev);
+
   const Sair = () => {
     localStorage.removeItem("token");
     navigate("/login");
@@ -113,41 +124,49 @@ const HomeBiblio: React.FC = () => {
 
   const filteredButtons = [
     hasAdminPermission && {
+      img: userIcon,
       title: "Cadastrar Usuário",
       description: "Aqui você pode cadastrar um novo usuário",
       onClick: () => navigate("/home_biblio?page=2"),
     },
     hasAdminPermission && {
+      img: guserIcon,
       title: "Gerenciar Usuários",
       description: "Aqui você pode ver a lista de usuários e editar suas informações",
       onClick: () => navigate("/home_biblio?page=3"),
     },
     {
+      img: plusbookIcon,
       title: "Cadastrar Livro",
       description: "Aqui você pode cadastrar um novo livro no Read Raccoon",
       onClick: () => navigate("/home_biblio?page=4"),
     },
     {
+      img: searchbookIcon,
       title: "Gerenciar Livros",
       description: "Aqui você pode ver os livros e editar suas informações",
       onClick: () => navigate("/home_biblio?page=5"),
     },
     {
+      img: transitionIcon,
       title: "Movimentações",
       description: "Aqui você pode acompanhar as movimentações da biblioteca",
       onClick: () => navigate("/home_biblio?page=6"),
     },
     {
+      img: fineadmIcon,
       title: "Multas",
       description: "Aqui você acompanhar as multas da biblioteca",
       onClick: () => navigate("/home_biblio?page=7"),
     },
     {
+      img: pdfIcon,
       title: "Relatórios",
       description: "Aqui você poderá gerar um relatório dos usuários e livros no formato PDF",
       onClick: () => navigate("/home_biblio?page=8"),
     },
     hasAdminPermission && {
+      img: configIcon,
       title: "Configurações",
       description: "Aqui você pode ajustar as configurações do sistema",
       onClick: () => navigate("/home_biblio?page=9"),
@@ -188,6 +207,9 @@ const HomeBiblio: React.FC = () => {
         <aside className="sidebar">
           <nav className="nav-lateral">
             <ul>
+            <button onClick={toggleSidebar}>
+              {isSidebarOpen ? "✕" : "☰"}
+            </button>
               <li data-page="1" onClick={() => navigate("/home_biblio?page=1")} className="pointer">
                 <a className="active">Início</a>
               </li>
@@ -221,11 +243,12 @@ const HomeBiblio: React.FC = () => {
                   <a>Configurações</a>
                 </li>
               )}
-              <div className="space-sm-y"></div>
-              <li className="highlight pointer" onClick={Sair}>
-                <a>Sair</a>
-              </li>
-            </ul>
+              </ul>
+              <ul>
+                <li className="highlight pointer" onClick={Sair}>
+                  <a>Sair</a>
+                </li>
+              </ul>
           </nav>
         </aside>
 
@@ -250,16 +273,23 @@ const HomeBiblio: React.FC = () => {
             </div>
 
             <div className="d-flex g-20 m-top-negative flex-wrap responsive-class center-x">
-              {filteredButtons.map((button, index) => (
-                <button
-                  key={index}
-                  className="botao-home-biblio"
-                  onClick={button!.onClick}
-                >
-                  <span className="titulo-botao-home-biblio montserrat-alternates">{button!.title}</span>
-                  <span className="descricao-botao-home-biblio montserrat-alternates">{button!.description}</span>
-                </button>
-              ))}
+            {filteredButtons.map((button, index) => (
+              <button
+                key={index}
+                className="botao-home-biblio"
+                onClick={button!.onClick}
+              >
+                {button!.img && (
+                  <img
+                    src={button!.img}
+                    alt={button!.title}
+                    className="icone-botao-home-biblio"
+                  />
+                )}
+                <span className="titulo-botao-home-biblio montserrat-alternates">{button!.title}</span>
+                <span className="descricao-botao-home-biblio montserrat-alternates">{button!.description}</span>
+              </button>
+            ))}
             </div>
           </div>
 
