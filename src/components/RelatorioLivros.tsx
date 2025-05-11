@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-
 import {
   BarChart,
   Bar,
@@ -222,6 +221,12 @@ export default function RelatorioLivros() {
               >
                 {abaAtiva === "geral" ? "Disponíveis" : "Quantidade Emprestada"}
               </th>
+              <th
+                className="montserrat-alternates"
+                style={{ textAlign: "left", padding: "12px" }}
+              >
+                Ano Publicado
+              </th>
             </tr>
           </thead>
           <tbody>
@@ -253,19 +258,25 @@ export default function RelatorioLivros() {
                     ? livro.qtd_disponivel
                     : livro.qtd_emprestada}
                 </td>
+                <td
+                  className="montserrat-alternates"
+                  style={{ padding: "10px" }}
+                >
+                  {livro.ano_publicado}
+                </td>
               </tr>
             ))}
           </tbody>
         </table>
       </div>
       {abaAtiva === "geral" && (
-      <div
-        style={{
-          padding: "16px",
-          border: "1px solid #ddd",
-          borderRadius: "8px",
-        }}
-      >
+        <div
+          style={{
+            padding: "16px",
+            border: "1px solid #ddd",
+            borderRadius: "8px",
+          }}
+        >
           <>
             <h2
               className="montserrat-alternates"
@@ -291,7 +302,7 @@ export default function RelatorioLivros() {
               </BarChart>
             </ResponsiveContainer>
           </>
-      </div>
+        </div>
       )}
     </div>
   );

@@ -1,10 +1,7 @@
 import React, { useEffect } from "react";
 import { useNotification } from "../services/useNotification";
-import { io } from "socket.io-client";
 import NotificacoesList from "./NotificacoesList";
 import styles from "./NotificacoesModal.module.css";
-
-const socket = io("http://127.0.0.1:5000");
 
 interface NotificacoesModalProps {
   onClose: () => void;
@@ -22,7 +19,6 @@ const NotificacoesModal: React.FC<NotificacoesModalProps> = ({ onClose }) => {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
           },
         });
-        socket.emit("notificacoesVisualizadas"); // Notify backend
       } catch (error) {
         console.error("Erro ao marcar notificações como lidas:", error);
       }
@@ -30,11 +26,8 @@ const NotificacoesModal: React.FC<NotificacoesModalProps> = ({ onClose }) => {
     };
 
     marcarTodasComoLidas();
-
-    return () => {
-      socket.off("notificacoesVisualizadas");
-    };
-  }, [notes]);
+  }
+  , [notes]);
 
   return (
     <div className={`${styles["notificacoes-modal"]} ${styles["notificacoes-modal-container"]}`}>

@@ -1,6 +1,5 @@
 // store/useStore.ts
 import { create } from 'zustand';
-import { socket } from '../services/socket';
 
 type Notificacao = {
   id: string;
@@ -107,9 +106,3 @@ export const useStore = create<Store>((set) => ({
     }
   },
 }));
-
-// WebSocket event listener for new notifications
-socket.on("nova_notificacao", (notificacao: Notificacao) => {
-  const { adicionarNotificacao } = useStore.getState();
-  adicionarNotificacao(notificacao);
-});

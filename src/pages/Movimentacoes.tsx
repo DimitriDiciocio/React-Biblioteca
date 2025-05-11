@@ -5,6 +5,7 @@ import { handleDevolverEmprestimo } from "../components/DevolverEmprestimo";
 import { atenderReserva } from "../services/atenderReservaService";
 import { atenderEmprestimo } from "../services/atenderEmprestimoService";
 import { cancelarReserva } from "../services/cancelarReserva";
+import { formatDate } from "../services/FormatDate";
 
 type Movimentacao = {
   tipo: string;
@@ -44,10 +45,17 @@ const Movimentacoes: React.FC = () => {
       setLoading(true);
       try {
         const endpoint =
-          debouncedFilters.usuario || debouncedFilters.titulo || debouncedFilters.tipo
+          debouncedFilters.usuario ||
+          debouncedFilters.titulo ||
+          debouncedFilters.tipo
             ? `http://localhost:5000/movimentacoes/pesquisa/${page}`
             : `http://localhost:5000/movimentacoes/${page}`;
-        const method = debouncedFilters.usuario || debouncedFilters.titulo || debouncedFilters.tipo ? "POST" : "GET";
+        const method =
+          debouncedFilters.usuario ||
+          debouncedFilters.titulo ||
+          debouncedFilters.tipo
+            ? "POST"
+            : "GET";
 
         const res = await fetch(endpoint, {
           method,
@@ -55,16 +63,19 @@ const Movimentacoes: React.FC = () => {
             "Content-Type": "application/json",
             Authorization: `Bearer ${localStorage.getItem("token")}`,
           },
-          body: method === "POST" ? JSON.stringify({
-            pesquisaUsuario: debouncedFilters.usuario,
-            pesquisaTitulo: debouncedFilters.titulo,
-            tipoMovimentacao: debouncedFilters.tipo,
-          }) : null,
+          body:
+            method === "POST"
+              ? JSON.stringify({
+                  pesquisaUsuario: debouncedFilters.usuario,
+                  pesquisaTitulo: debouncedFilters.titulo,
+                  tipoMovimentacao: debouncedFilters.tipo,
+                })
+              : null,
         });
         const json: Movimentacao[] = await res.json();
 
         if (json.length === 0) {
-          setHasMoreData(false); 
+          setHasMoreData(false);
           return;
         }
 
@@ -146,18 +157,6 @@ const Movimentacoes: React.FC = () => {
       setPage(1);
       setHasMoreData(true);
     }, 300); // Debounce delay
-  };
-
-  const formatDate = (timestamp: number | null): string => {
-    if (!timestamp) return "—";
-    const d = new Date(timestamp);
-    return d.toLocaleString("pt-BR", {
-      day: "2-digit",
-      month: "2-digit",
-      year: "numeric",
-      hour: "2-digit",
-      minute: "2-digit",
-    });
   };
 
   const getDescriptiveTipo = (tipo: string, status: string): string => {
@@ -310,9 +309,13 @@ const Movimentacoes: React.FC = () => {
                       <button
                         className={styles["action-button"]}
                         onClick={() =>
-                          handleDevolverEmprestimo(String(m.id), navigate, () => {
-                            handleActionUpdate(m.id, "DEVOLVIDO");
-                          })
+                          handleDevolverEmprestimo(
+                            String(m.id),
+                            navigate,
+                            () => {
+                              handleActionUpdate(m.id, "DEVOLVIDO");
+                            }
+                          )
                         }
                       >
                         Devolver

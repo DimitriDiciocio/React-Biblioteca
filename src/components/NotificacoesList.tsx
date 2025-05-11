@@ -1,32 +1,15 @@
 import React, { useState, useEffect } from "react";
 import { Note } from "../services/useNotification";
-import { io } from "socket.io-client";
-
 interface Props {
   notes: Note[];
 }
 
 const NotificacoesList: React.FC<Props> = ({ notes }) => {
   const [localNotes, setLocalNotes] = useState(notes);
-  const socket = io("http://127.0.0.1:5000");
 
   useEffect(() => {
     setLocalNotes(notes); // Update notifications if props change
   }, [notes]);
-useEffect(() => {
-    socket.emit("notificacoesVisualizadas"); // Notifica o backend que as notificações foram visualizadas
-  }, [socket]);
-
-
-  useEffect(() => {
-    socket.emit("notificacoesVisualizadas"); // Notifica o backend que as notificações foram visualizadas
-  }, [socket]);
-
-  useEffect(() => {
-    return () => {
-      socket.disconnect();
-    };
-  }, []);
 
   return (
     <div className="notificacoes-container">

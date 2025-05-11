@@ -4,6 +4,7 @@ import Header from "../components/Header";
 import Footer from "../components/Footer";
 import MostrarTop from "../components/MostrarTop";
 import PorqueVoceLeu from "../components/PorqueVoceLeu";
+import Banners from "../components/Banners";
 
 const Home: React.FC = () => {
   const token = localStorage.getItem("token");
@@ -12,15 +13,7 @@ const Home: React.FC = () => {
     <div>
       <Header />
       <main className="background-blue">
-        <section>
-          <img src="" alt="" />
-        </section>
-        <section>
-          <img src="" alt="" />
-          <img src="" alt="" />
-          <img src="" alt="" />
-          <img src="" alt="" />
-        </section>
+        <Banners />
         <section>
           <p className="montserrat-alternates-semibold size-titles">
             Recomendados

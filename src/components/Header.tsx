@@ -3,7 +3,6 @@ import { useNavigate } from "react-router-dom";
 import Modal from "./Modal";
 import Swal from "sweetalert2";
 import NotificacoesModal from "./NotificacoesModal";
-import { io } from "socket.io-client";
 import { useStore } from "../store/useStore";
 import NotificationIcon from "./NotificationIcon";
 
@@ -107,18 +106,6 @@ const Header: React.FC = () => {
 
     fetchUserData();
   }, [navigate, token]);
-
-  useEffect(() => {
-    const socket = io("http://127.0.0.1:5000"); // Substitua pela URL do seu servidor WebSocket
-    socket.on("novaNotificacao", (notificacao) => {
-      const { adicionarNotificacao } = useStore.getState();
-      adicionarNotificacao(notificacao); // Add notification and update state
-    });
-
-    return () => {
-      socket.disconnect();
-    };
-  }, []);
 
   useEffect(() => {
     fetchNotificacoes(); // Fetch notifications on component mount

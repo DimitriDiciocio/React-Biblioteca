@@ -10,13 +10,13 @@ import PuxarHistorico from "../components/PuxarHistorico";
 import Swal from "sweetalert2";
 import MultasByUser from "../components/MultasByUser";
 import NotificacoesPage from "../components/NotificacoesPage";
-import infoIcon from '../../assets/img/info-icon.png';
-import securityIcon from '../../assets/img/security-icon.png';
-import bookIcon from '../../assets/img/book-icon.png';
-import listIcon from '../../assets/img/list-icon.png';
-import historicIcon from '../../assets/img/historic-icon.png';
-import fineIcon from '../../assets/img/fine-icon.png';
-import notificationIcon from '../../assets/img/notification-icon.png';
+import infoIcon from "../../assets/img/info-icon.png";
+import securityIcon from "../../assets/img/security-icon.png";
+import bookIcon from "../../assets/img/book-icon.png";
+import listIcon from "../../assets/img/list-icon.png";
+import historicIcon from "../../assets/img/historic-icon.png";
+import fineIcon from "../../assets/img/fine-icon.png";
+import notificationIcon from "../../assets/img/notification-icon.png";
 
 const Config: React.FC = () => {
   const [nome, setNome] = useState("");
@@ -118,11 +118,11 @@ const Config: React.FC = () => {
       return false;
     }
   };
-  
+
   const Sair = () => {
     localStorage.removeItem("token");
-    navigate("/login")
-  }
+    navigate("/login");
+  };
 
   if (isAllowed === null) return <p>Verificando permissão...</p>;
   if (!isAllowed) return null;
@@ -131,43 +131,115 @@ const Config: React.FC = () => {
     <div>
       <Header />
       <main className="background-blue">
-      <aside className={`sidebar ${isSidebarOpen ? "open" : "closed"}`}>
-          <nav className="nav-lateral">
-            <ul>
-            <div className="jc-end m-right">
-              <button className="xiii" onClick={toggleSidebar}>
-                {isSidebarOpen ? "✕" : "☰"}
-              </button>
-            </div>
-              <li onClick={() => navigate("/user?page=1")} className="pointer">
-                <a className="link-flex"><img src={infoIcon} alt="Ícone Informações Pessoais" className="icon-config" /><span>Informações Pessoais</span></a>
-              </li>
-              <li onClick={() => navigate("/user?page=2")} className="pointer">
-                <a className="link-flex"><img src={securityIcon} alt="Ícone Segurança" className="icon-config" /><span>Segurança</span></a>
-              </li>
-              <li onClick={() => navigate("/user?page=3")} className="pointer">
-                <a className="link-flex"><img src={bookIcon} alt="Ícone Gerenciar Livros" className="icon-config" /><span>Gerenciar Livros</span></a>
-              </li>
-              <li onClick={() => navigate("/user?page=4")} className="pointer">
-                <a className="link-flex"><img src={listIcon} alt="Ícone Minha Lista" className="icon-config" /><span>Minha Lista</span></a>
-              </li>
-              <li onClick={() => navigate("/user?page=5")} className="pointer">
-                <a className="link-flex"><img src={historicIcon} alt="Ícone Histórico" className="icon-config" /><span>Histórico</span></a>
-              </li>
-              <li onClick={() => navigate("/user?page=6")} className="pointer">
-                <a className="link-flex"><img src={fineIcon} alt="Ícone Minhas Multas" className="icon-config" /><span>Minhas Multas</span></a>
-              </li>
-              <li onClick={() => navigate("/user?page=7")} className="pointer">
-                <a className="link-flex"><img src={notificationIcon} alt="Ícone Notificações" className="icon-config" /><span>Notificações</span></a>
-              </li>
-              <div className="space-sm-y"></div>
+        <aside className={`sidebar ${isSidebarOpen ? "open" : "closed"}`}>
+          <div className="jc-end m-right">
+            <button className="xiii" onClick={toggleSidebar}>
+              {isSidebarOpen ? "✕" : "☰"}
+            </button>
+          </div>
+          {isSidebarOpen && (
+            <nav className="nav-lateral">
+              <ul>
+                <li
+                  onClick={() => navigate("/user?page=1")}
+                  className="pointer"
+                >
+                  <a className="link-flex">
+                    <img
+                      src={infoIcon}
+                      alt="Ícone Informações Pessoais"
+                      className="icon-config"
+                    />
+                    <span>Informações Pessoais</span>
+                  </a>
+                </li>
+                <li
+                  onClick={() => navigate("/user?page=2")}
+                  className="pointer"
+                >
+                  <a className="link-flex">
+                    <img
+                      src={securityIcon}
+                      alt="Ícone Segurança"
+                      className="icon-config"
+                    />
+                    <span>Segurança</span>
+                  </a>
+                </li>
+                <li
+                  onClick={() => navigate("/user?page=3")}
+                  className="pointer"
+                >
+                  <a className="link-flex">
+                    <img
+                      src={bookIcon}
+                      alt="Ícone Gerenciar Livros"
+                      className="icon-config"
+                    />
+                    <span>Gerenciar Livros</span>
+                  </a>
+                </li>
+                <li
+                  onClick={() => navigate("/user?page=4")}
+                  className="pointer"
+                >
+                  <a className="link-flex">
+                    <img
+                      src={listIcon}
+                      alt="Ícone Minha Lista"
+                      className="icon-config"
+                    />
+                    <span>Minha Lista</span>
+                  </a>
+                </li>
+                <li
+                  onClick={() => navigate("/user?page=5")}
+                  className="pointer"
+                >
+                  <a className="link-flex">
+                    <img
+                      src={historicIcon}
+                      alt="Ícone Histórico"
+                      className="icon-config"
+                    />
+                    <span>Histórico</span>
+                  </a>
+                </li>
+                <li
+                  onClick={() => navigate("/user?page=6")}
+                  className="pointer"
+                >
+                  <a className="link-flex">
+                    <img
+                      src={fineIcon}
+                      alt="Ícone Minhas Multas"
+                      className="icon-config"
+                    />
+                    <span>Minhas Multas</span>
+                  </a>
+                </li>
+                <li
+                  onClick={() => navigate("/user?page=7")}
+                  className="pointer"
+                >
+                  <a className="link-flex">
+                    <img
+                      src={notificationIcon}
+                      alt="Ícone Notificações"
+                      className="icon-config"
+                    />
+                    <span>Notificações</span>
+                  </a>
+                </li>
+                <div className="space-sm-y"></div>
               </ul>
               <ul>
-              <li className="highlight pointer" onClick={() => Sair()} >
-                <a>Sair</a>
-              </li>
-            </ul>
-          </nav>
+                <li className="highlight pointer" onClick={() => Sair()}>
+                  <a>Sair</a>
+                </li>
+              </ul>
+            </nav>
+          )}
         </aside>
         <section className="content montserrat-alternates-semibold">
           <div className="page active">
@@ -189,7 +261,7 @@ const Config: React.FC = () => {
             <MultasByUser />
           </div>
           <div className="page">
-            <NotificacoesPage/>
+            <NotificacoesPage />
           </div>
         </section>
       </main>

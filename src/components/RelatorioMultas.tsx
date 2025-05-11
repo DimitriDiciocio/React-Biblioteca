@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { formatDate } from "../services/FormatDate";
 
 interface Multa {
   email: string;
@@ -6,6 +7,7 @@ interface Multa {
   nome: string;
   id_emprestimo: number;
   data_devolver: string;
+  pago: boolean; // Adicionado para indicar se foi pago ou não
 }
 
 export default function RelatorioMultas() {
@@ -25,13 +27,16 @@ export default function RelatorioMultas() {
       });
       const data = await response.json();
       setMultas(
-        data.multas.map((multa: any) => ({
-          email: multa[0],
-          telefone: multa[1],
-          nome: multa[2],
-          id_emprestimo: multa[3],
-          data_devolver: multa[4]
-        }))
+        data.multas.map(
+          (multa: [string, string, string, number, string, boolean]) => ({
+            email: multa[0],
+            telefone: multa[1],
+            nome: multa[2],
+            id_emprestimo: multa[3],
+            data_devolver: multa[4],
+            pago: multa[5],
+          })
+        )
       );
     } catch (error) {
       console.error("Erro ao buscar multas:", error);
@@ -54,13 +59,16 @@ export default function RelatorioMultas() {
       );
       const data = await response.json();
       setMultasPendentes(
-        data.multas_pendentes.map((multa: any) => ({
-          email: multa[0],
-          telefone: multa[1],
-          nome: multa[2],
-          id_emprestimo: multa[3],
-          data_devolver: multa[4],
-        }))
+        data.multas_pendentes.map(
+          (multa: [string, string, string, number, string, boolean]) => ({
+            email: multa[0],
+            telefone: multa[1],
+            nome: multa[2],
+            id_emprestimo: multa[3],
+            data_devolver: multa[4],
+            pago: multa[5],
+          })
+        )
       );
     } catch (error) {
       console.error("Erro ao buscar multas pendentes:", error);
@@ -115,8 +123,11 @@ export default function RelatorioMultas() {
   }, [abaAtiva]);
 
   return (
-    <div className="montserrat-alternates" style={{ padding: "24px", maxWidth: "1000px", margin: "0 auto" }}>
-      <div 
+    <div
+      className="montserrat-alternates"
+      style={{ padding: "24px", maxWidth: "1000px", margin: "0 auto" }}
+    >
+      <div
         style={{
           display: "flex",
           justifyContent: "space-between",
@@ -130,7 +141,8 @@ export default function RelatorioMultas() {
           Relatório de Multas
         </h1>
         <div style={{ display: "flex", gap: "10px" }}>
-          <button className="montserrat-alternates"
+          <button
+            className="montserrat-alternates"
             onClick={gerarPDF}
             disabled={loading}
             style={{
@@ -148,7 +160,8 @@ export default function RelatorioMultas() {
             onClick={() =>
               abaAtiva === "geral" ? buscarMultas() : buscarMultasPendentes()
             }
-            disabled={loading} className="montserrat-alternates"
+            disabled={loading}
+            className="montserrat-alternates"
             style={{
               padding: "8px 3px",
               backgroundColor: "#2473D9",
@@ -163,7 +176,8 @@ export default function RelatorioMultas() {
         </div>
       </div>
 
-      <div className="montserrat-alternates"
+      <div
+        className="montserrat-alternates"
         style={{
           display: "flex",
           justifyContent: "center",
@@ -211,25 +225,85 @@ export default function RelatorioMultas() {
           <table style={{ width: "100%", borderCollapse: "collapse" }}>
             <thead>
               <tr style={{ backgroundColor: "#f0f0f0" }}>
-                <th className="montserrat-alternates" style={{ textAlign: "left", padding: "12px" }}>Email</th>
-                <th className="montserrat-alternates" style={{ textAlign: "left", padding: "12px" }}>Telefone</th>
-                <th className="montserrat-alternates" style={{ textAlign: "left", padding: "12px" }}>Nome</th>
-                <th className="montserrat-alternates" style={{ textAlign: "left", padding: "12px" }}>
+                <th
+                  className="montserrat-alternates"
+                  style={{ textAlign: "left", padding: "12px" }}
+                >
+                  Email
+                </th>
+                <th
+                  className="montserrat-alternates"
+                  style={{ textAlign: "left", padding: "12px" }}
+                >
+                  Telefone
+                </th>
+                <th
+                  className="montserrat-alternates"
+                  style={{ textAlign: "left", padding: "12px" }}
+                >
+                  Nome
+                </th>
+                <th
+                  className="montserrat-alternates"
+                  style={{ textAlign: "left", padding: "12px" }}
+                >
                   ID Empréstimo
                 </th>
-                <th className="montserrat-alternates" style={{ textAlign: "left", padding: "12px" }}> 
+                <th
+                  className="montserrat-alternates"
+                  style={{ textAlign: "left", padding: "12px" }}
+                >
                   Data Devolver
+                </th>
+                <th
+                  className="montserrat-alternates"
+                  style={{ textAlign: "left", padding: "12px" }}
+                >
+                  Pago
                 </th>
               </tr>
             </thead>
             <tbody>
               {multas.map((multa, index) => (
                 <tr key={index} style={{ borderBottom: "1px solid #ddd" }}>
-                  <td className="montserrat-alternates" style={{ padding: "10px" }}>{multa.email}</td>
-                  <td className="montserrat-alternates" style={{ padding: "10px" }}>{multa.telefone}</td>
-                  <td className="montserrat-alternates" style={{ padding: "10px" }}>{multa.nome}</td>
-                  <td className="montserrat-alternates" style={{ padding: "10px" }}>{multa.id_emprestimo}</td>
-                  <td className="montserrat-alternates" style={{ padding: "10px" }}>{multa.data_devolver}</td>
+                  <td
+                    className="montserrat-alternates"
+                    style={{ padding: "10px" }}
+                  >
+                    {multa.email}
+                  </td>
+                  <td
+                    className="montserrat-alternates"
+                    style={{ padding: "10px" }}
+                  >
+                    {multa.telefone}
+                  </td>
+                  <td
+                    className="montserrat-alternates"
+                    style={{ padding: "10px" }}
+                  >
+                    {multa.nome}
+                  </td>
+                  <td
+                    className="montserrat-alternates"
+                    style={{ padding: "10px" }}
+                  >
+                    {multa.id_emprestimo}
+                  </td>
+                  <td
+                    className="montserrat-alternates"
+                    style={{ padding: "10px" }}
+                  >
+                    {multa.data_devolver
+                      ? formatDate(multa.data_devolver)
+                      : "N/A"}
+                  </td>
+                  <td
+                    className="montserrat-alternates"
+                    style={{ padding: "10px" }}
+                  >
+                    {multa.pago ? "Sim" : "Não"}
+                  </td>
                 </tr>
               ))}
             </tbody>
@@ -258,6 +332,7 @@ export default function RelatorioMultas() {
                 <th style={{ textAlign: "left", padding: "12px" }}>
                   Data Devolver
                 </th>
+                <th style={{ textAlign: "left", padding: "12px" }}>Pago</th>
               </tr>
             </thead>
             <tbody>
@@ -267,7 +342,14 @@ export default function RelatorioMultas() {
                   <td style={{ padding: "10px" }}>{multa.telefone}</td>
                   <td style={{ padding: "10px" }}>{multa.nome}</td>
                   <td style={{ padding: "10px" }}>{multa.id_emprestimo}</td>
-                  <td style={{ padding: "10px" }}>{multa.data_devolver}</td>
+                  <td style={{ padding: "10px" }}>
+                    {multa.data_devolver
+                      ? formatDate(multa.data_devolver)
+                      : "N/A"}
+                  </td>
+                  <td style={{ padding: "10px" }}>
+                    {multa.pago ? "Sim" : "Não"}
+                  </td>
                 </tr>
               ))}
             </tbody>

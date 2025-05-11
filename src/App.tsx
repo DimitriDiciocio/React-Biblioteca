@@ -17,25 +17,9 @@ import HomeBiblio from "./pages/HomeBiblio";
 import Config from "./pages/Config";
 import SemPermissao from "./pages/SemPermissao";
 import DetalhesUsuario from "./pages/DetalhesUsuario";
-import { useEffect } from 'react'
-import { useStore } from './store/useStore'
-
-export function NotificacaoListener() {
-  const socket = useStore((s) => s.socket)
-  const adicionarNotificacao = useStore((s) => s.adicionarNotificacao)
-
-  useEffect(() => {
-    socket.on('novaNotificacao', (nova: any) => {
-      adicionarNotificacao(nova)
-    })
-    return () => {
-      socket.off('novaNotificacao')
-    }
-  }, [socket, adicionarNotificacao])
-
-  return null
-}
-
+import AddBanners from "./components/AddBanners";
+import DetalhesBanner from "./pages/DetalhesBanner";
+import CadastroBiblioteca from "./pages/CadastroBiblioteca";
 
 const App: React.FC = () => {
   return (
@@ -59,6 +43,9 @@ const App: React.FC = () => {
         <Route path="/user" element={<Config />} />
         <Route path="/sem-permissao" element={<SemPermissao />} />
         <Route path="/usuarios/:id" element={<DetalhesUsuario />} />
+        <Route path="/addBanners" element={<AddBanners />} />
+        <Route path="/detalhesBanner/:id_banner" element={<DetalhesBanner />} />
+        <Route path="/cadastro_biblioteca" element={<CadastroBiblioteca />} />
       </Routes>
     </Router>
   );
