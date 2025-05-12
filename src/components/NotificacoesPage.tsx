@@ -29,7 +29,7 @@ const NotificacoesPage: React.FC = () => {
 
   return (
     <div style={{ padding: "2rem" }}>
-      <h2>Minhas Notificações</h2>
+      <h2 className="montserrat-alternates-semibold">Minhas Notificações</h2>
       <NotificacoesList notes={notes} />
     </div>
   );

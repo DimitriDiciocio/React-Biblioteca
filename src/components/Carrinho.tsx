@@ -425,12 +425,12 @@ const Carrinho: React.FC = () => {
 
   return (
     <div className="container">
-      <h1 className="titulo">Seu Carrinho</h1>
+      <h1 className="titulo montserrat-alternates-semibold">Meu Carrinho</h1>
       <div className="gap-tabela">
         <section className="secao">
-          <h2 className="titulo-secao">Livros Reservados</h2>
+          <h2 className="titulo-secao montserrat-alternates-semibold">Livros Reservados</h2>
           {reservas.length === 0 ? (
-            <p>Nenhum livro reservado.</p>
+            <p className="montserrat-alternates">Nenhum livro reservado.</p>
           ) : (
             <div className="lista-livros">
               {reservas.map((book) => (
@@ -441,11 +441,11 @@ const Carrinho: React.FC = () => {
                     className="imagem-livro"
                   />
                   <div className="info-livro">
-                    <h3>{book.titulo}</h3>
-                    <p>{book.autor}</p>
+                    <h3 className="montserrat-alternates">{book.titulo}</h3>
+                    <p className="montserrat-alternates">{book.autor}</p>
                   </div>
                   <button
-                    className="botao-remover"
+                    className="botao-remover montserrat-alternates-semibold"
                     onClick={() => removerLivro(book.id_reserva!, "reserva")}
                   >
                     ✖
@@ -459,7 +459,7 @@ const Carrinho: React.FC = () => {
           <div className="espaco-vazio2"></div>
           {reservas.length > 0 && (
             <div className="center-x">
-              <button className="botao-acao" onClick={reservarLivros} disabled={reserving}>
+              <button className="botao-acao montserrat-alternates-semibold" onClick={reservarLivros} disabled={reserving}>
                 Reservar Todos
               </button>
             </div>
@@ -467,9 +467,9 @@ const Carrinho: React.FC = () => {
         </section>
         <div className="espaco-vazio2"></div>
         <section className="secao">
-          <h2 className="titulo-secao">Livros Emprestados</h2>
+          <h2 className="titulo-secao montserrat-alternates-semibold">Livros Emprestados</h2>
           {emprestimos.length === 0 ? (
-            <p>Nenhum livro emprestado.</p>
+            <p className="montserrat-alternates">Nenhum livro emprestado.</p>
           ) : (
             <div className="lista-livros">
               {emprestimos.map((book) => (
@@ -480,11 +480,11 @@ const Carrinho: React.FC = () => {
                     className="imagem-livro"
                   />
                   <div className="info-livro">
-                    <h3>{book.titulo}</h3>
-                    <p>{book.autor}</p>
+                    <h3 className="montserrat-alternates">{book.titulo}</h3>
+                    <p className="montserrat-alternates">{book.autor}</p>
                   </div>
                   <button
-                    className="botao-remover"
+                    className="botao-remover montserrat-alternates-semibold"
                     onClick={() => removerLivro(book.id_emprestimo!, "emprestimo")}
                   >
                     ✖
@@ -496,7 +496,7 @@ const Carrinho: React.FC = () => {
           <div className="espaco-vazio2"></div>
           {emprestimos.length > 0 && (
             <div className="center-x">
-              <button className="botao-acao" onClick={emprestarLivros} disabled={borrowing}>
+              <button className="botao-acao montserrat-alternates-semibold" onClick={emprestarLivros} disabled={borrowing}>
                 Emprestar Todos
               </button>
             </div>

@@ -14,9 +14,9 @@ const NotificacoesList: React.FC<Props> = ({ notes }) => {
   return (
     <div className="notificacoes-container">
       {localNotes.length === 0 ? (
-        <p className="sem-notificacoes">Sem notificações.</p>
+        <p className="sem-notificacoes montserrat-alternates-semibold">Sem notificações.</p>
       ) : (
-        <ul className="notificacoes-lista">
+        <ul className="notificacoes-lista montserrat-alternates">
           {localNotes
             .slice()
             .reverse()
@@ -26,8 +26,8 @@ const NotificacoesList: React.FC<Props> = ({ notes }) => {
                 className={`notificacao-item fundo-site`}
               >
                 <div className="notificacao-header">
-                  <h3 className="notificacao-titulo">{note.titulo}</h3>
-                  <small className="notificacao-data">{note.data_adicionada}</small>
+                  <h3 className="notificacao-titulo montserrat-alternates-semibold  ">{note.titulo}</h3>
+                  <small className="notificacao-data montserrat-alternates">{note.data_adicionada}</small>
                 </div>
                 <p className="notificacao-mensagem">{note.mensagem}</p>
               </li>

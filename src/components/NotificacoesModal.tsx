@@ -32,7 +32,7 @@ const NotificacoesModal: React.FC<NotificacoesModalProps> = ({ onClose }) => {
   return (
     <div className={`${styles["notificacoes-modal"]} ${styles["notificacoes-modal-container"]}`}>
       <div className={styles["modal-header"]}>
-        <h3>Notificações</h3>
+        <h3 className="montserrat-alternates-semibold">Notificações</h3>
         <button className={styles["close-button"]} onClick={onClose}>✕</button>
       </div>
       <div className={styles["modal-content"]}>
@@ -41,7 +41,7 @@ const NotificacoesModal: React.FC<NotificacoesModalProps> = ({ onClose }) => {
       <div className={styles["modal-footer"]}>
         <button
           className={styles["ver-mais-button"]}
-          onClick={() => (window.location.href = "/user?page=8")}
+          onClick={() => (window.location.href = "/user?page=7")}
         >
           Ver mais
         </button>
