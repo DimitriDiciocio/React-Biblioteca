@@ -104,6 +104,7 @@ const AddBanners: React.FC = () => {
     <div>
       <main className="background-blue padding-responsive">
         <div className="space-sm-y"></div>
+        <div className="fake-header"></div>
         <section className="responsive-container center-x size-medium">
           <div className="d-flex-responsive">
             <i
@@ -112,7 +113,7 @@ const AddBanners: React.FC = () => {
             ></i>
             <div
               {...getRootProps()}
-              className="border-banner dropzone"
+              className="border-banner dropzone border-radius center-y"
               id="dropzone"
             >
               <input {...getInputProps()} />
@@ -212,7 +213,7 @@ const AddBanners: React.FC = () => {
             </form>
           </div>
         </section>
-        <div className="fake-header"></div>
+        
       </main>
     </div>
   );

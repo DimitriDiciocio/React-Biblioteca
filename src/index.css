@@ -124,6 +124,10 @@
 .g-sm {
   gap: 15px;
 }
+.g-ssm {
+  display: flex;
+  gap: 10px;
+}
 .pointer {
   cursor: pointer;
 }
@@ -133,6 +137,9 @@
 .jc-end {
   display: flex;
   justify-content: end;
+}
+.border-radius{
+  border-radius: 10px;
 }
 /* Header */
 
@@ -1073,8 +1080,8 @@ textarea.input {
 .nav-lateral ul {
   display: flex;
   flex-direction: column;
-  height: 100%; /* importante */
-  padding-top: 20px; /* se quiser manter */
+  height: 100%; 
+  padding-top: 15px; 
 }
 
 .nav-lateral a {
@@ -3631,4 +3638,20 @@ button.limpar-btn,
 
 .m-top {
   margin-top: 20px;
+}
+.sidebar.open .left-x {
+  position: absolute;
+  left: 89%;
+}
+.banner-image{
+  width: 80vw !important;
+  height: 70vh !important;
+}
+.banner-item{
+  display: flex;
+  justify-content: center;
+}
+
+.owl-theme .owl-nav.disabled + .owl-dots {
+  margin-top: -20px !important;
 }

@@ -1,4 +1,7 @@
 import React, { useEffect, useState } from "react";
+import OwlCarousel from "react-owl-carousel";
+import "owl.carousel/dist/assets/owl.carousel.css";
+import "owl.carousel/dist/assets/owl.theme.default.css";
 
 interface Banner {
   title: string;
@@ -26,15 +29,26 @@ const Banners: React.FC = () => {
 
   return (
     <div>
-      {banners.map((banner, index) => (
-        <div key={index} className="banner-item">
-          <img
-            src={`http://127.0.0.1:5000/uploads/banners/${banner.imagePath}`}
-            alt={banner.title}
-            className="banner-image"
-          />
-        </div>
-      ))}
+      <OwlCarousel
+        className="owl-theme"
+        loop={true}
+        nav={false}
+        dots={true}
+        autoplay={true}
+        autoplayTimeout={6000}
+        autoplayHoverPause={true}
+        items={1}
+      >
+        {banners.map((banner, index) => (
+          <div key={index} className="banner-item">
+            <img
+              src={`http://127.0.0.1:5000/uploads/banners/${banner.imagePath}`}
+              alt={banner.title}
+              className="banner-image"
+            />
+          </div>
+        ))}
+      </OwlCarousel>
     </div>
   );
 };

@@ -132,115 +132,99 @@ const Config: React.FC = () => {
       <Header />
       <main className="background-blue">
         <aside className={`sidebar ${isSidebarOpen ? "open" : "closed"}`}>
-          <div className="jc-end m-right">
-            <button className="xiii" onClick={toggleSidebar}>
-              {isSidebarOpen ? "✕" : "☰"}
-            </button>
-          </div>
-          {isSidebarOpen && (
-            <nav className="nav-lateral">
-              <ul>
-                <li
-                  onClick={() => navigate("/user?page=1")}
-                  className="pointer"
-                >
-                  <a className="link-flex">
-                    <img
-                      src={infoIcon}
-                      alt="Ícone Informações Pessoais"
-                      className="icon-config"
-                    />
-                    <span>Informações Pessoais</span>
-                  </a>
-                </li>
-                <li
-                  onClick={() => navigate("/user?page=2")}
-                  className="pointer"
-                >
-                  <a className="link-flex">
-                    <img
-                      src={securityIcon}
-                      alt="Ícone Segurança"
-                      className="icon-config"
-                    />
-                    <span>Segurança</span>
-                  </a>
-                </li>
-                <li
-                  onClick={() => navigate("/user?page=3")}
-                  className="pointer"
-                >
-                  <a className="link-flex">
-                    <img
-                      src={bookIcon}
-                      alt="Ícone Gerenciar Livros"
-                      className="icon-config"
-                    />
-                    <span>Gerenciar Livros</span>
-                  </a>
-                </li>
-                <li
-                  onClick={() => navigate("/user?page=4")}
-                  className="pointer"
-                >
-                  <a className="link-flex">
-                    <img
-                      src={listIcon}
-                      alt="Ícone Minha Lista"
-                      className="icon-config"
-                    />
-                    <span>Minha Lista</span>
-                  </a>
-                </li>
-                <li
-                  onClick={() => navigate("/user?page=5")}
-                  className="pointer"
-                >
-                  <a className="link-flex">
-                    <img
-                      src={historicIcon}
-                      alt="Ícone Histórico"
-                      className="icon-config"
-                    />
-                    <span>Histórico</span>
-                  </a>
-                </li>
-                <li
-                  onClick={() => navigate("/user?page=6")}
-                  className="pointer"
-                >
-                  <a className="link-flex">
-                    <img
-                      src={fineIcon}
-                      alt="Ícone Minhas Multas"
-                      className="icon-config"
-                    />
-                    <span>Minhas Multas</span>
-                  </a>
-                </li>
-                <li
-                  onClick={() => navigate("/user?page=7")}
-                  className="pointer"
-                >
-                  <a className="link-flex">
-                    <img
-                      src={notificationIcon}
-                      alt="Ícone Notificações"
-                      className="icon-config"
-                    />
-                    <span>Notificações</span>
-                  </a>
-                </li>
-                <div className="space-sm-y"></div>
-              </ul>
-              <ul>
-                <li className="highlight pointer" onClick={() => Sair()}>
-                  <a>Sair</a>
-                </li>
-              </ul>
-            </nav>
-          )}
+          <nav className="nav-lateral">
+            <ul>
+              <div className="jc-end m-right left-x">
+                <button className="xiii" onClick={toggleSidebar}>
+                  {isSidebarOpen ? "✕" : "☰"}
+                </button>
+              </div>
+              {isSidebarOpen && (
+                <nav className="nav-lateral">
+                  <ul>
+                    <li onClick={() => navigate("/user?page=1")} className="pointer">
+                      <a className="link-flex">
+                        <img
+                          src={infoIcon}
+                          alt="Ícone Informações Pessoais"
+                          className="icon-config"
+                        />
+                        <span>Informações Pessoais</span>
+                      </a>
+                    </li>
+                    <li onClick={() => navigate("/user?page=2")} className="pointer">
+                      <a className="link-flex">
+                        <img
+                          src={securityIcon}
+                          alt="Ícone Segurança"
+                          className="icon-config"
+                        />
+                        <span>Segurança</span>
+                      </a>
+                    </li>
+                    <li onClick={() => navigate("/user?page=3")} className="pointer">
+                      <a className="link-flex">
+                        <img
+                          src={bookIcon}
+                          alt="Ícone Gerenciar Livros"
+                          className="icon-config"
+                        />
+                        <span>Gerenciar Livros</span>
+                      </a>
+                    </li>
+                    <li onClick={() => navigate("/user?page=4")} className="pointer">
+                      <a className="link-flex">
+                        <img
+                          src={listIcon}
+                          alt="Ícone Minha Lista"
+                          className="icon-config"
+                        />
+                        <span>Minha Lista</span>
+                      </a>
+                    </li>
+                    <li onClick={() => navigate("/user?page=5")} className="pointer">
+                      <a className="link-flex">
+                        <img
+                          src={historicIcon}
+                          alt="Ícone Histórico"
+                          className="icon-config"
+                        />
+                        <span>Histórico</span>
+                      </a>
+                    </li>
+                    <li onClick={() => navigate("/user?page=6")} className="pointer">
+                      <a className="link-flex">
+                        <img
+                          src={fineIcon}
+                          alt="Ícone Minhas Multas"
+                          className="icon-config"
+                        />
+                        <span>Minhas Multas</span>
+                      </a>
+                    </li>
+                    <li onClick={() => navigate("/user?page=7")} className="pointer">
+                      <a className="link-flex">
+                        <img
+                          src={notificationIcon}
+                          alt="Ícone Notificações"
+                          className="icon-config"
+                        />
+                        <span>Notificações</span>
+                      </a>
+                    </li>
+                    <div className="space-sm-y"></div>
+                  </ul>
+                  <ul>
+                    <li className="highlight pointer" onClick={Sair}>
+                      <a>Sair</a>
+                    </li>
+                  </ul>
+                </nav>
+              )}
+            </ul>
+          </nav>
         </aside>
+
         <section className="content montserrat-alternates-semibold">
           <div className="page active">
             <EditarUsuario />

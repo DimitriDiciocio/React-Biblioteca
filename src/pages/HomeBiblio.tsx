@@ -21,6 +21,8 @@ import configIcon from "../../assets/img/config-icon.png";
 import arrowDown from "../../assets/img/arrow-down.png";
 import bannerIcon from "../../assets/img/banner-icon.png";
 import BannersAdm from "../components/BannersAdm";
+import AddBanners from "../components/AddBanners";
+import gBannersIcon from "../../assets/img/plusbanner.png";
 
 const HomeBiblio: React.FC = () => {
   const navigate = useNavigate();
@@ -35,17 +37,32 @@ const HomeBiblio: React.FC = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [isUsersMenuOpen, setIsUsersMenuOpen] = useState(false);
   const [isBooksMenuOpen, setIsBooksMenuOpen] = useState(false);
+  const [isBannersMenuOpen, setIsBannersMenuOpen] = useState(false);
   const currentPage =
     Number(new URLSearchParams(window.location.search).get("page")) || 1;
 
   const toggleUsersMenu = () => {
     setIsUsersMenuOpen((prev) => !prev);
-    if (!isUsersMenuOpen) setIsBooksMenuOpen(false); // Fecha o menu "Livros" ao abrir "Usuários"
+    if (!isUsersMenuOpen) {
+      setIsBooksMenuOpen(false); // Fecha o menu "Livros" ao abrir "Usuários"
+      setIsBannersMenuOpen(false); // Fecha o menu "Banners" ao abrir "Usuários"
+    }
   };
 
   const toggleBooksMenu = () => {
     setIsBooksMenuOpen((prev) => !prev);
-    if (!isBooksMenuOpen) setIsUsersMenuOpen(false); // Fecha o menu "Usuários" ao abrir "Livros"
+    if (!isBooksMenuOpen) {
+      setIsUsersMenuOpen(false); // Fecha o menu "Usuários" ao abrir "Livros"
+      setIsBannersMenuOpen(false); // Fecha o menu "Banners" ao abrir "Livros"
+    }
+  };
+
+  const toggleBannersMenu = () => {
+    setIsBannersMenuOpen((prev) => !prev);
+    if (!isBannersMenuOpen) {
+      setIsUsersMenuOpen(false); // Fecha o menu "Usuários" ao abrir "Banners"
+      setIsBooksMenuOpen(false); // Fecha o menu "Livros" ao abrir "Banners"
+    }
   };
 
   // Verifica permissão de administrador
@@ -170,34 +187,40 @@ const HomeBiblio: React.FC = () => {
     },
     {
       img: bannerIcon,
-      title: "Banners",
+      title: "Cadastrar Banners",
       description: "Aqui você pode adicionar banners para a página inicial",
       onClick: () => navigate("/home_biblio?page=6"),
+    },
+    {
+      img: gBannersIcon,
+      title: "Gerenciar Banners",
+      description: "Aqui você pode gerenciar os banners ativos e inativos",
+      onClick: () => navigate("/home_biblio?page=7"),
     },
     {
       img: transitionIcon,
       title: "Movimentações",
       description: "Aqui você pode acompanhar as movimentações da biblioteca",
-      onClick: () => navigate("/home_biblio?page=7"),
+      onClick: () => navigate("/home_biblio?page=8"),
     },
     {
       img: fineadmIcon,
       title: "Multas",
       description: "Aqui você acompanhar as multas da biblioteca",
-      onClick: () => navigate("/home_biblio?page=8"),
+      onClick: () => navigate("/home_biblio?page=9"),
     },
     {
       img: pdfIcon,
       title: "Relatórios",
       description:
         "Aqui você poderá gerar um relatório dos usuários e livros no formato PDF",
-      onClick: () => navigate("/home_biblio?page=9"),
+      onClick: () => navigate("/home_biblio?page=10"),
     },
     hasAdminPermission && {
       img: configIcon,
       title: "Configurações",
       description: "Aqui você pode ajustar as configurações do sistema",
-      onClick: () => navigate("/home_biblio?page=10"),
+      onClick: () => navigate("/home_biblio?page=11"),
     },
   ]
     .filter(Boolean)
@@ -241,7 +264,7 @@ const HomeBiblio: React.FC = () => {
         <aside className={`sidebar ${isSidebarOpen ? "open" : "closed"}`}>
           <nav className="nav-lateral">
             <ul>
-              <div className="jc-end m-right">
+              <div className="jc-end m-right left-x">
                 <button className="xiii" onClick={toggleSidebar}>
                   {isSidebarOpen ? "✕" : "☰"}
                 </button>
@@ -324,37 +347,62 @@ const HomeBiblio: React.FC = () => {
                       </>
                     </div>
                     <li
+                      className="pointer z-index-high"
+                      onClick={toggleBannersMenu}
+                    >
+                      <a>
+                      Banners <img className="arrowdown" src={arrowDown}></img>
+                      </a>
+                    </li>
+                    <div
+                      className={isBannersMenuOpen ? "submenu" : "submenu-hidden"}
+                    >
+                      <>
+                      <li
                       data-page="6"
                       onClick={() => navigate("/home_biblio?page=6")}
-                      className="pointer"
-                    >
-                      <a>Banners</a>
-                    </li>
-                    <li
-                      data-page="7"
-                      onClick={() => navigate("/home_biblio?page=7")}
-                      className="pointer"
-                    >
-                      <a>Movimentações</a>
-                    </li>
+                        className="pointer"
+                      >
+                        <button className="submenu-button montserrat-alternates-semibold">
+                        Cadastrar Banners
+                        </button>
+                      </li>
+                      <li
+                        data-page="7"
+                        onClick={() => navigate("/home_biblio?page=7")}
+                        className="pointer"
+                      >
+                        <button className="submenu-button montserrat-alternates-semibold">
+                        Gerenciar Banners
+                        </button>
+                      </li>
+                      </>
+                    </div>
                     <li
                       data-page="8"
                       onClick={() => navigate("/home_biblio?page=8")}
                       className="pointer"
                     >
-                      <a>Multas</a>
+                      <a>Movimentações</a>
                     </li>
                     <li
                       data-page="9"
                       onClick={() => navigate("/home_biblio?page=9")}
                       className="pointer"
                     >
+                      <a>Multas</a>
+                    </li>
+                    <li
+                      data-page="10"
+                      onClick={() => navigate("/home_biblio?page=10")}
+                      className="pointer"
+                    >
                       <a>Relatórios</a>
                     </li>
                     {hasAdminPermission && (
                       <li
-                        data-page="10"
-                        onClick={() => navigate("/home_biblio?page=10")}
+                        data-page="11"
+                        onClick={() => navigate("/home_biblio?page=11")}
                         className="pointer"
                       >
                         <a>Configurações</a>
@@ -435,19 +483,22 @@ const HomeBiblio: React.FC = () => {
             <Livros />
           </div>
           <div className="page" data-page="6">
-            <BannersAdm />
+            <AddBanners />
           </div>
           <div className="page" data-page="7">
-            <Movimentacoes />
+            <BannersAdm />
           </div>
           <div className="page" data-page="8">
-            <Multas />
+            <Movimentacoes />
           </div>
           <div className="page" data-page="9">
+            <Multas />
+          </div>
+          <div className="page" data-page="10">
             <Relatorios />
           </div>
           {hasAdminPermission && (
-            <div className="page" data-page="10">
+            <div className="page" data-page="11">
               <Configuracoes />
             </div>
           )}

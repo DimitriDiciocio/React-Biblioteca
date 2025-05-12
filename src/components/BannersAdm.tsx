@@ -32,7 +32,7 @@ const BannersAdm: React.FC = () => {
     fetchBanners();
   }, []);
 
-  const handleDelete = async (id_banner: number) => {
+  const handleDelete = async (  id_banner: number) => {
     const confirm = await Swal.fire({
       title: "Tem certeza?",
       text: "Você não poderá reverter esta ação!",
@@ -76,45 +76,42 @@ const BannersAdm: React.FC = () => {
 
   return (
     <div>
-      <div className="d-flex justify-between align-center">
+      <div className="d-flex justify-between align-center montserrat-alternates-semibold">
         <h1>Banners</h1>
-        <button
-          className="btn btn-primary"
-          onClick={() => navigate("/addBanners")}
-        >
-          Adicionar Banner
-        </button>
+
       </div>
       <table className="table">
         <thead>
           <tr>
-            <th>Título</th>
-            <th>Data de Início</th>
-            <th>Data de Fim</th>
-            <th>Ações</th>
+            <th className="montserrat-alternates-semibold">Título</th>
+            <th className="montserrat-alternates-semibold">Data de Início</th>
+            <th className="montserrat-alternates-semibold">Data de Fim</th>
+            <th className="montserrat-alternates-semibold">Ações</th>
           </tr>
         </thead>
         <tbody>
           {banners.map((banner) => (
-            <tr key={banner.id_banner}>
+            <tr  className="montserrat-alternates-semibold" key={banner.id_banner}>
               <td>{banner.title}</td>
               <td>{banner.startDate}</td>
               <td>{banner.finishDate}</td>
               <td>
-                <button
-                  className="btn btn-secondary"
-                  onClick={() =>
-                    navigate(`/detalhesBanner/${banner.id_banner}`)
-                  }
-                >
-                  Editar
-                </button>
-                <button
-                  className="btn btn-danger"
-                  onClick={() => handleDelete(banner.id_banner)}
-                >
-                  Deletar
-                </button>
+                <div className="g-ssm">
+                  <button
+                    className="btn btn-secondary montserrat-alternates-semibold"
+                    onClick={() =>
+                      navigate(`/detalhesBanner/${banner.id_banner}`)
+                    }
+                  >
+                    Editar
+                  </button>
+                  <button
+                    className="btn btn-danger montserrat-alternates-semibold"
+                    onClick={() => handleDelete(banner.id_banner)}
+                  >
+                    Deletar
+                  </button>
+                </div>
               </td>
             </tr>
           ))}
