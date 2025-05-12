@@ -197,7 +197,7 @@ const EditarLivro = () => {
                       cursor: "pointer",
                     }}
                   >
-                    X
+                    ✕
                   </button>
                 </>
               ) : (

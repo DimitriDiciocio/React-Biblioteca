@@ -147,22 +147,22 @@ const Search = () => {
                 onTagsChange={handleTagsChange}
               />
             </div>
-            <input type="text" placeholder="Autor..." value={formData.autor} onChange={(e) => setFormData(prev => ({ ...prev, autor: e.target.value }))} />
-            <input type="text" placeholder="Ano de publicação..." value={formData.ano_publicacao} onChange={(e) => setFormData(prev => ({ ...prev, ano_publicacao: e.target.value }))} />
-            <input type="text" placeholder="ISBN..." value={formData.isbn} onChange={(e) => setFormData(prev => ({ ...prev, isbn: e.target.value }))} />
-            <select value={formData.categoria} onChange={(e) => setFormData(prev => ({ ...prev, categoria: e.target.value }))}>
-              <option value="">Categoria</option>
-              <option value="Livro">Livro</option>
-              <option value="Artigo Científico">Artigo Científico</option>
-              <option value="Jornal">Jornal</option>
-              <option value="Quadrinhos">Quadrinhos</option>
+            <input className="montserrat-alternates" type="text" placeholder="Autor..." value={formData.autor} onChange={(e) => setFormData(prev => ({ ...prev, autor: e.target.value }))} />
+            <input className="montserrat-alternates" type="text" placeholder="Ano de publicação..." value={formData.ano_publicacao} onChange={(e) => setFormData(prev => ({ ...prev, ano_publicacao: e.target.value }))} />
+            <input className="montserrat-alternates" type="text" placeholder="ISBN..." value={formData.isbn} onChange={(e) => setFormData(prev => ({ ...prev, isbn: e.target.value }))} />
+            <select className="montserrat-alternates" value={formData.categoria} onChange={(e) => setFormData(prev => ({ ...prev, categoria: e.target.value }))}>
+              <option className="montserrat-alternates" value="">Categoria</option>
+              <option className="montserrat-alternates" value="Livro">Livro</option>
+              <option className="montserrat-alternates" value="Artigo Científico">Artigo Científico</option>
+              <option className="montserrat-alternates" value="Jornal">Jornal</option>
+              <option className="montserrat-alternates" value="Quadrinhos">Quadrinhos</option>
             </select>
-            <select value={formData.idioma} onChange={(e) => setFormData(prev => ({ ...prev, idioma: e.target.value }))}>
-              <option value="">Idioma</option>
-              <option value="Português">Português</option>
-              <option value="Inglês">Inglês</option>
-              <option value="Espanhol">Espanhol</option>
-              <option value="Francês">Francês</option>
+            <select className="montserrat-alternates" value={formData.idioma} onChange={(e) => setFormData(prev => ({ ...prev, idioma: e.target.value }))}>
+              <option className="montserrat-alternates" value="">Idioma</option>
+              <option className="montserrat-alternates" value="Português">Português</option>
+              <option className="montserrat-alternates" value="Inglês">Inglês</option>
+              <option className="montserrat-alternates" value="Espanhol">Espanhol</option>
+              <option className="montserrat-alternates" value="Francês">Francês</option>
             </select>
           </div>
         )}
@@ -197,7 +197,7 @@ const Search = () => {
           ))}
         </div>
         {books.length === 0 && !loading && (
-          <p className="mensagem-erro">Nenhum livro encontrado.</p>
+          <p className="mensagem-erro montserrat-alternates-semibold">Nenhum livro encontrado.</p>
         )}
         {loading && (
           <p className="mensagem-carregando">Carregando mais livros...</p>
