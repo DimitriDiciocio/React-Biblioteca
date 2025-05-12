@@ -118,6 +118,8 @@ const Login: React.FC = () => {
         </form>
         <div className="space-lilsm-y"></div>
         <a className='register text-decoration-none cursor-pointer z-index-high' onClick={() => navigate("/cadastro")}>Não possuo uma conta</a>
+        <div className="space-lilsm-y"></div>
+        <a className='register text-decoration-none cursor-pointer z-index-high' onClick={() => navigate("/esqueci-senha")}>Esqueci minha senha</a>
       </main>
   </div>
   );

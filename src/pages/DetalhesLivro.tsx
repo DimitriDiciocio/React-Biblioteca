@@ -157,8 +157,59 @@ const BookDetail = () => {
     fetchUserRating();
   }, [id, token]);
 
-  if (loading) return <p>Carregando...</p>;
-  if (!book) return <p>Livro não encontrado.</p>;
+  const handleAddToList = async () => {
+    if (!token) {
+      Swal.fire("Erro", "Você precisa estar logado para adicionar à sua lista.", "error");
+      return;
+    }
+
+    if (!isAllowed) {
+      Swal.fire("Erro", "Você não tem permissão para realizar esta ação.", "error");
+      return;
+    }
+
+    try {
+      Swal.fire({
+        title: "Adicionar à Minha Lista",
+        text: `Deseja adicionar "${book?.titulo}" à sua lista de leitura?`,
+        icon: "question",
+        showCancelButton: true,
+        confirmButtonColor: "#4562D6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Adicionar",
+        cancelButtonText: "Cancelar"
+      }).then(async (result) => {
+        if (result.isConfirmed) {
+          const response = await fetch(
+            `http://127.0.0.1:5000/livros/minhalista/adicionar/${id}`,
+            {
+              method: "POST",
+              headers: {
+                Authorization: `Bearer ${token}`,
+                "Content-Type": "application/json",
+              },
+            }
+          );
+
+          const data = await response.json();
+
+          if (!response.ok) {
+            Swal.fire("Erro", data.message || "Erro ao adicionar à lista", "error");
+            return;
+          }
+
+          Swal.fire("Sucesso", data.message, "success");
+        }
+      });
+    } catch (error) {
+      console.error("Erro ao adicionar à lista:", error);
+      Swal.fire(
+        "Erro",
+        "Ocorreu um erro ao tentar adicionar o livro à sua lista.",
+        "error"
+      );
+    }
+  };
 
   const handleAgendamento = async () => {
     if (!token) {
@@ -346,6 +397,9 @@ const BookDetail = () => {
     }
   };
 
+  if (loading) return <p>Carregando...</p>;
+  if (!book) return <p>Livro não encontrado.</p>;
+
   return (
     <div className="pagina-livro-informa">
       <Header />
@@ -373,6 +427,11 @@ const BookDetail = () => {
                     {tag.nome}
                   </p>
                 ))}
+                <button className="learn-more" onClick={handleAddToList}>
+                <span aria-hidden="true" className="">
+                  <span>+</span>
+                </span>
+              </button>
               </div>
             </div>
             <div>

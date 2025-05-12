@@ -1,0 +1,12 @@
+.circle.green {
+  background: #28a745 !important;
+}
+
+.icon.plus {
+  font-size: 24px;
+  font-weight: bold;
+  line-height: 24px;
+  margin: auto;
+  position: relative;
+  top: -2px;
+}

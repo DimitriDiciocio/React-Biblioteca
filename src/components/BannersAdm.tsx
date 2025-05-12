@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
+import { formatDate } from "../services/FormatDate";
 
 interface Banner {
   id_banner: number;
@@ -93,8 +94,8 @@ const BannersAdm: React.FC = () => {
           {banners.map((banner) => (
             <tr  className="montserrat-alternates-semibold" key={banner.id_banner}>
               <td>{banner.title}</td>
-              <td>{banner.startDate}</td>
-              <td>{banner.finishDate}</td>
+              <td>{formatDate(banner.startDate)}</td>
+              <td>{formatDate(banner.finishDate)}</td>
               <td>
                 <div className="g-ssm">
                   <button

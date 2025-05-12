@@ -5,6 +5,7 @@ import Footer from "../components/Footer";
 import MostrarTop from "../components/MostrarTop";
 import PorqueVoceLeu from "../components/PorqueVoceLeu";
 import Banners from "../components/Banners";
+import Novidades from "../components/Novidades";
 
 const Home: React.FC = () => {
   const token = localStorage.getItem("token");
@@ -45,10 +46,7 @@ const Home: React.FC = () => {
         </section>
         <div className="space-med-y"></div>
         <section>
-          <p className="montserrat-alternates-semibold size-titles">
-            Novidades
-          </p>
-          <MostrarLivros />
+          <Novidades />
         </section>
       </main>
       <Footer />

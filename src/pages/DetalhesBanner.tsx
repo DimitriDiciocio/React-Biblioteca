@@ -232,7 +232,7 @@ const DetalhesBanner: React.FC = () => {
                 <button
                   type="button"
                   className="salvar cancelar montserrat-alternates-semibold"
-                  onClick={() => navigate("/home_biblio?page=6")}
+                  onClick={() => navigate("/home_biblio?page=7")}
                 >
                   <span>Cancelar</span>
                 </button>

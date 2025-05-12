@@ -5,7 +5,6 @@ import Cadastro from "./pages/Cadastro";
 import AddBooks from "./pages/AddBooks";
 import Home from "./pages/Home";
 import EditarUsuario from "./components/EditarUsuario";
-import Relatorios from "./components/RelatorioLivros";
 import BookDetail from "./pages/DetalhesLivro";
 import Sair from "./pages/Sair";
 import EditarLivro from "./pages/EditarLivro";
@@ -19,6 +18,8 @@ import SemPermissao from "./pages/SemPermissao";
 import DetalhesUsuario from "./pages/DetalhesUsuario";
 import AddBanners from "./components/AddBanners";
 import DetalhesBanner from "./pages/DetalhesBanner";
+import RecuperarSenha from "./pages/RecuperarSenha";
+import EsqueciSenha from "./pages/EsqueciSenha";
 
 const App: React.FC = () => {
   return (
@@ -29,7 +30,6 @@ const App: React.FC = () => {
         <Route path="/login" element={<Login />} />
         <Route path="/user/editar" element={<EditarUsuario />} />
         <Route path="/addLivro" element={<AddBooks />} />
-        <Route path="/relatorios" element={<Relatorios />} />
         <Route path="/livro/:id" element={<BookDetail />} />
         <Route path="/editar_livro/:id" element={<EditarLivro />} />
         <Route path="/sair" element={<Sair />} />
@@ -44,6 +44,8 @@ const App: React.FC = () => {
         <Route path="/usuarios/:id" element={<DetalhesUsuario />} />
         <Route path="/addBanners" element={<AddBanners />} />
         <Route path="/detalhesBanner/:id_banner" element={<DetalhesBanner />} />
+        <Route path="/recuperar-senha" element={<RecuperarSenha />} />
+        <Route path="/esqueci-senha" element={<EsqueciSenha />} />
       </Routes>
     </Router>
   );

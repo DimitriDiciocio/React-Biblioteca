@@ -17,6 +17,7 @@ import listIcon from "../../assets/img/list-icon.png";
 import historicIcon from "../../assets/img/historic-icon.png";
 import fineIcon from "../../assets/img/fine-icon.png";
 import notificationIcon from "../../assets/img/notification-icon.png";
+import MinhaLista from "../components/MinhaLista";
 
 const Config: React.FC = () => {
   const [nome, setNome] = useState("");
@@ -236,7 +237,7 @@ const Config: React.FC = () => {
             <Carrinho />
           </div>
           <div className="page">
-            <p>Minha Lista</p>
+            <MinhaLista/>
           </div>
           <div className="page">
             <PuxarHistorico />
