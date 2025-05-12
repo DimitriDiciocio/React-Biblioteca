@@ -210,6 +210,7 @@ export default function RelatorioLivros({ isVisible }: Props) {
       >
         <button
           onClick={() => setAbaAtiva("geral")}
+          className="montserrat-alternates"
           style={{
             padding: "8px 16px",
             backgroundColor: abaAtiva === "geral" ? "#2473D9" : "#ccc",
@@ -223,6 +224,7 @@ export default function RelatorioLivros({ isVisible }: Props) {
         </button>
         <button
           onClick={() => setAbaAtiva("faltando")}
+          className="montserrat-alternates"
           style={{
             padding: "8px 16px",
             backgroundColor: abaAtiva === "faltando" ? "#2473D9" : "#ccc",
