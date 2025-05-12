@@ -3,7 +3,7 @@ import Header from "../components/Header";
 import { useDropzone } from "react-dropzone";
 import { useNavigate, useLocation } from "react-router-dom";
 import { usePermission } from "../components/usePermission";
-import EditarUsuario from "../components/EditarUsuario";
+import EditarUsuario from "../components/EditarUsuarioCopy";
 import TrocarSenha from "../components/TrocarSenha";
 import Carrinho from "../components/Carrinho";
 import PuxarHistorico from "../components/PuxarHistorico";

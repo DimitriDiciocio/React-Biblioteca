@@ -241,7 +241,6 @@ const EditarUsuario: React.FC = () => {
 
   return (
     <div className="pagina-edicao-usuario ">
-      <div className="space-xxbig-y"></div>
 
       <main className="background-blue">
         <section className="d-flex center-x center-y size-medium g-30 ">
