@@ -1,5 +1,9 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { formatDate } from "../services/FormatDate";
+
+interface Props {
+  isVisible: boolean;
+}
 
 interface Multa {
   email: string;
@@ -7,49 +11,76 @@ interface Multa {
   nome: string;
   id_emprestimo: number;
   data_devolver: string;
-  pago: boolean; // Adicionado para indicar se foi pago ou não
+  pago: boolean;
 }
 
-export default function RelatorioMultas() {
+export default function RelatorioMultas({ isVisible }: Props) {
   const [multas, setMultas] = useState<Multa[]>([]);
   const [multasPendentes, setMultasPendentes] = useState<Multa[]>([]);
   const [loading, setLoading] = useState(false);
   const [abaAtiva, setAbaAtiva] = useState<"geral" | "pendentes">("geral");
+  const [pageGeral, setPageGeral] = useState(1);
+  const [pagePendentes, setPagePendentes] = useState(1);
+  const [hasMoreGeral, setHasMoreGeral] = useState(true);
+  const [hasMorePendentes, setHasMorePendentes] = useState(true);
+  const [initialLoadDone, setInitialLoadDone] = useState(false);
 
-  const buscarMultas = async () => {
+  const buscarMultas = useCallback(async () => {
+    if (!hasMoreGeral || loading) return;
     setLoading(true);
     try {
-      const response = await fetch("http://localhost:5000/relatorio/multas", {
+      const response = await fetch(`http://localhost:5000/relatorio/multas/${pageGeral}`, {
         method: "GET",
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
       });
+
+      if (!response.ok) {
+        if (response.status === 404) {
+          setHasMoreGeral(false);
+          return;
+        }
+        throw new Error("Erro ao buscar multas");
+      }
+
       const data = await response.json();
-      setMultas(
-        data.multas.map(
-          (multa: [string, string, string, number, string, boolean]) => ({
-            email: multa[0],
-            telefone: multa[1],
-            nome: multa[2],
-            id_emprestimo: multa[3],
-            data_devolver: multa[4],
-            pago: multa[5],
-          })
-        )
+      if (!data.multas || data.multas.length === 0) {
+        setHasMoreGeral(false);
+        return;
+      }
+
+      const formattedMultas = data.multas.map(
+        (multa: [string, string, string, number, string, boolean]) => ({
+          email: multa[0],
+          telefone: multa[1],
+          nome: multa[2],
+          id_emprestimo: multa[3],
+          data_devolver: multa[4],
+          pago: multa[5],
+        })
       );
+
+      setMultas(prev => pageGeral === 1 ? formattedMultas : [...prev, ...formattedMultas]);
     } catch (error) {
       console.error("Erro ao buscar multas:", error);
     } finally {
       setLoading(false);
     }
-  };
+  }, [pageGeral, hasMoreGeral, loading]);
+  const buscarMultasPendentes = useCallback(async () => {
+    if (!hasMorePendentes || loading) return;
 
-  const buscarMultasPendentes = async () => {
+    // Check if we should stop loading more for pendentes
+    if (pagePendentes > 1 && multasPendentes.length === 0) {
+      setHasMorePendentes(false);
+      return;
+    }
+
     setLoading(true);
     try {
       const response = await fetch(
-        "http://localhost:5000/relatorio/multaspendentes",
+        `http://localhost:5000/relatorio/multaspendentes/${pagePendentes}`,
         {
           method: "GET",
           headers: {
@@ -57,25 +88,41 @@ export default function RelatorioMultas() {
           },
         }
       );
+
+      if (!response.ok) {
+        if (response.status === 404) {
+          setHasMorePendentes(false);
+          return;
+        }
+        throw new Error("Erro ao buscar multas pendentes");
+      }
+
       const data = await response.json();
-      setMultasPendentes(
-        data.multas_pendentes.map(
-          (multa: [string, string, string, number, string, boolean]) => ({
-            email: multa[0],
-            telefone: multa[1],
-            nome: multa[2],
-            id_emprestimo: multa[3],
-            data_devolver: multa[4],
-            pago: multa[5],
-          })
-        )
+      if (!data.multas_pendentes || data.multas_pendentes.length === 0) {
+        setHasMorePendentes(false);
+        return;
+      }
+
+      const formattedMultas = data.multas_pendentes.map(
+        (multa: [string, string, string, number, string, boolean]) => ({
+          email: multa[0],
+          telefone: multa[1],
+          nome: multa[2],
+          id_emprestimo: multa[3],
+          data_devolver: multa[4],
+          pago: multa[5],
+        })
+      );
+
+      setMultasPendentes(prev => 
+        pagePendentes === 1 ? formattedMultas : [...prev, ...formattedMultas]
       );
     } catch (error) {
       console.error("Erro ao buscar multas pendentes:", error);
     } finally {
       setLoading(false);
     }
-  };
+  }, [pagePendentes, hasMorePendentes, loading, multasPendentes.length]);
 
   const gerarPDF = async () => {
     try {
@@ -113,14 +160,81 @@ export default function RelatorioMultas() {
       console.error("Erro ao gerar relatório:", error);
     }
   };
+  const handleScroll = useCallback(() => {
+    if (loading || !isVisible) return;
+
+    // Only trigger if we have scrollable content
+    if (document.documentElement.scrollHeight <= window.innerHeight) return;
+
+    if (
+      window.innerHeight + document.documentElement.scrollTop
+      >= document.documentElement.offsetHeight - 100
+    ) {
+      if (abaAtiva === "geral" && hasMoreGeral) {
+        setPageGeral(prev => prev + 1);
+      } else if (abaAtiva === "pendentes" && hasMorePendentes) {
+        setPagePendentes(prev => prev + 1);
+      }
+    }
+  }, [loading, abaAtiva, hasMoreGeral, hasMorePendentes, isVisible]);
 
   useEffect(() => {
+    // Only attach scroll listener when component is visible
+    if (isVisible) {
+      window.addEventListener("scroll", handleScroll);
+      return () => window.removeEventListener("scroll", handleScroll);
+    }
+  }, [handleScroll, isVisible]);
+
+  useEffect(() => {
+    if (!isVisible) return;
+    
+    // Reset states when changing tabs
+    if (abaAtiva === "geral") {
+      setPageGeral(1);
+      setHasMoreGeral(true);
+      setMultas([]);
+      setInitialLoadDone(false); // Reset initial load flag to trigger new load
+    } else {
+      setPagePendentes(1);
+      setHasMorePendentes(true);
+      setMultasPendentes([]);
+      setInitialLoadDone(false); // Reset initial load flag to trigger new load
+    }
+  }, [abaAtiva, isVisible]);
+
+  useEffect(() => {
+    if (!isVisible || initialLoadDone) return;
+
+    // Initial load when component becomes visible
     if (abaAtiva === "geral") {
       buscarMultas();
     } else {
       buscarMultasPendentes();
     }
-  }, [abaAtiva]);
+    setInitialLoadDone(true);
+  }, [isVisible, initialLoadDone, abaAtiva, buscarMultas, buscarMultasPendentes]);
+
+  useEffect(() => {
+    if (!isVisible) return;
+
+    // Only fetch if user has scrolled for more
+    if ((abaAtiva === "geral" && pageGeral > 1) || 
+        (abaAtiva === "pendentes" && pagePendentes > 1)) {
+      if (abaAtiva === "geral") {
+        buscarMultas();
+      } else {
+        buscarMultasPendentes();
+      }
+    }
+  }, [
+    isVisible, 
+    abaAtiva, 
+    pageGeral, 
+    pagePendentes, 
+    buscarMultas, 
+    buscarMultasPendentes
+  ]);
 
   return (
     <div
@@ -225,89 +339,41 @@ export default function RelatorioMultas() {
           <table style={{ width: "100%", borderCollapse: "collapse" }}>
             <thead>
               <tr style={{ backgroundColor: "#f0f0f0" }}>
-                <th
-                  className="montserrat-alternates"
-                  style={{ textAlign: "left", padding: "12px" }}
-                >
-                  Email
-                </th>
-                <th
-                  className="montserrat-alternates"
-                  style={{ textAlign: "left", padding: "12px" }}
-                >
-                  Telefone
-                </th>
-                <th
-                  className="montserrat-alternates"
-                  style={{ textAlign: "left", padding: "12px" }}
-                >
-                  Nome
-                </th>
-                <th
-                  className="montserrat-alternates"
-                  style={{ textAlign: "left", padding: "12px" }}
-                >
-                  ID Empréstimo
-                </th>
-                <th
-                  className="montserrat-alternates"
-                  style={{ textAlign: "left", padding: "12px" }}
-                >
-                  Data Devolver
-                </th>
-                <th
-                  className="montserrat-alternates"
-                  style={{ textAlign: "left", padding: "12px" }}
-                >
-                  Pago
-                </th>
+                <th className="montserrat-alternates" style={{ textAlign: "left", padding: "12px" }}>Email</th>
+                <th className="montserrat-alternates" style={{ textAlign: "left", padding: "12px" }}>Telefone</th>
+                <th className="montserrat-alternates" style={{ textAlign: "left", padding: "12px" }}>Nome</th>
+                <th className="montserrat-alternates" style={{ textAlign: "left", padding: "12px" }}>ID Empréstimo</th>
+                <th className="montserrat-alternates" style={{ textAlign: "left", padding: "12px" }}>Data Devolver</th>
+                <th className="montserrat-alternates" style={{ textAlign: "left", padding: "12px" }}>Pago</th>
               </tr>
             </thead>
             <tbody>
-              {multas.map((multa, index) => (
-                <tr key={index} style={{ borderBottom: "1px solid #ddd" }}>
-                  <td
-                    className="montserrat-alternates"
-                    style={{ padding: "10px" }}
-                  >
-                    {multa.email}
-                  </td>
-                  <td
-                    className="montserrat-alternates"
-                    style={{ padding: "10px" }}
-                  >
-                    {multa.telefone}
-                  </td>
-                  <td
-                    className="montserrat-alternates"
-                    style={{ padding: "10px" }}
-                  >
-                    {multa.nome}
-                  </td>
-                  <td
-                    className="montserrat-alternates"
-                    style={{ padding: "10px" }}
-                  >
-                    {multa.id_emprestimo}
-                  </td>
-                  <td
-                    className="montserrat-alternates"
-                    style={{ padding: "10px" }}
-                  >
-                    {multa.data_devolver
-                      ? formatDate(multa.data_devolver)
-                      : "N/A"}
-                  </td>
-                  <td
-                    className="montserrat-alternates"
-                    style={{ padding: "10px" }}
-                  >
-                    {multa.pago ? "Sim" : "Não"}
+              {multas.length === 0 ? (
+                <tr>
+                  <td colSpan={6} className="montserrat-alternates" style={{ textAlign: "center", padding: "20px" }}>
+                    {loading ? "Carregando..." : "Nenhuma multa encontrada."}
                   </td>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              ) : (
+                multas.map((multa, index) => (
+                  <tr key={`${multa.id_emprestimo}-${index}`} style={{ borderBottom: "1px solid #ddd" }}>
+                    <td className="montserrat-alternates" style={{ padding: "10px" }}>{multa.email}</td>
+                    <td className="montserrat-alternates" style={{ padding: "10px" }}>{multa.telefone}</td>
+                    <td className="montserrat-alternates" style={{ padding: "10px" }}>{multa.nome}</td>
+                    <td className="montserrat-alternates" style={{ padding: "10px" }}>{multa.id_emprestimo}</td>
+                    <td className="montserrat-alternates" style={{ padding: "10px" }}>
+                      {multa.data_devolver ? formatDate(multa.data_devolver) : "N/A"}
+                    </td>
+                    <td className="montserrat-alternates" style={{ padding: "10px" }}>{multa.pago ? "Sim" : "Não"}</td>
+                  </tr>
+                ))
+              )}
+            </tbody>          </table>
+          {!loading && hasMoreGeral && multas.length > 0 && (
+            <div className="montserrat-alternates" style={{ textAlign: "center", padding: "10px", color: "#666" }}>
+              Carregando mais multas...
+            </div>
+          )}
         </div>
       )}
 
@@ -323,37 +389,42 @@ export default function RelatorioMultas() {
           <table style={{ width: "100%", borderCollapse: "collapse" }}>
             <thead>
               <tr style={{ backgroundColor: "#f0f0f0" }}>
-                <th style={{ textAlign: "left", padding: "12px" }}>Email</th>
-                <th style={{ textAlign: "left", padding: "12px" }}>Telefone</th>
-                <th style={{ textAlign: "left", padding: "12px" }}>Nome</th>
-                <th style={{ textAlign: "left", padding: "12px" }}>
-                  ID Empréstimo
-                </th>
-                <th style={{ textAlign: "left", padding: "12px" }}>
-                  Data Devolver
-                </th>
-                <th style={{ textAlign: "left", padding: "12px" }}>Pago</th>
+                <th className="montserrat-alternates" style={{ textAlign: "left", padding: "12px" }}>Email</th>
+                <th className="montserrat-alternates" style={{ textAlign: "left", padding: "12px" }}>Telefone</th>
+                <th className="montserrat-alternates" style={{ textAlign: "left", padding: "12px" }}>Nome</th>
+                <th className="montserrat-alternates" style={{ textAlign: "left", padding: "12px" }}>ID Empréstimo</th>
+                <th className="montserrat-alternates" style={{ textAlign: "left", padding: "12px" }}>Data Devolver</th>
+                <th className="montserrat-alternates" style={{ textAlign: "left", padding: "12px" }}>Pago</th>
               </tr>
             </thead>
             <tbody>
-              {multasPendentes.map((multa, index) => (
-                <tr key={index} style={{ borderBottom: "1px solid #ddd" }}>
-                  <td style={{ padding: "10px" }}>{multa.email}</td>
-                  <td style={{ padding: "10px" }}>{multa.telefone}</td>
-                  <td style={{ padding: "10px" }}>{multa.nome}</td>
-                  <td style={{ padding: "10px" }}>{multa.id_emprestimo}</td>
-                  <td style={{ padding: "10px" }}>
-                    {multa.data_devolver
-                      ? formatDate(multa.data_devolver)
-                      : "N/A"}
-                  </td>
-                  <td style={{ padding: "10px" }}>
-                    {multa.pago ? "Sim" : "Não"}
+              {multasPendentes.length === 0 ? (
+                <tr>
+                  <td colSpan={6} className="montserrat-alternates" style={{ textAlign: "center", padding: "20px" }}>
+                    {loading ? "Carregando..." : "Nenhuma multa pendente encontrada."}
                   </td>
                 </tr>
-              ))}
+              ) : (
+                multasPendentes.map((multa, index) => (
+                  <tr key={`${multa.id_emprestimo}-${index}`} style={{ borderBottom: "1px solid #ddd" }}>
+                    <td className="montserrat-alternates" style={{ padding: "10px" }}>{multa.email}</td>
+                    <td className="montserrat-alternates" style={{ padding: "10px" }}>{multa.telefone}</td>
+                    <td className="montserrat-alternates" style={{ padding: "10px" }}>{multa.nome}</td>
+                    <td className="montserrat-alternates" style={{ padding: "10px" }}>{multa.id_emprestimo}</td>
+                    <td className="montserrat-alternates" style={{ padding: "10px" }}>
+                      {multa.data_devolver ? formatDate(multa.data_devolver) : "N/A"}
+                    </td>
+                    <td className="montserrat-alternates" style={{ padding: "10px" }}>{multa.pago ? "Sim" : "Não"}</td>
+                  </tr>
+                ))
+              )}
             </tbody>
           </table>
+          {!loading && hasMorePendentes && multasPendentes.length > 0 && (
+            <div className="montserrat-alternates" style={{ textAlign: "center", padding: "10px", color: "#666" }}>
+              Carregando mais multas pendentes...
+            </div>
+          )}
         </div>
       )}
     </div>

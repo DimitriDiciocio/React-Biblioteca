@@ -19,7 +19,6 @@ import SemPermissao from "./pages/SemPermissao";
 import DetalhesUsuario from "./pages/DetalhesUsuario";
 import AddBanners from "./components/AddBanners";
 import DetalhesBanner from "./pages/DetalhesBanner";
-import CadastroBiblioteca from "./pages/CadastroBiblioteca";
 
 const App: React.FC = () => {
   return (
@@ -45,7 +44,6 @@ const App: React.FC = () => {
         <Route path="/usuarios/:id" element={<DetalhesUsuario />} />
         <Route path="/addBanners" element={<AddBanners />} />
         <Route path="/detalhesBanner/:id_banner" element={<DetalhesBanner />} />
-        <Route path="/cadastro_biblioteca" element={<CadastroBiblioteca />} />
       </Routes>
     </Router>
   );

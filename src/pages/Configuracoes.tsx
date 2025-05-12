@@ -10,29 +10,33 @@ const Configuracoes: React.FC = () => {
     valor_base: "",
     valor_acrescimo: "",
   });
-
+  // Library data is now part of configuracoes
   const [configuracoes, setConfiguracoes] = useState({
     dias_validade_emprestimo: "",
-    dias_validade_buscar: "",
-    dias_validade_reserva: "",
-    dias_validade_reserva_atender: "",
+    dias_validade_emprestimo_buscar: "",
+    chave_pix: "",
+    razao_social: "",
+    endereco: "",
+    telefone: "",
+    email: "",
   });
 
   const [originais, setOriginais] = useState({
     valor_base: 0,
     valor_acrescimo: 0,
     dias_validade_emprestimo: 0,
-    dias_validade_buscar: 0,
-    dias_validade_reserva: 0,
-    dias_validade_reserva_atender: 0,
+    dias_validade_emprestimo_buscar: 0,
   });
-
   interface HistoricoConfiguracao {
     dias_validade_emprestimo?: number;
-    dias_validade_buscar?: number;
-    dias_validade_reserva?: number;
-    dias_validade_reserva_atender?: number;
+    dias_validade_emprestimo_buscar?: number;
+    chave_pix?: string;
+    razao_social?: string;
+    endereco?: string;
+    telefone?: string;
+    email?: string;
     data_adicionado?: string;
+    [key: number]: string | number | undefined;
   }
 
   const [historicoConfiguracoes, setHistoricoConfiguracoes] = useState<
@@ -76,9 +80,7 @@ const Configuracoes: React.FC = () => {
       })
       .catch((error) => {
         console.error("Erro ao buscar valores:", error);
-      });
-
-    // Fetch current configurations
+      });    // Fetch current configurations
     fetch("http://127.0.0.1:5000/configuracoes?todas=false", {
       method: "GET",
       headers: {
@@ -90,21 +92,21 @@ const Configuracoes: React.FC = () => {
           throw new Error("Erro ao buscar configurações");
         }
         return response.json();
-      })
-      .then((data) => {
+      })      .then((data) => {
         const config = data.configuracoes_mais_recentes;
         setConfiguracoes({
-          dias_validade_emprestimo: config[1],
-          dias_validade_buscar: config[2],
-          dias_validade_reserva: config[4],
-          dias_validade_reserva_atender: config[3],
+          dias_validade_emprestimo: config[1]?.toString() || "",
+          dias_validade_emprestimo_buscar: config[2]?.toString() || "",
+          chave_pix: config[3]?.toString() || "",
+          razao_social: config[4]?.toString() || "",
+          endereco: config[5]?.toString() || "",
+          telefone: config[6]?.toString() || "",
+          email: config[7]?.toString() || "",
         });
         setOriginais((prev) => ({
           ...prev,
-          dias_validade_emprestimo: config[1],
-          dias_validade_buscar: config[2],
-          dias_validade_reserva: config[4],
-          dias_validade_reserva_atender: config[3],
+          dias_validade_emprestimo: parseInt(config.dias_validade_emprestimo || config[1]) || 0,
+          dias_validade_emprestimo_buscar: parseInt(config.dias_validade_emprestimo_buscar || config[2]) || 0,
         }));
       })
       .catch((error) => {
@@ -123,81 +125,91 @@ const Configuracoes: React.FC = () => {
           throw new Error("Erro ao buscar histórico de configurações");
         }
         return response.json();
-      })
-      .then((data) => {
+      })      .then((data) => {
         const config = data.configuracoes;
         setHistoricoConfiguracoes(
-          config.map((item: { [key: number]: number }) => ({
+          config.map((item: { [key: number]: number | string }) => ({
             dias_validade_emprestimo: item[1],
-            dias_validade_buscar: item[2],
-            dias_validade_reserva: item[3],
-            dias_validade_reserva_atender: item[4],
-            data_adicionado: item[5],
+            dias_validade_emprestimo_buscar: item[2],
+            chave_pix: item[3] || "",
+            razao_social: item[4] || "",
+            endereco: item[5] || "",
+            telefone: item[6] || "",
+            email: item[7] || "",
+            data_adicionado: item[8] || "",
           }))
         );
-      })
-      .catch((error) => {
+      }).catch((error) => {
         console.error("Erro ao buscar histórico de configurações:", error);
-      });
+      });    // Library data is now part of configuracoes
   }, [isAllowed]);
 
   if (isAllowed === false) {
     return null;
-  }
-
-  const handleSubmit = (e: React.FormEvent) => {
+  }const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
     const valorBase = parseFloat(valores.valor_base) || 0;
-    const valorAcrescimo = parseFloat(valores.valor_acrescimo) || 0;
-
+    const valorAcrescimo = parseFloat(valores.valor_acrescimo) || 0;    // Validate library data
     if (
-      valorBase < 0 ||
-      valorAcrescimo < 0 ||
-      Object.values(configuracoes).some((val) => parseInt(val) <= 0)
+      !configuracoes.razao_social ||
+      !configuracoes.chave_pix ||
+      !configuracoes.endereco ||
+      !configuracoes.telefone ||
+      !configuracoes.email
     ) {
       Swal.fire({
         icon: "error",
         title: "Erro",
-        text: "Os valores não podem ser menores ou iguais a 0.",
+        text: "Todos os campos da biblioteca são obrigatórios.",
       });
       return;
-    }
-
-    fetch("http://127.0.0.1:5000/valor/criar", {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${localStorage.getItem("token")}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        valor_base: valorBase,
-        valor_acrescimo: valorAcrescimo,
+    }    // Validate numeric fields
+    if (
+      valorBase < 0 ||
+      valorAcrescimo < 0 ||
+      parseInt(configuracoes.dias_validade_emprestimo) <= 0 ||
+      parseInt(configuracoes.dias_validade_emprestimo_buscar) <= 0
+    ) {
+      Swal.fire({
+        icon: "error",
+        title: "Erro",
+        text: "Os valores numéricos não podem ser menores ou iguais a 0.",
+      });
+      return;
+    }Promise.all([
+      fetch("http://127.0.0.1:5000/valor/criar", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          valor_base: valorBase,
+          valor_acrescimo: valorAcrescimo,
+        }),
       }),
-    })
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error("Erro ao atualizar valores");
+      fetch("http://127.0.0.1:5000/configuracoes/criar", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          dias_validade_emprestimo: parseInt(configuracoes.dias_validade_emprestimo),
+          dias_validade_buscar: parseInt(configuracoes.dias_validade_emprestimo_buscar),
+          chave_pix: configuracoes.chave_pix,
+          razao_social: configuracoes.razao_social,
+          endereco: configuracoes.endereco,
+          telefone: configuracoes.telefone,
+          email: configuracoes.email
+        }),
+      })
+    ])
+      .then(([valoresRes, configRes]) => {
+        if (!valoresRes.ok || !configRes.ok) {
+          throw new Error("Erro ao atualizar as configurações");
         }
-        return response.json();
-      })
-      .then(() => {
-        return fetch("http://127.0.0.1:5000/configuracoes/criar/", {
-          method: "POST",
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(configuracoes),
-        });
-      })
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error("Erro ao atualizar configurações");
-        }
-        return response.json();
-      })
-      .then(() => {
         Swal.fire({
           icon: "success",
           title: "Sucesso",
@@ -295,16 +307,33 @@ const Configuracoes: React.FC = () => {
               className={styles.input}
               required
             />
-          </div>
-          <div className={styles.inputGroup}>
-            <label>Dias de Validade para Buscar Empréstimo</label>
+          </div>          
+        <div className={styles.inputGroup}>            
+          <label>Dias de Validade para Buscar Empréstimo</label>
             <input
               type="number"
-              value={configuracoes.dias_validade_buscar}
+              value={configuracoes.dias_validade_emprestimo_buscar}
               onChange={(e) =>
                 setConfiguracoes({
                   ...configuracoes,
-                  dias_validade_buscar: e.target.value,
+                  dias_validade_emprestimo_buscar: e.target.value,
+                })
+              }
+              className={styles.input}
+              required
+            />
+          </div>
+
+          <h3 className={styles.subtitle}>Configurações da Biblioteca</h3>
+          <div className={styles.inputGroup}>
+            <label>Razão Social</label>
+            <input
+              type="text"              
+              value={configuracoes.razao_social}
+              onChange={(e) =>
+                setConfiguracoes({
+                  ...configuracoes,
+                  razao_social: e.target.value,
                 })
               }
               className={styles.input}
@@ -312,14 +341,14 @@ const Configuracoes: React.FC = () => {
             />
           </div>
           <div className={styles.inputGroup}>
-            <label>Dias de Validade da Reserva</label>
+            <label>Chave Pix</label>
             <input
-              type="number"
-              value={configuracoes.dias_validade_reserva}
+              type="text"
+              value={configuracoes.chave_pix}
               onChange={(e) =>
                 setConfiguracoes({
                   ...configuracoes,
-                  dias_validade_reserva: e.target.value,
+                  chave_pix: e.target.value,
                 })
               }
               className={styles.input}
@@ -327,14 +356,44 @@ const Configuracoes: React.FC = () => {
             />
           </div>
           <div className={styles.inputGroup}>
-            <label>Dias de Validade para Atender Reserva</label>
+            <label>Endereço</label>
             <input
-              type="number"
-              value={configuracoes.dias_validade_reserva_atender}
+              type="text"
+              value={configuracoes.endereco}
               onChange={(e) =>
                 setConfiguracoes({
                   ...configuracoes,
-                  dias_validade_reserva_atender: e.target.value,
+                  endereco: e.target.value,
+                })
+              }
+              className={styles.input}
+              required
+            />
+          </div>
+          <div className={styles.inputGroup}>
+            <label>Telefone</label>
+            <input
+              type="text"
+              value={configuracoes.telefone}
+              onChange={(e) =>
+                setConfiguracoes({
+                  ...configuracoes,
+                  telefone: e.target.value,
+                })
+              }
+              className={styles.input}
+              required
+            />
+          </div>
+          <div className={styles.inputGroup}>
+            <label>Email</label>
+            <input
+              type="email"
+              value={configuracoes.email}
+              onChange={(e) =>
+                setConfiguracoes({
+                  ...configuracoes,
+                  email: e.target.value,
                 })
               }
               className={styles.input}
@@ -350,44 +409,35 @@ const Configuracoes: React.FC = () => {
         <div className={styles.historico}>
           <h3 className={styles.subtitle}>Histórico de Configurações</h3>
           {historicoConfiguracoes && historicoConfiguracoes.length > 0 ? (
-            <table className={styles.table}>
-              <thead>
+            <table className={styles.table}>              
+            <thead>
                 <tr>
                   <th>Dias Empréstimo</th>
                   <th>Dias Buscar</th>
-                  <th>Dias Reserva</th>
-                  <th>Dias Atender Reserva</th>
+                  <th>Razão Social</th>
+                  <th>Chave Pix</th>
+                  <th>Email</th>
                   <th>Data Adicionado</th>
                 </tr>
               </thead>
               <tbody>
                 {historicoConfiguracoes.map((config, index) => (
-                  <tr key={index}>
+                  <tr key={index}>                    
                     <td>{config.dias_validade_emprestimo || "N/A"}</td>
-                    <td>{config.dias_validade_buscar || "N/A"}</td>
-                    <td>{config.dias_validade_reserva || "N/A"}</td>
-                    <td>{config.dias_validade_reserva_atender || "N/A"}</td>
-                    <td>
-                      {config.data_adicionado
-                        ? formatDate(config.data_adicionado)
-                        : "N/A"}
+                    <td>{config.dias_validade_emprestimo_buscar || "N/A"}</td>
+                    <td>{config.razao_social || "N/A"}</td>
+                    <td>{config.chave_pix || "N/A"}</td>
+                    <td>{config.email || "N/A"}</td>
+                    <td>{config.data_adicionado ? config.data_adicionado : "N/A"}
                     </td>
                   </tr>
                 ))}
               </tbody>
             </table>
           ) : (
-            <p className={styles.noData}>Nenhum histórico encontrado.</p>
-          )}
+            <p className={styles.noData}>Nenhum histórico encontrado.</p>          
+            )}
         </div>
-      )}
-      {isAllowed && (
-        <button
-          className={styles.button}
-          onClick={() => navigate("/cadastro_biblioteca")}
-        >
-          Cadastrar Biblioteca
-        </button>
       )}
     </div>
   );

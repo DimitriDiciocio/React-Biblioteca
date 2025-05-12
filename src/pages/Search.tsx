@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import Header from "../components/Header";
 import './Search.css';
@@ -28,6 +28,9 @@ const Search = () => {
 
   const [books, setBooks] = useState<Book[]>([]);
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  const [page, setPage] = useState(1);
+  const [loading, setLoading] = useState(false);
+  const [hasMore, setHasMore] = useState(true);
 
   const [formData, setFormData] = useState({
     tag: "",
@@ -40,38 +43,83 @@ const Search = () => {
 
   const toggleSidebar = () => setIsSidebarOpen((prev) => !prev);
 
-  useEffect(() => {
-    const searchBooks = async () => {
-      try {
-        const response = await fetch("http://127.0.0.1:5000/livros/pesquisa", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify({
-            pesquisa: search,
-            filtros: {
-              ...formData,
-              tags: selectedTags.map(tag => tag.nome),
-            }
-          }),          
-        });
+  const searchBooks = useCallback(async () => {
+    if (!hasMore || loading) return;
 
-        if (!response.ok) {
-          const errorMessage = await response.json();
-          throw new Error(errorMessage.message || "Erro na requisição.");
+    setLoading(true);
+    try {
+      const response = await fetch(`http://127.0.0.1:5000/livros/pesquisa/${page}`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          pesquisa: search,
+          filtros: {
+            ...formData,
+            tags: selectedTags.map(tag => tag.nome),
+          }
+        }),          
+      });
+
+      if (!response.ok) {
+        const errorMessage = await response.json();
+        throw new Error(errorMessage.message || "Erro na requisição.");
+      }
+
+      const data = await response.json();
+      
+      if (!data.resultados || data.resultados.length === 0) {
+        setHasMore(false);
+        if (page === 1) {
+          setBooks([]);
         }
+        return;
+      }
 
-        const data = await response.json();
-        setBooks(data.resultados);
-      } catch (error) {
-        console.error("Erro ao buscar livros:", error);
+      setBooks(prevBooks => {
+        const newBooks = data.resultados.filter((newBook: Book) => 
+          !prevBooks.some(existingBook => existingBook.id === newBook.id)
+        );
+        return page === 1 ? data.resultados : [...prevBooks, ...newBooks];
+      });
+    } catch (error) {
+      console.error("Erro ao buscar livros:", error);
+      setHasMore(false);
+      if (page === 1) {
         setBooks([]);
       }
-    };
+    } finally {
+      setLoading(false);
+    }
+  }, [search, formData, selectedTags, page, hasMore, loading]);
 
-    searchBooks();
+  const handleScroll = useCallback(() => {
+    if (loading || !hasMore) return;
+
+    const scrollPosition = window.innerHeight + document.documentElement.scrollTop;
+    const threshold = document.documentElement.offsetHeight - 100;
+    
+    if (scrollPosition >= threshold) {
+      setPage(prev => prev + 1);
+    }
+  }, [loading, hasMore]);
+
+  useEffect(() => {
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, [handleScroll]);
+
+  useEffect(() => {
+    // Reset states when search or filters change
+    setPage(1);
+    setHasMore(true);
+    setBooks([]);
   }, [search, formData, selectedTags]);
+
+  useEffect(() => {
+    searchBooks();
+  }, [page, searchBooks]);
 
   const handleTagsChange = (tags: Tag[]) => {
     setSelectedTags(tags);
@@ -148,8 +196,11 @@ const Search = () => {
             </div>
           ))}
         </div>
-        {books.length === 0 && (
+        {books.length === 0 && !loading && (
           <p className="mensagem-erro">Nenhum livro encontrado.</p>
+        )}
+        {loading && (
+          <p className="mensagem-carregando">Carregando mais livros...</p>
         )}
       </main>
     </div>

@@ -62,16 +62,14 @@ export default function PaginaRelatorios() {
         >
           Relatório de Multas
         </button>
-      </div>
-
-      <div style={{ display: mostrar === "livros" ? "block" : "none" }}>
-        <RelatorioLivros />
+      </div>      <div style={{ display: mostrar === "livros" ? "block" : "none" }}>
+        <RelatorioLivros isVisible={mostrar === "livros"} />
       </div>
       <div style={{ display: mostrar === "usuarios" ? "block" : "none" }}>
-        <RelatorioUsuarios />
+        <RelatorioUsuarios isVisible={mostrar === "usuarios"} />
       </div>
       <div style={{ display: mostrar === "multas" ? "block" : "none" }}>
-        <RelatorioMultas />
+        <RelatorioMultas isVisible={mostrar === "multas"} />
       </div>
     </div>
   );

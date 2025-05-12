@@ -48,11 +48,14 @@ const PorqueVoceLeu: React.FC = () => {
   }, []);
 
   if (!visivel) {
-    return <p>Recomendações não disponíveis no momento.</p>;
+    return null;
   }
 
   return (
-    <div>
+    <section>
+      <p className="montserrat-alternates-semibold size-titles">
+        Por que você leu <strong>{livroTitulo}</strong>
+      </p>
       {loading ? (
         <p>Carregando livros...</p>
       ) : books.length > 0 ? (
@@ -93,7 +96,7 @@ const PorqueVoceLeu: React.FC = () => {
       ) : (
         <p>Nenhum livro encontrado.</p>
       )}
-    </div>
+    </section>
   );
 };
 

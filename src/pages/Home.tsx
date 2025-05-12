@@ -31,15 +31,9 @@ const Home: React.FC = () => {
             </section>
             <div className="space-med-y"></div>
           </>
-        )}
-        {token && (
+        )}        {token && (
           <>
-            <section>
-              <p className="montserrat-alternates-semibold size-titles">
-                Por que você leu
-              </p>
-              <PorqueVoceLeu />
-            </section>
+            <PorqueVoceLeu />
             <div className="space-med-y"></div>
           </>
         )}

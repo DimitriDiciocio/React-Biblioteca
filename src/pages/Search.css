@@ -153,4 +153,10 @@
   .confirmar-btn:hover {
     background-color: #1d4ed8;
   }
-  
+
+.mensagem-carregando {
+  text-align: center;
+  padding: 20px;
+  color: #666;
+  font-family: 'Montserrat Alternates', sans-serif;
+}

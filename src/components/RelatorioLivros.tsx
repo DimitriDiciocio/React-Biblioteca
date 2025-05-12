@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import {
   BarChart,
   Bar,
@@ -9,6 +9,10 @@ import {
   CartesianGrid,
 } from "recharts";
 import "../index.css";
+
+interface Props {
+  isVisible: boolean;
+}
 
 interface Tag {
   id: number;
@@ -31,32 +35,82 @@ interface Book {
   idiomas: string;
 }
 
-export default function RelatorioLivros() {
+export default function RelatorioLivros({ isVisible }: Props) {
   const [livros, setLivros] = useState<Book[]>([]);
   const [loading, setLoading] = useState(false);
   const [abaAtiva, setAbaAtiva] = useState<"geral" | "faltando">("geral");
+  const [page, setPage] = useState(1);
+  const [hasMore, setHasMore] = useState(true);
 
-  const buscarLivros = async () => {
+  const buscarLivros = useCallback(async () => {
+    if (!hasMore || loading) return;
+
     setLoading(true);
     try {
       const endpoint =
         abaAtiva === "geral"
-          ? "http://localhost:5000/relatorio/livros"
-          : "http://localhost:5000/relatorio/livrosfaltando";
+          ? `http://localhost:5000/relatorio/livros/${page}`
+          : `http://localhost:5000/relatorio/livrosfaltando/${page}`;
 
       const response = await fetch(endpoint, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
       });
+
+      if (!response.ok) {
+        if (response.status === 404) {
+          setHasMore(false);
+          return;
+        }
+        throw new Error("Erro ao buscar livros");
+      }
+
       const data = await response.json();
-      setLivros(data.livros);
+      if (!data.livros || data.livros.length === 0) {
+        setHasMore(false);
+        return;
+      }
+
+      setLivros(prev => {
+        // Verifica se os novos livros já existem para evitar duplicação
+        const newBooks = data.livros.filter((newBook: Book) => 
+          !prev.some(existingBook => existingBook.id === newBook.id)
+        );
+        return page === 1 ? data.livros : [...prev, ...newBooks];
+      });
     } catch (error) {
       console.error("Erro ao buscar livros:", error);
+      setHasMore(false);
     } finally {
       setLoading(false);
     }
-  };
+  }, [abaAtiva, page, hasMore, loading]);
+
+  const handleScroll = useCallback(() => {
+  if (loading || !hasMore) return;
+
+  const scrollPosition = window.innerHeight + document.documentElement.scrollTop;
+  const threshold = document.documentElement.offsetHeight - 100;
+
+  if (scrollPosition >= threshold) {
+    setPage(prev => prev + 1);
+    buscarLivros(); // CHAMAR AQUI GARANTE QUE SÓ OCORRE DEPOIS DO SCROLL
+  }
+}, [loading, hasMore, buscarLivros]);
+
+
+  useEffect(() => {
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, [handleScroll]);
+
+  useEffect(() => {
+    // Reset states when changing tabs
+    setPage(1);
+    setHasMore(true);
+    setLivros([]);
+  }, [abaAtiva]);
 
   const relatorioPDF = async () => {
     try {
@@ -94,10 +148,6 @@ export default function RelatorioLivros() {
       console.error("Erro ao gerar relatório:", error);
     }
   };
-
-  useEffect(() => {
-    buscarLivros();
-  }, [abaAtiva]);
 
   return (
     <div style={{ padding: "24px", maxWidth: "1000px", margin: "0 auto" }}>
@@ -197,77 +247,44 @@ export default function RelatorioLivros() {
         <table style={{ width: "100%", borderCollapse: "collapse" }}>
           <thead>
             <tr style={{ backgroundColor: "#f0f0f0" }}>
-              <th
-                className="montserrat-alternates"
-                style={{ textAlign: "left", padding: "12px" }}
-              >
-                Título
-              </th>
-              <th
-                className="montserrat-alternates"
-                style={{ textAlign: "left", padding: "12px" }}
-              >
-                Autor
-              </th>
-              <th
-                className="montserrat-alternates"
-                style={{ textAlign: "left", padding: "12px" }}
-              >
-                Categoria
-              </th>
-              <th
-                className="montserrat-alternates"
-                style={{ textAlign: "left", padding: "12px" }}
-              >
+              <th className="montserrat-alternates" style={{ textAlign: "left", padding: "12px" }}>Título</th>
+              <th className="montserrat-alternates" style={{ textAlign: "left", padding: "12px" }}>Autor</th>
+              <th className="montserrat-alternates" style={{ textAlign: "left", padding: "12px" }}>Categoria</th>
+              <th className="montserrat-alternates" style={{ textAlign: "left", padding: "12px" }}>
                 {abaAtiva === "geral" ? "Disponíveis" : "Quantidade Emprestada"}
               </th>
-              <th
-                className="montserrat-alternates"
-                style={{ textAlign: "left", padding: "12px" }}
-              >
-                Ano Publicado
-              </th>
+              <th className="montserrat-alternates" style={{ textAlign: "left", padding: "12px" }}>Ano Publicado</th>
             </tr>
           </thead>
           <tbody>
-            {livros.map((livro) => (
-              <tr key={livro.id} style={{ borderBottom: "1px solid #ddd" }}>
-                <td
-                  className="montserrat-alternates"
-                  style={{ padding: "10px" }}
-                >
-                  {livro.titulo}
-                </td>
-                <td
-                  className="montserrat-alternates"
-                  style={{ padding: "10px" }}
-                >
-                  {livro.autor}
-                </td>
-                <td
-                  className="montserrat-alternates"
-                  style={{ padding: "10px" }}
-                >
-                  {livro.categoria}
-                </td>
-                <td
-                  className="montserrat-alternates"
-                  style={{ padding: "10px" }}
-                >
-                  {abaAtiva === "geral"
-                    ? livro.qtd_disponivel
-                    : livro.qtd_emprestada}
-                </td>
-                <td
-                  className="montserrat-alternates"
-                  style={{ padding: "10px" }}
-                >
-                  {livro.ano_publicado}
+            {livros.length === 0 ? (
+              <tr>
+                <td colSpan={5} className="montserrat-alternates" style={{ textAlign: "center", padding: "20px" }}>
+                  {loading ? "Carregando..." : "Nenhum livro encontrado."}
                 </td>
               </tr>
-            ))}
+            ) : (
+              <>
+                {livros.map((livro) => (
+                  <tr key={livro.id} style={{ borderBottom: "1px solid #ddd" }}>
+                    <td className="montserrat-alternates" style={{ padding: "10px" }}>{livro.titulo}</td>
+                    <td className="montserrat-alternates" style={{ padding: "10px" }}>{livro.autor}</td>
+                    <td className="montserrat-alternates" style={{ padding: "10px" }}>{livro.categoria}</td>
+                    <td className="montserrat-alternates" style={{ padding: "10px" }}>
+                      {abaAtiva === "geral" ? livro.qtd_disponivel : livro.qtd_emprestada}
+                    </td>
+                    <td className="montserrat-alternates" style={{ padding: "10px" }}>{livro.ano_publicado}</td>
+                  </tr>
+                ))}
+              </>
+            )}
           </tbody>
         </table>
+        {!loading && hasMore && (
+          <div className="montserrat-alternates" style={{ textAlign: "center", padding: "10px", color: "#666" }}>
+            Carregando mais livros...
+          </div>
+        )}
       </div>
       {abaAtiva === "geral" && (
         <div

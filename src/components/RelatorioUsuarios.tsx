@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import {
   BarChart,
   Bar,
@@ -22,58 +22,91 @@ interface DadosGrafico {
   quantidade: number;
 }
 
-export default function RelatorioUsuarios() {
-  const [usuarios, setUsuarios] = useState<Usuario[]>([]);
-  const [loading, setLoading] = useState(false);
+interface Props {
+  isVisible: boolean;
+}
 
-  const buscarUsuarios = async () => {
+const RelatorioUsuarios: React.FC<Props> = ({ isVisible }) => {
+  const [users, setUsers] = useState<Usuario[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [page, setPage] = useState(1);
+  const [hasMore, setHasMore] = useState(true);
+  const [initialLoadDone, setInitialLoadDone] = useState(false);
+
+  const buscarUsuarios = useCallback(async () => {
+    if (!hasMore || loading) return;
+
+    if (page > 1 && users.length === 0) {
+      setHasMore(false);
+      return;
+    }
+
     setLoading(true);
     try {
-      const response = await fetch("http://localhost:5000/relatorio/usuarios", {
-        method: "GET",
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-      });
-      const data = await response.json();
-      setUsuarios(data.usuarios);
-    } catch (error) {
-      console.error("Erro ao buscar usuários:", error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const gerarPDF = async () => {
-    try {
-      const response = await fetch("http://localhost:5000/relatorio/gerar/usuarios", {
-        method: "GET",
+      const response = await fetch(`http://localhost:5000/relatorio/usuarios/${page}`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
       });
 
       if (!response.ok) {
-        throw new Error("Falha ao gerar o relatório de usuários.");
+        if (response.status === 404) {
+          setHasMore(false);
+          return;
+        }
+        throw new Error("Erro ao buscar usuários");
       }
 
-      const blob = await response.blob();
-      const url = window.URL.createObjectURL(blob);
+      const data = await response.json();
+      if (!data.usuarios || data.usuarios.length === 0) {
+        setHasMore(false);
+        return;
+      }
 
-      const link = document.createElement("a");
-      link.href = url;
-      link.setAttribute("download", "relatorio_usuarios.pdf");
-      document.body.appendChild(link);
-      link.click();
-      link.remove();
+      setUsers(prev => page === 1 ? data.usuarios : [...prev, ...data.usuarios]);
     } catch (error) {
-      console.error("Erro ao gerar relatório de usuários:", error);
+      console.error("Erro ao buscar usuários:", error);
+    } finally {
+      setLoading(false);
     }
-  };
+  }, [page, hasMore, loading, users.length]);
+
+  const handleScroll = useCallback(() => {
+    if (loading || !hasMore) return;
+
+    // Only trigger if we have scrollable content
+    if (document.documentElement.scrollHeight <= window.innerHeight) return;
+
+    if (
+      window.innerHeight + document.documentElement.scrollTop
+      >= document.documentElement.offsetHeight - 100
+    ) {
+      setPage(prev => prev + 1);
+    }
+  }, [loading, hasMore]);
 
   useEffect(() => {
-    buscarUsuarios();
-  }, []);
+    if (isVisible) {
+      window.addEventListener("scroll", handleScroll);
+      return () => window.removeEventListener("scroll", handleScroll);
+    }
+  }, [handleScroll, isVisible]);
+
+  useEffect(() => {
+    if (isVisible) {
+      if (!initialLoadDone) {
+        buscarUsuarios();
+        setInitialLoadDone(true);
+      } else if (page > 1) {
+        // Only fetch if user has scrolled for more
+        buscarUsuarios();
+      }
+    }
+  }, [page, buscarUsuarios, initialLoadDone, isVisible]);
+
+  if (users.length === 0 && !loading && !hasMore) {
+    return <div>Nenhum usuário encontrado.</div>;
+  }
 
   return (
     <div style={{ padding: "24px", maxWidth: "1000px", margin: "0 auto" }}>
@@ -83,14 +116,14 @@ export default function RelatorioUsuarios() {
           justifyContent: "space-between",
           alignItems: "center",
           marginBottom: "20px",
-          gap: "10px",  
+          gap: "10px",
         }}
         className="relatorio-title "
       >
         <h1 className="montserrat-alternates" style={{ fontSize: "16px", fontWeight: "bold" }}>Relatório de Usuários</h1>
         <div style={{ display: "flex", gap: "10px" }}>
           <button className="montserrat-alternates"
-            onClick={gerarPDF}
+            onClick={() => {}}
             style={{
               padding: "8px 5px",
               backgroundColor: "#2473D9",
@@ -137,14 +170,24 @@ export default function RelatorioUsuarios() {
             </tr>
           </thead>
           <tbody>
-            {usuarios.map((usuario) => (
-              <tr key={usuario.id} style={{ borderBottom: "1px solid #ddd" }}>
-                <td className="montserrat-alternates" style={{ padding: "10px" }}>{usuario.nome}</td>
-                <td className="montserrat-alternates" style={{ padding: "10px" }}>{usuario.email}</td>
-                <td className="montserrat-alternates" style={{ padding: "10px" }}>{usuario.telefone}</td>
-                <td className="montserrat-alternates" style={{ padding: "10px" }}>{usuario.endereco}</td>
+            {users.length === 0 ? (
+              <tr>
+                <td colSpan={4} className="montserrat-alternates" style={{ textAlign: "center", padding: "20px" }}>
+                  {loading ? "Carregando..." : "Nenhum usuário encontrado."}
+                </td>
               </tr>
-            ))}
+            ) : (
+              <>
+                {users.map((usuario) => (
+                  <tr key={usuario.id} style={{ borderBottom: "1px solid #ddd" }}>
+                    <td className="montserrat-alternates" style={{ padding: "10px" }}>{usuario.nome}</td>
+                    <td className="montserrat-alternates" style={{ padding: "10px" }}>{usuario.email}</td>
+                    <td className="montserrat-alternates" style={{ padding: "10px" }}>{usuario.telefone}</td>
+                    <td className="montserrat-alternates" style={{ padding: "10px" }}>{usuario.endereco}</td>
+                  </tr>
+                ))}
+              </>
+            )}
           </tbody>
         </table>
       </div>
@@ -154,15 +197,19 @@ export default function RelatorioUsuarios() {
           Usuários por Estado (simulado)
         </h2>
         <ResponsiveContainer width="100%" height={300}>
-          <BarChart data={gerarDadosGrafico(usuarios)}>
+          <BarChart data={gerarDadosGrafico(users)}>
             <CartesianGrid strokeDasharray="3 3" />
             <XAxis dataKey="estado" />
             <YAxis allowDecimals={false} />
             <Tooltip />
             <Bar dataKey="quantidade" fill="#4A90E2" radius={[4, 4, 0, 0]} />
           </BarChart>
-        </ResponsiveContainer>
-      </div>
+        </ResponsiveContainer>      </div>
+      {!loading && hasMore && (
+        <div className="montserrat-alternates" style={{ textAlign: "center", padding: "10px", color: "#666" }}>
+          Carregando mais usuários...
+        </div>
+      )}
     </div>
   );
 }
@@ -178,3 +225,5 @@ function gerarDadosGrafico(usuarios: Usuario[]): DadosGrafico[] {
     quantidade,
   }));
 }
+
+export default RelatorioUsuarios;

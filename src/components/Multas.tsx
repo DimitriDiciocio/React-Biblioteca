@@ -1,7 +1,11 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 import { pagarMulta } from "../services/multaService";
+
+interface Props {
+  isVisible: boolean;
+}
 
 interface Multa {
   id_multa: number;
@@ -15,34 +19,66 @@ interface Multa {
   titulos: string;
 }
 
-const Multas: React.FC = () => {
+const Multas: React.FC<Props> = ({ isVisible }) => {
   const [multas, setMultas] = useState<Multa[]>([]);
   const [loading, setLoading] = useState(true);
+  const [page, setPage] = useState(1);
+  const [hasMore, setHasMore] = useState(true);
   const token = localStorage.getItem("token");
   const navigate = useNavigate();
-
-  useEffect(() => {
-    fetch("http://localhost:5000/multas", {
-      method: "GET",
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    })
-      .then((res) => {
-        if (!res.ok) {
+  const fetchMultas = useCallback(async () => {
+      try {
+        const response = await fetch(`http://localhost:5000/multas/${page}`, {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+  
+        if (!response.ok) {
+          if (response.status === 404) {
+            setHasMore(false);
+            return;
+          }
           throw new Error("Erro na resposta da API");
         }
-        return res.json();
-      })
-      .then((data) => {
-        setMultas(data);
-        setLoading(false);
-      })
-      .catch((err) => {
+  
+        const data = await response.json();
+        if (!Array.isArray(data) || data.length === 0) {
+          setHasMore(false);
+          return;
+        }
+  
+        setMultas(prev => page === 1 ? data : [...prev, ...data]);
+      } catch (err) {
         console.error("Erro ao buscar multas:", err);
+      } finally {
         setLoading(false);
-      });
-  }, [token]);
+      }
+    }, [page, token]);
+
+  const handleScroll = useCallback(() => {
+    if (loading || !hasMore) return;
+
+    if (
+      window.innerHeight + document.documentElement.scrollTop
+      >= document.documentElement.offsetHeight - 100
+    ) {
+      setPage(prev => prev + 1);
+    }
+  }, [loading, hasMore]);
+  useEffect(() => {
+    if (isVisible) {
+      window.addEventListener("scroll", handleScroll);
+      return () => window.removeEventListener("scroll", handleScroll);
+    }
+  }, [handleScroll, isVisible]);
+
+  useEffect(() => {
+    if (isVisible) {
+      fetchMultas();
+    }
+  }, [page, token, fetchMultas, isVisible]);
 
   const handlePagarMulta = async (id_multa: number) => {
     try {
