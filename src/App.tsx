@@ -20,6 +20,7 @@ import AddBanners from "./components/AddBanners";
 import DetalhesBanner from "./pages/DetalhesBanner";
 import RecuperarSenha from "./pages/RecuperarSenha";
 import EsqueciSenha from "./pages/EsqueciSenha";
+import VerificarCodigo from "./pages/VerificarCodigo";
 
 const App: React.FC = () => {
   return (
@@ -46,6 +47,7 @@ const App: React.FC = () => {
         <Route path="/detalhesBanner/:id_banner" element={<DetalhesBanner />} />
         <Route path="/recuperar-senha" element={<RecuperarSenha />} />
         <Route path="/esqueci-senha" element={<EsqueciSenha />} />
+        <Route path="/verificar-codigo/:id_usuario" element={<VerificarCodigo />} />
       </Routes>
     </Router>
   );

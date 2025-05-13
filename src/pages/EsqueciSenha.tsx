@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import Header from '../components/Header';
 
 const EsqueciSenha = () => {
@@ -7,6 +7,7 @@ const EsqueciSenha = () => {
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
   const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -30,8 +31,10 @@ const EsqueciSenha = () => {
         return;
       }
 
-      setSuccess('Email de recuperação enviado! Verifique sua caixa de entrada.');
-      setEmail('');
+      setSuccess('Email de recuperação enviado! Redirecionando...');
+      setTimeout(() => {
+        navigate(`/verificar-codigo/${data.id_usuario[0]}`);
+      }, 2000);
     } catch (err) {
       console.error('Erro:', err);
       setError('Erro ao conectar com o servidor');

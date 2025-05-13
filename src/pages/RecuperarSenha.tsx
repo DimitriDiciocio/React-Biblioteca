@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import Header from '../components/Header';
 
@@ -13,12 +13,13 @@ const RecuperarSenha = () => {
 
   const navigate = useNavigate();
   const location = useLocation();
-  const token = new URLSearchParams(location.search).get('token');
 
-  if (!token) {
-    navigate('/login');
-    return null;
-  }
+  useEffect(() => {
+    const token = new URLSearchParams(location.search).get('token');
+    if (!token) {
+      navigate('/login');
+    }
+  }, [navigate, location]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -26,6 +27,8 @@ const RecuperarSenha = () => {
     setSuccess('');
     setLoading(true);
 
+    const token = new URLSearchParams(location.search).get('token');
+    
     try {
       const response = await fetch('http://127.0.0.1:5000/reset_senha', {
         method: 'POST',

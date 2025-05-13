@@ -113,19 +113,17 @@ const Header: React.FC = () => {
 
   const handleAbrirModal = () => {
     setModalAberto(!modalAberto);
+    setNotificacoesOpen(false); // Close notifications modal
     if (!modalAberto) {
-      marcarNotificacaoComoLida(); // Agora marca todas como lidas com o token
+      marcarNotificacaoComoLida("id"); // Replace "id" with the actual id value
     }
   };
-  
 
   const toggleNotificacoesModal = () => {
     setNotificacoesOpen(!notificacoesOpen);
-    if (modalAberto) setModalAberto(false);
+    setModalAberto(false); // Close account modal
     if (!notificacoesOpen) {
-      setTemNotificacoesNovas(false); // Reset the state of new notifications
-      localStorage.setItem("lastViewedNotifications", "0");
-
+      setTemNotificacoesNovas(false);
     }
   };
 

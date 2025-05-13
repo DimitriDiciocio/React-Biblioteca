@@ -54,23 +54,23 @@ const MostrarLivros: React.FC = () => {
             1200: { items: 6, nav: true },
           }}
         >
-          {books.map((book) => (
-            <div>
-                <div key={book.id} className="border-book">
-                    <a href={`/livro/${book.id}`} className="text-decoration-none">
-                        <div>
-                            <img
-                                src={`http://127.0.0.1:5000/uploads/livros/${book.imagem}`}
-                                alt={book.titulo}
-                            />
-                        </div>
-                    </a>
-                </div>
-                <a href={`/livro/${book.id}`}    className="text-decoration-none">
-                    <p className="montserrat-alternates-semibold book-title-formatation">
-                        {book.titulo}
-                    </p>
+          {books.map((book, index) => (
+            <div key={`${book.id}-${index}`} className="item">
+              <div className="border-book">
+                <a href={`/livro/${book.id}`} className="text-decoration-none">
+                  <div>
+                    <img
+                      src={`http://127.0.0.1:5000/uploads/livros/${book.imagem}`}
+                      alt={book.titulo}
+                    />
+                  </div>
                 </a>
+              </div>
+              <a href={`/livro/${book.id}`} className="text-decoration-none">
+                <p className="montserrat-alternates-semibold book-title-formatation">
+                  {book.titulo}
+                </p>
+              </a>
             </div>
           ))}
         </OwlCarousel>

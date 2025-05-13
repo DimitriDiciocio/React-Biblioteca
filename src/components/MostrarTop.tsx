@@ -56,8 +56,8 @@ const MostrarTop: React.FC = () => {
             }}
           >
             {books.map((book, index) => (
-                <div className="item">
-                    <div key={book.id} className="border-book2">
+                <div key={`${book.id}-${index}`} className="item">
+                    <div className="border-book2">
                         <span className="rank lilita-one-regular">{index + 1}</span>
                         <a href={`/livro/${book.id}`}>
                             <div>

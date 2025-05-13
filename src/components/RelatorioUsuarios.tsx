@@ -71,6 +71,33 @@ const RelatorioUsuarios: React.FC<Props> = ({ isVisible }) => {
     }
   }, [page, hasMore, loading, users.length]);
 
+  const relatorioPDF = async () => {
+    try {
+      const response = await fetch("http://localhost:5000/relatorio/gerar/usuarios", {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error("Falha ao gerar o relatório.");
+      }
+
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+
+      const link = document.createElement("a");
+      link.href = url;
+      link.setAttribute("download", "relatorio_usuarios.pdf");
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+    } catch (error) {
+      console.error("Erro ao gerar relatório:", error);
+    }
+  };
+
   const handleScroll = useCallback(() => {
     if (loading || !hasMore) return;
 
@@ -123,7 +150,7 @@ const RelatorioUsuarios: React.FC<Props> = ({ isVisible }) => {
         <h1 className="montserrat-alternates" style={{ fontSize: "16px", fontWeight: "bold" }}>Relatório de Usuários</h1>
         <div style={{ display: "flex", gap: "10px" }}>
           <button className="montserrat-alternates"
-            onClick={() => {}}
+            onClick={relatorioPDF}
             style={{
               padding: "8px 5px",
               backgroundColor: "#2473D9",

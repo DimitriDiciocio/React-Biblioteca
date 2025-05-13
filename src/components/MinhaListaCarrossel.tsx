@@ -1,5 +1,8 @@
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
+import OwlCarousel from "react-owl-carousel";
 import { useNavigate } from "react-router-dom";
+import "owl.carousel/dist/assets/owl.carousel.css";
+import "owl.carousel/dist/assets/owl.theme.default.css";
 
 interface Tag {
   id: number;
@@ -14,13 +17,11 @@ interface Book {
   isbn: string;
   qtd_disponivel: number;
   descricao: string;
-  idiomas: string;
-  ano_publicacao: string;
-  selectedTags: Tag[];
   imagem: string;
+  selectedTags?: Tag[];
 }
 
-const MinhaLista: React.FC = () => {
+const MinhaListaCarrossel: React.FC = () => {
   const [books, setBooks] = useState<Book[]>([]);
   const [loading, setLoading] = useState(true);
   const [visivel, setVisivel] = useState(true);
@@ -45,7 +46,6 @@ const MinhaLista: React.FC = () => {
 
         const data = await response.json();
         
-        // Se recebermos { visivel: false }, não mostramos nada
         if ('visivel' in data && !data.visivel) {
           setVisivel(false);
           return;
@@ -92,63 +92,52 @@ const MinhaLista: React.FC = () => {
   }
 
   return (
-    <section>
+    <div>
       <p className="montserrat-alternates-semibold size-titles">
         Minha Lista de Leitura
       </p>
       {loading ? (
         <p className="montserrat-alternates">Carregando livros...</p>
       ) : books.length > 0 ? (
-        <div className={`livros-grid ${
-          books.length === 1
-            ? "single-book"
-            : books.length === 2
-            ? "two-books"
-            : books.length === 3
-            ? "three-books"
-            : ""
-        }`}>
-          {books.map((book) => (
-            <div key={book.id} className="livro-card">
-              <div 
-                className="pointer" 
-                onClick={() => navigate(`/livro/${book.id}`)}
-              >
-                <img
-                  src={`http://127.0.0.1:5000/uploads/livros/${book.imagem}`}
-                  alt={book.titulo}
-                  className="livro-imagem"
-                />
-                <div className="livro-info">
-                  <h3 className="montserrat-alternates">{book.titulo}</h3>
-                  <p className="montserrat-alternates"><strong>Autor:</strong> {book.autor}</p>
-                  <p className="montserrat-alternates"><strong>Categoria:</strong> {book.categoria}</p>
-                  <p className="montserrat-alternates"><strong>ISBN:</strong> {book.isbn}</p>
-                  {book.selectedTags && book.selectedTags.length > 0 && (
-                    <div className="tags-container">
-                      {book.selectedTags.map((tag) => (
-                        <span key={tag.id} className="tag">
-                          {tag.nome}
-                        </span>
-                      ))}
-                    </div>
-                  )}
-                </div>
+        <OwlCarousel
+          className="owl-carousel change"
+          loop={false}
+          nav
+          dots={false}
+          autoplay={false}
+          stagePadding={50}
+          responsive={{
+            0: { items: 1, nav: false },
+            480: { items: 3, nav: false },
+            950: { items: 4, nav: true },
+            1200: { items: 6, nav: true },
+          }}
+        >
+          {books.map((book, index) => (
+            <div key={`${book.id}-${index}`} className="item">
+              <div className="border-book">
+                <a href={`/livro/${book.id}`} className="text-decoration-none">
+                  <div>
+                    <img
+                      src={`http://127.0.0.1:5000/uploads/livros/${book.imagem}`}
+                      alt={book.titulo}
+                    />
+                  </div>
+                </a>
               </div>
-              <button 
-                className="remove-button montserrat-alternates"
-                onClick={() => handleRemoveFromList(book.id, book.titulo)}
-              >
-                Remover da Lista
-              </button>
+              <a href={`/livro/${book.id}`} className="text-decoration-none">
+                <p className="montserrat-alternates-semibold book-title-formatation">
+                  {book.titulo}
+                </p>
+              </a>
             </div>
           ))}
-        </div>
+        </OwlCarousel>
       ) : (
         <p className="montserrat-alternates">Nenhum livro na sua lista.</p>
       )}
-    </section>
+    </div>
   );
 };
 
-export default MinhaLista;
+export default MinhaListaCarrossel;
