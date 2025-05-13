@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useRef } from "react";
 import { useNotification } from "../services/useNotification";
 import NotificacoesList from "./NotificacoesList";
 import styles from "./NotificacoesModal.module.css";
@@ -9,6 +9,7 @@ interface NotificacoesModalProps {
 
 const NotificacoesModal: React.FC<NotificacoesModalProps> = ({ onClose }) => {
   const { notes, loading } = useNotification();
+  const modalRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const marcarTodasComoLidas = async () => {
@@ -22,29 +23,47 @@ const NotificacoesModal: React.FC<NotificacoesModalProps> = ({ onClose }) => {
       } catch (error) {
         console.error("Erro ao marcar notificações como lidas:", error);
       }
-      localStorage.setItem("lastViewedNotifications", notes.length.toString()); // Update localStorage
+      localStorage.setItem("lastViewedNotifications", notes.length.toString());
     };
 
     marcarTodasComoLidas();
-  }
-  , [notes]);
+  }, [notes]);
+
+  // Detectar clique fora do modal
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (modalRef.current && !modalRef.current.contains(event.target as Node)) {
+        onClose();
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [onClose]);
 
   return (
-    <div className={`${styles["notificacoes-modal"]} ${styles["notificacoes-modal-container"]}`}>
-      <div className={styles["modal-header"]}>
-        <h3 className="montserrat-alternates-semibold">Notificações</h3>
-        <button className={styles["close-button"]} onClick={onClose}>✕</button>
-      </div>
-      <div className={styles["modal-content"]}>
-        {loading ? <p>Carregando...</p> : <NotificacoesList notes={notes} />}
-      </div>
-      <div className={styles["modal-footer"]}>
-        <button
-          className={styles["ver-mais-button"]}
-          onClick={() => (window.location.href = "/user?page=7")}
-        >
-          Ver mais
-        </button>
+    <div className={styles["notificacoes-modal"]}>
+      <div
+        ref={modalRef}
+        className={styles["notificacoes-modal-container"]}
+      >
+        <div className={styles["modal-header"]}>
+          <h3 className="montserrat-alternates-semibold">Notificações</h3>
+          <button className={styles["close-button"]} onClick={onClose}>✕</button>
+        </div>
+        <div className={styles["modal-content"]}>
+          {loading ? <p>Carregando...</p> : <NotificacoesList notes={notes} />}
+        </div>
+        <div className={styles["modal-footer"]}>
+          <button
+            className={styles["ver-mais-button"]}
+            onClick={() => (window.location.href = "/user?page=7")}
+          >
+            Ver mais
+          </button>
+        </div>
       </div>
     </div>
   );

@@ -35,7 +35,7 @@ const Banners: React.FC = () => {
         nav={false}
         dots={true}
         autoplay={true}
-        autoplayTimeout={6000}
+        autoplayTimeout={5000}
         autoplayHoverPause={true}
         items={1}
       >

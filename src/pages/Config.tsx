@@ -12,7 +12,7 @@ import MultasByUser from "../components/MultasByUser";
 import NotificacoesPage from "../components/NotificacoesPage";
 import infoIcon from "../../assets/img/info-icon.png";
 import securityIcon from "../../assets/img/security-icon.png";
-import bookIcon from "../../assets/img/book-icon.png";
+import bookIcon from "../../assets/img/cesta.png";
 import listIcon from "../../assets/img/list-icon.png";
 import historicIcon from "../../assets/img/historic-icon.png";
 import fineIcon from "../../assets/img/fine-icon.png";
@@ -170,7 +170,7 @@ const Config: React.FC = () => {
                           alt="Ícone Gerenciar Livros"
                           className="icon-config"
                         />
-                        <span>Gerenciar Livros</span>
+                        <span>Cestinha</span>
                       </a>
                     </li>
                     <li onClick={() => navigate("/user?page=4")} className="pointer">

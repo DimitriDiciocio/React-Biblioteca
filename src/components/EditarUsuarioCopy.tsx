@@ -244,8 +244,31 @@ const EditarUsuario: React.FC = () => {
 
       <main className="background-blue">
         <section>
-          <div className="banner-profile">
-
+          <div className="banner-profile"></div>
+        </section>
+        <section>
+          <div className="profile-picture">
+            <img
+              src={imagemPreview || "../assets/img/user.png"}
+              alt="Sua foto de perfil!"
+              className="profile-picture-preview"
+            />
+            <div className="margin-btn">
+              <button className="btn3 btn-primary3">
+                <span className="material-icons">edit</span>
+              </button>
+            </div>
+          </div>
+          <div className="d-flex">
+            <div className="info-container">
+              <p className="montserrat-alternates info-profile">{nome || "Usuário"}</p>
+              <p className="montserrat-alternates info-profile">{email || "Email"}</p>
+              <p className="montserrat-alternates info-profile">{telefone || "Telefone"}</p>
+              <p className="montserrat-alternates info-profile">{endereco || "Endereço"}</p>
+            </div>
+            <div>
+              
+            </div>
           </div>
         </section>
       </main>

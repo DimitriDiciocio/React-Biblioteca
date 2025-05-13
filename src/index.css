@@ -3659,5 +3659,42 @@ button.limpar-btn,
 .banner-profile{
   width: 100%;
   height: 250px;
-  background-color: #0040cb;
+  background-color: var(--azul-escuro);
+}
+.profile-picture{
+  display: flex;
+  margin-top: -117px;
+  margin-left: 50px;
+}
+.profile-picture-preview{
+  border: 3px solid #0056d2;
+  object-fit: cover;
+  border-radius: 50%;
+  width: 200px;  
+}
+.info-container{
+  width: 400px;
+  margin-left: 50px;
+}
+.info-profile{
+  margin-top: 5px;
+  font-size: 25px;
+}
+.btn3 {
+  padding: 8px 12px;
+  background-color: #0056d2;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 14px;
+  height: 48px;
+}
+
+.btn3:hover {
+  background-color: #0041a8;
+}
+.margin-btn{
+  margin-top: auto;
+  margin-left: 10px;
 }

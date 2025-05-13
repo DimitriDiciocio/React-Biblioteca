@@ -425,7 +425,7 @@ const Carrinho: React.FC = () => {
 
   return (
     <div className="container">
-      <h1 className="titulo montserrat-alternates-semibold">Meu Carrinho</h1>
+      <h1 className="titulo montserrat-alternates-semibold">Minha Cestinha</h1>
       <div className="gap-tabela">
         <section className="secao">
           <h2 className="titulo-secao montserrat-alternates-semibold">Livros Reservados</h2>
