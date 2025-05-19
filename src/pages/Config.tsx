@@ -6,7 +6,6 @@ import { usePermission } from "../components/usePermission";
 import EditarUsuario from "../components/EditarUsuarioCopy";
 import TrocarSenha from "../components/TrocarSenha";
 import Carrinho from "../components/Carrinho";
-import PuxarHistorico from "../components/PuxarHistorico";
 import Swal from "sweetalert2";
 import MultasByUser from "../components/MultasByUser";
 import NotificacoesPage from "../components/NotificacoesPage";
@@ -14,7 +13,6 @@ import infoIcon from "../../assets/img/info-icon.png";
 import securityIcon from "../../assets/img/security-icon.png";
 import bookIcon from "../../assets/img/cesta.png";
 import listIcon from "../../assets/img/list-icon.png";
-import historicIcon from "../../assets/img/historic-icon.png";
 import fineIcon from "../../assets/img/fine-icon.png";
 import notificationIcon from "../../assets/img/notification-icon.png";
 import MinhaLista from "../components/MinhaLista";
@@ -183,17 +181,8 @@ const Config: React.FC = () => {
                         <span>Minha Lista</span>
                       </a>
                     </li>
+                    {/* Removido o item Histórico */}
                     <li onClick={() => navigate("/user?page=5")} className="pointer">
-                      <a className="link-flex">
-                        <img
-                          src={historicIcon}
-                          alt="Ícone Histórico"
-                          className="icon-config"
-                        />
-                        <span>Histórico</span>
-                      </a>
-                    </li>
-                    <li onClick={() => navigate("/user?page=6")} className="pointer">
                       <a className="link-flex">
                         <img
                           src={fineIcon}
@@ -203,7 +192,7 @@ const Config: React.FC = () => {
                         <span>Minhas Multas</span>
                       </a>
                     </li>
-                    <li onClick={() => navigate("/user?page=7")} className="pointer">
+                    <li onClick={() => navigate("/user?page=6")} className="pointer">
                       <a className="link-flex">
                         <img
                           src={notificationIcon}
@@ -239,9 +228,7 @@ const Config: React.FC = () => {
           <div className="page">
             <MinhaLista/>
           </div>
-          <div className="page">
-            <PuxarHistorico />
-          </div>
+          {/* Removido o componente <PuxarHistorico /> */}
           <div className="page">
             <MultasByUser />
           </div>

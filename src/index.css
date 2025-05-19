@@ -3139,7 +3139,7 @@ ul {
 
 /* Histórico Container */
 .historico-container {
-  background-color: #e9f6ff;
+  background-color: var(--branco);
   padding: 2rem;
   border-radius: 8px;
   margin: 1rem;
@@ -3148,19 +3148,13 @@ ul {
 
 /* Títulos das seções */
 .historico-container h2 {
-  display: flex;
-  align-items: center;
-  font-size: 1.8rem;
-  font-weight: bold;
-  margin-bottom: 1.5rem;
-  border-bottom: 1px solid #999;
-  padding-bottom: 0.5rem;
+  margin-bottom: 0 !important;
+  margin-left: 10px;
+}
+.historic-icon{
+  height: 40px;
 }
 
-.historico-container h2::before {
-  content: "🔄";
-  margin-right: 10px;
-}
 
 .historico-container h3 {
   font-size: 1.2rem;
@@ -3668,11 +3662,15 @@ button.limpar-btn,
   width: 100%;
   height: 250px;
   background-color: var(--azul-escuro);
+  z-index: 1;
+  position: relative;
 }
 .profile-picture{
   display: flex;
   margin-top: -117px;
   margin-left: 50px;
+  z-index: 2;
+  position: relative;
 }
 .profile-picture-preview{
   border: 3px solid #0056d2;
@@ -3909,4 +3907,75 @@ button.limpar-btn,
     transform: scale(0.8);
     opacity: 0;
   }
+}
+
+.fifty-cents{
+  height: 67vh;
+  width: 50%;
+  border-right: 5px solid var(--azul-escuro);
+}
+.historic{
+  background-color: var(--branco);
+  border: 3px solid var(--azul-escuro);
+  margin: 10px;
+  width: 100%;
+  border-radius: 20px;
+  overflow-y: auto; 
+  height: 400px;
+}
+
+/* Container das abas */
+.tabs {
+  display: flex;
+  gap: 12px;
+  margin: 24px 0 18px 0;
+  justify-content: flex-start;
+}
+
+/* Botões das abas */
+.tabs button {
+  background: var(--azul-claro, #effafd);
+  color: var(--azul-escuro, #2473d9);
+  border: 1.5px solid var(--azul-escuro, #2473d9);
+  border-radius: 6px 6px 0 0;
+  padding: 5px 17px; /* reduzido em 5px vertical e horizontal */
+  font-family: "Montserrat Alternates", sans-serif;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: 
+    background 0.2s,
+    color 0.2s,
+    border-color 0.2s;
+  outline: none;
+  box-shadow: 0 2px 8px rgba(36, 115, 217, 0.04);
+  position: relative;
+  z-index: 1;
+}
+
+/* Aba ativa */
+.tabs button:disabled,
+.tabs button[disabled] {
+  background: var(--azul-escuro, #2473d9);
+  color: var(--branco, #fff);
+  border-bottom: 2.5px solid var(--azul-escuro, #2473d9);
+  cursor: default;
+  font-weight: 700;
+  z-index: 2;
+}
+
+/* Hover nas abas inativas */
+.tabs button:not(:disabled):hover {
+  background: #e3f0ff;
+  color: var(--azul-escuro, #2473d9);
+  border-color: #1a5bb8;
+}
+.paper{
+background-color: var(--branco);
+    position: absolute;
+    top: 375px;
+    height: 275px;
+    width: 275px;
+    left: 280px;
+    border-radius: 15px;
 }

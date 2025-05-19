@@ -1,6 +1,7 @@
 import { useEffect, useState, useCallback } from "react";
 import Swal from "sweetalert2";
 import { usePermission } from "../components/usePermission";
+import historicIcon from "../../assets/img/historic-icon.png";
 
 interface Emprestimo {
   id_livro: number;
@@ -64,11 +65,17 @@ const PuxarHistorico = () => {
   const [hasMoreMulConc, setHasMoreMulConc] = useState(true);
 
   const handleScroll = useCallback(() => {
+    console.log("BBB")
     if (loading) return;
 
+    console.log("AAAAAAAAAAAAAAAAAAAAAA")
+    console.log(document.getElementById("historic0"))
+
+    const historicElement = document.getElementById("historic0");
     if (
-      window.innerHeight + document.documentElement.scrollTop
-      >= document.documentElement.offsetHeight - 100
+      historicElement &&
+      window.innerHeight + historicElement.scrollTop
+      >= historicElement.offsetHeight - 100
     ) {
       switch (activeTab) {
         case "emprestimosAtivos":
@@ -246,7 +253,7 @@ const PuxarHistorico = () => {
             <input
               type="text"
               placeholder="Pesquisar título ou autor..."
-              className="barra-pesquisa"
+              className="barra-pesquisa montserrat-alternates"
               value={filtros.emprestimosAtivos}
               onChange={(e) =>
                 handleFiltroChange("emprestimosAtivos", e.target.value)
@@ -438,10 +445,14 @@ const PuxarHistorico = () => {
   };
 
   return (
+    <section id="historic0" className="historic">
     <div>
       <div className="espaco-vazio"></div>
       <div className="historico-container">
-        <h2>Histórico da Biblioteca</h2>
+        <div className="d-flex center-y">
+          <img src={historicIcon} alt="Histórico" className="historic-icon" />
+          <h2 className="montserrat-alternates-semibold">Histórico da Biblioteca</h2>
+        </div>
         <div className="tabs">
           <button onClick={() => handleTabChange("emprestimosAtivos")} disabled={loading || activeTab === "emprestimosAtivos"}>
             Empréstimos Ativos
@@ -462,6 +473,7 @@ const PuxarHistorico = () => {
         {loading ? <p>Carregando...</p> : renderTabContent()}
       </div>
     </div>
+  </section>
   );
 };
 

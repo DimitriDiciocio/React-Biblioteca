@@ -42,32 +42,67 @@ const Tags: React.FC<TagsProps> = ({ onTagsChange, selectedTags }) => {
     );
   };
 
-  const customStyles = {
-    control: (base: any, state: any) => ({
-      ...base,
-      borderRadius: '8px',
-      border: '2px solid hsl(236, 92%, 66%)',
-      outline: 'none',
-      transition: '200ms ease-in',
-      paddingLeft: '1rem',
-      boxShadow: state.isFocused ? '0 0 0 3px rgba(69, 98, 214, 0.5)' : 'none',
-      "&:hover": {
-        border: "2px solid hsl(236, 92%, 26%)",
-      }
-    }),
+const customStyles = {
+  control: (base: any, state: any) => ({
+    ...base,
+    borderRadius: '8px',
+    border: '2px solid hsl(236, 92%, 66%)',
+    outline: 'none',
+    transition: '200ms ease-in',
+    boxShadow: state.isFocused ? '0 0 0 3px rgba(69, 98, 214, 0.5)' : 'none',
+    '&:hover': {
+      border: '2px solid hsl(236, 92%, 26%)',
+    },
+  }),
+  multiValue: (base: any) => ({
+    ...base,
+    backgroundColor: 'var(--azul-escuro)',
+    borderRadius: '6px',
+    minWidth: '80px', // diminui a largura mínima das tags
+  }),
+  multiValueLabel: (base: any) => ({
+    ...base,
+    color: 'var(--branco)',
+    fontFamily: '"Montserrat Alternates", sans-serif',
+    fontWeight: 400,
+    fontSize: 'x-small',
+    paddingLeft: '4px',
+    paddingRight: '4px',
+    order: 1,
+  }),
+  multiValueRemove: (base: any) => ({
+    ...base,
+    color: 'var(--branco)',
+    ':hover': {
+      backgroundColor: 'var(--roxo)',
+      color: 'var(--branco)',
+    },
+    order: 2, // Garante que o X fique sempre no final
+    marginLeft: 'auto',
+  }),
+  option: (base: any, state: any) => ({
+    ...base,
+    color: 'black',
+    padding: '10px',
+    fontFamily: '"Montserrat Alternates", sans-serif',
+    fontWeight: 400,
+    fontStyle: 'normal',
+    backgroundColor: state.isFocused ? '#7979791a' : 'transparent',
+    border: state.isFocused ? '3px solid #4562D6' : 'none',
+    '&:hover': {
+      backgroundColor: '#7979791a',
+      border: '3px solid #4562D6',
+    },
+  }),
 
-    option: (base: any, state: any) => ({
-      ...base,
-      color: 'black',
-      padding: '10px',
-      backgroundColor: state.isFocused ? '#7979791a' : 'transparent',
-      border: state.isFocused ? '3px solid #4562D6' : 'none',
-      '&:hover': {
-        backgroundColor: '#7979791a',
-        border: '3px solid #4562D6',
-      },
-    }),
-  };
+  placeholder: (base: any) => ({
+    ...base,
+    fontFamily: '"Montserrat Alternates", sans-serif',
+    fontWeight: 400,
+    fontStyle: 'normal',
+    color: '#888',
+  }),
+};
 
   return (
     <Select
@@ -80,6 +115,7 @@ const Tags: React.FC<TagsProps> = ({ onTagsChange, selectedTags }) => {
       getOptionValue={(e) => e.value.toString()}
       closeMenuOnSelect={false}
       styles={customStyles}
+      placeholder="Selecione as tags..."
     />
   );
 };

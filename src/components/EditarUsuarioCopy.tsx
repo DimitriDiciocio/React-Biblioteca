@@ -4,6 +4,7 @@ import { useDropzone } from "react-dropzone";
 import "../index.css";
 import Swal from "sweetalert2";
 import { usePermission } from "../components/usePermission";
+import PuxarHistorico from "../components/PuxarHistorico";
 
 const EditarUsuario: React.FC = () => {
   const [nome, setNome] = useState("");
@@ -246,31 +247,32 @@ const EditarUsuario: React.FC = () => {
         <section>
           <div className="banner-profile"></div>
         </section>
-        <section>
-          <div className="profile-picture">
-            <img
-              src={imagemPreview || "../assets/img/user.png"}
-              alt="Sua foto de perfil!"
-              className="profile-picture-preview"
-            />
-            <div className="margin-btn">
-              <button className="btn3 btn-primary3">
-                <span className="material-icons">edit</span>
-              </button>
+        <div className="d-flex">
+          <section className="fifty-cents">
+            <div className="paper"></div>
+            <div className="profile-picture">
+              <img
+                src={imagemPreview || "../assets/img/user.png"}
+                alt="Sua foto de perfil!"
+                className="profile-picture-preview"
+              />
+              <div className="margin-btn">
+                <button className="btn3 btn-primary3">
+                  <span className="material-icons">edit</span>
+                </button>
+              </div>
             </div>
-          </div>
-          <div className="d-flex">
-            <div className="info-container">
-              <p className="montserrat-alternates info-profile">{nome || "Usuário"}</p>
-              <p className="montserrat-alternates info-profile">{email || "Email"}</p>
-              <p className="montserrat-alternates info-profile">{telefone || "Telefone"}</p>
-              <p className="montserrat-alternates info-profile">{endereco || "Endereço"}</p>
+            <div className="d-flex z-index-high">
+              <div className="info-container">
+                <p className="montserrat-alternates info-profile">{nome || "Usuário"}</p>
+                <p className="montserrat-alternates info-profile">{email || "Email"}</p>
+                <p className="montserrat-alternates info-profile">{telefone || "Telefone"}</p>
+                <p className="montserrat-alternates info-profile">{endereco || "Endereço"}</p>
+              </div>
             </div>
-            <div>
-              
-            </div>
-          </div>
-        </section>
+          </section>
+          <PuxarHistorico />
+        </div>
       </main>
     </div>
   );
