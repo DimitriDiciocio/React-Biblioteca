@@ -50,7 +50,7 @@ export default function RelatorioLivros({ isVisible }: Props) {
       const endpoint =
         abaAtiva === "geral"
           ? `http://localhost:5000/relatorio/livros/${page}`
-          : `http://localhost:5000/relatorio/livrosfaltando/${page}`;
+          : `http://localhost:5000/relatorio/livros/faltando/${page}`;
 
       const response = await fetch(endpoint, {
         headers: {

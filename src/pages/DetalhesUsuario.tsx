@@ -3,7 +3,6 @@ import { useNavigate, useParams } from "react-router-dom";
 import Swal from "sweetalert2";
 import EmprestimoPorUsuario from "../components/EmprestimoPorUsuario";
 import Usuarios from "../components/Usuarios";
-import DeletarUsuario from "../components/DeletarUsuario";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
 
@@ -111,12 +110,6 @@ const DetalhesUsuario: React.FC = () => {
           &lt;
         </button>
         <h1>Detalhes do Usuário</h1>
-        <div className="actions">
-          <DeletarUsuario
-            usuarioId={id ? parseInt(id, 10) : 0}
-            onDeleteSuccess={() => navigate("/home_biblio?page=3")}
-          />
-        </div>
         {isEditing ? (
           <Usuarios onCancel={() => setIsEditing(false)} />
         ) : (

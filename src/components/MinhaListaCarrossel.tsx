@@ -87,7 +87,7 @@ const MinhaListaCarrossel: React.FC = () => {
     }
   };
 
-  if (!visivel) {
+  if (!visivel || (!loading && books.length === 0)) {
     return null;
   }
 

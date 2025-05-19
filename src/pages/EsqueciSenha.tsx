@@ -21,7 +21,7 @@ const EsqueciSenha = () => {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ email }),
+        body: JSON.stringify({ email: email.toLowerCase() }),
       });
 
       const data = await response.json();
@@ -36,7 +36,6 @@ const EsqueciSenha = () => {
         navigate(`/verificar-codigo/${data.id_usuario[0]}`);
       }, 2000);
     } catch (err) {
-      console.error('Erro:', err);
       setError('Erro ao conectar com o servidor');
     } finally {
       setLoading(false);

@@ -14,29 +14,27 @@ const RecuperarSenha = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  useEffect(() => {
-    const token = new URLSearchParams(location.search).get('token');
-    if (!token) {
-      navigate('/login');
-    }
-  }, [navigate, location]);
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
     setSuccess('');
     setLoading(true);
 
-    const token = new URLSearchParams(location.search).get('token');
-    
+    const resetToken = localStorage.getItem('reset_token');
+    if (!resetToken) {
+      setError('Token de recuperação não encontrado');
+      navigate('/login');
+      return;
+    }
+
     try {
       const response = await fetch('http://127.0.0.1:5000/reset_senha', {
-        method: 'POST',
+        method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
+          'Authorization': `Bearer ${resetToken}`,
         },
         body: JSON.stringify({
-          token,
           senha_nova: formData.senha_nova,
           senha_confirm: formData.senha_confirm
         }),
@@ -45,15 +43,17 @@ const RecuperarSenha = () => {
       const data = await response.json();
 
       if (!response.ok) {
-        setError(data.message || data.erro || 'Erro ao redefinir senha');
+        setError(data.message || 'Erro ao redefinir senha');
         return;
       }
 
       setSuccess('Senha alterada com sucesso!');
+      localStorage.removeItem('reset_token');
       setTimeout(() => {
         navigate('/login');
-      }, 2000);    } catch (err: unknown) {
-      console.error('Erro:', err);
+      }, 2000);
+
+    } catch (err) {
       setError('Erro ao conectar com o servidor');
     } finally {
       setLoading(false);

@@ -33,6 +33,8 @@ const BookDetail = () => {
   const [loading, setLoading] = useState(true);
   const [userRating, setUserRating] = useState<number | null>(null);
   const [isAllowed, setIsAllowed] = useState<boolean>(false);
+  const [isInList, setIsInList] = useState(false);
+  const [isProcessing, setIsProcessing] = useState(false);
   const navigate = useNavigate();
   const token = localStorage.getItem("token");
 
@@ -157,20 +159,39 @@ const BookDetail = () => {
     fetchUserRating();
   }, [id, token]);
 
+  useEffect(() => {
+    const checkIfInList = async () => {
+      if (!token || !isAllowed || !id) return;
+
+      try {
+        const response = await fetch(
+          `http://127.0.0.1:5000/livros/minhalista/${id}/verificar`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+
+        const data = await response.json();
+        setIsInList(data.inList);
+      } catch (error) {
+        console.error("Erro ao verificar lista:", error);
+      }
+    };
+
+    checkIfInList();
+  }, [token, isAllowed, id]);
+
   const handleAddToList = async () => {
-    if (!token) {
-      return;
-    }
+    if (!token || !isAllowed || isProcessing) return;
 
-    if (!isAllowed) {
-      return;
-    }
-
+    setIsProcessing(true);
     try {
       const response = await fetch(
-        `http://127.0.0.1:5000/livros/minhalista/adicionar/${id}`,
+        `http://127.0.0.1:5000/livros/minhalista/${isInList ? 'excluir' : 'adicionar'}/${id}`,
         {
-          method: "POST",
+          method: isInList ? "DELETE" : "POST",
           headers: {
             Authorization: `Bearer ${token}`,
             "Content-Type": "application/json",
@@ -180,14 +201,13 @@ const BookDetail = () => {
 
       const data = await response.json();
 
-      if (!response.ok) {
-        // Trate o erro conforme necessário
-        return;
+      if (response.ok) {
+        setIsInList(!isInList); // Toggle the state
       }
-
-      // Sucesso: faça algo se desejar
     } catch (error) {
-      console.error("Erro ao adicionar à lista:", error);
+      console.error(`Erro ao ${isInList ? 'remover da' : 'adicionar à'} lista:`, error);
+    } finally {
+      setIsProcessing(false);
     }
   };
 
@@ -439,9 +459,14 @@ const BookDetail = () => {
                     {tag.nome}
                   </p>
                 ))}
-                <span aria-hidden="true" className=""onClick={handleAddToList}>
+                <span 
+                  aria-hidden="true" 
+                  className={isProcessing ? 'disabled' : ''} 
+                  onClick={handleAddToList}
+                  style={{ pointerEvents: isProcessing ? 'none' : 'auto' }}
+                >
                   <label className="ui-bookmark">
-                    <input type="checkbox"/>
+                    <input type="checkbox" checked={isInList} readOnly/>
                     <div className="bookmark">
                       <svg viewBox="0 0 32 32">
                         <g>

@@ -33,10 +33,9 @@ const VerificarCodigo = () => {
         return;
       }
 
-      // Store the token in localStorage
       if (data.token) {
-        localStorage.setItem('token', data.token);
-        navigate(`/recuperar-senha/${id_usuario}`);
+        localStorage.setItem('reset_token', data.token);
+        navigate('/recuperar-senha');
       } else {
         setError('Token não recebido do servidor');
       }

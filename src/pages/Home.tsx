@@ -23,14 +23,8 @@ const Home: React.FC = () => {
           <MostrarLivros />
         </section>
         <div className="space-med-y"></div>
-        {token && (
-          <>
-            <section>
-              <MinhaListaCarrossel />
-            </section>
-            <div className="space-med-y"></div>
-          </>
-        )}        
+        {token && <MinhaListaCarrossel />}
+        <div className="space-med-y"></div>
         {token && (
           <>
             <PorqueVoceLeu />

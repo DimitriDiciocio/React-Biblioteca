@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 import { usePermission } from "../components/usePermission";
+import DeletarUsuario from "../components/DeletarUsuario";
 
 const MostrarUsuarios: React.FC = () => {
   const navigate = useNavigate();
@@ -189,6 +190,18 @@ const MostrarUsuarios: React.FC = () => {
                 >
                   <span className="material-icons">launch</span>
                 </button>
+                <DeletarUsuario
+                  usuarioId={user.id_usuario}
+                  ativo={user.ativo}
+                  onStatusChange={(deletedId, novoStatus) => {
+                    setUsers(prev => prev.map(u => 
+                      u.id_usuario === deletedId ? { ...u, ativo: novoStatus } : u
+                    ));
+                    setFilteredUsers(prev => prev.map(u => 
+                      u.id_usuario === deletedId ? { ...u, ativo: novoStatus } : u
+                    ));
+                  }}
+                />
               </div>
             </div>
           </div>

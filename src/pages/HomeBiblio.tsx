@@ -491,9 +491,9 @@ const HomeBiblio: React.FC = () => {
           <div className="page" data-page="8">
             <Movimentacoes />
           </div>
-          <div className="page" data-page="9">
-            <Multas />
-          </div>
+            <div className="page" data-page="9">
+            <Multas isVisible={page === 9} />
+            </div>
           <div className="page" data-page="10">
             <Relatorios />
           </div>

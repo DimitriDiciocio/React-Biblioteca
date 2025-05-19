@@ -26,59 +26,81 @@ const Multas: React.FC<Props> = ({ isVisible }) => {
   const [hasMore, setHasMore] = useState(true);
   const token = localStorage.getItem("token");
   const navigate = useNavigate();
+
   const fetchMultas = useCallback(async () => {
-      try {
-        const response = await fetch(`http://localhost:5000/multas/${page}`, {
-          method: "GET",
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-  
-        if (!response.ok) {
-          if (response.status === 404) {
-            setHasMore(false);
-            return;
-          }
-          throw new Error("Erro na resposta da API");
-        }
-  
-        const data = await response.json();
-        if (!Array.isArray(data) || data.length === 0) {
-          setHasMore(false);
-          return;
-        }
-  
-        setMultas(prev => page === 1 ? data : [...prev, ...data]);
-      } catch (err) {
-        console.error("Erro ao buscar multas:", err);
-      } finally {
-        setLoading(false);
+    if (!isVisible) return; // Stop if not visible
+    
+    try {
+      const response = await fetch(`http://localhost:5000/multas/${page}`, {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      const data = await response.json();
+
+      if (!Array.isArray(data) || data.length === 0) {
+        setHasMore(false);
+        return;
       }
-    }, [page, token]);
+
+      setMultas(prev => page === 1 ? data : [...prev, ...data]);
+      
+      if (data.length < 8) {
+        setHasMore(false);
+      }
+
+    } catch (err) {
+      console.error("Erro ao buscar multas:", err);
+      setHasMore(false);
+    } finally {
+      setLoading(false);
+    }
+  }, [page, token, isVisible]); // Add isVisible to dependencies
 
   const handleScroll = useCallback(() => {
     if (loading || !hasMore) return;
 
-    if (
-      window.innerHeight + document.documentElement.scrollTop
-      >= document.documentElement.offsetHeight - 100
-    ) {
-      setPage(prev => prev + 1);
+    const scrollPosition = window.innerHeight + window.scrollY;
+    const threshold = document.documentElement.scrollHeight - 100;
+
+    if (scrollPosition >= threshold) {
+      // Prevent multiple triggers
+      if (!loading) {
+        setPage(prev => prev + 1);
+      }
     }
   }, [loading, hasMore]);
+
+  // Reset pagination when becoming visible again
   useEffect(() => {
     if (isVisible) {
-      window.addEventListener("scroll", handleScroll);
-      return () => window.removeEventListener("scroll", handleScroll);
+      setPage(1);
+      setHasMore(true);
     }
-  }, [handleScroll, isVisible]);
+  }, [isVisible]);
 
+  // Only fetch when visible
   useEffect(() => {
     if (isVisible) {
       fetchMultas();
     }
-  }, [page, token, fetchMultas, isVisible]);
+  }, [page, isVisible, fetchMultas]);
+
+  // Only attach scroll listener when visible
+  useEffect(() => {
+    if (!isVisible) return;
+    
+    const scrollListener = () => {
+      if (!loading) {
+        handleScroll();
+      }
+    };
+
+    window.addEventListener("scroll", scrollListener);
+    return () => window.removeEventListener("scroll", scrollListener);
+  }, [isVisible, loading, handleScroll]);
 
   const handlePagarMulta = async (id_multa: number) => {
     try {
