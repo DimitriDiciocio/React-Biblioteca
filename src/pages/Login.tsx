@@ -32,6 +32,14 @@ const Login: React.FC = () => {
         localStorage.setItem('id_user', JSON.stringify(data.id_user));
 
         await Swal.fire({
+          customClass: {
+            title: 'montserrat-alternates-semibold',
+            htmlContainer: 'montserrat-alternates-semibold',
+            popup: 'montserrat-alternates-semibold',
+            container: 'montserrat-alternates-semibold',
+            confirmButton: 'montserrat-alternates-semibold',
+            content: 'montserrat-alternates-semibold',
+          },
           title: 'Login realizado!',
           text: data.message,
           icon: 'success',
@@ -45,6 +53,14 @@ const Login: React.FC = () => {
         }
       } else {
         await Swal.fire({
+          customClass: {
+            title: 'montserrat-alternates-semibold',
+            htmlContainer: 'montserrat-alternates-semibold',
+            popup: 'montserrat-alternates-semibold',
+            container: 'montserrat-alternates-semibold',
+            confirmButton: 'montserrat-alternates-semibold',
+            content: 'montserrat-alternates-semibold',
+          },
           title: 'Erro no login',
           text: data.message,
           icon: 'error',
@@ -53,6 +69,14 @@ const Login: React.FC = () => {
       }
     } catch (error) {
       await Swal.fire({
+        customClass: {
+          title: 'montserrat-alternates-semibold',
+          htmlContainer: 'montserrat-alternates-semibold',
+          popup: 'montserrat-alternates-semibold',
+          container: 'montserrat-alternates-semibold',
+          confirmButton: 'montserrat-alternates-semibold',
+          content: 'montserrat-alternates-semibold',
+        },
         title: 'Erro de conexão!',
         text: 'Não foi possível se conectar ao servidor.' + String(error),
         icon: 'error',
@@ -94,16 +118,16 @@ const Login: React.FC = () => {
           </button>
         </div>
       </div>
-        <h2 className="h2-login">LOGIN</h2>
+        <h2 className="h2-login montserrat-alternates-semibold">LOGIN</h2>
 
         <form onSubmit={handleLogin}>
           <div className="inputGroup">
-              <input type="text" required autoComplete="off" className='z-index-high'  value={email} onChange={(e) => setEmail(e.target.value)}/>
-              <label>E-mail:</label>
+              <input type="text" required autoComplete="off" className='z-index-high montserrat-alternates-semibold'  value={email} onChange={(e) => setEmail(e.target.value)}/>
+              <label className='montserrat-alternates-semibold'>E-mail:</label>
           </div>
           <div className="inputGroup">
-                <input type={mostrarSenha ? 'text' : 'password'} className='z-index-high' id="senha" required autoComplete="off" value={senha} onChange={(e) => setSenha(e.target.value)}/>
-                <label>Senha:</label>
+                <input type={mostrarSenha ? 'text' : 'password'} className='z-index-high montserrat-alternates-semibold' id="senha" required autoComplete="off" value={senha} onChange={(e) => setSenha(e.target.value)}/>
+                <label className='montserrat-alternates-semibold'>Senha:</label>
                 <input type="checkbox" id="togglePassword" checked={mostrarSenha} hidden/>
                 <div className="eye-container" onClick={veSenha}>
                     <svg className="eye" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512">
@@ -114,12 +138,12 @@ const Login: React.FC = () => {
                     </svg>
                 </div>
             </div>
-            <button type="submit" className='button-login z-index-high'>Entrar</button>
+            <button type="submit" className='button-login z-index-high montserrat-alternates-semibold'>Entrar</button>
         </form>
         <div className="space-lilsm-y"></div>
-        <a className='register text-decoration-none cursor-pointer z-index-high' onClick={() => navigate("/cadastro")}>Não possuo uma conta</a>
+        <a className='register text-decoration-none cursor-pointer z-index-high montserrat-alternates-semibold' onClick={() => navigate("/cadastro")}>Não possuo uma conta</a>
         <div className="space-lilsm-y"></div>
-        <a className='register text-decoration-none cursor-pointer z-index-high' onClick={() => navigate("/esqueci-senha")}>Esqueci minha senha</a>
+        <a className='register text-decoration-none cursor-pointer z-index-high montserrat-alternates-semibold' onClick={() => navigate("/esqueci-senha")}>Esqueci minha senha</a>
       </main>
   </div>
   );

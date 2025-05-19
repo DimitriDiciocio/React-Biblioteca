@@ -46,6 +46,7 @@ const Home: React.FC = () => {
         <div className="space-med-y"></div>
         <section>
           <Novidades />
+          <div className="space-ssm-y"></div>
         </section>
       </main>
       <Footer />

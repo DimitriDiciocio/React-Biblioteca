@@ -134,7 +134,7 @@ const MinhaListaCarrossel: React.FC = () => {
           ))}
         </OwlCarousel>
       ) : (
-        <p className="montserrat-alternates">Nenhum livro na sua lista.</p>
+        <p className="montserrat-alternates m-l-50">Nenhum livro na sua lista.</p>
       )}
     </div>
   );

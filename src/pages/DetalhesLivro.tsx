@@ -159,55 +159,35 @@ const BookDetail = () => {
 
   const handleAddToList = async () => {
     if (!token) {
-      Swal.fire("Erro", "Você precisa estar logado para adicionar à sua lista.", "error");
       return;
     }
 
     if (!isAllowed) {
-      Swal.fire("Erro", "Você não tem permissão para realizar esta ação.", "error");
       return;
     }
 
     try {
-      Swal.fire({
-        title: "Adicionar à Minha Lista",
-        text: `Deseja adicionar "${book?.titulo}" à sua lista de leitura?`,
-        icon: "question",
-        showCancelButton: true,
-        confirmButtonColor: "#4562D6",
-        cancelButtonColor: "#d33",
-        confirmButtonText: "Adicionar",
-        cancelButtonText: "Cancelar"
-      }).then(async (result) => {
-        if (result.isConfirmed) {
-          const response = await fetch(
-            `http://127.0.0.1:5000/livros/minhalista/adicionar/${id}`,
-            {
-              method: "POST",
-              headers: {
-                Authorization: `Bearer ${token}`,
-                "Content-Type": "application/json",
-              },
-            }
-          );
-
-          const data = await response.json();
-
-          if (!response.ok) {
-            Swal.fire("Erro", data.message || "Erro ao adicionar à lista", "error");
-            return;
-          }
-
-          Swal.fire("Sucesso", data.message, "success");
+      const response = await fetch(
+        `http://127.0.0.1:5000/livros/minhalista/adicionar/${id}`,
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
         }
-      });
+      );
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        // Trate o erro conforme necessário
+        return;
+      }
+
+      // Sucesso: faça algo se desejar
     } catch (error) {
       console.error("Erro ao adicionar à lista:", error);
-      Swal.fire(
-        "Erro",
-        "Ocorreu um erro ao tentar adicionar o livro à sua lista.",
-        "error"
-      );
     }
   };
 
@@ -223,6 +203,14 @@ const BookDetail = () => {
     }
 
     Swal.fire({
+      customClass: {
+        title: 'montserrat-alternates-semibold',
+        htmlContainer: 'montserrat-alternates-semibold',
+        popup: 'montserrat-alternates-semibold',
+        container: 'montserrat-alternates-semibold',
+        confirmButton: 'montserrat-alternates-semibold',
+        content: 'montserrat-alternates-semibold',
+      },
       title: "Quer Reservar?",
       text: `Você quer adicionar ${book?.titulo} ao carrinho de reservas?`,
       icon: "question",
@@ -256,6 +244,14 @@ const BookDetail = () => {
           }
 
           Swal.fire({
+            customClass: {
+              title: 'montserrat-alternates-semibold',
+              htmlContainer: 'montserrat-alternates-semibold',
+              popup: 'montserrat-alternates-semibold',
+              container: 'montserrat-alternates-semibold',
+              confirmButton: 'montserrat-alternates-semibold',
+              content: 'montserrat-alternates-semibold',
+            },
             title: "Livro adicionado ao carrinho de reservas!",
             text: "Deseja ir para o carrinho ou continuar procurando mais livros?",
             icon: "success",
@@ -291,6 +287,14 @@ const BookDetail = () => {
     }
 
     Swal.fire({
+      customClass: {
+        title: 'montserrat-alternates-semibold',
+        htmlContainer: 'montserrat-alternates-semibold',
+        popup: 'montserrat-alternates-semibold',
+        container: 'montserrat-alternates-semibold',
+        confirmButton: 'montserrat-alternates-semibold',
+        content: 'montserrat-alternates-semibold',
+      },
       title: "Fazer Empréstimo?",
       text: `Você quer adicionar ${book?.titulo} ao carrinho de empréstimos?`,
       icon: "question",
@@ -324,6 +328,14 @@ const BookDetail = () => {
           }
 
           Swal.fire({
+            customClass: {
+              title: 'montserrat-alternates-semibold',
+              htmlContainer: 'montserrat-alternates-semibold',
+              popup: 'montserrat-alternates-semibold',
+              container: 'montserrat-alternates-semibold',
+              confirmButton: 'montserrat-alternates-semibold',
+              content: 'montserrat-alternates-semibold',
+            },
             title: "Livro adicionado ao carrinho de empréstimos!",
             text: "Deseja ir para o carrinho ou continuar procurando mais livros?",
             icon: "success",
@@ -427,11 +439,18 @@ const BookDetail = () => {
                     {tag.nome}
                   </p>
                 ))}
-                <button className="learn-more" onClick={handleAddToList}>
-                <span aria-hidden="true" className="">
-                  <span>+</span>
+                <span aria-hidden="true" className=""onClick={handleAddToList}>
+                  <label className="ui-bookmark">
+                    <input type="checkbox"/>
+                    <div className="bookmark">
+                      <svg viewBox="0 0 32 32">
+                        <g>
+                          <path d="M27 4v27a1 1 0 0 1-1.625.781L16 24.281l-9.375 7.5A1 1 0 0 1 5 31V4a4 4 0 0 1 4-4h14a4 4 0 0 1 4 4z"></path>
+                        </g>
+                      </svg>
+                    </div>
+                  </label>
                 </span>
-              </button>
               </div>
             </div>
             <div>

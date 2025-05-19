@@ -54,7 +54,7 @@ const PorqueVoceLeu: React.FC = () => {
   return (
     <section>
       <p className="montserrat-alternates-semibold size-titles">
-        Por que você leu <strong>{livroTitulo}</strong>?
+        Por que você leu <strong className="montserrat-alternates-bold">{livroTitulo}</strong>?
       </p>
       {loading ? (
         <p>Carregando livros...</p>

@@ -1,6 +1,7 @@
 const Footer: React.FC = () => {
     return(
         <footer className="inter ">
+            
             <div className="d-flex s-around">
             <section className="d-flex-column">
                 <div className="d-flex center-y">

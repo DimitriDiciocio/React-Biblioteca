@@ -161,6 +161,7 @@ const Header: React.FC = () => {
           >
             <div className="p-relative">
               <input
+                className="montserrat-alternates-semibold"
                 id="campo-busca"
                 type="text"
                 placeholder="Pesquisar..."
@@ -205,10 +206,10 @@ const Header: React.FC = () => {
                   style={{cursor: "pointer"}}
                 />
               ) : (
-                <button className="button-sign-in"
+                <button className="button-sign-in montserrat-alternates-semibold"
                 onClick={() => navigate("/login")}
                 >  
-                    Sign in
+                    Entrar
                     <div className="arrow-wrapper">
                         <div className="arrow"></div>
                 
@@ -232,8 +233,9 @@ const Header: React.FC = () => {
                 navigate(`/pesquisa/${query}?filters=${filters.join(",")}`);
               }}
             >
-              <div className="p-relative">
-                <input
+              <div className="p-relative ">
+                <input 
+                  className="montserrat-alternates-semibold"
                   id="campo-busca"
                   required
                   type="text"

@@ -93,6 +93,14 @@ const Cadastro: React.FC = () => {
 
       if (response.ok) {
         await Swal.fire({
+          customClass: {
+            title: 'montserrat-alternates-semibold',
+            htmlContainer: 'montserrat-alternates-semibold',
+            popup: 'montserrat-alternates-semibold',
+            container: 'montserrat-alternates-semibold',
+            confirmButton: 'montserrat-alternates-semibold',
+            content: 'montserrat-alternates-semibold',
+          },
           title: "Cadastro realizado!",
           text: data.message,
           icon: "success",
@@ -102,6 +110,14 @@ const Cadastro: React.FC = () => {
         navigate("/login");
       } else {
         await Swal.fire({
+          customClass: {
+            title: 'montserrat-alternates-semibold',
+            htmlContainer: 'montserrat-alternates-semibold',
+            popup: 'montserrat-alternates-semibold',
+            container: 'montserrat-alternates-semibold',
+            confirmButton: 'montserrat-alternates-semibold',
+            content: 'montserrat-alternates-semibold',
+          },
           title: "Erro no cadastro",
           text: data.message,
           icon: "error",
@@ -110,6 +126,14 @@ const Cadastro: React.FC = () => {
       }
     } catch (error) {
       await Swal.fire({
+        customClass: {
+          title: 'montserrat-alternates-semibold',
+          htmlContainer: 'montserrat-alternates-semibold',
+          popup: 'montserrat-alternates-semibold',
+          container: 'montserrat-alternates-semibold',
+          confirmButton: 'montserrat-alternates-semibold',
+          content: 'montserrat-alternates-semibold',
+        },
         title: "Erro de conexão!",
         text: "Não foi possível se conectar ao servidor." + String(error),
         icon: "error",
@@ -203,16 +227,17 @@ const Cadastro: React.FC = () => {
               </button>
             </>
           ) : (
-            <p className="m-top-70-seminterferncia">
+            <p className="m-top-70-seminterferncia montserrat-alternates-semibold">
               Arraste uma imagem ou clique para selecionar
             </p>
           )}
         </div>
-        <h2 className="h2-cadastro">Cadastro</h2>
+        <h2 className="h2-cadastro montserrat-alternates-semibold">Cadastro</h2>
 
         <form onSubmit={handleCadastro} className="d-flex-column-cadastro">
         <div className="inputGroup2">
                 <input
+                  className="montserrat-alternates-semibold"
                   type="text"
                   required
                   autoComplete="off"
@@ -220,12 +245,13 @@ const Cadastro: React.FC = () => {
                   onChange={(e) => setNome(e.target.value)}
                   tabIndex={1}
                 />
-                <label htmlFor="name">Nome do Usuário</label>
+                <label htmlFor="name" className="montserrat-alternates-semibold">Nome do Usuário</label>
               </div>
           <div className="d-flex gap-5-responsive">
             <div>
               <div className="inputGroup">
                 <input
+                  className="montserrat-alternates-semibold"
                   type="email"
                   required
                   autoComplete="off"
@@ -233,10 +259,11 @@ const Cadastro: React.FC = () => {
                   onChange={(e) => setEmail(e.target.value)}
                   tabIndex={2}
                 />
-                <label htmlFor="name">E-mail:</label>
+                <label htmlFor="name" className="montserrat-alternates-semibold">E-mail:</label>
               </div>
               <div className="inputGroup">
                 <select
+                  className="montserrat-alternates-semibold"
                   value={uf}
                   onChange={(e) => setUf(e.target.value)}
                   required
@@ -252,6 +279,7 @@ const Cadastro: React.FC = () => {
               </div>
               <div className="inputGroup">
                 <input
+                  className="montserrat-alternates-semibold"
                   type={mostrarSenha ? "text" : "password"}
                   id="senha"
                   required
@@ -260,7 +288,7 @@ const Cadastro: React.FC = () => {
                   onChange={(e) => setSenha(e.target.value)}
                   tabIndex={6}
                 />
-                <label>Senha:</label>
+                <label className="montserrat-alternates-semibold">Senha:</label>
                 <input
                   type="checkbox"
                   id="togglePassword"
@@ -289,6 +317,7 @@ const Cadastro: React.FC = () => {
             <div>
               <div className="inputGroup">
                 <input
+                  className="montserrat-alternates-semibold"
                   type="text"
                   required
                   autoComplete="off"
@@ -297,10 +326,11 @@ const Cadastro: React.FC = () => {
                   maxLength={15}
                   tabIndex={3}
                 />
-                <label htmlFor="name">Telefone:</label>
+                <label htmlFor="name" className="montserrat-alternates-semibold">Telefone:</label>
               </div>
               <div className="inputGroup">
                 <select
+                  className="montserrat-alternates-semibold"
                   value={cidade}
                   onChange={(e) => setCidade(e.target.value)}
                   required
@@ -317,6 +347,7 @@ const Cadastro: React.FC = () => {
               </div>
               <div className="inputGroup">
                 <input
+                  className="montserrat-alternates-semibold"
                   type={mostrarConfirmSenha ? "text" : "password"}
                   id="senha-confirm"
                   required
@@ -325,7 +356,7 @@ const Cadastro: React.FC = () => {
                   onChange={(e) => setConfirmSenha(e.target.value)}
                   tabIndex={7}
                 />
-                <label>Confirmar Senha:</label>
+                <label className="montserrat-alternates-semibold">Confirmar Senha:</label>
                 <input
                   type="checkbox"
                   id="togglePassword-confirm"
@@ -356,12 +387,12 @@ const Cadastro: React.FC = () => {
           </div>
 
           <div>
-            <button type="submit" className="button-login">
+            <button type="submit" className="button-login montserrat-alternates-semibold">
               Cadastrar
             </button>
             <div className="space-lilsm-y"></div>
             <a
-              className="register text-decoration-none cursor-pointer"
+              className="register text-decoration-none cursor-pointer montserrat-alternates-semibold"
               onClick={() => navigate("/login")}
             >
               Possuo uma conta

@@ -84,6 +84,14 @@ const AddBooks: React.FC = () => {
 
       const result = await response.json();
       Swal.fire({
+        customClass: {
+          title: 'montserrat-alternates-semibold',
+          htmlContainer: 'montserrat-alternates-semibold',
+          popup: 'montserrat-alternates-semibold',
+          container: 'montserrat-alternates-semibold',
+          confirmButton: 'montserrat-alternates-semibold',
+          content: 'montserrat-alternates-semibold',
+        },
         icon: response.ok ? "success" : "error",
         title: response.ok ? "Sucesso" : "Erro",
         text: result.message || result.error,

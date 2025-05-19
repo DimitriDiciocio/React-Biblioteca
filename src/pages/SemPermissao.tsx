@@ -10,8 +10,8 @@ const SemPermissao = () => {
         <div className="sem-permissao-icon">
           <ShieldAlert className="icon" />
         </div>
-        <h1 className="sem-permissao-title">Acesso negado</h1>
-        <p className="sem-permissao-text">
+        <h1 className="sem-permissao-title montserrat-alternates-semibold">Acesso negado</h1>
+        <p className="sem-permissao-text montserrat-alternates-semibold">
           Você não tem permissão para acessar esta página. 
           Por favor, verifique suas credenciais ou volte para a página anterior.
         </p>
