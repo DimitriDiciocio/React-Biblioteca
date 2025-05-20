@@ -356,7 +356,13 @@ export default function RelatorioMultas({ isVisible }: Props) {
                 </tr>
               ) : (
                 multas.map((multa, index) => (
-                  <tr key={`${multa.id_emprestimo}-${index}`} style={{ borderBottom: "1px solid #ddd" }}>
+                  <tr 
+                    key={`${multa.id_emprestimo}-${index}`} 
+                    style={{ 
+                      borderBottom: "1px solid #ddd",
+                      backgroundColor: index % 2 === 0 ? '#ffffff' : '#f8f9fa' 
+                    }}
+                  >
                     <td className="montserrat-alternates" style={{ padding: "10px" }}>{multa.email}</td>
                     <td className="montserrat-alternates" style={{ padding: "10px" }}>{multa.telefone}</td>
                     <td className="montserrat-alternates" style={{ padding: "10px" }}>{multa.nome}</td>
@@ -406,7 +412,13 @@ export default function RelatorioMultas({ isVisible }: Props) {
                 </tr>
               ) : (
                 multasPendentes.map((multa, index) => (
-                  <tr key={`${multa.id_emprestimo}-${index}`} style={{ borderBottom: "1px solid #ddd" }}>
+                  <tr 
+                    key={`${multa.id_emprestimo}-${index}`} 
+                    style={{ 
+                      borderBottom: "1px solid #ddd",
+                      backgroundColor: index % 2 === 0 ? '#ffffff' : '#f8f9fa' 
+                    }}
+                  >
                     <td className="montserrat-alternates" style={{ padding: "10px" }}>{multa.email}</td>
                     <td className="montserrat-alternates" style={{ padding: "10px" }}>{multa.telefone}</td>
                     <td className="montserrat-alternates" style={{ padding: "10px" }}>{multa.nome}</td>

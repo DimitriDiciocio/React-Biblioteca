@@ -205,8 +205,14 @@ const RelatorioUsuarios: React.FC<Props> = ({ isVisible }) => {
               </tr>
             ) : (
               <>
-                {users.map((usuario) => (
-                  <tr key={usuario.id} style={{ borderBottom: "1px solid #ddd" }}>
+                {users.map((usuario, index) => (
+                  <tr 
+                    key={usuario.id} 
+                    style={{ 
+                      borderBottom: "1px solid #ddd",
+                      backgroundColor: index % 2 === 0 ? '#ffffff' : '#f8f9fa' 
+                    }}
+                  >
                     <td className="montserrat-alternates" style={{ padding: "10px" }}>{usuario.nome}</td>
                     <td className="montserrat-alternates" style={{ padding: "10px" }}>{usuario.email}</td>
                     <td className="montserrat-alternates" style={{ padding: "10px" }}>{usuario.telefone}</td>
