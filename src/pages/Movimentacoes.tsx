@@ -5,7 +5,7 @@ import { handleDevolverEmprestimo } from "../components/DevolverEmprestimo";
 import { atenderReserva } from "../services/atenderReservaService";
 import { atenderEmprestimo } from "../services/atenderEmprestimoService";
 import { cancelarReserva } from "../services/cancelarReserva";
-import { formatDate } from "../services/FormatDate";
+import { formatDateTime } from "../services/FormatDate";
 
 type Movimentacao = {
   tipo: string;
@@ -286,12 +286,11 @@ const Movimentacoes: React.FC = () => {
                   >
                     {getDescriptiveTipo(m.tipo, m.status)}
                   </span>
-                </td>
-                <td>{formatDate(m.data_criacao ?? null)}</td>
-                <td>{formatDate(m.data_devolver ?? null)}</td>
-                <td>{formatDate(m.data_devolvida ?? null)}</td>
-                <td>{formatDate(m.data_retirada ?? null)}</td>
-                <td>{formatDate(m.data_validade ?? null)}</td>
+                </td>                <td>{formatDateTime(m.data_criacao ? new Date(m.data_criacao).toISOString() : null)}</td>
+                <td>{formatDateTime(m.data_devolver ? new Date(m.data_devolver).toISOString() : null)}</td>
+                <td>{formatDateTime(m.data_devolvida ? new Date(m.data_devolvida).toISOString() : null)}</td>
+                <td>{formatDateTime(m.data_retirada ? new Date(m.data_retirada).toISOString() : null)}</td>
+                <td>{formatDateTime(m.data_validade ? new Date(m.data_validade).toISOString() : null)}</td>
                 <td>
                   <span
                     className={`${styles.tag} ${getStatusClass(

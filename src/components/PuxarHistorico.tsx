@@ -2,6 +2,7 @@ import { useEffect, useState, useCallback } from "react";
 import Swal from "sweetalert2";
 import { usePermission } from "../components/usePermission";
 import historicIcon from "../../assets/img/historic-icon.png";
+import { formatDateTime } from "../services/FormatDate";
 
 interface Emprestimo {
   id_livro: number;
@@ -65,11 +66,7 @@ const PuxarHistorico = () => {
   const [hasMoreMulConc, setHasMoreMulConc] = useState(true);
 
   const handleScroll = useCallback(() => {
-    console.log("BBB")
     if (loading) return;
-
-    console.log("AAAAAAAAAAAAAAAAAAAAAA")
-    console.log(document.getElementById("historic0"))
 
     const historicElement = document.getElementById("historic0");
     if (
@@ -271,8 +268,8 @@ const PuxarHistorico = () => {
                       <p>
                         <strong>{item.titulo}</strong> - {item.autor}
                       </p>
-                      <p>Retirado: {item.data_retirada}</p>
-                      <p>Devolver até: {item.data_devolver}</p>
+                      <p>Retirado: {formatDateTime(item.data_retirada)}</p>
+                      <p>Devolver até: {formatDateTime(item.data_devolver)}</p>
                     </div>
                   ))
               ) : (
@@ -307,9 +304,8 @@ const PuxarHistorico = () => {
                     <div key={item.id_emprestimo} className="historico-item">
                       <p>
                         <strong>{item.titulo}</strong> - {item.autor}
-                      </p>
-                      <p>Retirado: {item.data_retirada}</p>
-                      <p>Devolvido: {item.data_devolvido}</p>
+                      </p>                      <p>Retirado: {formatDateTime(item.data_retirada)}</p>
+                      <p>Devolvido: {formatDateTime(item.data_devolvido || null)}</p>
                     </div>
                   ))
               ) : (
@@ -345,8 +341,8 @@ const PuxarHistorico = () => {
                       <p>
                         <strong>{item.titulo}</strong> - {item.autor}
                       </p>
-                      <p>Reservado em: {item.data_criacao}</p>
-                      <p>Válido até: {item.data_validade}</p>
+                      <p>Reservado em: {formatDateTime(item.data_criacao)}</p>
+                      <p>Válido até: {formatDateTime(item.data_validade)}</p>
                     </div>
                   ))
               ) : (
@@ -447,7 +443,6 @@ const PuxarHistorico = () => {
   return (
     <section id="historic0" className="historic">
     <div>
-      <div className="espaco-vazio"></div>
       <div className="historico-container">
         <div className="d-flex center-y">
           <img src={historicIcon} alt="Histórico" className="historic-icon" />

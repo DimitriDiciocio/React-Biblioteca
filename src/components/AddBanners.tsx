@@ -11,6 +11,7 @@ const AddBanners: React.FC = () => {
     startdate: "",
     finishdate: "",
   });
+  const [indeterminado, setIndeterminado] = useState(false); // Add this state
 
   const [banner, setBanner] = useState<File | null>(null);
   const [bannerPreview, setBannerPreview] = useState<string | null>(null);
@@ -79,6 +80,11 @@ const AddBanners: React.FC = () => {
         });
         setBanner(null);
         setBannerPreview(null);
+        setIndeterminado(false);
+
+        // Dispatch event to update BannersAdm
+        const updateEvent = new CustomEvent('bannersUpdated');
+        window.dispatchEvent(updateEvent);
       }
     } catch (error) {
       console.error("Erro ao adicionar banner:", error);
@@ -190,8 +196,25 @@ const AddBanners: React.FC = () => {
                     name="finishdate"
                     value={formData.finishdate}
                     onChange={handleChange}
-                    required
+                    required={!indeterminado}
+                    disabled={indeterminado}
                   />
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginTop: '8px' }}>
+                    <input
+                      type="checkbox"
+                      checked={indeterminado}
+                      onChange={(e) => {
+                        setIndeterminado(e.target.checked);
+                        if (e.target.checked) {
+                          setFormData(prev => ({ ...prev, finishdate: "" }));
+                        }
+                      }}
+                      id="indeterminado"
+                    />
+                    <label htmlFor="indeterminado" className="montserrat-alternates">
+                      Por tempo indeterminado
+                    </label>
+                  </div>
                 </div>
               </div>
 

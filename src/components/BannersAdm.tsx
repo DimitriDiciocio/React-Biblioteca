@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 import { formatDate } from "../services/FormatDate";
@@ -15,25 +15,39 @@ const BannersAdm: React.FC = () => {
   const [banners, setBanners] = useState<Banner[]>([]);
   const navigate = useNavigate();
 
-  useEffect(() => {
-    const fetchBanners = async () => {
-      try {
-        const response = await fetch("http://127.0.0.1:5000/banners/biblios", {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        });
-        const data = await response.json();
-        setBanners(data.banners);
-      } catch (error) {
-        console.error("Erro ao buscar banners:", error);
-      }
-    };
-
-    fetchBanners();
+  const fetchBanners = useCallback(async () => {
+    try {
+      const response = await fetch("http://127.0.0.1:5000/banners/biblios", {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      });
+      const data = await response.json();
+      setBanners(data.banners);
+    } catch (error) {
+      console.error("Erro ao buscar banners:", error);
+    }
   }, []);
 
-  const handleDelete = async (  id_banner: number) => {
+  // Initial fetch
+  useEffect(() => {
+    fetchBanners();
+  }, [fetchBanners]);
+
+  // Listen for banner updates
+  useEffect(() => {
+    const handleBannersUpdated = () => {
+      fetchBanners();
+    };
+
+    window.addEventListener('bannersUpdated', handleBannersUpdated);
+
+    return () => {
+      window.removeEventListener('bannersUpdated', handleBannersUpdated);
+    };
+  }, [fetchBanners]);
+
+  const handleDelete = async (id_banner: number) => {
     const confirm = await Swal.fire({
       title: "Tem certeza?",
       text: "Você não poderá reverter esta ação!",
@@ -79,7 +93,6 @@ const BannersAdm: React.FC = () => {
     <div>
       <div className="d-flex justify-between align-center montserrat-alternates-semibold">
         <h1>Banners</h1>
-
       </div>
       <table className="table">
         <thead>
@@ -92,7 +105,7 @@ const BannersAdm: React.FC = () => {
         </thead>
         <tbody>
           {banners.map((banner) => (
-            <tr  className="montserrat-alternates-semibold" key={banner.id_banner}>
+            <tr className="montserrat-alternates-semibold" key={banner.id_banner}>
               <td>{banner.title}</td>
               <td>{formatDate(banner.startDate)}</td>
               <td>{formatDate(banner.finishDate)}</td>

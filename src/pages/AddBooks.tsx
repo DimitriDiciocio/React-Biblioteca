@@ -35,7 +35,7 @@ const AddBooks: React.FC = () => {
   };
 
   const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
   ) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
@@ -57,17 +57,14 @@ const AddBooks: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    const newBook = {
-      ...formData,
-      selectedTags: selectedTags.map((tag) => tag.id),
-    };
-
-    const requestBody = new FormData();
-
-    // Adicionando os dados do livro
-    Object.keys(newBook).forEach((key) => {
-      requestBody.append(key, newBook[key as keyof typeof newBook]);
+    const requestBody = new FormData();    // Adicionar campos do formulário
+    Object.entries(formData).forEach(([key, value]) => {
+      requestBody.append(key, value);
     });
+
+    // Adicionar tags como uma string separada por vírgula
+    const tagIds = selectedTags.map(tag => tag.id).join(',');
+    requestBody.append('selectedTags', tagIds);
 
     if (image) {
       requestBody.append("imagem", image);
@@ -83,22 +80,15 @@ const AddBooks: React.FC = () => {
       });
 
       const result = await response.json();
-      Swal.fire({
-        customClass: {
-          title: 'montserrat-alternates-semibold',
-          htmlContainer: 'montserrat-alternates-semibold',
-          popup: 'montserrat-alternates-semibold',
-          container: 'montserrat-alternates-semibold',
-          confirmButton: 'montserrat-alternates-semibold',
-          content: 'montserrat-alternates-semibold',
-        },
-        icon: response.ok ? "success" : "error",
-        title: response.ok ? "Sucesso" : "Erro",
-        text: result.message || result.error,
-      });
-
-      // Resetar os campos do formulário após o sucesso
+      
       if (response.ok) {
+        Swal.fire({
+          icon: "success",
+          title: "Sucesso",
+          text: result.message,
+        });
+
+        // Resetar os campos do formulário após o sucesso
         setFormData({
           titulo: "",
           autor: "",
@@ -112,9 +102,24 @@ const AddBooks: React.FC = () => {
         setImage(null);
         setImagemPreview(null);
         setSelectedTags([]);
+
+        // Atualizar a lista de livros em segundo plano
+        const updateEvent = new CustomEvent('booksUpdated');
+        window.dispatchEvent(updateEvent);
+      } else {
+        Swal.fire({
+          icon: "error",
+          title: "Erro",
+          text: result.error,
+        });
       }
     } catch (error) {
       console.error("Erro ao adicionar livro:", error);
+      Swal.fire({
+        icon: "error",
+        title: "Erro",
+        text: "Erro ao adicionar livro. Tente novamente.",
+      });
     }
   };
 

@@ -71,7 +71,24 @@ const CadastroUsuario: React.FC = () => {
           text: data.message,
           icon: "success",
         });
-        // Clear form fields and reset image preview
+
+        // Buscar a imagem do usuário recém-cadastrado
+        let imagemPreviewUrl = null;
+        if (data.usuario && data.usuario.imagem) {
+          try {
+            const imageResponse = await fetch(
+              `http://127.0.0.1:5000/uploads/usuarios/${data.usuario.imagem}`,
+              { method: "HEAD" }
+            );
+            if (imageResponse.ok) {
+              imagemPreviewUrl = `http://127.0.0.1:5000/uploads/usuarios/${data.usuario.imagem}`;
+            }
+          } catch (error) {
+            console.error("Erro ao buscar imagem do usuário:", error);
+          }
+        }
+
+        // Resetar os campos do formulário
         setNome("");
         setEmail("");
         setTelefone("");

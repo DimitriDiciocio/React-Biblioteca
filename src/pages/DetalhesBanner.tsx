@@ -7,6 +7,7 @@ interface Banner {
   title: string;
   startDate: string;
   finishDate: string;
+  indefiniteEndDate?: boolean;
 }
 
 const DetalhesBanner: React.FC = () => {
@@ -15,6 +16,7 @@ const DetalhesBanner: React.FC = () => {
     title: "",
     startDate: "",
     finishDate: "",
+    indefiniteEndDate: false,
   });
   const [banner, setBanner] = useState<File | null>(null);
   const [bannerPreview, setBannerPreview] = useState<string | null>(null);
@@ -37,14 +39,19 @@ const DetalhesBanner: React.FC = () => {
           }
         );
         const data = await response.json();
+        
+        // Check if finishDate is null or empty
+        const isIndefinite = !data.banner.finishDate || data.banner.finishDate === '';
+        
         setFormData({
           ...data.banner,
           startDate: new Date(data.banner.startDate)
             .toISOString()
             .split("T")[0],
-          finishDate: new Date(data.banner.finishDate)
+          finishDate: isIndefinite ? '' : new Date(data.banner.finishDate)
             .toISOString()
             .split("T")[0],
+          indefiniteEndDate: isIndefinite
         });
 
         if (data.banner.imagePath) {
@@ -72,7 +79,18 @@ const DetalhesBanner: React.FC = () => {
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    const { name, value, type } = e.target;
+    const checked = (e.target as HTMLInputElement).checked;
+
+    if (type === 'checkbox') {
+      setFormData(prev => ({
+        ...prev,
+        [name]: checked,
+        finishDate: checked ? '' : prev.finishDate
+      }));
+    } else {
+      setFormData(prev => ({ ...prev, [name]: value }));
+    }
   };
 
   const onDrop = useCallback((acceptedFiles: File[]) => {
@@ -95,7 +113,8 @@ const DetalhesBanner: React.FC = () => {
     const form = new FormData();
     form.append("title", formData.title);
     form.append("startdate", formData.startDate);
-    form.append("finishdate", formData.finishDate);
+    form.append("finishdate", formData.indefiniteEndDate ? "" : formData.finishDate);
+    form.append("indefiniteEndDate", String(formData.indefiniteEndDate));
     if (banner) {
       form.append("banner", banner);
     }
@@ -217,9 +236,23 @@ const DetalhesBanner: React.FC = () => {
                     name="finishDate"
                     value={formData.finishDate}
                     onChange={handleChange}
-                    required
+                    required={!formData.indefiniteEndDate}
+                    disabled={formData.indefiniteEndDate}
                   />
                 </div>
+              </div>
+
+              <div className="form-group">
+                <label className="checkbox-container montserrat-alternates-semibold">
+                  <input
+                    type="checkbox"
+                    name="indefiniteEndDate"
+                    checked={formData.indefiniteEndDate}
+                    onChange={handleChange}
+                  />
+                  <span className="checkmark"></span>
+                  Banner sem data de término
+                </label>
               </div>
 
               <div className="d-flex g-sm m-top">
