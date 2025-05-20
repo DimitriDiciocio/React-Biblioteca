@@ -143,7 +143,7 @@ const EditarLivro = () => {
           title: "Sucesso",
           text: data.message,
         });
-        navigate(`/livro/${id}`);
+        navigate(`/home_biblio?page=5`);
       } else {
         Swal.fire({
           icon: "error",

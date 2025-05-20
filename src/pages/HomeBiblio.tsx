@@ -38,6 +38,7 @@ const HomeBiblio: React.FC = () => {
   const [isUsersMenuOpen, setIsUsersMenuOpen] = useState(false);
   const [isBooksMenuOpen, setIsBooksMenuOpen] = useState(false);
   const [isBannersMenuOpen, setIsBannersMenuOpen] = useState(false);
+  const [atualizarListaUsers, setAtualizarListaUsers] = useState(true);
   const currentPage =
     Number(new URLSearchParams(window.location.search).get("page")) || 1;
 
@@ -469,10 +470,10 @@ const HomeBiblio: React.FC = () => {
           {hasAdminPermission && (
             <>
               <div className="page" data-page="2">
-                <CadastroUsuario />
+                <CadastroUsuario setAtualizarListaUsers={setAtualizarListaUsers} />
               </div>
               <div className="page" data-page="3">
-                <MostrarUsuarios />
+                <MostrarUsuarios atualizarListaUsers={atualizarListaUsers} />
               </div>
             </>
           )}

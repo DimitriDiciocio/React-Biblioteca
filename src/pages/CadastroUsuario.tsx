@@ -5,7 +5,11 @@ import "../index.css";
 import { usePermission } from "../components/usePermission";
 import { useDropzone } from "react-dropzone";
 
-const CadastroUsuario: React.FC = () => {
+interface CadastroUsuarioProps {
+  setAtualizarListaUsers: (value: boolean) => void;
+}
+
+const CadastroUsuario: React.FC<CadastroUsuarioProps> = ({ setAtualizarListaUsers }) => {
   const [nome, setNome] = useState("");
   const [email, setEmail] = useState("");
   const [telefone, setTelefone] = useState("");
@@ -72,23 +76,7 @@ const CadastroUsuario: React.FC = () => {
           icon: "success",
         });
 
-        // Buscar a imagem do usuário recém-cadastrado
-        let imagemPreviewUrl = null;
-        if (data.usuario && data.usuario.imagem) {
-          try {
-            const imageResponse = await fetch(
-              `http://127.0.0.1:5000/uploads/usuarios/${data.usuario.imagem}`,
-              { method: "HEAD" }
-            );
-            if (imageResponse.ok) {
-              imagemPreviewUrl = `http://127.0.0.1:5000/uploads/usuarios/${data.usuario.imagem}`;
-            }
-          } catch (error) {
-            console.error("Erro ao buscar imagem do usuário:", error);
-          }
-        }
-
-        // Resetar os campos do formulário
+        // Reset form fields
         setNome("");
         setEmail("");
         setTelefone("");
@@ -99,6 +87,9 @@ const CadastroUsuario: React.FC = () => {
         setImagemPreview(null);
         setUf("");
         setCidade("");
+        
+        localStorage.setItem("updateCadastro", "true");
+        window.dispatchEvent(new Event("updateCadastro"));
       }
     } catch (error) {
       await Swal.fire({
