@@ -287,7 +287,7 @@ const PuxarHistorico = () => {
             <input
               type="text"
               placeholder="Pesquisar título ou autor..."
-              className="barra-pesquisa"
+              className="barra-pesquisa montserrat-alternates"
               value={filtros.emprestimosConcluidos}
               onChange={(e) =>
                 handleFiltroChange("emprestimosConcluidos", e.target.value)
@@ -301,7 +301,7 @@ const PuxarHistorico = () => {
                       .includes(filtros.emprestimosConcluidos)
                   )
                   .map((item) => (
-                    <div key={item.id_emprestimo} className="historico-item">
+                    <div key={item.id_emprestimo} className="historico-item montserrat-alternates">
                       <p>
                         <strong>{item.titulo}</strong> - {item.autor}
                       </p>                      <p>Retirado: {formatDateTime(item.data_retirada)}</p>
@@ -323,7 +323,7 @@ const PuxarHistorico = () => {
             <input
               type="text"
               placeholder="Pesquisar título ou autor..."
-              className="barra-pesquisa"
+              className="barra-pesquisa montserrat-alternates"
               value={filtros.reservasAtivas}
               onChange={(e) =>
                 handleFiltroChange("reservasAtivas", e.target.value)
@@ -337,7 +337,7 @@ const PuxarHistorico = () => {
                       .includes(filtros.reservasAtivas)
                   )
                   .map((item) => (
-                    <div key={item.id_reserva} className="historico-item">
+                    <div key={item.id_reserva} className="historico-item montserrat-alternates">
                       <p>
                         <strong>{item.titulo}</strong> - {item.autor}
                       </p>
@@ -360,7 +360,7 @@ const PuxarHistorico = () => {
             <input
               type="text"
               placeholder="Pesquisar por empréstimo..."
-              className="barra-pesquisa"
+              className="barra-pesquisa montserrat-alternates"
               value={filtros.multasPendentes}
               onChange={(e) =>
                 handleFiltroChange("multasPendentes", e.target.value)
@@ -374,7 +374,7 @@ const PuxarHistorico = () => {
                       .includes(filtros.multasPendentes)
                   )
                   .map((multa) => (
-                    <div key={multa.id_multa} className="historico-item multa">
+                    <div key={multa.id_multa} className="historico-item multa montserrat-alternates">
                       <p>
                         <strong>Empréstimo #{multa.id_emprestimo}</strong>
                       </p>
@@ -400,7 +400,7 @@ const PuxarHistorico = () => {
             <input
               type="text"
               placeholder="Pesquisar por empréstimo..."
-              className="barra-pesquisa"
+              className="barra-pesquisa montserrat-alternates"
               value={filtros.multasConcluidas}
               onChange={(e) =>
                 handleFiltroChange("multasConcluidas", e.target.value)
@@ -414,7 +414,7 @@ const PuxarHistorico = () => {
                       .includes(filtros.multasConcluidas)
                   )
                   .map((multa) => (
-                    <div key={multa.id_multa} className="historico-item multa">
+                    <div key={multa.id_multa} className="historico-item multa montserrat-alternates">
                       <p>
                         <strong>Empréstimo #{multa.id_emprestimo}</strong>
                       </p>

@@ -218,7 +218,16 @@ const BookDetail = () => {
     }
 
     if (!isAllowed) {
-      Swal.fire("Erro", "Você não tem permissão para realizar esta ação.", "error");
+      Swal.fire({
+        customClass: {
+          title: 'montserrat-alternates-semibold',
+          htmlContainer: 'montserrat-alternates-semibold',
+          confirmButton: 'montserrat-alternates-semibold',
+        },
+        title: "Erro",
+        text: "Você não tem permissão para realizar esta ação.",
+        icon: "error"
+      });
       return;
     }
 
@@ -556,9 +565,9 @@ const BookDetail = () => {
             </div>
             <div className="d-flex g-sm m-top">
               {disponivelEmprestimo && (
-                <button className="learn-more" onClick={handleEmprestimo}>
-                  <span className="circle" aria-hidden="true">
-                    <span className="icon arrow"></span>
+                <button className="learn-more montserrat-alternates-semibold" onClick={handleEmprestimo}>
+                  <span className="circle montserrat-alternates-semibold" aria-hidden="true">
+                    <span className="icon arrow montserrat-alternates-semibold"></span>
                   </span>
                   <span className="button-text montserrat-alternates-semibold">
                     Emprestar
@@ -566,9 +575,9 @@ const BookDetail = () => {
                 </button>
               )}
               {disponivelReserva && (
-                <button className="learn-more" onClick={handleAgendamento}>
-                  <span className="circle purple" aria-hidden="true">
-                    <span className="icon arrow"></span>
+                <button className="learn-more montserrat-alternates-semibold" onClick={handleAgendamento}>
+                  <span className="circle purple montserrat-alternates-semibold" aria-hidden="true">
+                    <span className="icon arrow montserrat-alternates-semibold"></span>
                   </span>
                   <span className="button-text montserrat-alternates-semibold">
                     Reservar
@@ -578,7 +587,8 @@ const BookDetail = () => {
               {!disponivelEmprestimo &&
                 !disponivelReserva &&
                 mensagemIndisponivel && (
-                  <div
+                    <div
+                    className="montserrat-alternates-semibold"
                     style={{
                       backgroundColor: "#f8d7da",
                       color: "#721c24",
@@ -589,9 +599,9 @@ const BookDetail = () => {
                       fontWeight: "bold",
                       maxWidth: "400px",
                     }}
-                  >
+                    >
                     {mensagemIndisponivel}
-                  </div>
+                    </div>
                 )}
             </div>
           </div>

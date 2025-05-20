@@ -303,6 +303,10 @@ const EditarUsuario: React.FC = () => {
 
       if (response.ok) {
         Swal.fire({
+          customClass: {
+            title: "montserrat-alternates-semibold",
+            htmlContainer: "montserrat-alternates-semibold"
+          },
           title: "Usuário editado com sucesso!",
           text: data.message,
           icon: "success",
@@ -315,7 +319,15 @@ const EditarUsuario: React.FC = () => {
         setEndereco(enderecoCompleto);
         setIsEditing(false);
       } else {
-        Swal.fire("Erro ao editar usuário", data.message, "error");
+        Swal.fire({
+          title: "Erro ao editar usuário",
+          text: data.message,
+          icon: "error",
+          customClass: {
+            title: "montserrat-alternates-semibold",
+            htmlContainer: "montserrat-alternates-semibold"
+          }
+        });
       }
     } catch (error) {
       Swal.fire("Erro de conexão com o servidor", String(error), "error");
@@ -378,7 +390,9 @@ const EditarUsuario: React.FC = () => {
           <h2 className="montserrat-alternates-semibold" style={{ marginBottom: 16 }}>Editar Usuário</h2>
           <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
             <label className="montserrat-alternates-semibold">
-              Nome:
+              <p className="table-row">
+                Nome:
+              </p>
               <input
                 className="input montserrat-alternates-semibold"
                 type="text"
@@ -388,7 +402,9 @@ const EditarUsuario: React.FC = () => {
               />
             </label>
             <label className="montserrat-alternates-semibold">
-              Email:
+              <p className="table-row">
+                Email:
+              </p>
               <input
                 className="input"
                 type="email"
@@ -398,7 +414,9 @@ const EditarUsuario: React.FC = () => {
               />
             </label>
             <label className="montserrat-alternates-semibold">
-              Telefone:
+              <p className="table-row">
+                Telefone:
+              </p>
               <input
                 className="input"
                 type="text"
@@ -408,7 +426,9 @@ const EditarUsuario: React.FC = () => {
               />
             </label>
             <label className="montserrat-alternates-semibold">
-              Estado:
+              <p className="table-row">
+                Estado:
+              </p>
               <select
                 className="input montserrat-alternates-semibold"
                 value={editUf}
@@ -422,7 +442,9 @@ const EditarUsuario: React.FC = () => {
               </select>
             </label>
             <label className="montserrat-alternates-semibold">
-              Cidade:
+              <p className="table-row">
+                Cidade:
+              </p>
               <select
                 className="input"
                 value={editCidade}
