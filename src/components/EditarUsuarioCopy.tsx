@@ -6,6 +6,29 @@ import Swal from "sweetalert2";
 import { usePermission } from "../components/usePermission";
 import PuxarHistorico from "../components/PuxarHistorico";
 
+const Modal: React.FC<{ open: boolean; onClose: () => void; children: React.ReactNode }> = ({ open, onClose, children }) => {
+  if (!open) return null;
+  return (
+    <div className="modal-overlay " style={{
+      position: "fixed", top: 0, left: 0, width: "100vw", height: "100vh",
+      background: "rgba(0,0,0,0.3)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 9999
+    }}
+      onClick={onClose}
+    >
+      <div className="modal-content" style={{
+        background: "#fff", borderRadius: 10, padding: 32, minWidth: 320, maxWidth: 400, width: "100%", position: "relative"
+      }}
+        onClick={e => e.stopPropagation()}
+      >
+        <button onClick={onClose} style={{
+          position: "absolute", top: 10, right: 10, background: "none", border: "none", fontSize: 22, cursor: "pointer"
+        }} aria-label="Fechar">×</button>
+        {children}
+      </div>
+    </div>
+  );
+};
+
 const EditarUsuario: React.FC = () => {
   const [nome, setNome] = useState("");
   const [email, setEmail] = useState("");
@@ -24,9 +47,16 @@ const EditarUsuario: React.FC = () => {
   const [originalEndereco, setOriginalEndereco] = useState("");
   const [originalUf, setOriginalUf] = useState("");
   const [originalCidade, setOriginalCidade] = useState("");
+  const [editNome, setEditNome] = useState("");
+  const [editEmail, setEditEmail] = useState("");
+  const [editTelefone, setEditTelefone] = useState("");
+  const [editUf, setEditUf] = useState("");
+  const [editCidade, setEditCidade] = useState("");
+  const [editCidadesBrasil, setEditCidadesBrasil] = useState<string[]>([]); // cidades para o modal
   const navigate = useNavigate();
   const token = localStorage.getItem("token");
   const isAllowed = usePermission(1);
+  const [modalOpen, setModalOpen] = useState(false);
 
   const formatTelefone = (value: string) => {
     const numericValue = value.replace(/\D/g, "");
@@ -168,6 +198,50 @@ const EditarUsuario: React.FC = () => {
     }
   }, [endereco]);
 
+  useEffect(() => {
+    if (modalOpen) {
+      setEditNome(nome);
+      setEditEmail(email);
+      setEditTelefone(telefone);
+      setEditUf(uf);
+      setEditCidade(cidade);
+      if (uf) {
+        // Atualiza cidades do modal para o estado atual
+        fetch(`https://servicodados.ibge.gov.br/api/v1/localidades/estados/${uf}/municipios`)
+          .then(res => res.ok ? res.json() : [])
+          .then(data => setEditCidadesBrasil(Array.isArray(data) ? data.map((c: { nome: string }) => c.nome) : []));
+      } else {
+        setEditCidadesBrasil([]);
+      }
+    }
+  }, [modalOpen, nome, email, telefone, uf, cidade]);
+
+  useEffect(() => {
+    
+    if (!editUf) {
+      setEditCidadesBrasil([]);
+      setEditCidade("");
+      return;
+    }
+    const fetchCidades = async () => {
+      try {
+        const response = await fetch(
+          `https://servicodados.ibge.gov.br/api/v1/localidades/estados/${editUf}/municipios`
+        );
+        if (response.ok) {
+          const data = await response.json();
+          setEditCidadesBrasil(data.map((cidade: { nome: string }) => cidade.nome));
+        } else {
+          setEditCidadesBrasil([]);
+        }
+      } catch {
+        setEditCidadesBrasil([]);
+      }
+      setEditCidade(""); // Limpa cidade ao trocar estado
+    };
+    fetchCidades();
+  }, [editUf]);
+
   const onDrop = useCallback((acceptedFiles: File[]) => {
     const file = acceptedFiles[0];
     if (file) {
@@ -189,12 +263,27 @@ const EditarUsuario: React.FC = () => {
 
   const handleEdicao = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (
+      !editNome.trim() ||
+      !editEmail.trim() ||
+      !editTelefone.trim() ||
+      !editUf ||
+      !editCidade
+    ) {
+      Swal.fire({
+        icon: "warning",
+        title: "Campos obrigatórios",
+        text: "Preencha todos os campos e selecione estado e cidade antes de salvar.",
+        confirmButtonText: "OK"
+      });
+      return;
+    }
 
-    const enderecoCompleto = `${cidade} - ${uf}`; // Combine city and UF
+    const enderecoCompleto = `${editCidade} - ${editUf}`; // Combine city and UF
     const formData = new FormData();
-    formData.append("nome", nome);
-    formData.append("email", email);
-    formData.append("telefone", telefone.replace(/\D/g, "")); // Send numeric-only
+    formData.append("nome", editNome);
+    formData.append("email", editEmail);
+    formData.append("telefone", editTelefone.replace(/\D/g, "")); // Send numeric-only
     formData.append("endereco", enderecoCompleto); // Update address field
 
     if (imagem) {
@@ -218,6 +307,12 @@ const EditarUsuario: React.FC = () => {
           text: data.message,
           icon: "success",
         });
+        setNome(editNome);
+        setEmail(editEmail);
+        setTelefone(editTelefone);
+        setUf(editUf);
+        setCidade(editCidade);
+        setEndereco(enderecoCompleto);
         setIsEditing(false);
       } else {
         Swal.fire("Erro ao editar usuário", data.message, "error");
@@ -228,12 +323,11 @@ const EditarUsuario: React.FC = () => {
   };
 
   const handleCancel = () => {
-    setNome(originalNome);
-    setEmail(originalEmail);
-    setTelefone(originalTelefone);
-    setEndereco(originalEndereco);
-    setUf(originalUf); // Revert UF to original
-    setCidade(originalCidade); // Revert city to original
+    setEditNome(nome);
+    setEditEmail(email);
+    setEditTelefone(telefone);
+    setEditUf(uf); // Revert UF to original
+    setEditCidade(cidade); // Revert city to original
     setIsEditing(false);
   };
 
@@ -247,9 +341,8 @@ const EditarUsuario: React.FC = () => {
         <section>
           <div className="banner-profile"></div>
         </section>
-        <div className="d-flex">
+        <div className="usuario-layout">
           <section className="fifty-cents">
-            <div className="paper"></div>
             <div className="profile-picture">
               <img
                 src={imagemPreview || "../assets/img/user.png"}
@@ -257,14 +350,14 @@ const EditarUsuario: React.FC = () => {
                 className="profile-picture-preview"
               />
               <div className="margin-btn">
-                <button className="btn3 btn-primary3">
+                <button className="btn3 btn-primary3" onClick={() => setModalOpen(true)}>
                   <span className="material-icons">edit</span>
                 </button>
               </div>
             </div>
-            <div className="d-flex z-index-high">
+            <div className="d-flex">
               <div className="info-container">
-                <p className="montserrat-alternates info-profile">{nome || "Usuário"}</p>
+                <p className="montserrat-alternates info-profile-name">{nome || "Usuário"}</p>
                 <p className="montserrat-alternates info-profile">{email || "Email"}</p>
                 <p className="montserrat-alternates info-profile">{telefone || "Telefone"}</p>
                 <p className="montserrat-alternates info-profile">{endereco || "Endereço"}</p>
@@ -274,6 +367,97 @@ const EditarUsuario: React.FC = () => {
           <PuxarHistorico />
         </div>
       </main>
+      <Modal open={modalOpen} onClose={() => setModalOpen(false)}>
+        <form
+          onSubmit={async (e) => {
+            e.preventDefault();
+            await handleEdicao(e);
+            setModalOpen(false);
+          }}
+        >
+          <h2 className="montserrat-alternates-semibold" style={{ marginBottom: 16 }}>Editar Usuário</h2>
+          <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+            <label className="montserrat-alternates-semibold">
+              Nome:
+              <input
+                className="input montserrat-alternates-semibold"
+                type="text"
+                value={editNome}
+                onChange={e => setEditNome(e.target.value)}
+                required
+              />
+            </label>
+            <label className="montserrat-alternates-semibold">
+              Email:
+              <input
+                className="input"
+                type="email"
+                value={editEmail}
+                onChange={e => setEditEmail(e.target.value)}
+                required
+              />
+            </label>
+            <label className="montserrat-alternates-semibold">
+              Telefone:
+              <input
+                className="input"
+                type="text"
+                value={editTelefone}
+                onChange={e => setEditTelefone(formatTelefone(e.target.value))}
+                required
+              />
+            </label>
+            <label className="montserrat-alternates-semibold">
+              Estado:
+              <select
+                className="input montserrat-alternates-semibold"
+                value={editUf}
+                onChange={e => setEditUf(e.target.value)}
+                required
+              >
+                <option value="">Selecione o estado</option>
+                {ufsBrasil.map((sigla) => (
+                  <option key={sigla} value={sigla}>{sigla}</option>
+                ))}
+              </select>
+            </label>
+            <label className="montserrat-alternates-semibold">
+              Cidade:
+              <select
+                className="input"
+                value={editCidade}
+                onChange={e => setEditCidade(e.target.value)}
+                required
+                disabled={!editUf || editCidadesBrasil.length === 0}
+              >
+                <option value="">Selecione a cidade</option>
+                {editCidadesBrasil.map((nomeCidade) => (
+                  <option key={nomeCidade} value={nomeCidade}>{nomeCidade}</option>
+                ))}
+              </select>
+            </label>
+          </div>
+          <div style={{ display: "flex", gap: 12, marginTop: 24, justifyContent: "flex-end" }}>
+            <button
+              type="button"
+              className="btn btn-secondary montserrat-alternates-semibold"
+              onClick={() => {
+                handleCancel();
+                setModalOpen(false);
+              }}
+            >
+              Cancelar
+            </button>
+            <button
+              type="submit"
+              className="btn btn-primary montserrat-alternates-semibold"
+              disabled={!editUf || !editCidade}
+            >
+              Salvar
+            </button>
+          </div>
+        </form>
+      </Modal>
     </div>
   );
 };

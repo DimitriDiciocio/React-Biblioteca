@@ -144,70 +144,71 @@ const MostrarUsuarios: React.FC = () => {
       <i className="fa-solid fa-arrow-left arrow-back"  onClick={() => navigate("/home_biblio?page=1")}></i>
       <h1 className="page-title montserrat-alternates-semibold">Usuários</h1>
       <input 
-        type="text"
-        placeholder="Pesquisar usuários"
-        className="input pesquisa montserrat-alternates"
-        onChange={handleSearchChange}
+      type="text"
+      placeholder="Pesquisar usuários"
+      className="input pesquisa montserrat-alternates"
+      onChange={handleSearchChange}
       />
       <div className="usuarios-grid">
-        {filteredUsers.map((user) => (
-          <div key={user.id_usuario} className="usuario-card">
-            {user.imagemPreview ? (
-              <img
-                src={user.imagemPreview}
-                alt={user.nome}
-                className="usuario-imagem"
-              />
-            ) : (
-              <div className="usuario-imagem-placeholder montserrat-alternates">Sem imagem</div>
-            )}
-            <div className="usuario-info montserrat-alternates">
-              <h3>{user.nome}</h3>
-              <p>
-                <strong>Email:</strong> {user.email}
-              </p>
-              <p>
-                <strong>Telefone:</strong> {user.telefone}
-              </p>
-              <p>
-                <strong>Endereço:</strong> {user.endereco}
-              </p>
-              <p>
-                <strong>Tipo:</strong>{" "}
-                {user.tipo === 1
-                  ? "Leitor"
-                  : user.tipo === 2
-                  ? "Bibliotecário"
-                  : "Administrador"}
-              </p>
-              <p>
-                <strong>Status:</strong> {user.ativo ? "Ativo" : "Inativo"}
-              </p>
-              <div className="usuario-acoes">
-                <button
-                  onClick={() => navigate(`/usuarios/${user.id_usuario}`)}
-                  className="btn btn-secondary"
-                >
-                  <span className="material-icons">launch</span>
-                </button>
-                <DeletarUsuario
-                  usuarioId={user.id_usuario}
-                  ativo={user.ativo}
-                  onStatusChange={(deletedId, novoStatus) => {
-                    setUsers(prev => prev.map(u => 
-                      u.id_usuario === deletedId ? { ...u, ativo: novoStatus } : u
-                    ));
-                    setFilteredUsers(prev => prev.map(u => 
-                      u.id_usuario === deletedId ? { ...u, ativo: novoStatus } : u
-                    ));
-                  }}
-                />
-              </div>
-            </div>
+      {filteredUsers.map((user) => (
+        <div key={user.id_usuario} className="usuario-card">
+        {user.imagemPreview ? (
+          <img
+          src={user.imagemPreview}
+          alt={user.nome}
+          className="usuario-imagem"
+          />
+        ) : (
+          <div className="usuario-imagem-placeholder montserrat-alternates">Sem imagem</div>
+        )}
+        <div className="usuario-info montserrat-alternates">
+          <h3>{user.nome}</h3>
+          <p>
+          <strong>Email:</strong> {user.email}
+          </p>
+          <p>
+          <strong>Telefone:</strong> {user.telefone}
+          </p>
+          <p>
+          <strong>Endereço:</strong> {user.endereco}
+          </p>
+          <p>
+          <strong>Tipo:</strong>{" "}
+          {user.tipo === 1
+            ? "Leitor"
+            : user.tipo === 2
+            ? "Bibliotecário"
+            : "Administrador"}
+          </p>
+          <p>
+          <strong>Status:</strong> {user.ativo ? "Ativo" : "Inativo"}
+          </p>
+          <div className="usuario-acoes">
+          <button
+            onClick={() => navigate(`/usuarios/${user.id_usuario}`)}
+            className="btn btn-secondary"
+          >
+            <span className="material-icons">launch</span>
+          </button>
+          <DeletarUsuario
+            usuarioId={user.id_usuario}
+            ativo={user.ativo}
+            onStatusChange={(deletedId, novoStatus) => {
+            setUsers(prev => prev.map(u => 
+              u.id_usuario === deletedId ? { ...u, ativo: novoStatus } : u
+            ));
+            setFilteredUsers(prev => prev.map(u => 
+              u.id_usuario === deletedId ? { ...u, ativo: novoStatus } : u
+            ));
+            }}
+          />
           </div>
-        ))}
+        </div>
+        </div>
+      ))}
       </div>
-      {hasMore && <p>Carregando mais usuários...</p>}
+      
+      {hasMore && <p className="montserrat-alternates-semibold">Carregando mais usuários...</p>}
     </div>
   );
 };

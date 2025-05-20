@@ -144,7 +144,7 @@ const AddBanners: React.FC = () => {
                       cursor: "pointer",
                     }}
                   >
-                    X
+                    ✕
                   </button>
                 </>
               ) : (

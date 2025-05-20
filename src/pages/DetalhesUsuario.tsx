@@ -65,9 +65,16 @@ const DetalhesUsuario: React.FC = () => {
       } catch (error) {
         console.error(error);
         Swal.fire(
-          "Erro!",
-          "Não foi possível carregar os dados do usuário.",
-          "error"
+          {
+            title: "Erro!",
+            text: "Não foi possível carregar os dados do usuário.",
+            icon: "error",
+            customClass: {
+              title: "montserrat-alternates-semibold",
+              popup: "",
+              confirmButton: "montserrat-alternates-semibold"
+            }
+          }
         );
       }
     };

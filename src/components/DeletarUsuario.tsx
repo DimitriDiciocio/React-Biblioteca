@@ -23,6 +23,12 @@ const DeletarUsuario: React.FC<DeletarUsuarioProps> = ({
       text: `Deseja ${action} este usuário?`,
       icon: "warning",
       showCancelButton: true,
+      customClass: {
+        title: 'montserrat-alternates-semibold',
+        confirmButton: 'montserrat-alternates-semibold',
+        cancelButton: 'montserrat-alternates-semibold',
+        htmlContainer: 'montserrat-alternates-semibold'
+      },
       confirmButtonColor: ativar ? "#3085d6" : "#d33",
       cancelButtonColor: "#6c757d",
       confirmButtonText: `Sim, ${action}!`,
@@ -46,26 +52,44 @@ const DeletarUsuario: React.FC<DeletarUsuarioProps> = ({
       const data = await response.json();
 
       if (response.ok) {
-        await Swal.fire(
-          "Sucesso!",
-          data.message,
-          "success"
-        );
+        await Swal.fire({
+          title: "Sucesso!",
+          text: data.message,
+          icon: "success",
+          customClass: {
+            title: 'montserrat-alternates-semibold',
+            confirmButton: 'montserrat-alternates-semibold',
+            cancelButton: 'montserrat-alternates-semibold',
+            htmlContainer: 'montserrat-alternates-semibold'
+          }
+        });
         onStatusChange(usuarioId, ativar);
       } else {
-        await Swal.fire(
-          "Erro!",
-          data.message || `Não foi possível ${action} o usuário.`,
-          "error"
-        );
+        await Swal.fire({
+          title: "Erro!",
+          text: data.message || `Não foi possível ${action} o usuário.`,
+          icon: "error",
+          customClass: {
+            title: 'montserrat-alternates-semibold',
+            confirmButton: 'montserrat-alternates-semibold',
+            cancelButton: 'montserrat-alternates-semibold',
+            htmlContainer: 'montserrat-alternates-semibold'
+          }
+        });
       }
     } catch (error) {
       console.error("Erro:", error);
-      await Swal.fire(
-        "Erro!",
-        `Ocorreu um erro ao tentar ${action} o usuário.`,
-        "error"
-      );
+      await Swal.fire({
+        title: "Erro!",
+        text: `Ocorreu um erro ao tentar ${action} o usuário.`,
+        icon: "error",
+        customClass: {
+          title: 'montserrat-alternates-semibold',
+          confirmButton: 'montserrat-alternates-semibold',
+          cancelButton: 'montserrat-alternates-semibold',
+          htmlContainer: 'montserrat-alternates-semibold'
+        }
+      });
     } finally {
       setLoading(false);
     }
@@ -82,7 +106,7 @@ const DeletarUsuario: React.FC<DeletarUsuarioProps> = ({
         <span className="spinner-border spinner-border-sm"></span>
       ) : (
         <span className="material-icons">
-          {ativo ? 'person_off' : 'person'}
+          {ativo ? 'person' : 'person_off'}
         </span>
       )}
     </button>
