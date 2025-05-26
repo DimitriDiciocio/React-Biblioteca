@@ -39,23 +39,34 @@ interface Book {
   id_usuarios: string; // This will be a comma-separated string of user IDs
 }
 
-const LivroItem = ({ livro, index, abaAtiva }: { livro: Book, index: number, abaAtiva: string }) => {
+const LivroItem = ({
+  livro,
+  index,
+  abaAtiva,
+}: {
+  livro: Book;
+  index: number;
+  abaAtiva: string;
+}) => {
   const [expanded, setExpanded] = useState(false);
   const navigate = useNavigate();
-  
+
   // Parse users and their IDs
-  const usuariosNomes = livro.usuarios?.split(',').filter(Boolean) || [];
-  const usuariosIds = livro.id_usuarios?.split(',').filter(Boolean) || [];
+  const usuariosNomes = livro.usuarios?.split(",").filter(Boolean) || [];
+  const usuariosIds = livro.id_usuarios?.split(",").filter(Boolean) || [];
 
   // Create array of user objects
   const usuariosList = usuariosNomes.map((nome, idx) => ({
     nome: nome.trim(),
-    id: parseInt(usuariosIds[idx])
+    id: parseInt(usuariosIds[idx]),
   }));
 
   return (
-    <div className="livro-item" style={{ backgroundColor: index % 2 === 0 ? '#ffffff' : '#f8f9fa' }}>
-      <div 
+    <div
+      className="livro-item"
+      style={{ backgroundColor: index % 2 === 0 ? "#ffffff" : "#f8f9fa" }}
+    >
+      <div
         className="livro-header"
         onClick={() => abaAtiva === "faltando" && setExpanded(!expanded)}
       >
@@ -67,18 +78,22 @@ const LivroItem = ({ livro, index, abaAtiva }: { livro: Book, index: number, aba
         </span>
         <span className="montserrat-alternates">{livro.ano_publicado}</span>
         {abaAtiva === "faltando" && usuariosList.length > 0 && (
-          <i className={`fas fa-chevron-down expand-icon ${expanded ? 'rotated' : ''}`} />
+          <i
+            className={`fas fa-chevron-down expand-icon ${
+              expanded ? "rotated" : ""
+            }`}
+          />
         )}
       </div>
       {abaAtiva === "faltando" && usuariosList.length > 0 && (
-        <div className={`livro-usuarios ${expanded ? 'expanded' : ''}`}>
+        <div className={`livro-usuarios ${expanded ? "expanded" : ""}`}>
           <div className="usuarios-list">
             {usuariosList.map((usuario, idx) => (
-              <div 
-                key={idx} 
+              <div
+                key={idx}
                 className="usuario-item montserrat-alternates"
                 onClick={() => navigate(`/usuarios/${usuario.id}`)}
-                style={{ cursor: 'pointer' }}
+                style={{ cursor: "pointer" }}
               >
                 {usuario.nome}
               </div>
@@ -127,10 +142,11 @@ export default function RelatorioLivros({ isVisible }: Props) {
         return;
       }
 
-      setLivros(prev => {
+      setLivros((prev) => {
         // Verifica se os novos livros já existem para evitar duplicação
-        const newBooks = data.livros.filter((newBook: Book) => 
-          !prev.some(existingBook => existingBook.id === newBook.id)
+        const newBooks = data.livros.filter(
+          (newBook: Book) =>
+            !prev.some((existingBook) => existingBook.id === newBook.id)
         );
         return page === 1 ? data.livros : [...prev, ...newBooks];
       });
@@ -145,11 +161,12 @@ export default function RelatorioLivros({ isVisible }: Props) {
   const handleScroll = useCallback(() => {
     if (loading || !hasMore) return;
 
-    const scrollPosition = window.innerHeight + document.documentElement.scrollTop;
+    const scrollPosition =
+      window.innerHeight + document.documentElement.scrollTop;
     const threshold = document.documentElement.offsetHeight - 100;
 
     if (scrollPosition >= threshold) {
-      setPage(prev => prev + 1);
+      setPage((prev) => prev + 1);
       buscarLivros(); // CHAMAR AQUI GARANTE QUE SÓ OCORRE DEPOIS DO SCROLL
     }
   }, [loading, hasMore, buscarLivros]);
@@ -160,11 +177,20 @@ export default function RelatorioLivros({ isVisible }: Props) {
   }, [handleScroll]);
 
   useEffect(() => {
-    // Reset states when changing tabs
+    if (!isVisible) return;
     setPage(1);
     setHasMore(true);
     setLivros([]);
-  }, [abaAtiva]);
+  }, [abaAtiva, isVisible]);
+
+  // Busca inicial após reset de estado
+  useEffect(() => {
+    if (!isVisible) return;
+    if (page === 1 && livros.length === 0 && hasMore) {
+      buscarLivros();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [page, livros.length, hasMore, isVisible, abaAtiva]);
 
   const relatorioPDF = async () => {
     try {
@@ -293,7 +319,10 @@ export default function RelatorioLivros({ isVisible }: Props) {
       </div>
 
       <div className="livros-lista">
-        <div className="livro-header" style={{ fontWeight: 'bold', backgroundColor: '#f0f0f0' }}>
+        <div
+          className="livro-header"
+          style={{ fontWeight: "bold", backgroundColor: "#f0f0f0" }}
+        >
           <span>Título</span>
           <span>Autor</span>
           <span>Categoria</span>
@@ -302,17 +331,18 @@ export default function RelatorioLivros({ isVisible }: Props) {
         </div>
         {livros.length === 0 ? (
           <div className="livro-item">
-            <div className="livro-header">
-              <span colSpan={5} style={{ textAlign: "center" }}>
-                {loading ? "Carregando..." : "Nenhum livro encontrado."}
-              </span>
+            <div
+              className="livro-header"
+              style={{ width: "100%", textAlign: "center" }}
+            >
+              {loading ? "Carregando..." : "Nenhum livro encontrado."}
             </div>
           </div>
         ) : (
           livros.map((livro, index) => (
-            <LivroItem 
-              key={livro.id} 
-              livro={livro} 
+            <LivroItem
+              key={livro.id}
+              livro={livro}
               index={index}
               abaAtiva={abaAtiva}
             />

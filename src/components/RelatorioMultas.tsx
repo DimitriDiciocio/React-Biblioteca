@@ -23,18 +23,20 @@ export default function RelatorioMultas({ isVisible }: Props) {
   const [pagePendentes, setPagePendentes] = useState(1);
   const [hasMoreGeral, setHasMoreGeral] = useState(true);
   const [hasMorePendentes, setHasMorePendentes] = useState(true);
-  const [initialLoadDone, setInitialLoadDone] = useState(false);
 
   const buscarMultas = useCallback(async () => {
     if (!hasMoreGeral || loading) return;
     setLoading(true);
     try {
-      const response = await fetch(`http://localhost:5000/relatorio/multas/${pageGeral}`, {
-        method: "GET",
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-      });
+      const response = await fetch(
+        `http://localhost:5000/relatorio/multas/${pageGeral}`,
+        {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
 
       if (!response.ok) {
         if (response.status === 404) {
@@ -61,7 +63,9 @@ export default function RelatorioMultas({ isVisible }: Props) {
         })
       );
 
-      setMultas(prev => pageGeral === 1 ? formattedMultas : [...prev, ...formattedMultas]);
+      setMultas((prev) =>
+        pageGeral === 1 ? formattedMultas : [...prev, ...formattedMultas]
+      );
     } catch (error) {
       console.error("Erro ao buscar multas:", error);
     } finally {
@@ -114,7 +118,7 @@ export default function RelatorioMultas({ isVisible }: Props) {
         })
       );
 
-      setMultasPendentes(prev => 
+      setMultasPendentes((prev) =>
         pagePendentes === 1 ? formattedMultas : [...prev, ...formattedMultas]
       );
     } catch (error) {
@@ -167,13 +171,13 @@ export default function RelatorioMultas({ isVisible }: Props) {
     if (document.documentElement.scrollHeight <= window.innerHeight) return;
 
     if (
-      window.innerHeight + document.documentElement.scrollTop
-      >= document.documentElement.offsetHeight - 100
+      window.innerHeight + document.documentElement.scrollTop >=
+      document.documentElement.offsetHeight - 100
     ) {
       if (abaAtiva === "geral" && hasMoreGeral) {
-        setPageGeral(prev => prev + 1);
+        setPageGeral((prev) => prev + 1);
       } else if (abaAtiva === "pendentes" && hasMorePendentes) {
-        setPagePendentes(prev => prev + 1);
+        setPagePendentes((prev) => prev + 1);
       }
     }
   }, [loading, abaAtiva, hasMoreGeral, hasMorePendentes, isVisible]);
@@ -186,41 +190,59 @@ export default function RelatorioMultas({ isVisible }: Props) {
     }
   }, [handleScroll, isVisible]);
 
+  // Reset states when changing aba or visibilidade
   useEffect(() => {
     if (!isVisible) return;
-    
-    // Reset states when changing tabs
     if (abaAtiva === "geral") {
       setPageGeral(1);
       setHasMoreGeral(true);
       setMultas([]);
-      setInitialLoadDone(false); // Reset initial load flag to trigger new load
     } else {
       setPagePendentes(1);
       setHasMorePendentes(true);
       setMultasPendentes([]);
-      setInitialLoadDone(false); // Reset initial load flag to trigger new load
     }
   }, [abaAtiva, isVisible]);
 
+  // Busca inicial após reset de estado
   useEffect(() => {
-    if (!isVisible || initialLoadDone) return;
-
-    // Initial load when component becomes visible
-    if (abaAtiva === "geral") {
+    if (!isVisible) return;
+    if (
+      abaAtiva === "geral" &&
+      pageGeral === 1 &&
+      multas.length === 0 &&
+      hasMoreGeral
+    ) {
       buscarMultas();
-    } else {
+    }
+    if (
+      abaAtiva === "pendentes" &&
+      pagePendentes === 1 &&
+      multasPendentes.length === 0 &&
+      hasMorePendentes
+    ) {
       buscarMultasPendentes();
     }
-    setInitialLoadDone(true);
-  }, [isVisible, initialLoadDone, abaAtiva, buscarMultas, buscarMultasPendentes]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [
+    abaAtiva,
+    isVisible,
+    pageGeral,
+    pagePendentes,
+    multas.length,
+    multasPendentes.length,
+    hasMoreGeral,
+    hasMorePendentes,
+  ]);
 
   useEffect(() => {
     if (!isVisible) return;
 
     // Only fetch if user has scrolled for more
-    if ((abaAtiva === "geral" && pageGeral > 1) || 
-        (abaAtiva === "pendentes" && pagePendentes > 1)) {
+    if (
+      (abaAtiva === "geral" && pageGeral > 1) ||
+      (abaAtiva === "pendentes" && pagePendentes > 1)
+    ) {
       if (abaAtiva === "geral") {
         buscarMultas();
       } else {
@@ -228,12 +250,12 @@ export default function RelatorioMultas({ isVisible }: Props) {
       }
     }
   }, [
-    isVisible, 
-    abaAtiva, 
-    pageGeral, 
-    pagePendentes, 
-    buscarMultas, 
-    buscarMultasPendentes
+    isVisible,
+    abaAtiva,
+    pageGeral,
+    pagePendentes,
+    buscarMultas,
+    buscarMultasPendentes,
   ]);
 
   return (
@@ -339,44 +361,112 @@ export default function RelatorioMultas({ isVisible }: Props) {
           <table style={{ width: "100%", borderCollapse: "collapse" }}>
             <thead>
               <tr style={{ backgroundColor: "#f0f0f0" }}>
-                <th className="montserrat-alternates" style={{ textAlign: "left", padding: "12px" }}>Email</th>
-                <th className="montserrat-alternates" style={{ textAlign: "left", padding: "12px" }}>Telefone</th>
-                <th className="montserrat-alternates" style={{ textAlign: "left", padding: "12px" }}>Nome</th>
-                <th className="montserrat-alternates" style={{ textAlign: "left", padding: "12px" }}>ID Empréstimo</th>
-                <th className="montserrat-alternates" style={{ textAlign: "left", padding: "12px" }}>Data Devolver</th>
-                <th className="montserrat-alternates" style={{ textAlign: "left", padding: "12px" }}>Pago</th>
+                <th
+                  className="montserrat-alternates"
+                  style={{ textAlign: "left", padding: "12px" }}
+                >
+                  Email
+                </th>
+                <th
+                  className="montserrat-alternates"
+                  style={{ textAlign: "left", padding: "12px" }}
+                >
+                  Telefone
+                </th>
+                <th
+                  className="montserrat-alternates"
+                  style={{ textAlign: "left", padding: "12px" }}
+                >
+                  Nome
+                </th>
+                <th
+                  className="montserrat-alternates"
+                  style={{ textAlign: "left", padding: "12px" }}
+                >
+                  ID Empréstimo
+                </th>
+                <th
+                  className="montserrat-alternates"
+                  style={{ textAlign: "left", padding: "12px" }}
+                >
+                  Data Devolver
+                </th>
+                <th
+                  className="montserrat-alternates"
+                  style={{ textAlign: "left", padding: "12px" }}
+                >
+                  Pago
+                </th>
               </tr>
             </thead>
             <tbody>
               {multas.length === 0 ? (
                 <tr>
-                  <td colSpan={6} className="montserrat-alternates" style={{ textAlign: "center", padding: "20px" }}>
+                  <td
+                    colSpan={6}
+                    className="montserrat-alternates"
+                    style={{ textAlign: "center", padding: "20px" }}
+                  >
                     {loading ? "Carregando..." : "Nenhuma multa encontrada."}
                   </td>
                 </tr>
               ) : (
                 multas.map((multa, index) => (
-                  <tr 
-                    key={`${multa.id_emprestimo}-${index}`} 
-                    style={{ 
+                  <tr
+                    key={`${multa.id_emprestimo}-${index}`}
+                    style={{
                       borderBottom: "1px solid #ddd",
-                      backgroundColor: index % 2 === 0 ? '#ffffff' : '#f8f9fa' 
+                      backgroundColor: index % 2 === 0 ? "#ffffff" : "#f8f9fa",
                     }}
                   >
-                    <td className="montserrat-alternates" style={{ padding: "10px" }}>{multa.email}</td>
-                    <td className="montserrat-alternates" style={{ padding: "10px" }}>{multa.telefone}</td>
-                    <td className="montserrat-alternates" style={{ padding: "10px" }}>{multa.nome}</td>
-                    <td className="montserrat-alternates" style={{ padding: "10px" }}>{multa.id_emprestimo}</td>
-                    <td className="montserrat-alternates" style={{ padding: "10px" }}>
-                      {multa.data_devolver ? formatDate(multa.data_devolver) : "N/A"}
+                    <td
+                      className="montserrat-alternates"
+                      style={{ padding: "10px" }}
+                    >
+                      {multa.email}
                     </td>
-                    <td className="montserrat-alternates" style={{ padding: "10px" }}>{multa.pago ? "Sim" : "Não"}</td>
+                    <td
+                      className="montserrat-alternates"
+                      style={{ padding: "10px" }}
+                    >
+                      {multa.telefone}
+                    </td>
+                    <td
+                      className="montserrat-alternates"
+                      style={{ padding: "10px" }}
+                    >
+                      {multa.nome}
+                    </td>
+                    <td
+                      className="montserrat-alternates"
+                      style={{ padding: "10px" }}
+                    >
+                      {multa.id_emprestimo}
+                    </td>
+                    <td
+                      className="montserrat-alternates"
+                      style={{ padding: "10px" }}
+                    >
+                      {multa.data_devolver
+                        ? formatDate(multa.data_devolver)
+                        : "N/A"}
+                    </td>
+                    <td
+                      className="montserrat-alternates"
+                      style={{ padding: "10px" }}
+                    >
+                      {multa.pago ? "Sim" : "Não"}
+                    </td>
                   </tr>
                 ))
               )}
-            </tbody>          </table>
+            </tbody>{" "}
+          </table>
           {!loading && hasMoreGeral && multas.length > 0 && (
-            <div className="montserrat-alternates" style={{ textAlign: "center", padding: "10px", color: "#666" }}>
+            <div
+              className="montserrat-alternates"
+              style={{ textAlign: "center", padding: "10px", color: "#666" }}
+            >
               Carregando mais multas...
             </div>
           )}
@@ -395,45 +485,114 @@ export default function RelatorioMultas({ isVisible }: Props) {
           <table style={{ width: "100%", borderCollapse: "collapse" }}>
             <thead>
               <tr style={{ backgroundColor: "#f0f0f0" }}>
-                <th className="montserrat-alternates" style={{ textAlign: "left", padding: "12px" }}>Email</th>
-                <th className="montserrat-alternates" style={{ textAlign: "left", padding: "12px" }}>Telefone</th>
-                <th className="montserrat-alternates" style={{ textAlign: "left", padding: "12px" }}>Nome</th>
-                <th className="montserrat-alternates" style={{ textAlign: "left", padding: "12px" }}>ID Empréstimo</th>
-                <th className="montserrat-alternates" style={{ textAlign: "left", padding: "12px" }}>Data Devolver</th>
-                <th className="montserrat-alternates" style={{ textAlign: "left", padding: "12px" }}>Pago</th>
+                <th
+                  className="montserrat-alternates"
+                  style={{ textAlign: "left", padding: "12px" }}
+                >
+                  Email
+                </th>
+                <th
+                  className="montserrat-alternates"
+                  style={{ textAlign: "left", padding: "12px" }}
+                >
+                  Telefone
+                </th>
+                <th
+                  className="montserrat-alternates"
+                  style={{ textAlign: "left", padding: "12px" }}
+                >
+                  Nome
+                </th>
+                <th
+                  className="montserrat-alternates"
+                  style={{ textAlign: "left", padding: "12px" }}
+                >
+                  ID Empréstimo
+                </th>
+                <th
+                  className="montserrat-alternates"
+                  style={{ textAlign: "left", padding: "12px" }}
+                >
+                  Data Devolver
+                </th>
+                <th
+                  className="montserrat-alternates"
+                  style={{ textAlign: "left", padding: "12px" }}
+                >
+                  Pago
+                </th>
               </tr>
             </thead>
             <tbody>
               {multasPendentes.length === 0 ? (
                 <tr>
-                  <td colSpan={6} className="montserrat-alternates" style={{ textAlign: "center", padding: "20px" }}>
-                    {loading ? "Carregando..." : "Nenhuma multa pendente encontrada."}
+                  <td
+                    colSpan={6}
+                    className="montserrat-alternates"
+                    style={{ textAlign: "center", padding: "20px" }}
+                  >
+                    {loading
+                      ? "Carregando..."
+                      : "Nenhuma multa pendente encontrada."}
                   </td>
                 </tr>
               ) : (
                 multasPendentes.map((multa, index) => (
-                  <tr 
-                    key={`${multa.id_emprestimo}-${index}`} 
-                    style={{ 
+                  <tr
+                    key={`${multa.id_emprestimo}-${index}`}
+                    style={{
                       borderBottom: "1px solid #ddd",
-                      backgroundColor: index % 2 === 0 ? '#ffffff' : '#f8f9fa' 
+                      backgroundColor: index % 2 === 0 ? "#ffffff" : "#f8f9fa",
                     }}
                   >
-                    <td className="montserrat-alternates" style={{ padding: "10px" }}>{multa.email}</td>
-                    <td className="montserrat-alternates" style={{ padding: "10px" }}>{multa.telefone}</td>
-                    <td className="montserrat-alternates" style={{ padding: "10px" }}>{multa.nome}</td>
-                    <td className="montserrat-alternates" style={{ padding: "10px" }}>{multa.id_emprestimo}</td>
-                    <td className="montserrat-alternates" style={{ padding: "10px" }}>
-                      {multa.data_devolver ? formatDate(multa.data_devolver) : "N/A"}
+                    <td
+                      className="montserrat-alternates"
+                      style={{ padding: "10px" }}
+                    >
+                      {multa.email}
                     </td>
-                    <td className="montserrat-alternates" style={{ padding: "10px" }}>{multa.pago ? "Sim" : "Não"}</td>
+                    <td
+                      className="montserrat-alternates"
+                      style={{ padding: "10px" }}
+                    >
+                      {multa.telefone}
+                    </td>
+                    <td
+                      className="montserrat-alternates"
+                      style={{ padding: "10px" }}
+                    >
+                      {multa.nome}
+                    </td>
+                    <td
+                      className="montserrat-alternates"
+                      style={{ padding: "10px" }}
+                    >
+                      {multa.id_emprestimo}
+                    </td>
+                    <td
+                      className="montserrat-alternates"
+                      style={{ padding: "10px" }}
+                    >
+                      {multa.data_devolver
+                        ? formatDate(multa.data_devolver)
+                        : "N/A"}
+                    </td>
+                    <td
+                      className="montserrat-alternates"
+                      style={{ padding: "10px" }}
+                    >
+                      {multa.pago ? "Sim" : "Não"}
+                    </td>
                   </tr>
                 ))
               )}
             </tbody>
           </table>
           {!loading && hasMorePendentes && multasPendentes.length > 0 && (
-            <div className="montserrat-alternates" style={{ textAlign: "center", padding: "10px", color: "#666" }}>
+            <div
+              className="montserrat-alternates"
+              style={{ textAlign: "center", padding: "10px", color: "#666" }}
+            >
               Carregando mais multas pendentes...
             </div>
           )}
