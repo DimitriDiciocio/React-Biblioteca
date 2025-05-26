@@ -400,42 +400,69 @@ const BookDetail = () => {
       return;
     }
 
-    const newRating = userRating === rating ? 0 : rating; // Alterna a avaliação (0 se o mesmo for clicado novamente)
-    setUserRating(newRating); // Atualiza a avaliação no frontend
-
-    if (newRating === null || newRating === undefined) {
-      Swal.fire("Erro", "Avaliação inválida.", "error");
-      return;
-    }
+    const newRating = userRating === rating ? null : rating;
+    setUserRating(newRating);
 
     try {
-      // Envia a avaliação para a API
-      const response = await fetch(`http://127.0.0.1:5000/avaliarlivro/${id}`, {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ valor: newRating }),
-      });
+      if (newRating === null) {
+        const response = await fetch(`http://127.0.0.1:5000/avaliarlivro/${id}`, {
+          method: "DELETE",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        });
 
-      if (!response.ok) {
-        const errorData = await response.json();
-        Swal.fire(
-          "Erro",
-          errorData.error || "Erro ao enviar avaliação",
-          "error"
-        );
-        return;
+        if (!response.ok) {
+          const errorData = await response.json();
+          Swal.fire("Erro", errorData.error || "Erro ao deletar avaliação", "error");
+          return;
+        }
+
+        setBook((prevBook) => {
+          if (!prevBook) return prevBook;
+          const novaQtdAvaliacoes = prevBook.qtd_avaliacoes - 1;
+          const novaMedia = novaQtdAvaliacoes > 0
+            ? ((prevBook.avaliacao * prevBook.qtd_avaliacoes) - rating) / novaQtdAvaliacoes
+            : 0;
+          return {
+            ...prevBook,
+            qtd_avaliacoes: novaQtdAvaliacoes,
+            avaliacao: novaMedia,
+          };
+        });
+      } else {
+        const response = await fetch(`http://127.0.0.1:5000/avaliarlivro/${id}`, {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ valor: newRating }),
+        });
+
+        if (!response.ok) {
+          const errorData = await response.json();
+          Swal.fire("Erro", errorData.error || "Erro ao enviar avaliação", "error");
+          return;
+        }
+
+        setBook((prevBook) => {
+          if (!prevBook) return prevBook;
+          const novaQtdAvaliacoes = prevBook.qtd_avaliacoes + (userRating ? 0 : 1);
+          const novaMedia =
+            (prevBook.avaliacao * prevBook.qtd_avaliacoes + newRating - (userRating || 0)) /
+            novaQtdAvaliacoes;
+          return {
+            ...prevBook,
+            qtd_avaliacoes: novaQtdAvaliacoes,
+            avaliacao: novaMedia,
+          };
+        });
       }
-      window.location.reload();
     } catch (error) {
-      console.error("Erro ao enviar avaliação:", error);
-      Swal.fire(
-        "Erro",
-        "Ocorreu um erro ao tentar enviar a avaliação.",
-        "error"
-      );
+      console.error("Erro ao enviar ou deletar avaliação:", error);
+      Swal.fire("Erro", "Ocorreu um erro ao tentar enviar ou deletar a avaliação.", "error");
     }
   };
 
