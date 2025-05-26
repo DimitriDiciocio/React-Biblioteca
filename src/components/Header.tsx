@@ -25,6 +25,7 @@ const Header: React.FC = () => {
     useState(false);
   const [isPermissionChecked, setIsPermissionChecked] = useState(false);
   const [notificacoesOpen, setNotificacoesOpen] = useState(false);
+  const [sidebarRightOpen, setSidebarRightOpen] = useState(false);
 
   const handleFiltroClick = () => {
     navigate('/pesquisa/');
@@ -127,6 +128,8 @@ const Header: React.FC = () => {
     }
   };
 
+  const toggleSidebarRight = () => setSidebarRightOpen((prev) => !prev);
+
   const Sair = () => {
     localStorage.removeItem("id_user");
     localStorage.removeItem("token");
@@ -194,6 +197,10 @@ const Header: React.FC = () => {
               {token && (
                 <>
                   <NotificationIcon onClick={toggleNotificacoesModal} />
+                  <button className="button" onClick={toggleSidebarRight}>
+                    <svg className="cart" fill="white" viewBox="0 0 576 512" height="1em" xmlns="http://www.w3.org/2000/svg"><path d="M0 24C0 10.7 10.7 0 24 0H69.5c22 0 41.5 12.8 50.6 32h411c26.3 0 45.5 25 38.6 50.4l-41 152.3c-8.5 31.4-37 53.3-69.5 53.3H170.7l5.4 28.5c2.2 11.3 12.1 19.5 23.6 19.5H488c13.3 0 24 10.7 24 24s-10.7 24-24 24H199.7c-34.6 0-64.3-24.6-70.7-58.5L77.4 54.5c-.7-3.8-4-6.5-7.9-6.5H24C10.7 48 0 37.3 0 24zM128 464a48 48 0 1 1 96 0 48 48 0 1 1 -96 0zm336-48a48 48 0 1 1 0 96 48 48 0 1 1 0-96z"></path></svg>
+                  </button>
+                  <div className="space-sm"></div>
                 </>
               )}
               {token ? (
@@ -266,7 +273,6 @@ const Header: React.FC = () => {
           <button className="gerenciar" onClick={() => navigate("/user?page=1")}>
               <p className="montserrat-alternates size-medium" >Gerenciar conta</p>
             </button>
-
           <div className="d-flex center-x">
 
             <button className="Btn-modal" onClick={Sair}>
@@ -282,6 +288,56 @@ const Header: React.FC = () => {
       {notificacoesOpen && (
           <NotificacoesModal onClose={() => setNotificacoesOpen(false)} />
       )}
+
+      {/* Sidebar direita (replicada da Config, mas na direita) */}
+      <div
+        style={{
+          position: "fixed",
+          top: 0,
+          left: 0,
+          width: "100vw",
+          height: "100vh",
+          zIndex: sidebarRightOpen ? 1999 : -1,
+          background: sidebarRightOpen ? "rgba(0,0,0,0.0)" : "transparent",
+          pointerEvents: sidebarRightOpen ? "auto" : "none",
+          transition: "background 0.3s",
+        }}
+        onClick={() => setSidebarRightOpen(false)}
+      >
+        <aside
+          className={`sidebar sidebar-right ${sidebarRightOpen ? "open" : "closed"}`}
+          style={{
+            position: "fixed",
+            top: 100, // altura do header fixo
+            right: sidebarRightOpen ? 0 : "-300px",
+            left: "auto",
+            height: "calc(100vh - 100px)",
+            width: 260,
+            background: "#fff",
+            zIndex: 2000,
+            boxShadow: "-2px 0 8px rgba(0,0,0,0.12)",
+            borderRadius: "12px 0 0 12px",
+            transition: "right 0.3s cubic-bezier(.77,0,.18,1)",
+            display: "flex",
+            flexDirection: "column",
+            paddingTop: 0,
+            animation: sidebarRightOpen ? "slideInRight 0.3s" : "slideOutRight 0.3s",
+            pointerEvents: "auto",
+          }}
+          onClick={e => e.stopPropagation()}
+        >
+          <div style={{ display: "flex", justifyContent: "flex-end", padding: "0px 10px 0 0" }}>
+            <button className="xiii" onClick={() => setSidebarRightOpen(false)}>
+              ✕
+            </button>
+          </div>
+          <nav className="nav-lateral" style={{ marginTop: 10 }}>
+            <ul style={{ listStyle: "none", padding: 0 }}>
+              
+            </ul>
+          </nav>
+        </aside>
+      </div>
     </div>
   );
 };
