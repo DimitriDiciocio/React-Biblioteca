@@ -7,6 +7,7 @@ import PorqueVoceLeu from "../components/PorqueVoceLeu";
 import Banners from "../components/Banners";
 import Novidades from "../components/Novidades";
 import MinhaListaCarrossel from "../components/MinhaListaCarrossel";
+import Recomendados from "../components/Recomendados";
 
 const Home: React.FC = () => {
   const token = localStorage.getItem("token");
@@ -20,7 +21,7 @@ const Home: React.FC = () => {
           <p className="montserrat-alternates-semibold size-titles">
             Recomendados
           </p>
-          <MostrarLivros />
+          <Recomendados />
         </section>
         <div className="space-med-y"></div>
         {token && <MinhaListaCarrossel />}

@@ -29,6 +29,7 @@ interface Book {
   isbn: string;
   qtd_disponivel: string;
   qtd_emprestada: string;
+  qtd_total: string; // Nova propriedade adicionada
   descricao: string;
   selectedTags: Tag[];
   ano_publicado: string;
@@ -73,9 +74,8 @@ const LivroItem = ({
         <span className="montserrat-alternates">{livro.titulo}</span>
         <span className="montserrat-alternates">{livro.autor}</span>
         <span className="montserrat-alternates">{livro.categoria}</span>
-        <span className="montserrat-alternates">
-          {abaAtiva === "geral" ? livro.qtd_disponivel : livro.qtd_emprestada}
-        </span>
+        <span className="montserrat-alternates">{livro.qtd_emprestada}</span>
+        <span className="montserrat-alternates">{livro.qtd_total}</span>
         <span className="montserrat-alternates">{livro.ano_publicado}</span>
         {abaAtiva === "faltando" && usuariosList.length > 0 && (
           <i
@@ -326,7 +326,8 @@ export default function RelatorioLivros({ isVisible }: Props) {
           <span>Título</span>
           <span>Autor</span>
           <span>Categoria</span>
-          <span>{abaAtiva === "geral" ? "Disponíveis" : "Emprestados"}</span>
+          <span>Emprestados</span>
+          <span>Total</span>
           <span>Ano Publicado</span>
         </div>
         {livros.length === 0 ? (

@@ -23,7 +23,7 @@
 
 .livro-header {
   display: grid;
-  grid-template-columns: 2fr 1.5fr 1fr 1fr 1fr auto;
+  grid-template-columns: 2fr 1.5fr 1fr 1fr 1fr auto; /* Ajusta as proporções para acomodar o ícone de expansão */
   padding: 12px;
   cursor: pointer;
   align-items: center;
@@ -68,6 +68,8 @@
 
 .expand-icon {
   margin-left: 8px;
+  position: relative; /* Mantém o ícone dentro do layout da tabela */
+  justify-self: end; /* Alinha o ícone à direita */
   transition: transform 0.3s ease;
 }
 

@@ -22,6 +22,7 @@ interface Book {
   imagem: string;
   avaliacao: number;
   idiomas: string;
+  qtd_avaliacoes: number;
 }
 
 const BookDetail = () => {
@@ -524,6 +525,10 @@ const BookDetail = () => {
                   <p className="montserrat-alternates-semibold">
                     {book.avaliacao}
                   </p>
+                </div>
+                <div className="montserrat-alternates-semibold">
+                  <p className="m-left-10">Avaliações</p>
+                  <p>{book.qtd_avaliacoes}</p>
                 </div>
               </div>
             </div>

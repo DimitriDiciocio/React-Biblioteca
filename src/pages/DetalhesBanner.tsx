@@ -2,6 +2,7 @@ import React, { useEffect, useState, useCallback } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 import { useDropzone } from "react-dropzone";
+import Header from "../components/Header";
 
 interface Banner {
   title: string;
@@ -148,6 +149,7 @@ const DetalhesBanner: React.FC = () => {
 
   return (
     <div>
+      <Header />
       <main className="background-blue padding-responsive">
         <div className="space-sm-y"></div>
         <section className="responsive-container center-x size-medium">
