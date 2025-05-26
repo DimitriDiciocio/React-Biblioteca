@@ -526,9 +526,8 @@ const BookDetail = () => {
                     {book.avaliacao}
                   </p>
                 </div>
-                <div className="montserrat-alternates-semibold">
-                  <p className="m-left-10">Avaliações</p>
-                  <p>{book.qtd_avaliacoes}</p>
+                <div className="montserrat-alternates-semibold m-l-10">
+                  <p>({book.qtd_avaliacoes})</p>
                 </div>
               </div>
             </div>
