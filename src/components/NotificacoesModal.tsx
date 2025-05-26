@@ -59,7 +59,7 @@ const NotificacoesModal: React.FC<NotificacoesModalProps> = ({ onClose }) => {
         <div className={styles["modal-footer"]}>
           <button
             className={styles["ver-mais-button"]}
-            onClick={() => (window.location.href = "/user?page=7")}
+            onClick={() => (window.location.href = "/user?page=6")}
           >
             Ver mais
           </button>

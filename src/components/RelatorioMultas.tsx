@@ -164,12 +164,10 @@ export default function RelatorioMultas({ isVisible }: Props) {
       console.error("Erro ao gerar relatório:", error);
     }
   };
+  // --- NOVA LÓGICA DE PAGINAÇÃO E BUSCA, igual ao RelatorioLivros ---
   const handleScroll = useCallback(() => {
-    if (loading || !isVisible) return;
-
-    // Only trigger if we have scrollable content
+    if (loading) return;
     if (document.documentElement.scrollHeight <= window.innerHeight) return;
-
     if (
       window.innerHeight + document.documentElement.scrollTop >=
       document.documentElement.offsetHeight - 100
@@ -180,10 +178,9 @@ export default function RelatorioMultas({ isVisible }: Props) {
         setPagePendentes((prev) => prev + 1);
       }
     }
-  }, [loading, abaAtiva, hasMoreGeral, hasMorePendentes, isVisible]);
+  }, [loading, abaAtiva, hasMoreGeral, hasMorePendentes]);
 
   useEffect(() => {
-    // Only attach scroll listener when component is visible
     if (isVisible) {
       window.addEventListener("scroll", handleScroll);
       return () => window.removeEventListener("scroll", handleScroll);
@@ -204,59 +201,28 @@ export default function RelatorioMultas({ isVisible }: Props) {
     }
   }, [abaAtiva, isVisible]);
 
-  // Busca inicial após reset de estado
+  // Busca inicial e por paginação
   useEffect(() => {
     if (!isVisible) return;
-    if (
-      abaAtiva === "geral" &&
-      pageGeral === 1 &&
-      multas.length === 0 &&
-      hasMoreGeral
-    ) {
-      buscarMultas();
-    }
-    if (
-      abaAtiva === "pendentes" &&
-      pagePendentes === 1 &&
-      multasPendentes.length === 0 &&
-      hasMorePendentes
-    ) {
-      buscarMultasPendentes();
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [
-    abaAtiva,
-    isVisible,
-    pageGeral,
-    pagePendentes,
-    multas.length,
-    multasPendentes.length,
-    hasMoreGeral,
-    hasMorePendentes,
-  ]);
-
-  useEffect(() => {
-    if (!isVisible) return;
-
-    // Only fetch if user has scrolled for more
-    if (
-      (abaAtiva === "geral" && pageGeral > 1) ||
-      (abaAtiva === "pendentes" && pagePendentes > 1)
-    ) {
-      if (abaAtiva === "geral") {
+    if (abaAtiva === "geral") {
+      if (pageGeral === 1 && multas.length === 0 && hasMoreGeral) {
         buscarMultas();
-      } else {
+      } else if (pageGeral > 1 && hasMoreGeral) {
+        buscarMultas();
+      }
+    } else if (abaAtiva === "pendentes") {
+      if (
+        pagePendentes === 1 &&
+        multasPendentes.length === 0 &&
+        hasMorePendentes
+      ) {
+        buscarMultasPendentes();
+      } else if (pagePendentes > 1 && hasMorePendentes) {
         buscarMultasPendentes();
       }
     }
-  }, [
-    isVisible,
-    abaAtiva,
-    pageGeral,
-    pagePendentes,
-    buscarMultas,
-    buscarMultasPendentes,
-  ]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [abaAtiva, isVisible, pageGeral, pagePendentes]);
 
   return (
     <div
@@ -462,14 +428,7 @@ export default function RelatorioMultas({ isVisible }: Props) {
               )}
             </tbody>{" "}
           </table>
-          {!loading && hasMoreGeral && multas.length > 0 && (
-            <div
-              className="montserrat-alternates"
-              style={{ textAlign: "center", padding: "10px", color: "#666" }}
-            >
-              Carregando mais multas...
-            </div>
-          )}
+          {/* Removido o texto 'Carregando mais multas...' e 'Carregando mais multas pendentes...' */}
         </div>
       )}
 
@@ -588,14 +547,7 @@ export default function RelatorioMultas({ isVisible }: Props) {
               )}
             </tbody>
           </table>
-          {!loading && hasMorePendentes && multasPendentes.length > 0 && (
-            <div
-              className="montserrat-alternates"
-              style={{ textAlign: "center", padding: "10px", color: "#666" }}
-            >
-              Carregando mais multas pendentes...
-            </div>
-          )}
+          {/* Aqui estava o texto removido */}
         </div>
       )}
     </div>
