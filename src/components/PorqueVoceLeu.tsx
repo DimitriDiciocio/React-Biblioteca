@@ -65,6 +65,7 @@ const PorqueVoceLeu: React.FC = () => {
           nav
           dots={false}
           autoplay={false}
+          slideBy={5}
           stagePadding={50}
           responsive={{
             0: { items: 1, nav: false },

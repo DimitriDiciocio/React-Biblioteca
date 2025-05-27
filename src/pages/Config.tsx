@@ -164,16 +164,6 @@ const Config: React.FC = () => {
                     <li onClick={() => navigate("/user?page=3")} className="pointer">
                       <a className="link-flex">
                         <img
-                          src={bookIcon}
-                          alt="Ícone Gerenciar Livros"
-                          className="icon-config"
-                        />
-                        <span>Cestinha</span>
-                      </a>
-                    </li>
-                    <li onClick={() => navigate("/user?page=4")} className="pointer">
-                      <a className="link-flex">
-                        <img
                           src={listIcon}
                           alt="Ícone Minha Lista"
                           className="icon-config"
@@ -182,7 +172,7 @@ const Config: React.FC = () => {
                       </a>
                     </li>
                     {/* Removido o item Histórico */}
-                    <li onClick={() => navigate("/user?page=5")} className="pointer">
+                    <li onClick={() => navigate("/user?page=4")} className="pointer">
                       <a className="link-flex">
                         <img
                           src={fineIcon}
@@ -221,9 +211,6 @@ const Config: React.FC = () => {
           </div>
           <div className="page">
             <TrocarSenha />
-          </div>
-          <div className="page">
-            <Carrinho />
           </div>
           <div className="page">
             <MinhaLista/>

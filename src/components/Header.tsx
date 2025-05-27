@@ -26,6 +26,14 @@ const Header: React.FC = () => {
   const [isPermissionChecked, setIsPermissionChecked] = useState(false);
   const [notificacoesOpen, setNotificacoesOpen] = useState(false);
   const [sidebarRightOpen, setSidebarRightOpen] = useState(false);
+  const [isSidebarClosing, setIsSidebarClosing] = useState(false);
+
+  // Carrinho state
+  const [reservas, setReservas] = useState<any[]>([]);
+  const [emprestimos, setEmprestimos] = useState<any[]>([]);
+  const [loadingCarrinho, setLoadingCarrinho] = useState(false);
+  const [reserving, setReserving] = useState(false);
+  const [borrowing, setBorrowing] = useState(false);
 
   const handleFiltroClick = () => {
     navigate('/pesquisa/');
@@ -130,11 +138,324 @@ const Header: React.FC = () => {
 
   const toggleSidebarRight = () => setSidebarRightOpen((prev) => !prev);
 
+  const closeSidebarRight = () => {
+    setIsSidebarClosing(true);
+    setTimeout(() => {
+      setSidebarRightOpen(false);
+      setIsSidebarClosing(false);
+    }, 300);
+  };
+
   const Sair = () => {
     localStorage.removeItem("id_user");
     localStorage.removeItem("token");
     navigate("/login")
   }
+
+  // Carregar carrinho ao abrir sidebar direita
+  useEffect(() => {
+    if (!sidebarRightOpen) return;
+    const token = localStorage.getItem("token");
+    const fetchReservas = async () => {
+      try {
+        const response = await fetch(
+          "http://127.0.0.1:5000/carrinho_reservas",
+          {
+            method: "GET",
+            headers: {
+              Authorization: `Bearer ${token}`,
+              "Content-Type": "application/json",
+            },
+          }
+        );
+        if (!response.ok) throw new Error("Erro ao buscar reservas");
+        const result = await response.json();
+        setReservas(
+          result.map((reserva: any) => ({
+            id_reserva: reserva.id_reserva,
+            id_usuario: reserva.id_usuario,
+            id_livro: reserva.id_livro,
+            data_adicionado: reserva.data_adicionado,
+            imagem: reserva.imagem || "default.jpg",
+            titulo: reserva.livro?.titulo || "Título Desconhecido",
+            autor: reserva.livro?.autor || "Autor Desconhecido",
+          }))
+        );
+      } catch {
+        setReservas([]);
+      }
+    };
+    const fetchEmprestimos = async () => {
+      try {
+        const response = await fetch(
+          "http://127.0.0.1:5000/carrinho_emprestimos",
+          {
+            method: "GET",
+            headers: {
+              Authorization: `Bearer ${token}`,
+              "Content-Type": "application/json",
+            },
+          }
+        );
+        if (!response.ok) throw new Error("Erro ao buscar empréstimos");
+        const result = await response.json();
+        setEmprestimos(
+          result.map((emprestimo: any) => ({
+            id_emprestimo: emprestimo.id_emprestimo,
+            id_usuario: emprestimo.id_usuario,
+            id_livro: emprestimo.id_livro,
+            data_adicionado: emprestimo.data_adicionado,
+            imagem: emprestimo.imagem || "default.jpg",
+            titulo: emprestimo.livro?.titulo || "Título Desconhecido",
+            autor: emprestimo.livro?.autor || "Autor Desconhecido",
+          }))
+        );
+      } catch {
+        setEmprestimos([]);
+      }
+    };
+    setLoadingCarrinho(true);
+    Promise.all([fetchReservas(), fetchEmprestimos()]).finally(() =>
+      setLoadingCarrinho(false)
+    );
+  }, [sidebarRightOpen]);
+
+  // Função para remover livro do carrinho
+  const removerLivro = async (id: number, tipo: "reserva" | "emprestimo") => {
+    const token = localStorage.getItem("token");
+    const confirmacao = await Swal.fire({
+      title: "Remover Livro?",
+      text: "Tem certeza de que deseja remover este livro do carrinho?",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonText: "Sim, remover",
+      cancelButtonText: "Cancelar",
+    });
+    if (!confirmacao.isConfirmed) return;
+    try {
+      const endpoint =
+        tipo === "reserva"
+          ? `http://127.0.0.1:5000/carrinho_reservas/${id}`
+          : `http://127.0.0.1:5000/carrinho_emprestimos/${id}`;
+      const response = await fetch(endpoint, {
+        method: "DELETE",
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (!response.ok) throw new Error("Erro ao remover livro");
+      if (tipo === "reserva") {
+        setReservas((prev) => prev.filter((book) => book.id_reserva !== id));
+      } else {
+        setEmprestimos((prev) =>
+          prev.filter((book) => book.id_emprestimo !== id)
+        );
+      }
+      Swal.fire({
+        icon: "success",
+        title: "Removido!",
+        text: "O livro foi removido do carrinho.",
+      });
+    } catch {
+      Swal.fire({
+        icon: "error",
+        title: "Erro",
+        text: "Não foi possível remover o livro.",
+      });
+    }
+  };
+
+  // Reservar todos
+  const reservarLivros = async () => {
+    const token = localStorage.getItem("token");
+    if (reservas.length === 0) {
+      Swal.fire({
+        icon: "warning",
+        title: "Carrinho vazio",
+        text: "Adicione livros antes de reservar.",
+      });
+      return;
+    }
+    setReserving(true);
+    try {
+      const indisponiveis: any[] = [];
+      const verificacoes = await Promise.all(
+        reservas.map(async (book) => {
+          const response = await fetch(
+            `http://127.0.0.1:5000/verificar_reserva/${book.id_livro}`,
+            {
+              method: "GET",
+              headers: { Authorization: `Bearer ${token}` },
+            }
+          );
+          if (!response.ok) throw new Error("Erro ao verificar disponibilidade");
+          const result = await response.json();
+          if (!result.disponivel) indisponiveis.push(book);
+          return result.disponivel;
+        })
+      );
+      if (indisponiveis.length > 0) {
+        const { isConfirmed } = await Swal.fire({
+          title: "Alguns livros não estão disponíveis",
+          html: `<p>Os seguintes livros não podem ser reservados:</p><ul>${indisponiveis
+            .map((book) => `<li>${book.titulo}</li>`)
+            .join("")}</ul><p>Deseja removê-los e continuar?</p>`,
+          icon: "warning",
+          showCancelButton: true,
+          confirmButtonText: "Remover indisponíveis e continuar",
+          cancelButtonText: "Cancelar",
+        });
+        if (!isConfirmed) {
+          setReserving(false);
+          return;
+        }
+        for (const book of indisponiveis) {
+          await removerLivro(book.id_reserva, "reserva");
+        }
+      }
+      const confirmacao = await Swal.fire({
+        title: "Confirmar Reserva?",
+        text: "Todos os itens do carrinho serão reservados.",
+        icon: "info",
+        showCancelButton: true,
+        confirmButtonText: "Sim, reservar",
+        cancelButtonText: "Cancelar",
+      });
+      if (!confirmacao.isConfirmed) {
+        setReserving(false);
+        return;
+      }
+      const response = await fetch("http://127.0.0.1:5000/reservar", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      });
+      const data = await response.json();
+      if (response.ok) {
+        setReservas([]);
+        Swal.fire({
+          icon: "success",
+          title: "Reserva Confirmada!",
+          text: "Os livros foram reservados com sucesso.",
+        });
+      } else {
+        Swal.fire({ icon: "error", title: "Erro", text: String(data.message) });
+      }
+    } catch (error) {
+      Swal.fire({ icon: "error", title: "Erro", text: String(error) });
+    } finally {
+      setReserving(false);
+    }
+  };
+
+  // Emprestar todos
+  const emprestarLivros = async () => {
+    const token = localStorage.getItem("token");
+    if (emprestimos.length === 0) {
+      Swal.fire({
+        icon: "warning",
+        title: "Carrinho vazio",
+        text: "Adicione livros antes de reservar.",
+      });
+      return;
+    }
+    setBorrowing(true);
+    const indisponiveis: any[] = [];
+    for (const livro of emprestimos) {
+      const response = await fetch(
+        `http://127.0.0.1:5000/verificar_emprestimo/${livro.id_livro}`,
+        {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      const result = await response.json();
+      if (!result.disponivel) {
+        indisponiveis.push(livro);
+      }
+    }
+    if (indisponiveis.length > 0) {
+      const confirmacao = await Swal.fire({
+        title: "Livros Indisponíveis",
+        text: `Os seguintes livros não estão disponíveis para empréstimo:\n${indisponiveis
+          .map((livro) => livro.titulo)
+          .join(", ")}\nDeseja remover esses livros e continuar com a reserva?`,
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonText: "Sim, remover e continuar",
+        cancelButtonText: "Cancelar",
+      });
+      if (confirmacao.isConfirmed) {
+        for (const livro of indisponiveis) {
+          await removerLivro(livro.id_emprestimo, "emprestimo");
+        }
+        try {
+          await fetch("http://127.0.0.1:5000/emprestar", {
+            method: "POST",
+            headers: {
+              Authorization: `Bearer ${token}`,
+              "Content-Type": "application/json",
+            },
+          });
+          setEmprestimos([]);
+          Swal.fire({
+            icon: "success",
+            title: "Empréstimo Confirmado!",
+            text: "Os livros foram emprestados com sucesso.",
+          });
+        } catch {
+          Swal.fire({
+            icon: "error",
+            title: "Erro",
+            text: "Não foi possível emprestar os livros.",
+          });
+        }
+      }
+    } else {
+      const confirmacao = await Swal.fire({
+        title: "Confirmar Empréstimo?",
+        text: "Todos os itens do carrinho serão emprestados.",
+        icon: "info",
+        showCancelButton: true,
+        confirmButtonText: "Sim, emprestar",
+        cancelButtonText: "Cancelar",
+      });
+      if (!confirmacao.isConfirmed) {
+        setBorrowing(false);
+        return;
+      }
+      try {
+        const response = await fetch("http://127.0.0.1:5000/emprestar", {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        });
+        const data = await response.json();
+        if (response.ok) {
+          setEmprestimos([]);
+          Swal.fire({
+            icon: "success",
+            title: "Empréstimo Confirmado!",
+            text: "Os livros foram emprestados com sucesso.",
+          });
+        } else {
+          Swal.fire({
+            icon: "error",
+            title: "Erro",
+            text: String(data.message),
+          });
+        }
+      } catch (error) {
+        Swal.fire({ icon: "error", title: "Erro", text: String(error) });
+      }
+    }
+    setBorrowing(false);
+  };
 
   if (!isPermissionChecked) {
     return null;
@@ -186,8 +507,7 @@ const Header: React.FC = () => {
                       fill="#e8eaed"
                     >
                       <path
-                        d="m370-80-16-128q-13-5-24.5-12T307-235l-119 50L78-375l103-78q-1-7-1-13.5v-27q0-6.5 1-13.5L78-585l110-190 119 50q11-8 23-15t24-12l16-128h220l16 128q13 5 24.5 12t22.5 15l119-50 110 190-103 78q1 7 1 13.5v27q0 6.5-2 13.5l103 78-110 190-118-50q-11 8-23 15t-24 12L590-80H370Zm70-80h79l14-106q31-8 57.5-23.5T639-327l99 41 39-68-86-65q5-14 7-29.5t2-31.5q0-16-2-31.5t-7-29.5l86-65-39-68-99 42q-22-23-48.5-38.5T533-694l-13-106h-79l-14 106q-31 8-57.5 23.5T321-633l-99-41-39 68 86 64q-5 15-7 30t-2 32q0 16 2 31t7 30l-86 65 39 68 99-42q22 23 48.5 38.5T427-266l13 106Zm42-180q58 0 99-41t41-99q0-58-41-99t-99-41q-59 0-99.5 41T342-480q0 58 40.5 ```html
-                99t99.5 41Zm-2-140Z"
+                        d="m370-80-16-128q-13-5-24.5-12T307-235l-119 50L78-375l103-78q-1-7-1-13.5v-27q0-6.5 1-13.5L78-585l110-190 119 50q11-8 23-15t24-12l16-128h220l16 128q13 5 24.5 12t22.5 15l119-50 110 190-103 78q1 7 1 13.5v27q0 6.5-2 13.5l103 78-110 190-118-50q-11 8-23 15t-24 12L590-80H370Zm70-80h79l14-106q31-8 57.5-23.5T639-327l99 41 39-68-86-65q5-14 7-29.5t2-31.5q0-16-2-31.5t-7-29.5l86-65-39-68-99 42q-22-23-48.5-38.5T533-694l-13-106h-79l-14 106q-31 8-57.5 23.5T321-633l-99-41-39 68 86 64q-5 15-7 30t-2 32q0 16 2 31t7 30l-86 65 39 68 99-42q22 23 48.5 38.5T427-266l13 106Zm42-180q58 0 99-41t41-99q0-58-41-99t-99-41q-59 0-99.5 41T342-480q0 58 40.5 99t99.5 41Zm-2-140Z"
                       ></path>
                     </svg>
                     <span className="tooltip">settings</span>
@@ -297,46 +617,132 @@ const Header: React.FC = () => {
           left: 0,
           width: "100vw",
           height: "100vh",
-          zIndex: sidebarRightOpen ? 1999 : -1,
-          background: sidebarRightOpen ? "rgba(0,0,0,0.0)" : "transparent",
-          pointerEvents: sidebarRightOpen ? "auto" : "none",
+          zIndex: sidebarRightOpen || isSidebarClosing ? 1999 : -1,
+          background: sidebarRightOpen || isSidebarClosing ? "rgba(0,0,0,0.0)" : "transparent",
+          pointerEvents: sidebarRightOpen || isSidebarClosing ? "auto" : "none",
           transition: "background 0.3s",
         }}
-        onClick={() => setSidebarRightOpen(false)}
+        onClick={closeSidebarRight}
       >
-        <aside
-          className={`sidebar sidebar-right ${sidebarRightOpen ? "open" : "closed"}`}
-          style={{
-            position: "fixed",
-            top: 100, // altura do header fixo
-            right: sidebarRightOpen ? 0 : "-300px",
-            left: "auto",
-            height: "calc(100vh - 100px)",
-            width: 260,
-            background: "#fff",
-            zIndex: 2000,
-            boxShadow: "-2px 0 8px rgba(0,0,0,0.12)",
-            borderRadius: "12px 0 0 12px",
-            transition: "right 0.3s cubic-bezier(.77,0,.18,1)",
-            display: "flex",
-            flexDirection: "column",
-            paddingTop: 0,
-            animation: sidebarRightOpen ? "slideInRight 0.3s" : "slideOutRight 0.3s",
-            pointerEvents: "auto",
-          }}
-          onClick={e => e.stopPropagation()}
-        >
-          <div style={{ display: "flex", justifyContent: "flex-end", padding: "0px 10px 0 0" }}>
-            <button className="xiii" onClick={() => setSidebarRightOpen(false)}>
-              ✕
-            </button>
-          </div>
-          <nav className="nav-lateral" style={{ marginTop: 10 }}>
-            <ul style={{ listStyle: "none", padding: 0 }}>
-              
-            </ul>
-          </nav>
-        </aside>
+        {(sidebarRightOpen || isSidebarClosing) && (
+          <aside
+            className={`sidebar sidebar-right ${sidebarRightOpen ? (isSidebarClosing ? "closing" : "open") : ""}`}
+            style={{
+              position: "fixed",
+              top: 100,
+              right: sidebarRightOpen ? 0 : "-300px",
+              left: "auto",
+              height: "calc(100vh - 100px)",
+              width: 300,
+              background: "#fff",
+              zIndex: 2000,
+              boxShadow: "-2px 0 8px rgba(0,0,0,0.12)",
+              borderRadius: "12px 0 0 12px",
+              transition: "right 0.3s cubic-bezier(.77,0,.18,1)",
+              display: "flex",
+              flexDirection: "column",
+              paddingTop: 0,
+              animation: sidebarRightOpen
+                ? (isSidebarClosing ? "slideOutRight 0.3s" : "slideInRight 0.3s")
+                : "",
+              pointerEvents: "auto",
+            }}
+            onClick={e => e.stopPropagation()}
+          >
+            <div style={{ display: "flex", justifyContent: "flex-end", padding: "0px 10px 0 0" }}>
+              <button className="xiii" onClick={closeSidebarRight}>
+                ✕
+              </button>
+            </div>
+            <div style={{ padding: "0 18px", overflowY: "auto", flex: 1 }}>
+              <h2 className="montserrat-alternates-semibold" style={{ fontSize: 20, margin: "10px 0" }}>Minha Cestinha</h2>
+              {loadingCarrinho ? (
+                <p className="montserrat-alternates">Carregando...</p>
+              ) : (
+                <>
+                  <div>
+                    <h3 className="montserrat-alternates-semibold" style={{ fontSize: 16 }}>Livros Reservados</h3>
+                    {reservas.length === 0 ? (
+                      <p className="montserrat-alternates">Nenhum livro reservado.</p>
+                    ) : (
+                      <div>
+                        {reservas.map((book) => (
+                          <div key={book.id_reserva} style={{ display: "flex", alignItems: "center", marginBottom: 8 }}>
+                            <img
+                              src={`http://127.0.0.1:5000/uploads/livros/${book.imagem}`}
+                              alt={book.titulo}
+                              style={{ width: 32, height: 48, objectFit: "cover", borderRadius: 4, marginRight: 8 }}
+                            />
+                            <div style={{ flex: 1 }}>
+                              <div className="montserrat-alternates" style={{ fontSize: 14 }}>{book.titulo}</div>
+                              <div className="montserrat-alternates" style={{ fontSize: 12 }}>{book.autor}</div>
+                            </div>
+                            <button
+                              className="botao-remover montserrat-alternates-semibold"
+                              style={{ fontSize: 18, background: "none", border: "none", color: "red", cursor: "pointer" }}
+                              onClick={() => removerLivro(book.id_reserva, "reserva")}
+                            >
+                              ✖
+                            </button>
+                          </div>
+                        ))}
+                        <div style={{ margin: "10px 0" }}>
+                          <button
+                            className="botao-acao montserrat-alternates-semibold"
+                            style={{ width: "100%" }}
+                            onClick={reservarLivros}
+                            disabled={reserving}
+                          >
+                            Reservar Todos
+                          </button>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                  <div style={{ marginTop: 18 }}>
+                    <h3 className="montserrat-alternates-semibold" style={{ fontSize: 16 }}>Livros Emprestados</h3>
+                    {emprestimos.length === 0 ? (
+                      <p className="montserrat-alternates">Nenhum livro emprestado.</p>
+                    ) : (
+                      <div>
+                        {emprestimos.map((book) => (
+                          <div key={book.id_emprestimo} style={{ display: "flex", alignItems: "center", marginBottom: 8 }}>
+                            <img
+                              src={`http://127.0.0.1:5000/uploads/livros/${book.imagem}`}
+                              alt={book.titulo}
+                              style={{ width: 32, height: 48, objectFit: "cover", borderRadius: 4, marginRight: 8 }}
+                            />
+                            <div style={{ flex: 1 }}>
+                              <div className="montserrat-alternates" style={{ fontSize: 14 }}>{book.titulo}</div>
+                              <div className="montserrat-alternates" style={{ fontSize: 12 }}>{book.autor}</div>
+                            </div>
+                            <button
+                              className="botao-remover montserrat-alternates-semibold"
+                              style={{ fontSize: 18, background: "none", border: "none", color: "red", cursor: "pointer" }}
+                              onClick={() => removerLivro(book.id_emprestimo, "emprestimo")}
+                            >
+                              ✖
+                            </button>
+                          </div>
+                        ))}
+                        <div style={{ margin: "10px 0" }}>
+                          <button
+                            className="botao-acao montserrat-alternates-semibold"
+                            style={{ width: "100%" }}
+                            onClick={emprestarLivros}
+                            disabled={borrowing}
+                          >
+                            Emprestar Todos
+                          </button>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </>
+              )}
+            </div>
+          </aside>
+        )}
       </div>
     </div>
   );
