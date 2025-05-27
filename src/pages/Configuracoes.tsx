@@ -162,8 +162,40 @@ const Configuracoes: React.FC = () => {
   if (isAllowed === false) {
     return null;
   }
+  const validatePhoneNumber = (phone: string) => {
+    // Remove all non-numeric characters
+    const numericOnly = phone.replace(/\D/g, "");
+    // Check if it has 10 or 11 digits (with DDD)
+    return numericOnly.length >= 10 && numericOnly.length <= 11;
+  };
+
+  const formatTelefone = (value: string) => {
+    const numericValue = value.replace(/\D/g, "");
+    const cursorPosition = value.length - 1;
+    if (value[cursorPosition] === "-" || value[cursorPosition] === ")") {
+      return value.slice(0, cursorPosition);
+    }
+    if (numericValue.length <= 10) {
+      return numericValue.replace(/(\d{2})(\d{4})(\d{0,4})/, "($1) $2-$3");
+    }
+    return numericValue.replace(/(\d{2})(\d{5})(\d{0,4})/, "($1) $2-$3");
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    // Add phone validation for Pix key and remove formatting
+    const pixNumerico = configuracoes.chave_pix.replace(/\D/g, "");
+    const telefoneNumerico = configuracoes.telefone.replace(/\D/g, "");
+    
+    if (!validatePhoneNumber(pixNumerico)) {
+      Swal.fire({
+        icon: "error",
+        title: "Erro",
+        text: "A chave Pix deve ser um número de telefone válido (com DDD).",
+      });
+      return;
+    }
 
     const valorBase = parseFloat(valores.valor_base) || 0;
     const valorAcrescimo = parseFloat(valores.valor_acrescimo) || 0;
@@ -255,10 +287,10 @@ const Configuracoes: React.FC = () => {
               dias_validade_buscar: parseInt(
                 configuracoes.dias_validade_emprestimo_buscar
               ),
-              chave_pix: configuracoes.chave_pix,
+              chave_pix: pixNumerico,
               razao_social: configuracoes.razao_social,
               endereco: configuracoes.endereco,
-              telefone: configuracoes.telefone,
+              telefone: telefoneNumerico,
               email: configuracoes.email,
             }),
           }
@@ -293,10 +325,10 @@ const Configuracoes: React.FC = () => {
               dias_validade_buscar: parseInt(
                 configuracoes.dias_validade_emprestimo_buscar
               ),
-              chave_pix: configuracoes.chave_pix,
+              chave_pix: pixNumerico,
               razao_social: configuracoes.razao_social,
               endereco: configuracoes.endereco,
-              telefone: configuracoes.telefone,
+              telefone: telefoneNumerico,
               email: configuracoes.email,
             }),
           }
@@ -447,16 +479,17 @@ const Configuracoes: React.FC = () => {
             />
           </div>
           <div className={styles.inputGroup}>
-            <label>Chave Pix</label>
+            <label>Chave Pix (Telefone com DDD)</label>
             <input
               type="text"
               value={configuracoes.chave_pix}
               onChange={(e) =>
                 setConfiguracoes({
                   ...configuracoes,
-                  chave_pix: e.target.value,
+                  chave_pix: formatTelefone(e.target.value),
                 })
               }
+              maxLength={15}
               className={styles.input}
               required
             />
@@ -484,9 +517,10 @@ const Configuracoes: React.FC = () => {
               onChange={(e) =>
                 setConfiguracoes({
                   ...configuracoes,
-                  telefone: e.target.value,
+                  telefone: formatTelefone(e.target.value),
                 })
               }
+              maxLength={15}
               className={styles.input}
               required
             />

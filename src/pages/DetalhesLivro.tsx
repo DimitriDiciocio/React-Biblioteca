@@ -443,7 +443,7 @@ const BookDetail = () => {
 
         if (!response.ok) {
           const errorData = await response.json();
-          Swal.fire("Erro", errorData.error || "Erro ao enviar avaliação", "error");
+          Swal.fire("Erro", errorData.message || "Erro ao enviar avaliação", "error");
           return;
         }
 
