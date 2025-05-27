@@ -205,6 +205,7 @@ const EditarUsuario: React.FC = () => {
       setEditTelefone(telefone);
       setEditUf(uf);
       setEditCidade(cidade);
+
       if (uf) {
         // Atualiza cidades do modal para o estado atual
         fetch(`https://servicodados.ibge.gov.br/api/v1/localidades/estados/${uf}/municipios`)
@@ -217,29 +218,27 @@ const EditarUsuario: React.FC = () => {
   }, [modalOpen, nome, email, telefone, uf, cidade]);
 
   useEffect(() => {
-    
-    if (!editUf) {
-      setEditCidadesBrasil([]);
-      setEditCidade("");
-      return;
-    }
-    const fetchCidades = async () => {
-      try {
-        const response = await fetch(
-          `https://servicodados.ibge.gov.br/api/v1/localidades/estados/${editUf}/municipios`
-        );
-        if (response.ok) {
-          const data = await response.json();
-          setEditCidadesBrasil(data.map((cidade: { nome: string }) => cidade.nome));
-        } else {
+    if (editUf) {
+      const fetchCidades = async () => {
+        try {
+          const response = await fetch(
+            `https://servicodados.ibge.gov.br/api/v1/localidades/estados/${editUf}/municipios`
+          );
+          if (response.ok) {
+            const data = await response.json();
+            setEditCidadesBrasil(data.map((cidade: { nome: string }) => cidade.nome));
+          } else {
+            setEditCidadesBrasil([]);
+          }
+        } catch {
           setEditCidadesBrasil([]);
         }
-      } catch {
-        setEditCidadesBrasil([]);
-      }
+      };
+      fetchCidades();
+    } else {
+      setEditCidadesBrasil([]);
       setEditCidade(""); // Limpa cidade ao trocar estado
-    };
-    fetchCidades();
+    }
   }, [editUf]);
 
   const onDrop = useCallback((acceptedFiles: File[]) => {

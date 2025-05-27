@@ -65,8 +65,10 @@ const PuxarHistorico = () => {
   const [hasMoreMulPend, setHasMoreMulPend] = useState(true);
   const [hasMoreMulConc, setHasMoreMulConc] = useState(true);
 
+  const [isFetching, setIsFetching] = useState(false);
+
   const handleScroll = useCallback(() => {
-    if (loading) return;
+    if (loading || isFetching) return;
 
     const historicElement = document.getElementById("historic0");
     if (
@@ -102,7 +104,7 @@ const PuxarHistorico = () => {
           break;
       }
     }
-  }, [loading, activeTab, hasMoreEmpAtiv, hasMoreEmpConc, hasMoreResAtiv, hasMoreMulPend, hasMoreMulConc]);
+  }, [loading, isFetching, activeTab, hasMoreEmpAtiv, hasMoreEmpConc, hasMoreResAtiv, hasMoreMulPend, hasMoreMulConc]);
 
   useEffect(() => {
     window.addEventListener("scroll", handleScroll);
@@ -110,6 +112,9 @@ const PuxarHistorico = () => {
   }, [handleScroll]);
 
   const puxarHistorico = useCallback(async () => {
+    if (isFetching) return;
+    setIsFetching(true);
+
     try {
       let endpoint = "";
 
@@ -147,40 +152,53 @@ const PuxarHistorico = () => {
         return;
       }
 
+      // Ensure we have no duplicates by checking IDs
+      const updateHistoricoState = (
+        prevState: Historico,
+        newItems: any[],
+        key: keyof Historico
+      ) => {
+        const existingIds = new Set(
+          prevState[key].map((item: any) => 
+            'id_emprestimo' in item ? item.id_emprestimo : 
+            'id_reserva' in item ? item.id_reserva :
+            'id_multa' in item ? item.id_multa : null
+          )
+        );
+
+        const uniqueNewItems = newItems.filter((item) => {
+          const itemId = 
+            'id_emprestimo' in item ? item.id_emprestimo : 
+            'id_reserva' in item ? item.id_reserva :
+            'id_multa' in item ? item.id_multa : null;
+          return !existingIds.has(itemId);
+        });
+
+        return {
+          ...prevState,
+          [key]: [...prevState[key], ...uniqueNewItems]
+        };
+      };
+
       switch (activeTab) {
         case "emprestimosAtivos":
-          setHistorico((prev) => ({
-            ...prev,
-            emprestimos_ativos: [...prev.emprestimos_ativos, ...result],
-          }));
+          setHistorico(prev => updateHistoricoState(prev, result, 'emprestimos_ativos'));
           setHasMoreEmpAtiv(result.length > 0);
           break;
         case "emprestimosConcluidos":
-          setHistorico((prev) => ({
-            ...prev,
-            emprestimos_concluidos: [...prev.emprestimos_concluidos, ...result],
-          }));
+          setHistorico(prev => updateHistoricoState(prev, result, 'emprestimos_concluidos'));
           setHasMoreEmpConc(result.length > 0);
           break;
         case "reservasAtivas":
-          setHistorico((prev) => ({
-            ...prev,
-            reservas_ativas: [...prev.reservas_ativas, ...result],
-          }));
+          setHistorico(prev => updateHistoricoState(prev, result, 'reservas_ativas'));
           setHasMoreResAtiv(result.length > 0);
           break;
         case "multasPendentes":
-          setHistorico((prev) => ({
-            ...prev,
-            multas_pendentes: [...prev.multas_pendentes, ...result],
-          }));
+          setHistorico(prev => updateHistoricoState(prev, result, 'multas_pendentes'));
           setHasMoreMulPend(result.length > 0);
           break;
         case "multasConcluidas":
-          setHistorico((prev) => ({
-            ...prev,
-            multas_concluidas: [...prev.multas_concluidas, ...result],
-          }));
+          setHistorico(prev => updateHistoricoState(prev, result, 'multas_concluidas'));
           setHasMoreMulConc(result.length > 0);
           break;
         default:
@@ -191,10 +209,11 @@ const PuxarHistorico = () => {
       setError("Erro ao puxar histórico.");
     } finally {
       setLoading(false);
+      setIsFetching(false);
     }
   }, [activeTab, paginaEmpAtiv, paginaEmpConc, paginaResAtiv, paginaMulPend, paginaMulConc, token]);
   const handleTabChange = (tab: string) => {
-    if (loading || activeTab === tab) return; // Prevent tab change while loading or if already active
+    if (loading || isFetching || activeTab === tab) return;
     setActiveTab(tab);
     setHistorico({
       emprestimos_ativos: [],
@@ -256,7 +275,8 @@ const PuxarHistorico = () => {
                 handleFiltroChange("emprestimosAtivos", e.target.value)
               }
             />
-            <div>              {historico.emprestimos_ativos.length > 0 ? (
+            <div>
+              {historico.emprestimos_ativos.length > 0 ? (
                 historico.emprestimos_ativos
                   .filter((item) =>
                     `${item.titulo} ${item.autor}`
@@ -275,9 +295,6 @@ const PuxarHistorico = () => {
               ) : (
                 <p className="no-data-message montserrat-alternates">Não há empréstimos ativos.</p>
               )}
-              {!loading && hasMoreEmpAtiv && (
-                <p className="loading-more montserrat-alternates">Carregando mais itens...</p>
-              )}
             </div>
           </div>
         );
@@ -293,7 +310,8 @@ const PuxarHistorico = () => {
                 handleFiltroChange("emprestimosConcluidos", e.target.value)
               }
             />
-            <div>              {historico.emprestimos_concluidos.length > 0 ? (
+            <div>
+              {historico.emprestimos_concluidos.length > 0 ? (
                 historico.emprestimos_concluidos
                   .filter((item) =>
                     `${item.titulo} ${item.autor}`
@@ -311,9 +329,6 @@ const PuxarHistorico = () => {
               ) : (
                 <p className="no-data-message montserrat-alternates">Não há empréstimos concluídos.</p>
               )}
-              {!loading && hasMoreEmpConc && (
-                <p className="loading-more montserrat-alternates">Carregando mais itens...</p>
-              )}
             </div>
           </div>
         );
@@ -329,7 +344,8 @@ const PuxarHistorico = () => {
                 handleFiltroChange("reservasAtivas", e.target.value)
               }
             />
-            <div>              {historico.reservas_ativas.length > 0 ? (
+            <div>
+              {historico.reservas_ativas.length > 0 ? (
                 historico.reservas_ativas
                   .filter((item) =>
                     `${item.titulo} ${item.autor}`
@@ -348,9 +364,6 @@ const PuxarHistorico = () => {
               ) : (
                 <p className="no-data-message montserrat-alternates">Não há reservas ativas.</p>
               )}
-              {!loading && hasMoreResAtiv && (
-                <p className="loading-more montserrat-alternates">Carregando mais itens...</p>
-              )}
             </div>
           </div>
         );
@@ -366,7 +379,8 @@ const PuxarHistorico = () => {
                 handleFiltroChange("multasPendentes", e.target.value)
               }
             />
-            <div>              {historico.multas_pendentes.length > 0 ? (
+            <div>
+              {historico.multas_pendentes.length > 0 ? (
                 historico.multas_pendentes
                   .filter((multa) =>
                     `Empréstimo #${multa.id_emprestimo}`
@@ -388,9 +402,6 @@ const PuxarHistorico = () => {
               ) : (
                 <p className="no-data-message montserrat-alternates">Não há multas pendentes.</p>
               )}
-              {!loading && hasMoreMulPend && (
-                <p className="loading-more montserrat-alternates">Carregando mais itens...</p>
-              )}
             </div>
           </div>
         );
@@ -406,7 +417,8 @@ const PuxarHistorico = () => {
                 handleFiltroChange("multasConcluidas", e.target.value)
               }
             />
-            <div>              {historico.multas_concluidas.length > 0 ? (
+            <div>
+              {historico.multas_concluidas.length > 0 ? (
                 historico.multas_concluidas
                   .filter((multa) =>
                     `Empréstimo #${multa.id_emprestimo}`
@@ -428,9 +440,6 @@ const PuxarHistorico = () => {
                   ))
               ) : (
                 <p className="no-data-message montserrat-alternates">Não há multas concluídas.</p>
-              )}
-              {!loading && hasMoreMulConc && (
-                <p className="loading-more montserrat-alternates">Carregando mais itens...</p>
               )}
             </div>
           </div>

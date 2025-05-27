@@ -24,12 +24,10 @@ const Home: React.FC = () => {
           <Recomendados />
         </section>
         <div className="space-med-y"></div>
-        {token && <MinhaListaCarrossel />}
-        <div className="space-med-y"></div>
         {token && (
           <>
+            <MinhaListaCarrossel />
             <PorqueVoceLeu />
-            <div className="space-med-y"></div>
           </>
         )}
         <section>

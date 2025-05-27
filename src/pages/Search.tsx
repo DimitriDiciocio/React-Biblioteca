@@ -199,9 +199,6 @@ const Search = () => {
         {books.length === 0 && !loading && (
           <p className="mensagem-erro montserrat-alternates-semibold">Nenhum livro encontrado.</p>
         )}
-        {loading && (
-          <p className="mensagem-carregando">Carregando mais livros...</p>
-        )}
       </main>
     </div>
   );

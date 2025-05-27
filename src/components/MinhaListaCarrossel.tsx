@@ -92,51 +92,56 @@ const MinhaListaCarrossel: React.FC = () => {
   }
 
   return (
-    <div>
-      <p className="montserrat-alternates-semibold size-titles">
-        Minha Lista de Leitura
-      </p>
-      {loading ? (
-        <p className="montserrat-alternates">Carregando livros...</p>
-      ) : books.length > 0 ? (
-        <OwlCarousel
-          className="owl-carousel change"
-          loop={false}
-          nav
-          dots={false}
-          autoplay={false}
-          stagePadding={50}
-          responsive={{
-            0: { items: 1, nav: false },
-            480: { items: 3, nav: false },
-            950: { items: 4, nav: true },
-            1200: { items: 6, nav: true },
-          }}
-        >
-          {books.map((book, index) => (
-            <div key={`${book.id}-${index}`} className="item">
-              <div className="border-book">
-                <a href={`/livro/${book.id}`} className="text-decoration-none">
-                  <div>
-                    <img
-                      src={`http://127.0.0.1:5000/uploads/livros/${book.imagem}`}
-                      alt={book.titulo}
-                    />
+    <>
+      {visivel && books.length > 0 && (
+        <>
+          <div>
+            <p className="montserrat-alternates-semibold size-titles">
+              Minha Lista de Leitura
+            </p>
+            {loading ? (
+              <p className="montserrat-alternates">Carregando livros...</p>
+            ) : (
+              <OwlCarousel
+                className="owl-carousel change"
+                loop={false}
+                nav
+                dots={false}
+                autoplay={false}
+                stagePadding={50}
+                responsive={{
+                  0: { items: 1, nav: false },
+                  480: { items: 3, nav: false },
+                  950: { items: 4, nav: true },
+                  1200: { items: 6, nav: true },
+                }}
+              >
+                {books.map((book, index) => (
+                  <div key={`${book.id}-${index}`} className="item">
+                    <div className="border-book">
+                      <a href={`/livro/${book.id}`} className="text-decoration-none">
+                        <div>
+                          <img
+                            src={`http://127.0.0.1:5000/uploads/livros/${book.imagem}`}
+                            alt={book.titulo}
+                          />
+                        </div>
+                      </a>
+                    </div>
+                    <a href={`/livro/${book.id}`} className="text-decoration-none">
+                      <p className="montserrat-alternates-semibold book-title-formatation">
+                        {book.titulo}
+                      </p>
+                    </a>
                   </div>
-                </a>
-              </div>
-              <a href={`/livro/${book.id}`} className="text-decoration-none">
-                <p className="montserrat-alternates-semibold book-title-formatation">
-                  {book.titulo}
-                </p>
-              </a>
-            </div>
-          ))}
-        </OwlCarousel>
-      ) : (
-        <p className="montserrat-alternates m-l-50">Nenhum livro na sua lista.</p>
+                ))}
+              </OwlCarousel>
+            )}
+          </div>
+          <div className="space-med-y"></div>
+        </>
       )}
-    </div>
+    </>
   );
 };
 
