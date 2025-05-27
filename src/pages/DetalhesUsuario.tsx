@@ -208,7 +208,6 @@ const DetalhesUsuario: React.FC = () => {
             {id && <EmprestimoPorUsuario userId={id} />}
           </div>
         )}
-        <div className="oval"></div>
       </div>
       <Footer />
     </div>
