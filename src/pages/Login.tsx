@@ -46,7 +46,9 @@ const Login: React.FC = () => {
           confirmButtonColor: '#3085d6',
           confirmButtonText: 'Ir para o início',
         });
-        if (data.tipo == 1) {
+        if (localStorage.getItem("redirectAfterLogin")) {
+          navigate(localStorage.getItem("redirectAfterLogin") || "/");
+        } else if (data.tipo == 1) {
           navigate("/")
         } else {
           navigate("/home_biblio")

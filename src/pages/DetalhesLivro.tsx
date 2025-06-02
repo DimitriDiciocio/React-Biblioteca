@@ -398,6 +398,14 @@ const BookDetail = () => {
     });
   };
 
+  const levarLogin = () => {
+    localStorage.setItem("redirectAfterLogin", window.location.pathname);
+    navigate("/login")
+  }
+  if (localStorage.getItem("redirectAfterLogin") && isAllowed) {
+    localStorage.removeItem("redirectAfterLogin");
+  }
+
   // Update the rating logic to depend on the `checked` state in CSS
   const handleRating = async (rating: number | null) => {
     const ratingInput = rating !== null ? document.getElementById(`star-${rating}`) as HTMLInputElement : null;
@@ -624,7 +632,7 @@ const BookDetail = () => {
                 </button>
               )}
               {!token && (
-                <button className="learn-more montserrat-alternates-semibold" onClick={() => navigate("/login")}> 
+                <button className="learn-more montserrat-alternates-semibold" onClick={() => levarLogin()}> 
                   <span className="circle montserrat-alternates-semibold" aria-hidden="true">
                     <span className="icon arrow montserrat-alternates-semibold"></span>
                   </span>
