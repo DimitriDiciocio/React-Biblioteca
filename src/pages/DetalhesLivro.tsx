@@ -237,6 +237,7 @@ const BookDetail = () => {
         popup: 'montserrat-alternates-semibold',
         container: 'montserrat-alternates-semibold',
         confirmButton: 'montserrat-alternates-semibold',
+        cancelButton: 'montserrat-alternates-semibold',
       },
       title: "Quer Reservar?",
       text: `Você quer adicionar ${book?.titulo} ao carrinho de reservas?`,
@@ -245,6 +246,7 @@ const BookDetail = () => {
       confirmButtonColor: "#4562D6",
       cancelButtonColor: "#d33",
       confirmButtonText: "Adicionar",
+      cancelButtonText: "Cancelar",
     }).then(async (result) => {
       if (result.isConfirmed) {
         try {
@@ -260,13 +262,18 @@ const BookDetail = () => {
             }
           );
 
-          if (!response.ok) {
+            if (!response.ok) {
             const errorData = await response.json();
-            Swal.fire(
-              "Erro",
-              errorData.message || "Erro ao adicionar ao carrinho",
-              "error"
-            );
+            Swal.fire({
+              customClass: {
+              title: 'montserrat-alternates-semibold',
+              htmlContainer: 'montserrat-alternates-semibold',
+              confiemButton: 'montserrat-alternates-semibold',
+              },
+              title: "Erro",
+              text: errorData.message || "Erro ao adicionar ao carrinho",
+              icon: "error"
+            });
             return;
           }
 
@@ -277,6 +284,7 @@ const BookDetail = () => {
               popup: 'montserrat-alternates-semibold',
               container: 'montserrat-alternates-semibold',
               confirmButton: 'montserrat-alternates-semibold',
+              cancelButton: 'montserrat-alternates-semibold',
             },
             title: "Livro adicionado ao carrinho de reservas!",
             text: "Deseja ir para o carrinho ou continuar procurando mais livros?",
@@ -286,7 +294,8 @@ const BookDetail = () => {
             cancelButtonText: "Procurar mais livros",
           }).then((result) => {
             if (result.isConfirmed) {
-              navigate("/user?page=3");
+              const event = new CustomEvent("abrirCarrinhoLateral");
+              window.dispatchEvent(event);
             }
           });
         } catch (error) {

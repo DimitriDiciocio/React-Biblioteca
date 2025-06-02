@@ -378,9 +378,25 @@ const Header: React.FC = () => {
           icon: "success",
           title: "Reserva Confirmada!",
           text: "Os livros foram reservados com sucesso.",
+          confirmButtonText: "Eba!",
+          customClass: {
+            title: "montserrat-alternates-semibold",
+            htmlContainer: "montserrat-alternates-semibold",
+            confirmButton: "montserrat-alternates-semibold",
+          },
         });
       } else {
-        Swal.fire({ icon: "error", title: "Erro", text: String(data.message) });
+        Swal.fire({
+          icon: "error",
+          title: '<span class="montserrat-alternates-semibold">Erro</span>',
+          html: `<span class="montserrat-alternates-semibold">${String(data.message)}</span>`,
+          customClass: {
+            title: "",
+            htmlContainer: "",
+            confirmButton: "",
+            cancelButton: "",
+          },
+        });
       }
     } catch (error) {
       Swal.fire({ icon: "error", title: "Erro", text: String(error) });
@@ -455,20 +471,17 @@ const Header: React.FC = () => {
             },
           });
           setEmprestimos([]);
-
-          if (response.ok) {
-            Swal.fire({
-              icon: "success",
-              title: "Empréstimo Confirmado!",
-              text: "Os livros foram emprestados com sucesso.",
-            });
-          } else {
-            Swal.fire({
-              icon: "error",
-              title: "Sem Livros Disponíveis",
-              text: "Não há livros disponíveis para emprestar.",
-            });
-          }
+          Swal.fire({
+            icon: "success",
+            title: "Empréstimo Confirmado!",
+            text: "Os livros foram emprestados com sucesso.",
+            confirmButtonText: "Eba!",
+            customClass: {
+              title: "montserrat-alternates-semibold",
+              htmlContainer: "montserrat-alternates-semibold",
+              confirmButton: "montserrat-alternates-semibold",
+            },
+          });
         } catch {
           Swal.fire({
             icon: "error",
@@ -521,11 +534,17 @@ const Header: React.FC = () => {
             
           });
         } else {
-          Swal.fire({
+            Swal.fire({
             icon: "error",
-            title: "Erro",
-            text: String(data.message),
-          });
+            title: '<span class="montserrat-alternates-semibold">Erro</span>',
+            html: `<span class="montserrat-alternates-semibold">${String(data.message)}</span>`,
+            customClass: {
+              title: "",
+              htmlContainer: "",
+              confirmButton: "",
+              cancelButton: "",
+            },
+            });
         }
       } catch (error) {
         Swal.fire({ icon: "error", title: "Erro", text: String(error) });

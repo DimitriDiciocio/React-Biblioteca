@@ -2035,6 +2035,14 @@ ul {
   padding-top: 10px;
 }
 
+.livros-grid2 {
+  display: flex;
+  gap: 30px;
+  flex-wrap: wrap;
+  justify-items: center;
+  max-height: 560px;
+}
+
 .livro-card {
   display: flex;
   flex-direction: column;

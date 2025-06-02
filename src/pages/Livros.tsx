@@ -118,7 +118,7 @@ const Livros: React.FC = () => {
         onChange={handleSearchChange}
       />
       <div
-        className={`livros-grid montserrat-alternates ${
+        className={`livros-grid2 montserrat-alternates ${
           livros.length === 1
             ? "single-book"
             : livros.length === 2
