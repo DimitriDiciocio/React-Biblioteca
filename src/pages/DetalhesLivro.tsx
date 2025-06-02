@@ -312,7 +312,7 @@ const BookDetail = () => {
 
   const handleEmprestimo = async () => {
     if (!token) {
-      Swal.fire("Erro", "Você precisa estar logado para emprestar.", "error");
+      navigate("/login");
       return;
     }
 
@@ -439,7 +439,7 @@ const BookDetail = () => {
                 if (!prevBook) return prevBook;
                 const novaQtdAvaliacoes = prevBook.qtd_avaliacoes - 1;
                 const novaMedia = novaQtdAvaliacoes > 0
-                    ? (prevBook.avaliacao * prevBook.qtd_avaliacoes - userRating!) / novaQtdAvaliacoes
+                    ? (prevBook.avaliacao * prevBook.qtd_avaliacoes - (rating || 0)) / novaQtdAvaliacoes
                     : 0;
                 return {
                     ...prevBook,
@@ -537,7 +537,7 @@ const BookDetail = () => {
                   {[5, 4, 3, 2, 1].map((star) => (
                     <React.Fragment key={star}>
                       <input
-                        type="checkbox"
+                        type="radio"
                         id={`star-${star}`}
                         name="star-radio"
                         value={star}
@@ -613,8 +613,18 @@ const BookDetail = () => {
               </p>
             </div>
             <div className="d-flex g-sm m-top">
-              {disponivelEmprestimo && (
+              {disponivelEmprestimo && token && (
                 <button className="learn-more montserrat-alternates-semibold" onClick={handleEmprestimo}>
+                  <span className="circle montserrat-alternates-semibold" aria-hidden="true">
+                    <span className="icon arrow montserrat-alternates-semibold"></span>
+                  </span>
+                  <span className="button-text montserrat-alternates-semibold">
+                    Emprestar
+                  </span>
+                </button>
+              )}
+              {!token && (
+                <button className="learn-more montserrat-alternates-semibold" onClick={() => navigate("/login")}> 
                   <span className="circle montserrat-alternates-semibold" aria-hidden="true">
                     <span className="icon arrow montserrat-alternates-semibold"></span>
                   </span>
@@ -636,7 +646,7 @@ const BookDetail = () => {
               {!disponivelEmprestimo &&
                 !disponivelReserva &&
                 mensagemIndisponivel && (
-                    <div
+                  <div
                     className="montserrat-alternates-semibold"
                     style={{
                       backgroundColor: "#f8d7da",
@@ -648,9 +658,9 @@ const BookDetail = () => {
                       fontWeight: "bold",
                       maxWidth: "400px",
                     }}
-                    >
+                  >
                     {mensagemIndisponivel}
-                    </div>
+                  </div>
                 )}
             </div>
           </div>

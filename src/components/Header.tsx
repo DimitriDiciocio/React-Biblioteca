@@ -5,7 +5,6 @@ import Swal from "sweetalert2";
 import NotificacoesModal from "./NotificacoesModal";
 import { useStore } from "../store/useStore";
 import NotificationIcon from "./NotificationIcon";
-import { data } from "jquery";
 
 const Header: React.FC = () => {
   const navigate = useNavigate();
@@ -14,8 +13,6 @@ const Header: React.FC = () => {
     setModalAberto,
     fetchNotificacoes,
     marcarNotificacaoComoLida,
-    notificacoes,
-    temNotificacoesNovas,
     setTemNotificacoesNovas,
   } = useStore();
   const userButtonRef = useRef<HTMLImageElement>(null);
@@ -30,8 +27,20 @@ const Header: React.FC = () => {
   const [isSidebarClosing, setIsSidebarClosing] = useState(false);
 
   // Carrinho state
-  const [reservas, setReservas] = useState<any[]>([]);
-  const [emprestimos, setEmprestimos] = useState<any[]>([]);
+  const [reservas, setReservas] = useState<{
+    id_reserva: number;
+    id_livro: number;
+    titulo: string;
+    imagem: string;
+    autor: string;
+  }[]>([]);
+  const [emprestimos, setEmprestimos] = useState<{
+    id_emprestimo: number;
+    id_livro: number;
+    titulo: string;
+    imagem: string;
+    autor: string;
+  }[]>([]);
   const [loadingCarrinho, setLoadingCarrinho] = useState(false);
   const [reserving, setReserving] = useState(false);
   const [borrowing, setBorrowing] = useState(false);
@@ -228,7 +237,7 @@ const Header: React.FC = () => {
     );
   }, [sidebarRightOpen]);
 
-  // Revisando a função `removerLivro` para garantir que o livro seja removido corretamente
+  // Função para remover livro do carrinho
   const removerLivro = async (id: number, tipo: "reserva" | "emprestimo") => {
     const token = localStorage.getItem("token");
     const confirmacao = await Swal.fire({
@@ -245,49 +254,37 @@ const Header: React.FC = () => {
             cancelButton: "montserrat-alternates-semibold",
         },
     });
-
     if (!confirmacao.isConfirmed) return;
-
     try {
-        const endpoint =
-            tipo === "reserva"
-                ? `http://127.0.0.1:5000/carrinho_reservas/${id}`
-                : `http://127.0.0.1:5000/carrinho_emprestimos/${id}`;
-
-        const response = await fetch(endpoint, {
-            method: "DELETE",
-            headers: { Authorization: `Bearer ${token}` },
-        });
-
-        if (!response.ok) {
-            const errorData = await response.json();
-            throw new Error(errorData.message || "Erro ao remover livro");
-        }
-
-        if (tipo === "reserva") {
-            setReservas((prev) => prev.filter((book) => book.id_reserva !== id));
-        } else {
-            setEmprestimos((prev) => prev.filter((book) => book.id_emprestimo !== id));
-        }
-
-        Swal.fire({
-            icon: "success",
-            title: "Removido!",
-            text: "O livro foi removido do carrinho.",
-            customClass: {
-                title: "montserrat-alternates-semibold",
-                htmlContainer: "montserrat-alternates-semibold",
-                confirmButton: "montserrat-alternates-semibold",
-            },
-        });
-    } catch (error) {
-        Swal.fire({
-            icon: "error",
-            title: "Erro",
-            text: String(error),
-        });
+      const endpoint =
+        tipo === "reserva"
+          ? `http://127.0.0.1:5000/carrinho_reservas/${id}`
+          : `http://127.0.0.1:5000/carrinho_emprestimos/${id}`;
+      const response = await fetch(endpoint, {
+        method: "DELETE",
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (!response.ok) throw new Error("Erro ao remover livro");
+      if (tipo === "reserva") {
+        setReservas((prev) => prev.filter((book) => book.id_reserva !== id));
+      } else {
+        setEmprestimos((prev) =>
+          prev.filter((book) => book.id_emprestimo !== id)
+        );
+      }
+      Swal.fire({
+        icon: "success",
+        title: "Removido!",
+        text: "O livro foi removido do carrinho.",
+      });
+    } catch {
+      Swal.fire({
+        icon: "error",
+        title: "Erro",
+        text: "Não foi possível remover o livro.",
+      });
     }
-};
+  };
 
   // Reservar todos
   const reservarLivros = async () => {
@@ -302,8 +299,8 @@ const Header: React.FC = () => {
     }
     setReserving(true);
     try {
-      const indisponiveis: { id_reserva?: number; id_emprestimo?: number; titulo: string; motivo?: string }[] = [];
-      await Promise.all(
+      const indisponiveis: any[] = [];
+      const verificacoes = await Promise.all(
         reservas.map(async (book) => {
           const response = await fetch(
             `http://127.0.0.1:5000/verificar_reserva/${book.id_livro}`,
@@ -321,9 +318,9 @@ const Header: React.FC = () => {
       if (indisponiveis.length > 0) {
         const { isConfirmed } = await Swal.fire({
           title: "Alguns livros não estão disponíveis",
-          html: `Os seguintes livros não podem ser reservados:${indisponiveis
+          html: `<p>Os seguintes livros não podem ser reservados:</p><ul>${indisponiveis
             .map((book) => `<li>${book.titulo}</li>`)
-            .join("")}Deseja removê-los e continuar?`,
+            .join("")}</ul><p>Deseja removê-los e continuar?</p>`,
           icon: "warning",
           showCancelButton: true,
           confirmButtonText: "Remover indisponíveis e continuar",
@@ -340,10 +337,7 @@ const Header: React.FC = () => {
           return;
         }
         for (const book of indisponiveis) {
-          // Garantindo que apenas valores definidos sejam passados para a função `removerLivro`
-          if (book.id_reserva) {
-            await removerLivro(book.id_reserva, "reserva");
-          }
+          await removerLivro(book.id_reserva, "reserva");
         }
       }
       const confirmacao = await Swal.fire({
@@ -412,12 +406,17 @@ const Header: React.FC = () => {
       Swal.fire({
         icon: "warning",
         title: "Carrinho vazio",
-        text: "Adicione livros antes de reservar.",
+        text: "Adicione livros antes de emprestar.",
       });
       return;
     }
     setBorrowing(true);
-    const indisponiveis: { id_reserva?: number; id_emprestimo?: number; titulo: string; motivo?: string }[] = [];
+    const indisponiveis: {
+      id_livro: number;
+      titulo: string;
+      imagem: string;
+      autor: string;
+    }[] = [];
     for (const livro of emprestimos) {
       const response = await fetch(
         `http://127.0.0.1:5000/verificar_emprestimo/${livro.id_livro}`,
@@ -436,14 +435,10 @@ const Header: React.FC = () => {
     }
     if (indisponiveis.length > 0) {
       const confirmacao = await Swal.fire({
-        title: '<span class="montserrat-alternates-semibold">Livros indisponíveis</span>',
-        html: (
-          `<div class="montserrat-alternates-semibold">Os seguintes livros não estão disponíveis para empréstimo:</div>
-          <div style="height: 12px"></div>
-          <ul style="text-align:center; display: inline-block; margin: 0 auto;" class="montserrat-alternates-semibold">${indisponiveis.map(livro => `<li>${livro.titulo}</li>`).join("")}</ul>
-          <div style="height: 12px"></div>
-          <div class="montserrat-alternates-semibold">Deseja removê-los e continuar?</div>`
-        ),
+        title: "Livros indisponíveis",
+        html: `<p>Os seguintes livros não estão disponíveis para empréstimo:</p><ul>${indisponiveis
+          .map((livro) => `<li>${livro.titulo}</li>`)
+          .join("")}</ul><p>Deseja removê-los e continuar?</p>`,
         icon: "warning",
         showCancelButton: true,
         confirmButtonText: '<span class="montserrat-alternates-semibold">Remover indisponíveis e continuar</span>',
@@ -455,102 +450,73 @@ const Header: React.FC = () => {
           cancelButton: "",
         },
       });
-      if (confirmacao.isConfirmed) {
-        for (const livro of indisponiveis) {
-          // Garantindo que apenas valores definidos sejam passados para a função `removerLivro`
-          if (livro.id_emprestimo) {
-            await removerLivro(livro.id_emprestimo, "emprestimo");
-          }
-        }
-        try {
-          const response = await fetch("http://127.0.0.1:5000/emprestar", {
-            method: "POST",
-            headers: {
-              Authorization: `Bearer ${token}`,
-              "Content-Type": "application/json",
-            },
-          });
-          setEmprestimos([]);
-          Swal.fire({
-            icon: "success",
-            title: "Empréstimo Confirmado!",
-            text: "Os livros foram emprestados com sucesso.",
-            confirmButtonText: "Eba!",
-            customClass: {
-              title: "montserrat-alternates-semibold",
-              htmlContainer: "montserrat-alternates-semibold",
-              confirmButton: "montserrat-alternates-semibold",
-            },
-          });
-        } catch {
-          Swal.fire({
-            icon: "error",
-            title: "Erro",
-            text: "Não foi possível emprestar os livros.",
-          });
-        }
-      }
-    } else {
-      const confirmacao = await Swal.fire({
-        title: "Confirmar Empréstimo?",
-        text: "Todos os itens do carrinho serão emprestados.",
-        icon: "info",
-        showCancelButton: true,
-        confirmButtonText: "Sim, emprestar",
-        cancelButtonText: "Cancelar",
-        customClass: {
-          title: "montserrat-alternates-semibold",
-          htmlContainer: "montserrat-alternates-semibold",
-          confirmButton: "montserrat-alternates-semibold",
-          cancelButton: "montserrat-alternates-semibold",
-        },
-      });
-      
       if (!confirmacao.isConfirmed) {
         setBorrowing(false);
         return;
       }
-      try {
-        const response = await fetch("http://127.0.0.1:5000/emprestar", {
-          method: "POST",
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-        });
-        const data = await response.json();
-        if (response.ok) {
-          setEmprestimos([]);
-          Swal.fire({
-            icon: "success",
-            title: "Empréstimo Confirmado!",
-            text: "Os livros foram emprestados com sucesso.",
-            confirmButtonText: "Eba!",
-            customClass: {
-              title: "montserrat-alternates-semibold",
-              htmlContainer: "montserrat-alternates-semibold",
-              confirmButton: "montserrat-alternates-semibold",
-            },
-            
+      for (const livro of indisponiveis) {
+        try {
+          const endpoint = `http://127.0.0.1:5000/carrinho_emprestimos/${livro.id_emprestimo}`;
+          await fetch(endpoint, {
+            method: "DELETE",
+            headers: { Authorization: `Bearer ${token}` },
           });
-        } else {
-            Swal.fire({
+          setEmprestimos((prev) =>
+            prev.filter((book) => book.id_emprestimo !== livro.id_emprestimo)
+          );
+        } catch {
+          Swal.fire({
             icon: "error",
-            title: '<span class="montserrat-alternates-semibold">Erro</span>',
-            html: `<span class="montserrat-alternates-semibold">${String(data.message)}</span>`,
-            customClass: {
-              title: "",
-              htmlContainer: "",
-              confirmButton: "",
-              cancelButton: "",
-            },
-            });
+            title: "Erro",
+            text: `Não foi possível remover o livro: ${livro.titulo}`,
+          });
         }
-      } catch (error) {
-        Swal.fire({ icon: "error", title: "Erro", text: String(error) });
       }
     }
-    setBorrowing(false);
+    const confirmacaoEmprestimo = await Swal.fire({
+      title: "Confirmar Empréstimo?",
+      text: "Todos os itens restantes do carrinho serão emprestados.",
+      icon: "info",
+      showCancelButton: true,
+      confirmButtonText: "Sim, emprestar",
+      cancelButtonText: "Cancelar",
+    });
+    if (!confirmacaoEmprestimo.isConfirmed) {
+      setBorrowing(false);
+      return;
+    }
+    try {
+      const response = await fetch("http://127.0.0.1:5000/emprestar", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      });
+      if (response.ok) {
+        setEmprestimos([]);
+        Swal.fire({
+          icon: "success",
+          title: "Empréstimo Confirmado!",
+          text: "Os livros foram emprestados com sucesso.",
+        });
+      } else {
+        const data = await response.json();
+        Swal.fire({
+          icon: "error",
+          title: "Erro",
+          text: String(data.message),
+        });
+      }
+    } catch (error) {
+      Swal.fire({
+        icon: "error",
+        title: "Erro",
+        text: String(error),
+      });
+    } finally {
+      setBorrowing(false);
+    }
   };
 
   if (!isPermissionChecked) {

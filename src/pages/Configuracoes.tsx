@@ -14,6 +14,8 @@ const Configuracoes: React.FC = () => {
   const [configuracoes, setConfiguracoes] = useState({
     dias_validade_emprestimo: "",
     dias_validade_emprestimo_buscar: "",
+    limite_emprestimos: "",
+    limite_reservas: "",
     chave_pix: "",
     razao_social: "",
     endereco: "",
@@ -26,6 +28,8 @@ const Configuracoes: React.FC = () => {
     valor_acrescimo: 0,
     dias_validade_emprestimo: 0,
     dias_validade_emprestimo_buscar: 0,
+    limite_emprestimos: 0,
+    limite_reservas: 0,
     chave_pix: "",
     razao_social: "",
     endereco: "",
@@ -35,6 +39,8 @@ const Configuracoes: React.FC = () => {
   interface HistoricoConfiguracao {
     dias_validade_emprestimo?: number;
     dias_validade_emprestimo_buscar?: number;
+    limite_emprestimos?: number;
+    limite_reservas?: number;
     chave_pix?: string;
     razao_social?: string;
     endereco?: string;
@@ -108,6 +114,8 @@ const Configuracoes: React.FC = () => {
           endereco: config[5]?.toString() || "",
           telefone: config[6]?.toString() || "",
           email: config[7]?.toString() || "",
+          limite_emprestimos: config[8]?.toString() || "",
+          limite_reservas: config[9]?.toString() || "",
         });
         setOriginais((prev) => ({
           ...prev,
@@ -120,6 +128,8 @@ const Configuracoes: React.FC = () => {
           endereco: config[5]?.toString() || "",
           telefone: config[6]?.toString() || "",
           email: config[7]?.toString() || "",
+          limite_emprestimos: parseInt(config[8]) || 0,
+          limite_reservas: parseInt(config[9]) || 0,
         }));
       })
       .catch((error) => {
@@ -150,7 +160,9 @@ const Configuracoes: React.FC = () => {
             endereco: item[5] || "",
             telefone: item[6] || "",
             email: item[7] || "",
-            data_adicionado: item[8] || "",
+            limite_emprestimos: item[8] || "",
+            limite_reservas: item[9] || "",
+            data_adicionado: item[10] || "",
           }))
         );
       })
@@ -211,7 +223,9 @@ const Configuracoes: React.FC = () => {
       configuracoes.razao_social !== originais.razao_social ||
       configuracoes.endereco !== originais.endereco ||
       configuracoes.telefone !== originais.telefone ||
-      configuracoes.email !== originais.email;
+      configuracoes.email !== originais.email ||
+      parseInt(configuracoes.limite_emprestimos) !== originais.limite_emprestimos ||
+      parseInt(configuracoes.limite_reservas) !== originais.limite_reservas;
 
     if (!valoresAlterados && !configAlterada) {
       Swal.fire({
@@ -258,101 +272,44 @@ const Configuracoes: React.FC = () => {
       return;
     }
     try {
-      if (valoresAlterados && configAlterada) {
-        // Envia primeiro valores, depois configurações
-        const resValores = await fetch("http://127.0.0.1:5000/valor/criar", {
-          method: "POST",
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            valor_base: valorBase,
-            valor_acrescimo: valorAcrescimo,
-          }),
-        });
-        if (!resValores.ok) throw new Error("Erro ao atualizar valores");
-        const resConfig = await fetch(
-          "http://127.0.0.1:5000/configuracoes/criar",
-          {
-            method: "POST",
-            headers: {
-              Authorization: `Bearer ${localStorage.getItem("token")}`,
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              dias_validade_emprestimo: parseInt(
-                configuracoes.dias_validade_emprestimo
-              ),
-              dias_validade_buscar: parseInt(
-                configuracoes.dias_validade_emprestimo_buscar
-              ),
-              chave_pix: pixNumerico,
-              razao_social: configuracoes.razao_social,
-              endereco: configuracoes.endereco,
-              telefone: telefoneNumerico,
-              email: configuracoes.email,
-            }),
-          }
-        );
-        if (!resConfig.ok) throw new Error("Erro ao atualizar configurações");
-      } else if (valoresAlterados) {
-        const resValores = await fetch("http://127.0.0.1:5000/valor/criar", {
-          method: "POST",
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            valor_base: valorBase,
-            valor_acrescimo: valorAcrescimo,
-          }),
-        });
-        if (!resValores.ok) throw new Error("Erro ao atualizar valores");
-      } else if (configAlterada) {
-        const resConfig = await fetch(
-          "http://127.0.0.1:5000/configuracoes/criar",
-          {
-            method: "POST",
-            headers: {
-              Authorization: `Bearer ${localStorage.getItem("token")}`,
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              dias_validade_emprestimo: parseInt(
-                configuracoes.dias_validade_emprestimo
-              ),
-              dias_validade_buscar: parseInt(
-                configuracoes.dias_validade_emprestimo_buscar
-              ),
-              chave_pix: pixNumerico,
-              razao_social: configuracoes.razao_social,
-              endereco: configuracoes.endereco,
-              telefone: telefoneNumerico,
-              email: configuracoes.email,
-            }),
-          }
-        );
-        if (!resConfig.ok) throw new Error("Erro ao atualizar configurações");
-      }
-      Swal.fire({
-        icon: "success",
-        title: "Sucesso",
-        text: "Configurações atualizadas com sucesso!",
+      const resConfig = await fetch("http://127.0.0.1:5000/configuracoes/criar", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          dias_validade_emprestimo: parseInt(configuracoes.dias_validade_emprestimo),
+          dias_validade_buscar: parseInt(configuracoes.dias_validade_emprestimo_buscar),
+          chave_pix: pixNumerico,
+          razao_social: configuracoes.razao_social,
+          endereco: configuracoes.endereco,
+          telefone: telefoneNumerico,
+          email: configuracoes.email,
+          limite_emprestimo: parseInt(configuracoes.limite_emprestimos),
+          limite_reserva: parseInt(configuracoes.limite_reservas),
+        }),
       });
-      // Atualiza os valores originais para os novos valores salvos
+      if (!resConfig.ok) throw new Error("Erro ao atualizar configurações");
+
       setOriginais({
         valor_base: parseFloat(valores.valor_base) || 0,
         valor_acrescimo: parseFloat(valores.valor_acrescimo) || 0,
-        dias_validade_emprestimo:
-          parseInt(configuracoes.dias_validade_emprestimo) || 0,
-        dias_validade_emprestimo_buscar:
-          parseInt(configuracoes.dias_validade_emprestimo_buscar) || 0,
+        dias_validade_emprestimo: parseInt(configuracoes.dias_validade_emprestimo) || 0,
+        dias_validade_emprestimo_buscar: parseInt(configuracoes.dias_validade_emprestimo_buscar) || 0,
         chave_pix: configuracoes.chave_pix,
         razao_social: configuracoes.razao_social,
         endereco: configuracoes.endereco,
         telefone: configuracoes.telefone,
         email: configuracoes.email,
+        limite_emprestimos: parseInt(configuracoes.limite_emprestimos) || 0,
+        limite_reservas: parseInt(configuracoes.limite_reservas) || 0,
+      });
+
+      Swal.fire({
+        icon: "success",
+        title: "Sucesso",
+        text: "Configurações atualizadas com sucesso!",
       });
     } catch (error) {
       Swal.fire({
@@ -461,6 +418,36 @@ const Configuracoes: React.FC = () => {
               required
             />
           </div>
+          <div className={styles.inputGroup}>
+            <label>Limite de Empréstimos</label>
+            <input
+              type="number"
+              value={configuracoes.limite_emprestimos}
+              onChange={(e) =>
+                setConfiguracoes({
+                  ...configuracoes,
+                  limite_emprestimos: e.target.value,
+                })
+              }
+              className={styles.input}
+              required
+            />
+          </div>
+          <div className={styles.inputGroup}>
+            <label>Limite de Reservas</label>
+            <input
+              type="number"
+              value={configuracoes.limite_reservas}
+              onChange={(e) =>
+                setConfiguracoes({
+                  ...configuracoes,
+                  limite_reservas: e.target.value,
+                })
+              }
+              className={styles.input}
+              required
+            />
+          </div>
 
           <h3 className={styles.subtitle}>Configurações da Biblioteca</h3>
           <div className={styles.inputGroup}>
@@ -554,6 +541,8 @@ const Configuracoes: React.FC = () => {
                 <tr>
                   <th>Dias Empréstimo</th>
                   <th>Dias Buscar</th>
+                  <th>Limite Empréstimos</th>
+                  <th>Limite Reservas</th>
                   <th>Razão Social</th>
                   <th>Chave Pix</th>
                   <th>Email</th>
@@ -565,6 +554,8 @@ const Configuracoes: React.FC = () => {
                   <tr key={index}>
                     <td>{config.dias_validade_emprestimo || "N/A"}</td>
                     <td>{config.dias_validade_emprestimo_buscar || "N/A"}</td>
+                    <td>{config.limite_emprestimos || "N/A"}</td>
+                    <td>{config.limite_reservas || "N/A"}</td>
                     <td>{config.razao_social || "N/A"}</td>
                     <td>{config.chave_pix || "N/A"}</td>
                     <td>{config.email || "N/A"}</td>
