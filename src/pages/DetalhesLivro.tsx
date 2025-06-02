@@ -357,11 +357,18 @@ const BookDetail = () => {
 
           if (!response.ok) {
             const errorData = await response.json();
-            Swal.fire(
-              "Erro",
-              errorData.message || "Erro ao realizar o empréstimo",
-              "error"
-            );
+            Swal.fire({
+              customClass: {
+              title: 'montserrat-alternates-semibold',
+              htmlContainer: 'montserrat-alternates-semibold',
+              popup: 'montserrat-alternates-semibold',
+              container: 'montserrat-alternates-semibold',
+              confirmButton: 'montserrat-alternates-semibold',
+              },
+              title: "Erro",
+              text: errorData.message || "Erro ao realizar o empréstimo",
+              icon: "error"
+            });
             return;
           }
 
@@ -467,9 +474,20 @@ const BookDetail = () => {
             });
 
             if (!response.ok) {
-                const errorData = await response.json();
-                Swal.fire("Erro", errorData.message || "Erro ao enviar avaliação", "error");
-                return;
+              const errorData = await response.json();
+              Swal.fire({
+                customClass: {
+                title: 'montserrat-alternates-semibold',
+                htmlContainer: 'montserrat-alternates-semibold',
+                popup: 'montserrat-alternates-semibold',
+                container: 'montserrat-alternates-semibold',
+                confirmButton: 'montserrat-alternates-semibold',
+                },
+                title: "Erro",
+                text: errorData.message || "Erro ao enviar avaliação",
+                icon: "error"
+              });
+              return;
             }
 
             setBook((prevBook) => {

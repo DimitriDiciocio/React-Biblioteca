@@ -166,7 +166,8 @@ const Header: React.FC = () => {
   const Sair = () => {
     localStorage.removeItem("id_user");
     localStorage.removeItem("token");
-    navigate("/login")
+    setModalAberto(false); // Fecha o modal
+    navigate("/login");
   }
 
   // Carregar carrinho ao abrir sidebar direita
@@ -274,14 +275,26 @@ const Header: React.FC = () => {
       }
       Swal.fire({
         icon: "success",
-        title: "Removido!",
-        text: "O livro foi removido do carrinho.",
+        title: '<span>Removido!</span>',
+        html: '<span>O livro foi removido do carrinho.</span>',
+        customClass: {
+          title: "montserrat-alternates-semibold",
+          htmlContainer: "montserrat-alternates-semibold",
+          confirmButton: "montserrat-alternates-semibold",
+          cancelButton: "montserrat-alternates-semibold",
+        },
       });
     } catch {
       Swal.fire({
         icon: "error",
-        title: "Erro",
-        text: "Não foi possível remover o livro.",
+        title: '<span>Erro</span>',
+        html: '<span>Não foi possível remover o livro.</span>',
+        customClass: {
+          title: "montserrat-alternates-semibold",
+          htmlContainer: "montserrat-alternates-semibold",
+          confirmButton: "montserrat-alternates-semibold",
+          cancelButton: "montserrat-alternates-semibold",
+        },
       });
     }
   };
@@ -294,6 +307,12 @@ const Header: React.FC = () => {
         icon: "warning",
         title: "Carrinho vazio",
         text: "Adicione livros antes de reservar.",
+        customClass: {
+          title: "montserrat-alternates-semibold",
+          htmlContainer: "montserrat-alternates-semibold",
+          confirmButton: "montserrat-alternates-semibold",
+          cancelButton: "montserrat-alternates-semibold",
+        },
       });
       return;
     }
@@ -382,13 +401,13 @@ const Header: React.FC = () => {
       } else {
         Swal.fire({
           icon: "error",
-          title: '<span class="montserrat-alternates-semibold">Erro</span>',
-          html: `<span class="montserrat-alternates-semibold">${String(data.message)}</span>`,
+          title: "Erro",
+          html: String(data.message),
           customClass: {
-            title: "",
-            htmlContainer: "",
-            confirmButton: "",
-            cancelButton: "",
+            title: "montserrat-alternates-semibold",
+            htmlContainer: "montserrat-alternates-semibold",
+            confirmButton: "montserrat-alternates-semibold",
+            cancelButton: "montserrat-alternates-semibold",
           },
         });
       }
@@ -407,6 +426,12 @@ const Header: React.FC = () => {
         icon: "warning",
         title: "Carrinho vazio",
         text: "Adicione livros antes de emprestar.",
+        customClass: {
+          title: "montserrat-alternates-semibold",
+          htmlContainer: "montserrat-alternates-semibold",
+          confirmButton: "montserrat-alternates-semibold",
+          cancelButton: "montserrat-alternates-semibold",
+        },
       });
       return;
     }
@@ -441,13 +466,13 @@ const Header: React.FC = () => {
           .join("")}</ul><p>Deseja removê-los e continuar?</p>`,
         icon: "warning",
         showCancelButton: true,
-        confirmButtonText: '<span class="montserrat-alternates-semibold">Remover indisponíveis e continuar</span>',
-        cancelButtonText: '<span class="montserrat-alternates-semibold">Cancelar</span>',
+        confirmButtonText: "Remover indisponíveis e continuar",
+        cancelButtonText: "Cancelar",
         customClass: {
-          title: "",
-          htmlContainer: "",
-          confirmButton: "",
-          cancelButton: "",
+          title: "montserrat-alternates-semibold",
+          htmlContainer: "montserrat-alternates-semibold",
+          confirmButton: "montserrat-alternates-semibold",
+          cancelButton: "montserrat-alternates-semibold",
         },
       });
       if (!confirmacao.isConfirmed) {
@@ -475,11 +500,17 @@ const Header: React.FC = () => {
     }
     const confirmacaoEmprestimo = await Swal.fire({
       title: "Confirmar Empréstimo?",
-      text: "Todos os itens restantes do carrinho serão emprestados.",
+      html: "Todos os itens restantes do carrinho serão emprestados.",
       icon: "info",
       showCancelButton: true,
       confirmButtonText: "Sim, emprestar",
       cancelButtonText: "Cancelar",
+      customClass: {
+      title: "montserrat-alternates-semibold",
+      htmlContainer: "montserrat-alternates-semibold",
+      confirmButton: "montserrat-alternates-semibold",
+      cancelButton: "montserrat-alternates-semibold",
+      },
     });
     if (!confirmacaoEmprestimo.isConfirmed) {
       setBorrowing(false);
@@ -498,7 +529,14 @@ const Header: React.FC = () => {
         Swal.fire({
           icon: "success",
           title: "Empréstimo Confirmado!",
-          text: "Os livros foram emprestados com sucesso.",
+          html: "Os livros foram emprestados com sucesso.",
+          confirmButtonText: "Eba!",
+          customClass: {
+            title: "montserrat-alternates-semibold",
+            htmlContainer: "montserrat-alternates-semibold",
+            confirmButton: "montserrat-alternates-semibold",
+            cancelButton: "montserrat-alternates-semibold",
+          },
         });
       } else {
         const data = await response.json();
@@ -660,7 +698,7 @@ const Header: React.FC = () => {
             <button className="Btn-modal" onClick={Sair}>
               <div className="sign"><svg viewBox="0 0 512 512"><path d="M377.9 105.9L500.7 228.7c7.2 7.2 11.3 17.1 11.3 27.3s-4.1 20.1-11.3 27.3L377.9 406.1c-6.4 6.4-15 9.9-24 9.9c-18.7 0-33.9-15.2-33.9-33.9l0-62.1-128 0c-17.7 0-32-14.3-32-32l0-64c0-17.7 14.3-32 32-32l128 0 0-62.1c0-18.7 15.2-33.9 33.9-33.9c9 0 17.6 3.6 24 9.9zM160 96L96 96c-17.7 0-32 14.3-32 32l0 256c0 17.7 14.3 32 32 32l64 0c17.7 0 32 14.3 32 32s-14.3 32-32 32l-64 0c-53 0-96-43-96-96L0 128C0 75 43 32 96 32l64 0c17.7 0 32 14.3 32 32s-14.3 32-32 32z"></path></svg></div>
               
-              <div className="text-logout montserrat-alternates size-medium">Logout</div>
+              <div className="text-logout montserrat-alternates size-medium">Sair</div>
             </button>
             </div>
           </div>
