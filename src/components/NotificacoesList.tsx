@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Note } from "../services/useNotification";
+import { formatDateTime } from "../services/FormatDate";
+
 interface Props {
   notes: Note[];
 }
@@ -27,7 +29,7 @@ const NotificacoesList: React.FC<Props> = ({ notes }) => {
               >
                 <div className="notificacao-header">
                   <h3 className="notificacao-titulo montserrat-alternates-semibold  ">{note.titulo}</h3>
-                  <small className="notificacao-data montserrat-alternates">{note.data_adicionada}</small>
+                  <small className="notificacao-data montserrat-alternates">{formatDateTime(note.data_adicionada)}</small>
                 </div>
                 <p className="notificacao-mensagem">{note.mensagem}</p>
               </li>

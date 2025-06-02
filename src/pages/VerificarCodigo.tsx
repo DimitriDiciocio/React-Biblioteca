@@ -5,6 +5,7 @@ import Header from '../components/Header';
 const VerificarCodigo = () => {
   const [otp, setOtp] = useState(['', '', '', '', '', '']);
   const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const { id_usuario } = useParams();
@@ -85,6 +86,42 @@ const VerificarCodigo = () => {
     }
   };
 
+  const handleResendCode = async () => {
+    setError('');
+    setLoading(true);
+
+    const email = localStorage.getItem('email_recuperacao'); // Recupera o email do localStorage
+    if (!email) {
+      setError('Email não encontrado para reenvio do código');
+      setLoading(false);
+      return;
+    }
+
+    try {
+      const response = await fetch('http://127.0.0.1:5000/esqueci_senha', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        setError(data.message || 'Erro ao reenviar código');
+        return;
+      }
+
+      setError('');
+      setSuccess('Código reenviado! Verifique seu email.');
+    } catch (err) {
+      setError('Erro ao conectar com o servidor');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div className="montserrat-alternates-semibold">
       <Header />
@@ -120,11 +157,22 @@ const VerificarCodigo = () => {
             {error && (
               <p className="error-message montserrat-alternates montserrat-alternates-semibold">{error}</p>
             )}
+            {success && (
+              <p className="success-message montserrat-alternates montserrat-alternates-semibold">{success}</p>
+            )}
             <button className="verifyButton submit-button montserrat-alternates montserrat-alternates-semibold" type="submit" disabled={loading}>
               {loading ? 'Verificando...' : 'Verificar Código'}
             </button>
             <p className="resendNote montserrat-alternates-semibold">
-              Não recebeu o código? <button className="resendBtn montserrat-alternates-semibold" type="button" disabled>Reenviar código</button>
+              Não recebeu o código? 
+              <button 
+                className="resendBtn montserrat-alternates-semibold" 
+                type="button" 
+                onClick={handleResendCode} 
+                disabled={loading}
+              >
+                {loading ? 'Reenviando...' : 'Reenviar código'}
+              </button>
             </p>
           </form>
         </div>

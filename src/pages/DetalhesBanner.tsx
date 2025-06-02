@@ -147,7 +147,7 @@ const DetalhesBanner: React.FC = () => {
       });
 
       if (response.ok) {
-        navigate("/home_biblio?page=6");
+        navigate("/home_biblio?page=7");
       }
     } catch (error) {
       console.error("Erro ao editar banner:", error);
@@ -164,7 +164,7 @@ const DetalhesBanner: React.FC = () => {
           <div className="d-flex-responsive">
             <i
               className="fa-solid fa-arrow-left arrow-back"
-              onClick={() => navigate("/home_biblio?page=6")}
+              onClick={() => navigate("/home_biblio?page=7")}
             ></i>
             <div
               {...getRootProps()}

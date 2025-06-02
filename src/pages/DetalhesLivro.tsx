@@ -76,8 +76,7 @@ const BookDetail = () => {
         });
         if (!response.ok) throw new Error("Livro não encontrado");
 
-        const data = await response.json();
-        setBook(data);
+        setBook(await response.json());
       } catch (error) {
         console.error(error);
       } finally {
@@ -130,7 +129,7 @@ const BookDetail = () => {
     if (token && isAllowed) {
       verificarDisponibilidade();
     }
-  }, [id, token, isAllowed]);
+  }, [id, token, isAllowed, verificarDisponibilidade]);
 
   useEffect(() => {
     const fetchUserRating = async () => {
@@ -147,8 +146,7 @@ const BookDetail = () => {
         );
 
         if (response.ok) {
-          const data = await response.json();
-          setUserRating(data.valor_total); // Set the user's rating
+          setUserRating((await response.json()).valor_total); // Set the user's rating
         } else {
           console.log("Usuário ainda não avaliou este livro.");
         }
@@ -174,8 +172,8 @@ const BookDetail = () => {
           }
         );
 
-        const data = await response.json();
-        setIsInList(data.inList);
+        const { inList } = await response.json();
+        setIsInList(inList);
       } catch (error) {
         console.error("Erro ao verificar lista:", error);
       }
@@ -200,8 +198,6 @@ const BookDetail = () => {
         }
       );
 
-      const data = await response.json();
-
       if (response.ok) {
         setIsInList(!isInList); // Toggle the state
       }
@@ -223,6 +219,8 @@ const BookDetail = () => {
         customClass: {
           title: 'montserrat-alternates-semibold',
           htmlContainer: 'montserrat-alternates-semibold',
+          popup: 'montserrat-alternates-semibold',
+          container: 'montserrat-alternates-semibold',
           confirmButton: 'montserrat-alternates-semibold',
         },
         title: "Erro",
@@ -239,7 +237,6 @@ const BookDetail = () => {
         popup: 'montserrat-alternates-semibold',
         container: 'montserrat-alternates-semibold',
         confirmButton: 'montserrat-alternates-semibold',
-        content: 'montserrat-alternates-semibold',
       },
       title: "Quer Reservar?",
       text: `Você quer adicionar ${book?.titulo} ao carrinho de reservas?`,
@@ -280,7 +277,6 @@ const BookDetail = () => {
               popup: 'montserrat-alternates-semibold',
               container: 'montserrat-alternates-semibold',
               confirmButton: 'montserrat-alternates-semibold',
-              content: 'montserrat-alternates-semibold',
             },
             title: "Livro adicionado ao carrinho de reservas!",
             text: "Deseja ir para o carrinho ou continuar procurando mais livros?",
@@ -326,6 +322,7 @@ const BookDetail = () => {
         cancelButton: 'montserrat-alternates-semibold',
         content: 'montserrat-alternates-semibold',
       },
+      
       title: "Fazer Empréstimo?",
       text: `Você quer adicionar ${book?.titulo} ao carrinho de empréstimos?`,
       icon: "question",
@@ -367,7 +364,6 @@ const BookDetail = () => {
               container: 'montserrat-alternates-semibold',
               cancelButton: 'montserrat-alternates-semibold',
               confirmButton: 'montserrat-alternates-semibold',
-              content: 'montserrat-alternates-semibold',
             },
             title: "Livro adicionado ao carrinho de empréstimos!",
             text: "Deseja ir para o carrinho ou continuar procurando mais livros?",
@@ -393,10 +389,16 @@ const BookDetail = () => {
     });
   };
 
-  const handleRating = async (rating: number) => {
+  // Update the rating logic to depend on the `checked` state in CSS
+  const handleRating = async (rating: number | null) => {
+    const ratingInput = rating !== null ? document.getElementById(`star-${rating}`) as HTMLInputElement : null;
+    if (ratingInput && !ratingInput.checked) {
+        return; // Do nothing if the star is not checked
+    }
+
     if (!token) {
-      navigate("/login");
-      return;
+        navigate("/login");
+        return;
     }
 
     if (!isAllowed) {
@@ -404,66 +406,67 @@ const BookDetail = () => {
       return;
     }
 
-    const newRating = userRating === rating ? null : rating;
+    const newRating = rating === null ? null : userRating === rating ? null : rating; // Toggle rating
     setUserRating(newRating);
 
     try {
-      if (newRating === null) {
-        const response = await fetch(`http://127.0.0.1:5000/avaliarlivro/${id}`, {
-          method: "DELETE",
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-        });
+        if (newRating === null) {
+            // DELETE rating
+            const response = await fetch(`http://127.0.0.1:5000/avaliarlivro/${id}`, {
+                method: "DELETE",
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                    "Content-Type": "application/json",
+                },
+            });
 
-        if (!response.ok) {
-          const errorData = await response.json();
-          Swal.fire("Erro", errorData.error || "Erro ao deletar avaliação", "error");
-          return;
+            if (!response.ok) {
+                const errorData = await response.json();
+                Swal.fire("Erro", errorData.error || "Erro ao deletar avaliação", "error");
+                return;
+            }
+
+            setBook((prevBook) => {
+                if (!prevBook) return prevBook;
+                const novaQtdAvaliacoes = prevBook.qtd_avaliacoes - 1;
+                const novaMedia = novaQtdAvaliacoes > 0
+                    ? (prevBook.avaliacao * prevBook.qtd_avaliacoes - userRating!) / novaQtdAvaliacoes
+                    : 0;
+                return {
+                    ...prevBook,
+                    qtd_avaliacoes: novaQtdAvaliacoes,
+                    avaliacao: novaMedia,
+                };
+            });
+        } else {
+            // POST or update rating
+            const response = await fetch(`http://127.0.0.1:5000/avaliarlivro/${id}`, {
+                method: "POST",
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ valor: newRating }),
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                Swal.fire("Erro", errorData.message || "Erro ao enviar avaliação", "error");
+                return;
+            }
+
+            setBook((prevBook) => {
+                if (!prevBook) return prevBook;
+                const novaQtdAvaliacoes = prevBook.qtd_avaliacoes + (userRating ? 0 : 1);
+                const novaMedia =
+                    (prevBook.avaliacao * prevBook.qtd_avaliacoes + newRating - (userRating || 0)) / novaQtdAvaliacoes;
+                return {
+                    ...prevBook,
+                    qtd_avaliacoes: novaQtdAvaliacoes,
+                    avaliacao: novaMedia,
+                };
+            });
         }
-
-        setBook((prevBook) => {
-          if (!prevBook) return prevBook;
-          const novaQtdAvaliacoes = prevBook.qtd_avaliacoes - 1;
-          const novaMedia = novaQtdAvaliacoes > 0
-            ? ((prevBook.avaliacao * prevBook.qtd_avaliacoes) - rating) / novaQtdAvaliacoes
-            : 0;
-          return {
-            ...prevBook,
-            qtd_avaliacoes: novaQtdAvaliacoes,
-            avaliacao: novaMedia,
-          };
-        });
-      } else {
-        const response = await fetch(`http://127.0.0.1:5000/avaliarlivro/${id}`, {
-          method: "POST",
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ valor: newRating }),
-        });
-
-        if (!response.ok) {
-          const errorData = await response.json();
-          Swal.fire("Erro", errorData.message || "Erro ao enviar avaliação", "error");
-          return;
-        }
-
-        setBook((prevBook) => {
-          if (!prevBook) return prevBook;
-          const novaQtdAvaliacoes = prevBook.qtd_avaliacoes + (userRating ? 0 : 1);
-          const novaMedia =
-            (prevBook.avaliacao * prevBook.qtd_avaliacoes + newRating - (userRating || 0)) /
-            novaQtdAvaliacoes;
-          return {
-            ...prevBook,
-            qtd_avaliacoes: novaQtdAvaliacoes,
-            avaliacao: novaMedia,
-          };
-        });
-      }
     } catch (error) {
       console.error("Erro ao enviar ou deletar avaliação:", error);
       Swal.fire("Erro", "Ocorreu um erro ao tentar enviar ou deletar a avaliação.", "error");
@@ -525,22 +528,24 @@ const BookDetail = () => {
                   {[5, 4, 3, 2, 1].map((star) => (
                     <React.Fragment key={star}>
                       <input
-                        type="radio"
+                        type="checkbox"
                         id={`star-${star}`}
                         name="star-radio"
                         value={star}
                         checked={userRating === star}
-                        onChange={() => handleRating(star)}
+                        onChange={() => {
+                          if (userRating === star) {
+                            handleRating(null);
+                          } else {
+                            handleRating(star);
+                          }
+                        }}
                       />
-                      <label htmlFor={`star-${star}`}>
+                      <label htmlFor={`star-${star}`} className="star-label">
                         <svg
                           xmlns="http://www.w3.org/2000/svg"
                           viewBox="0 0 24 24"
-                          fill={
-                            userRating && userRating >= star
-                              ? "#FFD700"
-                              : "#ccc"
-                          }
+                          fill={userRating && userRating >= star ? "#FFD700" : "#ccc"}
                         >
                           <path
                             pathLength="360"

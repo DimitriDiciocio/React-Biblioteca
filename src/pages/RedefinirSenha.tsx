@@ -37,6 +37,7 @@ const RedefinirSenha = () => {
       }
 
       localStorage.removeItem('reset_token');
+      localStorage.removeItem('email_recuperacao'); // Remove o email do localStorage
       alert('Senha redefinida com sucesso!');
       navigate('/login');
 

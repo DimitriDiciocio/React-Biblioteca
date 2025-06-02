@@ -31,6 +31,7 @@ const EsqueciSenha = () => {
         return;
       }
 
+      localStorage.setItem('email_recuperacao', email.toLowerCase()); // Salva o email no localStorage
       setSuccess('Email de recuperação enviado! Redirecionando...');
       setTimeout(() => {
         navigate(`/verificar-codigo/${data.id_usuario[0]}`);
