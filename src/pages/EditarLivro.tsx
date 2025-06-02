@@ -31,12 +31,6 @@ const EditarLivro = () => {
   const token = localStorage.getItem("token");
 
   useEffect(() => {
-    document.body.classList.add("no-scroll");
-    return () => {
-      document.body.classList.remove("no-scroll");
-    };
-  }, []);
-  useEffect(() => {
     const fetchBookData = async () => {
       try {
         const response = await fetch(`http://127.0.0.1:5000/livros/${id}`, {
@@ -148,6 +142,13 @@ const EditarLivro = () => {
           icon: "success",
           title: "Sucesso",
           text: data.message,
+          customClass: {
+            title: "montserrat-alternates-semibold",
+            popup: "",
+            confirmButton: "",
+            cancelButton: "",
+            htmlcontent: "montserrat-alternates-semibold",
+          },
         });
         navigate(`/home_biblio?page=5`);
       } else {
@@ -155,6 +156,13 @@ const EditarLivro = () => {
           icon: "error",
           title: "Erro",
           text: data.message || "Erro ao editar livro",
+          customClass: {
+            title: "montserrat-alternates-semibold",
+            popup: "",
+            confirmButton: "",
+            cancelButton: "",
+            content: "montserrat-alternates-semibold",
+          },
         });
       }
     } catch (error) {

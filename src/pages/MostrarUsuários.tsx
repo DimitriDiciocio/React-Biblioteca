@@ -217,6 +217,7 @@ const MostrarUsuarios: React.FC = () => {
                 <button
                   onClick={() => navigate(`/usuarios/${user.id_usuario}`)}
                   className="btn btn-secondary"
+                  title="Editar Usuário"
                 >
                   <span className="material-icons">launch</span>
                 </button>

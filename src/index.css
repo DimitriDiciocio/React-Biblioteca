@@ -3709,7 +3709,14 @@ button.limpar-btn,
   border-radius: 50%;
   width: 200px;  
   height: 200px;
+  transition: filter 0.3s;
 }
+
+.profile-picture-preview:hover{
+  cursor: pointer;
+  filter: grayscale(80%);
+}
+
 .info-container{
   width: 275px;
   margin-left: 50px;
@@ -4216,4 +4223,17 @@ button.limpar-btn,
 }
 .remove-overflow{
   overflow: hidden !important;
+}
+
+.edit-pfp{
+  display: none;
+  position: absolute;
+  left: 70px;
+  bottom: 70px;
+  color: #fff;
+  font-size: 50px;
+}
+
+.profile-picture-preview  :hover .edit-pfp {
+    display: block;
 }

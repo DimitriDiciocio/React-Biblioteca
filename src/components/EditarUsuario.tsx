@@ -361,16 +361,22 @@ const EditarUsuario: React.FC = () => {
         </section>
         <div className="usuario-layout">
           <section className="fifty-cents">
-            <div className="profile-picture">
+            <div className="profile-picture" style={{ position: "relative" }}>
               <img
-                src={imagemPreview || "../assets/img/user.png"}
-                alt="Sua foto de perfil!"
-                className="profile-picture-preview"
+              src={imagemPreview || "../assets/img/user.png"}
+              alt="Sua foto de perfil!"
+              className="profile-picture-preview"
               />
+              <span
+              className="material-icons edit-pfp"
+              aria-hidden="true"
+              >
+              edit
+              </span>
               <div className="margin-btn">
-                <button className="btn3 btn-primary3" onClick={() => setModalOpen(true)}>
-                  <span className="material-icons">edit</span>
-                </button>
+              <button className="btn3 btn-primary3" onClick={() => setModalOpen(true)}>
+                <span className="material-icons">edit</span>
+              </button>
               </div>
             </div>
             <div className="d-flex">
