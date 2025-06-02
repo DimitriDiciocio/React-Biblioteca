@@ -171,7 +171,7 @@ const Search = () => {
 
       <main className="main-content background-blue vh86">
         <div className=
-        {`livros-grid ${
+        {`livros-grid2 ${
           books.length === 1
             ? "single-book"
             : books.length === 2

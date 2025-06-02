@@ -22,6 +22,12 @@ const AlterarDisponibilidade: React.FC<DeletarLivroProps> = ({
       cancelButtonColor: "#3085d6",
       confirmButtonText: "Sim, continuar!",
       cancelButtonText: "Cancelar",
+      customClass: {
+        title: "montserrat-alternates-semibold",
+        confirmButton: "montserrat-alternates-semibold",
+        htmlContainer: "montserrat-alternates-semibold",
+        cancelButton: "montserrat-alternates-semibold"
+      }
     });
 
     if (!confirmacao.isConfirmed) return;
@@ -44,7 +50,17 @@ const AlterarDisponibilidade: React.FC<DeletarLivroProps> = ({
       const data = await response.json();
 
       if (response.ok) {
-        await Swal.fire("Sucesso!", data.message, "success");
+        await Swal.fire({
+          title: "Sucesso!",
+          text: data.message,
+          icon: "success",
+          customClass: {
+            title: "montserrat-alternates-semibold",
+            confirmButton: "montserrat-alternates-semibold",
+            htmlContainer: "montserrat-alternates-semibold",
+            cancelButton: "montserrat-alternates-semibold"
+          }
+        });
         onStatusChange(); // Atualiza a lista de livros
       } else {
         await Swal.fire(
@@ -69,7 +85,7 @@ const AlterarDisponibilidade: React.FC<DeletarLivroProps> = ({
     <button
       onClick={handleStatusChange}
       disabled={loading}
-      className="btn btn-warning"
+      className="btn btn-primary"
     >
       {loading ? (
         <span className="spinner-border spinner-border-sm"></span>

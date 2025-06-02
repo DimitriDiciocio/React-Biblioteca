@@ -152,9 +152,10 @@ const Livros: React.FC = () => {
               <div className="livro-acoes">
                 <button
                   onClick={() =>
-                    (window.location.href = `/editar_livro/${book.id}`)
+                  (window.location.href = `/editar_livro/${book.id}`)
                   }
                   className="btn btn-primary"
+                  title="Editar livro"
                 >
                   <span className="material-icons">edit</span>
                 </button>
