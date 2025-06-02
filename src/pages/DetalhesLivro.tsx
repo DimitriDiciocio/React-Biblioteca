@@ -323,6 +323,7 @@ const BookDetail = () => {
         popup: 'montserrat-alternates-semibold',
         container: 'montserrat-alternates-semibold',
         confirmButton: 'montserrat-alternates-semibold',
+        cancelButton: 'montserrat-alternates-semibold',
         content: 'montserrat-alternates-semibold',
       },
       title: "Fazer Empréstimo?",
@@ -332,6 +333,7 @@ const BookDetail = () => {
       confirmButtonColor: "#4562D6",
       cancelButtonColor: "#d33",
       confirmButtonText: "Adicionar",
+      cancelButtonText: "Cancelar",
     }).then(async (result) => {
       if (result.isConfirmed) {
         try {
@@ -363,6 +365,7 @@ const BookDetail = () => {
               htmlContainer: 'montserrat-alternates-semibold',
               popup: 'montserrat-alternates-semibold',
               container: 'montserrat-alternates-semibold',
+              cancelButton: 'montserrat-alternates-semibold',
               confirmButton: 'montserrat-alternates-semibold',
               content: 'montserrat-alternates-semibold',
             },
@@ -374,7 +377,8 @@ const BookDetail = () => {
             cancelButtonText: "Procurar mais livros",
           }).then((result) => {
             if (result.isConfirmed) {
-              navigate("/user?page=3");
+              const event = new CustomEvent("abrirCarrinhoLateral");
+              window.dispatchEvent(event);
             }
           });
         } catch (error) {

@@ -3,7 +3,7 @@ import Header from "../components/Header";
 import { useDropzone } from "react-dropzone";
 import { useNavigate, useLocation } from "react-router-dom";
 import { usePermission } from "../components/usePermission";
-import EditarUsuario from "../components/EditarUsuarioCopy";
+import EditarUsuario from "../components/EditarUsuario";
 import TrocarSenha from "../components/TrocarSenha";
 import Carrinho from "../components/Carrinho";
 import Swal from "sweetalert2";
@@ -42,6 +42,7 @@ const Config: React.FC = () => {
   useEffect(() => {
     switchPage(Number(page));
   }, [page]);
+  
 
   useEffect(() => {
     const queryParams = new URLSearchParams(location.search);
@@ -148,7 +149,7 @@ const Config: React.FC = () => {
                           alt="Ícone Informações Pessoais"
                           className="icon-config"
                         />
-                        <span>Informações Pessoais</span>
+                        <span className=" montserrat-alternates-bold">Informações Pessoais</span>
                       </a>
                     </li>
                     <li onClick={() => navigate("/user?page=2")} className="pointer">
@@ -158,7 +159,7 @@ const Config: React.FC = () => {
                           alt="Ícone Segurança"
                           className="icon-config"
                         />
-                        <span>Segurança</span>
+                        <span className=" montserrat-alternates-bold">Segurança</span>
                       </a>
                     </li>
                     <li onClick={() => navigate("/user?page=3")} className="pointer">
@@ -168,7 +169,7 @@ const Config: React.FC = () => {
                           alt="Ícone Minha Lista"
                           className="icon-config"
                         />
-                        <span>Minha Lista</span>
+                        <span className=" montserrat-alternates-bold">Minha Lista</span>
                       </a>
                     </li>
                     {/* Removido o item Histórico */}
@@ -179,24 +180,24 @@ const Config: React.FC = () => {
                           alt="Ícone Minhas Multas"
                           className="icon-config"
                         />
-                        <span>Minhas Multas</span>
+                        <span className=" montserrat-alternates-bold">Minhas Multas</span>
                       </a>
                     </li>
-                    <li onClick={() => navigate("/user?page=6")} className="pointer">
+                    <li onClick={() => navigate("/user?page=5")} className="pointer">
                       <a className="link-flex">
                         <img
                           src={notificationIcon}
                           alt="Ícone Notificações"
                           className="icon-config"
                         />
-                        <span>Notificações</span>
+                        <span className=" montserrat-alternates-bold">Notificações</span>
                       </a>
                     </li>
                     <div className="space-sm-y"></div>
                   </ul>
                   <ul>
                     <li className="highlight pointer" onClick={Sair}>
-                      <a>Sair</a>
+                      <a className=" montserrat-alternates-bold">Sair</a>
                     </li>
                   </ul>
                 </nav>

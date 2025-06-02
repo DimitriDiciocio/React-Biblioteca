@@ -3,6 +3,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import Header from "../components/Header";
 import './Search.css';
 import Tags from "../components/Tags";
+import readRaccoonSad from "../../assets/img/red-racoon-sad.png";
 
 interface Tag {
   id: number;
@@ -197,7 +198,10 @@ const Search = () => {
           ))}
         </div>
         {books.length === 0 && !loading && (
-          <p className="mensagem-erro montserrat-alternates-semibold">Nenhum livro encontrado.</p>
+            <div className="center-x center-y d-flex-column-no-font vh50">
+            <img className="read-raccoon-sad center-x center-y" src={readRaccoonSad} alt="Read Raccoon triste" />
+            <p className="mensagem-erro montserrat-alternates-semibold center-x">Nenhum livro encontrado.</p>
+            </div>
         )}
       </main>
     </div>

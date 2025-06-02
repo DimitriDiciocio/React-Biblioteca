@@ -12,6 +12,12 @@ export const atenderEmprestimo = async (
     showCancelButton: true,
     confirmButtonText: "Sim, atender",
     cancelButtonText: "Cancelar",
+    customClass: {
+      title: "montserrat-alternates-semibold",
+      htmlContainer: "montserrat-alternates-semibold",
+      confirmButton: "montserrat-alternates-semibold",
+      cancelButton: "montserrat-alternates-semibold",
+    },
   });
 
   if (!confirmResult.isConfirmed) return false;
@@ -38,11 +44,17 @@ export const atenderEmprestimo = async (
 
     if (response.ok) {
       const data = await response.json();
-      Swal.fire(
-        "Sucesso",
-        `Empréstimo atendido com sucesso! Data para devolução: ${data.data_devolver}`,
-        "success"
-      );
+      Swal.fire({
+        title: "Sucesso",
+        html: `Empréstimo atendido com sucesso! Data para devolução: ${data.data_devolver}`,
+        icon: "success",
+        customClass: {
+          title: "montserrat-alternates-semibold",
+          htmlContainer: "montserrat-alternates-semibold",
+          confirmButton: "montserrat-alternates-semibold",
+          cancelButton: "montserrat-alternates-semibold",
+        },
+      });
       return true;
     } else {
       const errorData = await response.json();

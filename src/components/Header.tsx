@@ -119,7 +119,14 @@ const Header: React.FC = () => {
   useEffect(() => {
     fetchNotificacoes(); // Fetch notifications on component mount
   }, [fetchNotificacoes]);
-
+  
+  useEffect(() => {
+    const handleAbrirCarrinhoLateral = () => setSidebarRightOpen(true);
+    window.addEventListener("abrirCarrinhoLateral", handleAbrirCarrinhoLateral);
+    return () => {
+      window.removeEventListener("abrirCarrinhoLateral", handleAbrirCarrinhoLateral);
+    };
+  }, []);
   const handleAbrirModal = () => {
     setModalAberto(!modalAberto);
     setNotificacoesOpen(false); // Close notifications modal
@@ -230,6 +237,12 @@ const Header: React.FC = () => {
       showCancelButton: true,
       confirmButtonText: "Sim, remover",
       cancelButtonText: "Cancelar",
+      customClass: {
+        title: "montserrat-alternates-semibold",
+        htmlContainer: "montserrat-alternates-semibold",
+        confirmButton: "montserrat-alternates-semibold",
+        cancelButton: "montserrat-alternates-semibold",
+      },
     });
     if (!confirmacao.isConfirmed) return;
     try {
@@ -253,6 +266,11 @@ const Header: React.FC = () => {
         icon: "success",
         title: "Removido!",
         text: "O livro foi removido do carrinho.",
+        customClass: {
+          title: "montserrat-alternates-semibold",
+          htmlContainer: "montserrat-alternates-semibold",
+          confirmButton: "montserrat-alternates-semibold",
+        },
       });
     } catch {
       Swal.fire({
@@ -295,13 +313,19 @@ const Header: React.FC = () => {
       if (indisponiveis.length > 0) {
         const { isConfirmed } = await Swal.fire({
           title: "Alguns livros não estão disponíveis",
-          html: `<p>Os seguintes livros não podem ser reservados:</p><ul>${indisponiveis
+          html: `Os seguintes livros não podem ser reservados:${indisponiveis
             .map((book) => `<li>${book.titulo}</li>`)
-            .join("")}</ul><p>Deseja removê-los e continuar?</p>`,
+            .join("")}Deseja removê-los e continuar?`,
           icon: "warning",
           showCancelButton: true,
           confirmButtonText: "Remover indisponíveis e continuar",
           cancelButtonText: "Cancelar",
+          customClass: {
+            title: "montserrat-alternates-semibold",
+            htmlContainer: "montserrat-alternates-semibold",
+            confirmButton: "montserrat-alternates-semibold",
+            cancelButton: "montserrat-alternates-semibold",
+          },
         });
         if (!isConfirmed) {
           setReserving(false);
@@ -318,6 +342,12 @@ const Header: React.FC = () => {
         showCancelButton: true,
         confirmButtonText: "Sim, reservar",
         cancelButtonText: "Cancelar",
+        customClass: {
+          title: "montserrat-alternates-semibold",
+          htmlContainer: "montserrat-alternates-semibold",
+          confirmButton: "montserrat-alternates-semibold",
+          cancelButton: "montserrat-alternates-semibold",
+        },
       });
       if (!confirmacao.isConfirmed) {
         setReserving(false);
@@ -379,14 +409,24 @@ const Header: React.FC = () => {
     }
     if (indisponiveis.length > 0) {
       const confirmacao = await Swal.fire({
-        title: "Livros Indisponíveis",
-        text: `Os seguintes livros não estão disponíveis para empréstimo:\n${indisponiveis
-          .map((livro) => livro.titulo)
-          .join(", ")}\nDeseja remover esses livros e continuar com a reserva?`,
+        title: '<span class="montserrat-alternates-semibold">Livros indisponíveis</span>',
+        html: (
+          `<div class="montserrat-alternates-semibold">Os seguintes livros não estão disponíveis para empréstimo:</div>
+          <div style="height: 12px"></div>
+          <ul style="text-align:center; display: inline-block; margin: 0 auto;" class="montserrat-alternates-semibold">${indisponiveis.map(livro => `<li>${livro.titulo}</li>`).join("")}</ul>
+          <div style="height: 12px"></div>
+          <div class="montserrat-alternates-semibold">Deseja removê-los e continuar?</div>`
+        ),
         icon: "warning",
         showCancelButton: true,
-        confirmButtonText: "Sim, remover e continuar",
-        cancelButtonText: "Cancelar",
+        confirmButtonText: '<span class="montserrat-alternates-semibold">Remover indisponíveis e continuar</span>',
+        cancelButtonText: '<span class="montserrat-alternates-semibold">Cancelar</span>',
+        customClass: {
+          title: "",
+          htmlContainer: "",
+          confirmButton: "",
+          cancelButton: "",
+        },
       });
       if (confirmacao.isConfirmed) {
         for (const livro of indisponiveis) {
@@ -422,7 +462,14 @@ const Header: React.FC = () => {
         showCancelButton: true,
         confirmButtonText: "Sim, emprestar",
         cancelButtonText: "Cancelar",
+        customClass: {
+          title: "montserrat-alternates-semibold",
+          htmlContainer: "montserrat-alternates-semibold",
+          confirmButton: "montserrat-alternates-semibold",
+          cancelButton: "montserrat-alternates-semibold",
+        },
       });
+      
       if (!confirmacao.isConfirmed) {
         setBorrowing(false);
         return;
@@ -442,6 +489,13 @@ const Header: React.FC = () => {
             icon: "success",
             title: "Empréstimo Confirmado!",
             text: "Os livros foram emprestados com sucesso.",
+            confirmButtonText: "Eba!",
+            customClass: {
+              title: "montserrat-alternates-semibold",
+              htmlContainer: "montserrat-alternates-semibold",
+              confirmButton: "montserrat-alternates-semibold",
+            },
+            
           });
         } else {
           Swal.fire({
@@ -617,7 +671,7 @@ const Header: React.FC = () => {
           left: 0,
           width: "100vw",
           height: "100vh",
-          zIndex: sidebarRightOpen || isSidebarClosing ? 1999 : -1,
+          zIndex: sidebarRightOpen || isSidebarClosing ? 1000 : -1,
           background: sidebarRightOpen || isSidebarClosing ? "rgba(0,0,0,0.0)" : "transparent",
           pointerEvents: sidebarRightOpen || isSidebarClosing ? "auto" : "none",
           transition: "background 0.3s",
@@ -635,7 +689,7 @@ const Header: React.FC = () => {
               height: "calc(100vh - 100px)",
               width: 300,
               background: "#fff",
-              zIndex: 2000,
+              zIndex: 1050,
               boxShadow: "-2px 0 8px rgba(0,0,0,0.12)",
               borderRadius: "12px 0 0 12px",
               transition: "right 0.3s cubic-bezier(.77,0,.18,1)",

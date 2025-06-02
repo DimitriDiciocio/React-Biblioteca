@@ -1,6 +1,13 @@
 .vh86{
   min-height: 86vh;
 }
+.vh50{
+  min-height: 50vh;
+}
+.read-raccoon-sad{
+  height: 200px;
+}
+
 .filtro-btn {
     margin: 10px 20px;
     padding: 10px 20px;
@@ -12,7 +19,6 @@
     font-weight: bold;
     transition: background 0.3s ease;
   }
-  
   .filtro-btn:hover {
     background-color: #005fa3;
   }

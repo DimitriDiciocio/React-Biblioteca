@@ -22,6 +22,13 @@ const DetalhesBanner: React.FC = () => {
   const [banner, setBanner] = useState<File | null>(null);
   const [bannerPreview, setBannerPreview] = useState<string | null>(null);
   const navigate = useNavigate();
+  
+  useEffect(() => {
+    document.body.classList.add("no-scroll");
+    return () => {
+      document.body.classList.remove("no-scroll");
+    };
+  }, []);
 
   useEffect(() => {
     const fetchBanner = async () => {
@@ -150,6 +157,7 @@ const DetalhesBanner: React.FC = () => {
   return (
     <div>
       <Header />
+      <div className="fake-header"></div>
       <main className="background-blue padding-responsive">
         <div className="space-sm-y"></div>
         <section className="responsive-container center-x size-medium">
@@ -186,7 +194,7 @@ const DetalhesBanner: React.FC = () => {
                       cursor: "pointer",
                     }}
                   >
-                    X
+                    ✖
                   </button>
                 </>
               ) : (

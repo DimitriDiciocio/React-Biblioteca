@@ -31,6 +31,12 @@ const EditarLivro = () => {
   const token = localStorage.getItem("token");
 
   useEffect(() => {
+    document.body.classList.add("no-scroll");
+    return () => {
+      document.body.classList.remove("no-scroll");
+    };
+  }, []);
+  useEffect(() => {
     const fetchBookData = async () => {
       try {
         const response = await fetch(`http://127.0.0.1:5000/livros/${id}`, {
@@ -166,7 +172,7 @@ const EditarLivro = () => {
   return (
     <div>
       <Header />
-      <main className="background-blue">
+      <main className="background-blue ">
         <div className="space-sm-y"></div>
         <section className="d-flex center-x size-medium g-30">
           <div>
@@ -361,6 +367,7 @@ const EditarLivro = () => {
           </div>
         </section>
       </main>
+      <div className="fake-header"></div>
     </div>
   );
 };

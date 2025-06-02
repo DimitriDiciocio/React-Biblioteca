@@ -13,6 +13,12 @@ export const handleDevolverEmprestimo = async (
     showCancelButton: true,
     confirmButtonText: "Sim, devolver",
     cancelButtonText: "Cancelar",
+    customClass: {
+      title: "montserrat-alternates-semibold",
+      htmlContainer: "montserrat-alternates-semibold",
+      confirmButton: "montserrat-alternates-semibold",
+      cancelButton: "montserrat-alternates-semibold",
+    },
   });
 
   if (!confirmResult.isConfirmed) return;
@@ -38,7 +44,17 @@ export const handleDevolverEmprestimo = async (
     );
 
     if (response.ok) {
-      Swal.fire("Sucesso", "Empréstimo devolvido com sucesso!", "success");
+      Swal.fire({
+        title: "Sucesso",
+        text: "Empréstimo devolvido com sucesso!",
+        icon: "success",
+        customClass: {
+          title: "montserrat-alternates-semibold",
+          htmlContainer: "montserrat-alternates-semibold",
+          confirmButton: "montserrat-alternates-semibold",
+          cancelButton: "montserrat-alternates-semibold",
+        },
+      });
       onReturnSuccess();
     } else {
       const errorData = await response.json();

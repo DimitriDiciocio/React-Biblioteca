@@ -12,6 +12,12 @@ export const atenderReserva = async (
     showCancelButton: true,
     confirmButtonText: "Sim, atender",
     cancelButtonText: "Cancelar",
+    customClass: {
+      title: "montserrat-alternates-semibold",
+      htmlContainer: "montserrat-alternates-semibold",
+      confirmButton: "montserrat-alternates-semibold",
+      cancelButton: "montserrat-alternates-semibold",
+    },
   });
 
   if (!confirmResult.isConfirmed) return false;
@@ -37,11 +43,17 @@ export const atenderReserva = async (
     );
 
     if (response.ok) {
-      Swal.fire(
-        "Sucesso",
-        `Reserva atendida com sucesso!`,
-        "success"
-      );
+      Swal.fire({
+        title: "Sucesso",
+        text: "Reserva atendida com sucesso!",
+        icon: "success",
+        customClass: {
+          title: "montserrat-alternates-semibold",
+          htmlContainer: "montserrat-alternates-semibold",
+          confirmButton: "montserrat-alternates-semibold",
+          cancelButton: "montserrat-alternates-semibold",
+        },
+      });
       return true;
     } else {
       const errorData = await response.json();
