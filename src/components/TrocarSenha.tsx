@@ -119,55 +119,57 @@ const TrocarSenha: React.FC = () => {
   };
 
   return (
-    <div className="security-container">
-      <h2 className="size-medium montserrat-alternates-semibold">
-        {etapa === "verificar"
-          ? "Verifique sua senha atual"
-          : "Troque sua senha"}
-      </h2>
+    <div>
+      <div className="security-container">
+        <h2 className="size-medium montserrat-alternates-semibold">
+          {etapa === "verificar"
+            ? "Verifique sua senha atual"
+            : "Troque sua senha"}
+        </h2>
 
-      {etapa === "verificar" ? (
-        <>
-          <input
-            type="password"
-            placeholder="Senha atual"
-            className="input montserrat-alternates"
-            value={senhaAntiga}
-            onChange={(e) => setSenhaAntiga(e.target.value)}
-          />
-          <button
-            onClick={verificarSenhaAntiga}
-            className="salvar montserrat-alternates-semibold"
-            disabled={carregando}
-          >
-            <span>{carregando ? "Verificando..." : "Verificar"}</span>
-          </button>
-        </>
-      ) : (
-        <>
-          <input
-            type="password"
-            placeholder="Nova senha"
-            className="input montserrat-alternates"
-            value={senhaNova}
-            onChange={(e) => setSenhaNova(e.target.value)}
-          />
-          <input
-            type="password"
-            placeholder="Confirmar nova senha"
-            className="input montserrat-alternates"
-            value={senhaConfirm}
-            onChange={(e) => setSenhaConfirm(e.target.value)}
-          />
-          <button
-            onClick={trocarSenha}
-            className="salvar"
-            disabled={carregando}
-          >
-            <span className="montserrat-alternates-semibold">{carregando ? "Salvando..." : "Trocar Senha"}</span>
-          </button>
-        </>
-      )}
+        {etapa === "verificar" ? (
+          <>
+            <input
+              type="password"
+              placeholder="Senha atual"
+              className="input montserrat-alternates"
+              value={senhaAntiga}
+              onChange={(e) => setSenhaAntiga(e.target.value)}
+            />
+            <button
+              onClick={verificarSenhaAntiga}
+              className="salvar montserrat-alternates-semibold"
+              disabled={carregando}
+            >
+              <span>{carregando ? "Verificando..." : "Verificar"}</span>
+            </button>
+          </>
+        ) : (
+          <>
+            <input
+              type="password"
+              placeholder="Nova senha"
+              className="input montserrat-alternates"
+              value={senhaNova}
+              onChange={(e) => setSenhaNova(e.target.value)}
+            />
+            <input
+              type="password"
+              placeholder="Confirmar nova senha"
+              className="input montserrat-alternates"
+              value={senhaConfirm}
+              onChange={(e) => setSenhaConfirm(e.target.value)}
+            />
+            <button
+              onClick={trocarSenha}
+              className="salvar"
+              disabled={carregando}
+            >
+              <span className="montserrat-alternates-semibold">{carregando ? "Salvando..." : "Trocar Senha"}</span>
+            </button>
+          </>
+        )}
+      </div>
     </div>
   );
 };

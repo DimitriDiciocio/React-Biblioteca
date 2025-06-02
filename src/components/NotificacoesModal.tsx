@@ -57,11 +57,7 @@ const NotificacoesModal: React.FC<NotificacoesModalProps> = ({ onClose }) => {
           {loading ? <p>Carregando...</p> : <NotificacoesList notes={notes} />}
         </div>
         <div className={styles["modal-footer"]}>
-          <button
-            className={styles["ver-mais-button"]}
-            onClick={() => (window.location.href = "/user?page=6")}
-          >
-            Ver mais
+          <button>
           </button>
         </div>
       </div>

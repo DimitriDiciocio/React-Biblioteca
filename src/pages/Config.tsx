@@ -11,10 +11,8 @@ import MultasByUser from "../components/MultasByUser";
 import NotificacoesPage from "../components/NotificacoesPage";
 import infoIcon from "../../assets/img/info-icon.png";
 import securityIcon from "../../assets/img/security-icon.png";
-import bookIcon from "../../assets/img/cesta.png";
 import listIcon from "../../assets/img/list-icon.png";
 import fineIcon from "../../assets/img/fine-icon.png";
-import notificationIcon from "../../assets/img/notification-icon.png";
 import MinhaLista from "../components/MinhaLista";
 
 const Config: React.FC = () => {
@@ -183,16 +181,6 @@ const Config: React.FC = () => {
                         <span className=" montserrat-alternates-bold">Minhas Multas</span>
                       </a>
                     </li>
-                    <li onClick={() => navigate("/user?page=5")} className="pointer">
-                      <a className="link-flex">
-                        <img
-                          src={notificationIcon}
-                          alt="Ícone Notificações"
-                          className="icon-config"
-                        />
-                        <span className=" montserrat-alternates-bold">Notificações</span>
-                      </a>
-                    </li>
                     <div className="space-sm-y"></div>
                   </ul>
                   <ul>
@@ -219,9 +207,6 @@ const Config: React.FC = () => {
           {/* Removido o componente <PuxarHistorico /> */}
           <div className="page">
             <MultasByUser />
-          </div>
-          <div className="page">
-            <NotificacoesPage />
           </div>
         </section>
       </main>

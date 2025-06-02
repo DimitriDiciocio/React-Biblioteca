@@ -2029,6 +2029,10 @@ ul {
   gap: 30px;
   flex-wrap: wrap;
   justify-items: center;
+  margin-left: 50px;
+  overflow: auto;
+  max-height: 560px;
+  padding-top: 10px;
 }
 
 .livro-card {
@@ -2053,6 +2057,7 @@ ul {
   border-radius: 8px;
   margin-bottom: 10px;
   height: 350px;
+  width: 230px;
 }
 
 .livro-info {
@@ -2667,6 +2672,7 @@ ul {
 .tags-container{
   display: flex;
   gap: 5px;
+  flex-wrap: wrap;
 }
 
 .tag {
