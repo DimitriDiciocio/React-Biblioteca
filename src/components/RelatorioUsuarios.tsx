@@ -36,11 +36,6 @@ const RelatorioUsuarios: React.FC<Props> = ({ isVisible }) => {
   const buscarUsuarios = useCallback(async () => {
     if (!hasMore || loading) return;
 
-    if (page > 1 && users.length === 0) {
-      setHasMore(false);
-      return;
-    }
-
     setLoading(true);
     try {
       const response = await fetch(`http://localhost:5000/relatorio/usuarios/${page}`, {
@@ -63,13 +58,23 @@ const RelatorioUsuarios: React.FC<Props> = ({ isVisible }) => {
         return;
       }
 
-      setUsers(prev => page === 1 ? data.usuarios : [...prev, ...data.usuarios]);
+      // Check if new data is different from the existing data
+      const newUsers = data.usuarios.filter(
+        newUser => !users.some(existingUser => existingUser.id === newUser.id)
+      );
+
+      if (newUsers.length === 0) {
+        setHasMore(false);
+        return;
+      }
+
+      setUsers(prev => [...prev, ...newUsers]);
     } catch (error) {
       console.error("Erro ao buscar usuários:", error);
     } finally {
       setLoading(false);
     }
-  }, [page, hasMore, loading, users.length]);
+  }, [page, hasMore, loading, users]);
 
   const relatorioPDF = async () => {
     try {

@@ -261,24 +261,19 @@ const DetalhesUsuario: React.FC = () => {
   const handleEdicao = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    const enderecoCompleto = `${editCidade} - ${editUf}`;
-    // Primeiro, edite os dados do usuário SEM a imagem
-    const dadosUsuario = {
-      nome: editNome,
-      email: editEmail,
-      telefone: editTelefone.replace(/\D/g, ""),
-      endereco: enderecoCompleto,
-    };
+    const formData = new FormData();
+    formData.append("nome", editNome || nome);
+    formData.append("email", editEmail || email);
+    formData.append("telefone", editTelefone.replace(/\D/g, "") || telefone.replace(/\D/g, ""));
+    formData.append("endereco", `${editCidade} - ${editUf}`);
 
     try {
-      // Atualiza dados do usuário (sem imagem)
       const response = await fetch(`http://127.0.0.1:5000/editar_usuario/${id}`, {
         method: "PUT",
         headers: {
-          "Content-Type": "application/json",
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
-        body: JSON.stringify(dadosUsuario),
+        body: formData,
       });
 
       const data = await response.json();
@@ -290,61 +285,30 @@ const DetalhesUsuario: React.FC = () => {
           icon: "error",
           customClass: {
             title: "montserrat-alternates-semibold",
-            htmlContainer: "montserrat-alternates-semibold"
-          }
+            htmlContainer: "montserrat-alternates-semibold",
+          },
         });
         return;
-      }
-
-      // Se houver imagem nova, envie para a rota /upload/usuario
-      if (imagemTemp) {
-        const formData = new FormData();
-        formData.append("imagem", imagemTemp);
-        formData.append("id_usuario", id || "");
-
-        const imgResponse = await fetch("http://127.0.0.1:5000/upload/usuario", {
-          method: "POST",
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-          body: formData,
-        });
-
-        const imgData = await imgResponse.json();
-
-        if (!imgResponse.ok) {
-          Swal.fire({
-            title: "Erro ao salvar imagem",
-            text: imgData.message,
-            icon: "error",
-            customClass: {
-              title: "montserrat-alternates-semibold",
-              htmlContainer: "montserrat-alternates-semibold"
-            }
-          });
-          return;
-        }
-        setImagem(imagemTemp);
-        setImagemPreview(imagemTempPreview);
       }
 
       Swal.fire({
         customClass: {
           title: "montserrat-alternates-semibold",
-          htmlContainer: "montserrat-alternates-semibold"
+          htmlContainer: "montserrat-alternates-semibold",
         },
         title: "Usuário editado com sucesso!",
         text: data.message,
         icon: "success",
       });
+
+      // Update state with new values
       setNome(editNome);
       setEmail(editEmail);
       setTelefone(editTelefone);
       setUf(editUf);
       setCidade(editCidade);
-      setEndereco(enderecoCompleto);
+      setEndereco(`${editCidade} - ${editUf}`);
       setIsEditing(false);
-
     } catch (error) {
       Swal.fire("Erro de conexão com o servidor", String(error), "error");
     }
@@ -369,85 +333,53 @@ const DetalhesUsuario: React.FC = () => {
   }, [modalImagemOpen, imagemPreview]);
 
   const handleSalvarImagem = async () => {
-    // Utilize a rota /upload/usuario para salvar ou remover a imagem
-    if (imagemTemp) {
+    try {
       const formData = new FormData();
-      formData.append("imagem", imagemTemp);
-      try {
-        const response = await fetch(`http://127.0.0.1:5000/upload/usuario`, {
-          method: "POST",
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-          body: formData,
+
+      if (imagemTemp) {
+        // If a new image is uploaded, send it
+        formData.append("imagem", imagemTemp);
+      } else if (imagemPreview) {
+        // Convert imagemPreview to a File object and send it
+        const response = await fetch(imagemPreview);
+        const blob = await response.blob();
+        const file = new File([blob], "imagem_atual.jpg", { type: blob.type });
+        formData.append("imagem", file);
+      }
+
+      const response = await fetch(`http://127.0.0.1:5000/upload/usuario/${id}`, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+        body: formData,
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setImagem(imagemTemp || null);
+        setImagemPreview(imagemTempPreview || null);
+        Swal.fire({
+          icon: "success",
+          title: imagemTemp || imagemPreview ? "Imagem atualizada!" : "Imagem removida!",
+          text: data.message || "Sua imagem foi alterada com sucesso.",
         });
-
-        const data = await response.json();
-
-        if (response.ok) {
-          setImagem(imagemTemp);
-          setImagemPreview(imagemTempPreview);
-          // Salva o preview no localStorage para o Header pegar imediatamente
-          localStorage.setItem("usuario_atualizado", JSON.stringify({ imagemPreview: imagemTempPreview }));
-          window.dispatchEvent(new Event("atualizarImagemUsuario"));
-          Swal.fire({
-            icon: "success",
-            title: "Imagem atualizada!",
-            text: data.message || "Sua imagem foi alterada com sucesso.",
-          });
-        } else {
-          Swal.fire({
-            icon: "error",
-            title: "Erro ao atualizar imagem",
-            text: data.message || "Não foi possível atualizar a imagem.",
-          });
-        }
-      } catch (error) {
+      } else {
         Swal.fire({
           icon: "error",
-          title: "Erro de conexão",
-          text: String(error),
+          title: "Erro ao atualizar imagem",
+          text: data.message || "Não foi possível atualizar a imagem.",
         });
       }
-    } else {
-      // Para remover a imagem, envie um POST sem o campo "imagem"
-      try {
-        const response = await fetch(`http://127.0.0.1:5000/upload/usuario`, {
-          method: "POST",
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-          body: new FormData(), // vazio
-        });
-
-        const data = await response.json();
-
-        if (response.ok) {
-          setImagem(null);
-          setImagemPreview(null);
-          // Salva o preview padrão no localStorage para o Header pegar imediatamente
-          localStorage.setItem("usuario_atualizado", JSON.stringify({ imagemPreview: null }));
-          window.dispatchEvent(new Event("atualizarImagemUsuario"));
-          Swal.fire({
-            icon: "success",
-            title: "Imagem removida!",
-            text: data.message || "Sua imagem foi removida com sucesso.",
-          });
-        } else {
-          Swal.fire({
-            icon: "error",
-            title: "Erro ao remover imagem",
-            text: data.message || "Não foi possível remover a imagem.",
-          });
-        }
-      } catch (error) {
-        Swal.fire({
-          icon: "error",
-          title: "Erro de conexão",
-          text: String(error),
-        });
-      }
+    } catch (error) {
+      Swal.fire({
+        icon: "error",
+        title: "Erro de conexão",
+        text: String(error),
+      });
     }
+
     setModalImagemOpen(false);
   };
 

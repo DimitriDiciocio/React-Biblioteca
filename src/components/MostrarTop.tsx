@@ -51,8 +51,9 @@ const MostrarTop: React.FC = () => {
             slideBy={3}
             responsive={{
               0: { items: 1, nav: false },
-              480: { items: 3, nav: false },
-              1200: { items: 4, nav: true },
+              480: { items: 2, nav: false },
+              1200: { items: 3, nav: true },
+              1500: { items: 4, nav: true },
             }}
           >
             {books.map((book, index) => (

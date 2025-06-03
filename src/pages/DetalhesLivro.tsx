@@ -418,12 +418,12 @@ const BookDetail = () => {
   const handleRating = async (rating: number | null) => {
     const ratingInput = rating !== null ? document.getElementById(`star-${rating}`) as HTMLInputElement : null;
     if (ratingInput && !ratingInput.checked) {
-        return; // Do nothing if the star is not checked
+      return; // Do nothing if the star is not checked
     }
 
     if (!token) {
-        navigate("/login");
-        return;
+      navigate("/login");
+      return;
     }
 
     if (!isAllowed) {
@@ -431,78 +431,79 @@ const BookDetail = () => {
       return;
     }
 
-    const newRating = rating === null ? null : userRating === rating ? null : rating; // Toggle rating
-    setUserRating(newRating);
+    const newRating = rating === null ? null : userRating === rating ? null : rating;
 
     try {
-        if (newRating === null) {
-            // DELETE rating
-            const response = await fetch(`http://127.0.0.1:5000/avaliarlivro/${id}`, {
-                method: "DELETE",
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                    "Content-Type": "application/json",
-                },
-            });
+      if (newRating === null) {
+        // DELETE rating
+        const response = await fetch(`http://127.0.0.1:5000/avaliarlivro/${id}`, {
+          method: "DELETE",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        });
 
-            if (!response.ok) {
-                const errorData = await response.json();
-                Swal.fire("Erro", errorData.error || "Erro ao deletar avaliação", "error");
-                return;
-            }
-
-            setBook((prevBook) => {
-                if (!prevBook) return prevBook;
-                const novaQtdAvaliacoes = prevBook.qtd_avaliacoes - 1;
-                const novaMedia = novaQtdAvaliacoes > 0
-                    ? (prevBook.avaliacao * prevBook.qtd_avaliacoes - (rating || 0)) / novaQtdAvaliacoes
-                    : 0;
-                return {
-                    ...prevBook,
-                    qtd_avaliacoes: novaQtdAvaliacoes,
-                    avaliacao: novaMedia,
-                };
-            });
-        } else {
-            // POST or update rating
-            const response = await fetch(`http://127.0.0.1:5000/avaliarlivro/${id}`, {
-                method: "POST",
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({ valor: newRating }),
-            });
-
-            if (!response.ok) {
-              const errorData = await response.json();
-              Swal.fire({
-                customClass: {
-                title: 'montserrat-alternates-semibold',
-                htmlContainer: 'montserrat-alternates-semibold',
-                popup: 'montserrat-alternates-semibold',
-                container: 'montserrat-alternates-semibold',
-                confirmButton: 'montserrat-alternates-semibold',
-                },
-                title: "Erro",
-                text: errorData.message || "Erro ao enviar avaliação",
-                icon: "error"
-              });
-              return;
-            }
-
-            setBook((prevBook) => {
-                if (!prevBook) return prevBook;
-                const novaQtdAvaliacoes = prevBook.qtd_avaliacoes + (userRating ? 0 : 1);
-                const novaMedia =
-                    (prevBook.avaliacao * prevBook.qtd_avaliacoes + newRating - (userRating || 0)) / novaQtdAvaliacoes;
-                return {
-                    ...prevBook,
-                    qtd_avaliacoes: novaQtdAvaliacoes,
-                    avaliacao: novaMedia,
-                };
-            });
+        if (!response.ok) {
+          const errorData = await response.json();
+          Swal.fire("Erro", errorData.error || "Erro ao deletar avaliação", "error");
+          return;
         }
+
+        setUserRating(null); // Update state only if API responds with ok
+        setBook((prevBook) => {
+          if (!prevBook) return prevBook;
+          const novaQtdAvaliacoes = prevBook.qtd_avaliacoes - 1;
+          const novaMedia = novaQtdAvaliacoes > 0
+            ? (prevBook.avaliacao * prevBook.qtd_avaliacoes - userRating!) / novaQtdAvaliacoes
+            : 0;
+          return {
+            ...prevBook,
+            qtd_avaliacoes: novaQtdAvaliacoes,
+            avaliacao: novaMedia,
+          };
+        });
+      } else {
+        // POST or update rating
+        const response = await fetch(`http://127.0.0.1:5000/avaliarlivro/${id}`, {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ valor: newRating }),
+        });
+
+        if (!response.ok) {
+          const errorData = await response.json();
+          Swal.fire({
+            customClass: {
+              title: 'montserrat-alternates-semibold',
+              htmlContainer: 'montserrat-alternates-semibold',
+              popup: 'montserrat-alternates-semibold',
+              container: 'montserrat-alternates-semibold',
+              confirmButton: 'montserrat-alternates-semibold',
+            },
+            title: "Erro",
+            text: errorData.message || "Erro ao enviar avaliação",
+            icon: "error"
+          });
+          return;
+        }
+
+        setUserRating(newRating); // Update state only if API responds with ok
+        setBook((prevBook) => {
+          if (!prevBook) return prevBook;
+          const novaQtdAvaliacoes = prevBook.qtd_avaliacoes + (userRating ? 0 : 1);
+          const novaMedia =
+            (prevBook.avaliacao * prevBook.qtd_avaliacoes + newRating - (userRating || 0)) / novaQtdAvaliacoes;
+          return {
+            ...prevBook,
+            qtd_avaliacoes: novaQtdAvaliacoes,
+            avaliacao: novaMedia,
+          };
+        });
+      }
     } catch (error) {
       console.error("Erro ao enviar ou deletar avaliação:", error);
       Swal.fire("Erro", "Ocorreu um erro ao tentar enviar ou deletar a avaliação.", "error");
@@ -564,7 +565,7 @@ const BookDetail = () => {
                   {[5, 4, 3, 2, 1].map((star) => (
                     <React.Fragment key={star}>
                       <input
-                        type="radio"
+                        type="checkbox"
                         id={`star-${star}`}
                         name="star-radio"
                         value={star}
