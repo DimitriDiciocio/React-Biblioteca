@@ -5,6 +5,7 @@ import EmprestimoPorUsuario from "../components/EmprestimoPorUsuario";
 import Usuarios from "../components/Usuarios";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
+import HistoricoUsuario from "../components/HistoricoUsuario";
 
 const DetalhesUsuario: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -204,8 +205,7 @@ const DetalhesUsuario: React.FC = () => {
                 </div>
               </section>
             </main>
-            <h2>Empréstimos</h2>
-            {id && <EmprestimoPorUsuario userId={id} />}
+            {id && <HistoricoUsuario userID={parseInt(id)} />}
           </div>
         )}
       </div>

@@ -37,6 +37,7 @@ interface Historico {
   reservas_ativas: Reserva[];
   multas_pendentes: Multa[];
   multas_concluidas: Multa[];
+  emprestimos_pendentes: Emprestimo[]; // Add emprestimos_pendentes
 }
 
 const PuxarHistorico = () => {
@@ -47,10 +48,11 @@ const PuxarHistorico = () => {
     reservas_ativas: [],
     multas_pendentes: [],
     multas_concluidas: [],
+    emprestimos_pendentes: [], // Initialize emprestimos_pendentes
   });
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
-  const [activeTab, setActiveTab] = useState<string>("emprestimosAtivos");
+  const [activeTab, setActiveTab] = useState<string>("emprestimosPendentes");
   const isAllowed = usePermission(1);
 
   const [paginaEmpAtiv, setPaginaEmpAtiv] = useState(1);
@@ -58,12 +60,14 @@ const PuxarHistorico = () => {
   const [paginaResAtiv, setPaginaResAtiv] = useState(1);
   const [paginaMulPend, setPaginaMulPend] = useState(1);
   const [paginaMulConc, setPaginaMulConc] = useState(1);
+  const [paginaEmpPend, setPaginaEmpPend] = useState(1); // Add pagination for emprestimos_pendentes
 
   const [hasMoreEmpAtiv, setHasMoreEmpAtiv] = useState(true);
   const [hasMoreEmpConc, setHasMoreEmpConc] = useState(true);
   const [hasMoreResAtiv, setHasMoreResAtiv] = useState(true);
   const [hasMoreMulPend, setHasMoreMulPend] = useState(true);
   const [hasMoreMulConc, setHasMoreMulConc] = useState(true);
+  const [hasMoreEmpPend, setHasMoreEmpPend] = useState(true); // Add hasMore flag for emprestimos_pendentes
 
   const [isFetching, setIsFetching] = useState(false);
 
@@ -77,6 +81,11 @@ const PuxarHistorico = () => {
       >= historicElement.offsetHeight - 100
     ) {
       switch (activeTab) {
+        case "emprestimosPendentes":
+          if (hasMoreEmpPend) {
+            setPaginaEmpPend(prev => prev + 1);
+          }
+          break;
         case "emprestimosAtivos":
           if (hasMoreEmpAtiv) {
             setPaginaEmpAtiv(prev => prev + 1);
@@ -104,7 +113,7 @@ const PuxarHistorico = () => {
           break;
       }
     }
-  }, [loading, isFetching, activeTab, hasMoreEmpAtiv, hasMoreEmpConc, hasMoreResAtiv, hasMoreMulPend, hasMoreMulConc]);
+  }, [loading, isFetching, activeTab, hasMoreEmpAtiv, hasMoreEmpConc, hasMoreResAtiv, hasMoreMulPend, hasMoreMulConc, hasMoreEmpPend]);
 
   useEffect(() => {
     window.addEventListener("scroll", handleScroll);
@@ -119,6 +128,9 @@ const PuxarHistorico = () => {
       let endpoint = "";
 
       switch (activeTab) {
+        case "emprestimosPendentes":
+          endpoint = `historico/emprestimos_pendentes/${paginaEmpPend}`;
+          break;
         case "emprestimosAtivos":
           endpoint = `historico/emprestimos_ativos/${paginaEmpAtiv}`;
           break;
@@ -181,6 +193,10 @@ const PuxarHistorico = () => {
       };
 
       switch (activeTab) {
+        case "emprestimosPendentes":
+          setHistorico(prev => updateHistoricoState(prev, result, 'emprestimos_pendentes'));
+          setHasMoreEmpPend(result.length > 0);
+          break;
         case "emprestimosAtivos":
           setHistorico(prev => updateHistoricoState(prev, result, 'emprestimos_ativos'));
           setHasMoreEmpAtiv(result.length > 0);
@@ -211,11 +227,12 @@ const PuxarHistorico = () => {
       setLoading(false);
       setIsFetching(false);
     }
-  }, [activeTab, paginaEmpAtiv, paginaEmpConc, paginaResAtiv, paginaMulPend, paginaMulConc, token]);
+  }, [activeTab, paginaEmpPend, paginaEmpAtiv, paginaEmpConc, paginaResAtiv, paginaMulPend, paginaMulConc, token]);
   const handleTabChange = (tab: string) => {
     if (loading || isFetching || activeTab === tab) return;
     setActiveTab(tab);
     setHistorico({
+      emprestimos_pendentes: [], // Clear emprestimos_pendentes data
       emprestimos_ativos: [],
       emprestimos_concluidos: [],
       reservas_ativas: [],
@@ -224,6 +241,7 @@ const PuxarHistorico = () => {
     }); // Clear previous data
 
     // Reset pagination for all tabs
+    setPaginaEmpPend(1); // Reset pagination for emprestimos_pendentes
     setPaginaEmpAtiv(1);
     setPaginaEmpConc(1);
     setPaginaResAtiv(1);
@@ -231,6 +249,7 @@ const PuxarHistorico = () => {
     setPaginaMulConc(1);
 
     // Reset hasMore flags
+    setHasMoreEmpPend(true); // Reset hasMore flag for emprestimos_pendentes
     setHasMoreEmpAtiv(true);
     setHasMoreEmpConc(true);
     setHasMoreResAtiv(true);
@@ -250,6 +269,7 @@ const PuxarHistorico = () => {
     reservasAtivas: "",
     multasPendentes: "",
     multasConcluidas: "",
+    emprestimosPendentes: "", // Add filter for emprestimos_pendentes
   });
 
   const handleFiltroChange = (campo: string, valor: string) => {
@@ -263,6 +283,42 @@ const PuxarHistorico = () => {
 
   const renderTabContent = () => {
     switch (activeTab) {
+      case "emprestimosPendentes":
+        return (
+          <div>
+            <input
+              type="text"
+              placeholder="Pesquisar título ou autor..."
+              className="barra-pesquisa montserrat-alternates"
+              value={filtros.emprestimosPendentes}
+              onChange={(e) =>
+                handleFiltroChange("emprestimosPendentes", e.target.value)
+              }
+            />
+            <div>
+              {historico.emprestimos_pendentes.length > 0 ? (
+                historico.emprestimos_pendentes
+                  .filter((item) =>
+                    `${item.titulo} ${item.autor}`
+                      .toLowerCase()
+                      .includes(filtros.emprestimosPendentes)
+                  )
+                  .map((item) => (
+                    <div key={item.id_emprestimo} className="historico-item">
+                      <p>
+                        <strong>{item.titulo}</strong> - {item.autor}
+                      </p>
+                      <p>Data de Validade: {formatDateTime(item.data_validade)}</p>
+                    </div>
+                  ))
+              ) : (
+                <p className="no-data-message montserrat-alternates">
+                  Não há empréstimos pendentes.
+                </p>
+              )}
+            </div>
+          </div>
+        );
       case "emprestimosAtivos":
         return (
           <div>
@@ -458,6 +514,9 @@ const PuxarHistorico = () => {
           <h2 className="montserrat-alternates-semibold">Histórico da Biblioteca</h2>
         </div>
         <div className="tabs">
+          <button onClick={() => handleTabChange("emprestimosPendentes")} disabled={loading || activeTab === "emprestimosPendentes"}>
+            Empréstimos Pendentes
+          </button>
           <button onClick={() => handleTabChange("emprestimosAtivos")} disabled={loading || activeTab === "emprestimosAtivos"}>
             Empréstimos Ativos
           </button>
