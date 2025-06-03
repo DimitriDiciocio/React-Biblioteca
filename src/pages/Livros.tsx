@@ -104,6 +104,14 @@ const Livros: React.FC = () => {
     setHasMore(true);
   };
 
+  const handleStatusChange = (id_livro: number, disponivel: boolean) => {
+    setLivros((prevLivros) =>
+      prevLivros.map((book) =>
+        book.id === id_livro ? { ...book, disponivel: !disponivel } : book
+      )
+    );
+  };
+
   if (isAllowed === null) return <p>Verificando permissão...</p>;
   if (!isAllowed) return null;
 
@@ -159,7 +167,11 @@ const Livros: React.FC = () => {
                 >
                   <span className="material-icons">edit</span>
                 </button>
-                <DeletarLivro id_livro={book.id} onStatusChange={fetchLivros} />
+                <DeletarLivro
+                  id_livro={book.id}
+                  disponivel={book.disponivel}
+                  onStatusChange={() => handleStatusChange(book.id, book.disponivel)}
+                />
               </div>
             </div>
           </div>

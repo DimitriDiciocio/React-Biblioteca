@@ -1,6 +1,5 @@
 import React, { useEffect, useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
-import Swal from "sweetalert2";
 import { formatDate } from "../services/FormatDate";
 
 interface Banner {
@@ -9,6 +8,7 @@ interface Banner {
   startDate: string;
   finishDate: string;
   imagePath: string;
+  position: number; // Add position property
 }
 
 const BannersAdm: React.FC = () => {
@@ -46,6 +46,89 @@ const BannersAdm: React.FC = () => {
       window.removeEventListener('bannersUpdated', handleBannersUpdated);
     };
   }, [fetchBanners]);
+
+  const handleDragStart = (event: React.DragEvent<HTMLTableRowElement>, index: number) => {
+    event.dataTransfer.setData("text/plain", index.toString());
+    event.currentTarget.style.opacity = "0.7"; // Make the dragged row semi-transparent
+    event.currentTarget.style.backgroundColor = "#f0f8ff"; // Highlight the dragged row
+  };
+
+  const handleDragEnd = (event: React.DragEvent<HTMLTableRowElement>) => {
+    event.currentTarget.style.opacity = "1"; // Restore the row's opacity
+    event.currentTarget.style.backgroundColor = ""; // Remove the highlight
+  };
+
+  const moveBanner = (index: number, direction: "up" | "down") => {
+    const updatedBanners = [...banners];
+    const targetIndex = direction === "up" ? index - 1 : index + 1;
+
+    if (targetIndex < 0 || targetIndex >= updatedBanners.length) return;
+
+    const [movedBanner] = updatedBanners.splice(index, 1);
+    updatedBanners.splice(targetIndex, 0, movedBanner);
+
+    setBanners(updatedBanners);
+
+    try {
+      fetch("http://127.0.0.1:5000/banners/position", {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+        body: JSON.stringify({
+          banners: updatedBanners.map((banner, idx) => ({
+            id_banner: banner.id_banner,
+            position: idx + 1,
+          })),
+        }),
+      });
+    } catch (error) {
+      console.error("Erro ao atualizar posições:", error);
+    }
+  };
+
+  const handleDrop = async (event: React.DragEvent<HTMLTableRowElement>, targetIndex: number) => {
+    event.preventDefault();
+    const sourceIndex = parseInt(event.dataTransfer.getData("text/plain"), 10);
+
+    if (sourceIndex === targetIndex) return;
+
+    const updatedBanners = [...banners];
+    const [movedBanner] = updatedBanners.splice(sourceIndex, 1);
+    updatedBanners.splice(targetIndex, 0, movedBanner);
+
+    setBanners(updatedBanners);
+
+    try {
+      await fetch("http://127.0.0.1:5000/banners/position", {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+        body: JSON.stringify({
+          banners: updatedBanners.map((banner, index) => ({
+            id_banner: banner.id_banner,
+            position: index + 1,
+          })),
+        }),
+      });
+    } catch (error) {
+      console.error("Erro ao atualizar posições:", error);
+    }
+
+    event.currentTarget.style.borderTop = ""; // Remove the drop area highlight
+  };
+
+  const handleDragOver = (event: React.DragEvent<HTMLTableRowElement>) => {
+    event.preventDefault();
+    event.currentTarget.style.borderTop = "3px solid #007bff"; // Highlight the drop area
+  };
+
+  const handleDragLeave = (event: React.DragEvent<HTMLTableRowElement>) => {
+    event.currentTarget.style.borderTop = ""; // Remove the highlight
+  };
 
   const handleDelete = async (id_banner: number) => {
     const confirm = await Swal.fire({
@@ -97,6 +180,8 @@ const BannersAdm: React.FC = () => {
       <table className="table">
         <thead>
           <tr>
+            <th className="montserrat-alternates-semibold">Mover</th> {/* Add column for drag icon */}
+            <th className="montserrat-alternates-semibold">Imagem</th>
             <th className="montserrat-alternates-semibold">Título</th>
             <th className="montserrat-alternates-semibold">Data de Início</th>
             <th className="montserrat-alternates-semibold">Data de Fim</th>
@@ -104,8 +189,38 @@ const BannersAdm: React.FC = () => {
           </tr>
         </thead>
         <tbody>
-          {banners.map((banner) => (
-            <tr className="montserrat-alternates-semibold" key={banner.id_banner}>
+          {banners.map((banner, index) => (
+            <tr
+              className="montserrat-alternates-semibold"
+              key={banner.id_banner}
+              draggable
+              onDragStart={(event) => handleDragStart(event, index)}
+              onDragEnd={handleDragEnd}
+              onDragOver={handleDragOver}
+              onDragLeave={handleDragLeave}
+              onDrop={(event) => handleDrop(event, index)}
+              style={{ transition: "background-color 0.3s, opacity 0.3s" }} // Smooth transition for visual effects
+            >
+              <td style={{ textAlign: "center", width: "50px" }}> {/* Drag icon column */}
+                <span
+                  className="material-icons"
+                  style={{
+                    cursor: "grab",
+                    fontSize: "24px",
+                    color: "#007bff",
+                  }}
+                  title="Arraste para mover"
+                >
+                  drag_indicator
+                </span>
+              </td>
+              <td style={{ width: "120px" }}> {/* Image column */}
+                <img
+                  src={`http://127.0.0.1:5000/uploads/banners/${banner.id_banner}.jpeg`}
+                  alt={banner.title}
+                  style={{ width: "100px", height: "50px", objectFit: "cover", borderRadius: "5px" }} // Rounded corners for images
+                />
+              </td>
               <td>{banner.title}</td>
               <td>{formatDate(banner.startDate)}</td>
               <td>{formatDate(banner.finishDate)}</td>

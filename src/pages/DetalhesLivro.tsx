@@ -4,6 +4,7 @@ import Swal from "sweetalert2";
 import Header from "../components/Header";
 import MostrarLivros from "../components/MostrarLivros";
 import Footer from "../components/Footer";
+import Recomendados from "../components/Recomendados";
 interface Tag {
   id: number;
   nome: string;
@@ -696,7 +697,7 @@ const BookDetail = () => {
           <p className="montserrat-alternates-semibold size-titles">
             Recomendados
           </p>
-          <MostrarLivros />
+          <Recomendados />
           <div className="space-med-y"></div>
         </section>
       </main>

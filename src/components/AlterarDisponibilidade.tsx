@@ -1,13 +1,15 @@
 import React, { useState } from "react";
 import Swal from "sweetalert2";
 
-interface DeletarLivroProps {
+interface AlterarDisponibilidadeProps {
   id_livro: number;
-  onStatusChange: () => void; // Callback para atualizar a lista de livros
+  disponivel: boolean;
+  onStatusChange: () => void;
 }
 
-const AlterarDisponibilidade: React.FC<DeletarLivroProps> = ({
+const AlterarDisponibilidade: React.FC<AlterarDisponibilidadeProps> = ({
   id_livro,
+  disponivel,
   onStatusChange,
 }) => {
   const [loading, setLoading] = useState(false);
@@ -15,7 +17,9 @@ const AlterarDisponibilidade: React.FC<DeletarLivroProps> = ({
   const handleStatusChange = async () => {
     const confirmacao = await Swal.fire({
       title: "Tem certeza?",
-      text: "O livro será marcado como indisponível!",
+      text: disponivel
+        ? "O livro será marcado como indisponível!"
+        : "O livro será marcado como disponível!",
       icon: "warning",
       showCancelButton: true,
       confirmButtonColor: "#d33",
@@ -26,8 +30,8 @@ const AlterarDisponibilidade: React.FC<DeletarLivroProps> = ({
         title: "montserrat-alternates-semibold",
         confirmButton: "montserrat-alternates-semibold",
         htmlContainer: "montserrat-alternates-semibold",
-        cancelButton: "montserrat-alternates-semibold"
-      }
+        cancelButton: "montserrat-alternates-semibold",
+      },
     });
 
     if (!confirmacao.isConfirmed) return;
@@ -43,7 +47,7 @@ const AlterarDisponibilidade: React.FC<DeletarLivroProps> = ({
             "Content-Type": "application/json",
             Authorization: `Bearer ${localStorage.getItem("token")}`,
           },
-          body: JSON.stringify({ id_livro }),
+          body: JSON.stringify({ id_livro, disponivel: !disponivel }), // Alterna a disponibilidade
         }
       );
 
@@ -58,8 +62,7 @@ const AlterarDisponibilidade: React.FC<DeletarLivroProps> = ({
             title: "montserrat-alternates-semibold",
             confirmButton: "montserrat-alternates-semibold",
             htmlContainer: "montserrat-alternates-semibold",
-            cancelButton: "montserrat-alternates-semibold"
-          }
+          },
         });
         onStatusChange(); // Atualiza a lista de livros
       } else {
@@ -90,7 +93,9 @@ const AlterarDisponibilidade: React.FC<DeletarLivroProps> = ({
       {loading ? (
         <span className="spinner-border spinner-border-sm"></span>
       ) : (
-        <span className="material-icons">block</span>
+        <span className="material-icons">
+          {disponivel ? "check_circle" : "block"}
+        </span>
       )}
     </button>
   );
