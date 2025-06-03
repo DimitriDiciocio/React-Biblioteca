@@ -199,6 +199,8 @@ const AddBanners: React.FC = () => {
                     required={!indeterminado}
                     disabled={indeterminado}
                   />
+                </div>
+              </div>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginTop: '8px' }}>
                     <input
                       type="checkbox"
@@ -211,13 +213,10 @@ const AddBanners: React.FC = () => {
                       }}
                       id="indeterminado"
                     />
-                    <label htmlFor="indeterminado" className="montserrat-alternates">
+                    <label htmlFor="indeterminado" className="montserrat-alternates-bold">
                       Por tempo indeterminado
                     </label>
                   </div>
-                </div>
-              </div>
-
               <div className="d-flex g-sm m-top">
                 <button
                   type="submit"

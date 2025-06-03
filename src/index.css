@@ -983,11 +983,13 @@ button:hover .button-text {
   flex-direction: column;
   margin-bottom: 15px;
   width: 100%;
+  align-self: start;
 }
 
 .form-group label {
   margin-bottom: 5px;
   font-weight: bold;
+  font-size: 18px;
 }
 
 .d-flex.g-20 {

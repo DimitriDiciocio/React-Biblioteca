@@ -1,29 +1,74 @@
-import React, { useEffect, useState } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import { useDropzone } from "react-dropzone";
+import "../index.css";
 import Swal from "sweetalert2";
-import EmprestimoPorUsuario from "../components/EmprestimoPorUsuario";
-import Usuarios from "../components/Usuarios";
-import Header from "../components/Header";
-import Footer from "../components/Footer";
-import HistoricoUsuario from "../components/HistoricoUsuario";
+import { usePermission } from "../components/usePermission.ts";
+import PuxarHistorico from "../components/PuxarHistorico";
+import Header from "../components/Header"; // <-- adicionado
+
+const Modal: React.FC<{ open: boolean; onClose: () => void; children: React.ReactNode }> = ({ open, onClose, children }) => {
+  if (!open) return null;
+  return (
+    <div className="modal-overlay " style={{
+      position: "fixed", top: 0, left: 0, width: "100vw", height: "100vh",
+      background: "rgba(0,0,0,0.3)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 900,
+      overflow: "hidden" // impede scroll na overlay
+    }}
+      onClick={onClose}
+    >
+      <div className="modal-content" style={{
+        background: "#fff", borderRadius: 10, padding: 32, minWidth: 320, maxWidth: 400, width: "100%", position: "relative"
+      }}
+        onClick={e => e.stopPropagation()}
+      >
+        <button onClick={onClose} style={{
+          position: "absolute", top: 10, right: 10, background: "none", border: "none", fontSize: 22, cursor: "pointer"
+        }} aria-label="Fechar">×</button>
+        {children}
+      </div>
+    </div>
+  );
+};
+
+
 
 const DetalhesUsuario: React.FC = () => {
-  const { id } = useParams<{ id: string }>();
-  interface User {
-    nome: string;
-    email: string;
-    telefone: string;
-    endereco: string;
-    tipo: number;
-    ativo: boolean;
-    imagem: string;
-  }
-
-  const [user, setUser] = useState<User | null>(null);
-  const [isEditing, setIsEditing] = useState(false);
-  const navigate = useNavigate();
+  const [nome, setNome] = useState("");
+  const [email, setEmail] = useState("");
+  const [telefone, setTelefone] = useState("");
+  const [imagem, setImagem] = useState<File | null>(null);
   const [imagemPreview, setImagemPreview] = useState<string | null>(null);
-  
+  const [isEditing, setIsEditing] = useState(false);
+  const [originalNome, setOriginalNome] = useState("");
+  const [originalEmail, setOriginalEmail] = useState("");
+  const [originalTelefone, setOriginalTelefone] = useState("");
+  const [cidadesBrasil, setCidadesBrasil] = useState<string[]>([]);
+  const [uf, setUf] = useState("");
+  const [cidade, setCidade] = useState("");
+  const [ufsBrasil, setUfsBrasil] = useState<string[]>([]);
+  const [endereco, setEndereco] = useState("");
+  const [originalEndereco, setOriginalEndereco] = useState("");
+  const [originalUf, setOriginalUf] = useState("");
+  const [originalCidade, setOriginalCidade] = useState("");
+  const [editNome, setEditNome] = useState("");
+  const [editEmail, setEditEmail] = useState("");
+  const [editTelefone, setEditTelefone] = useState("");
+  const [editUf, setEditUf] = useState("");
+  const [editCidade, setEditCidade] = useState("");
+  const [editCidadesBrasil, setEditCidadesBrasil] = useState<string[]>([]); // cidades para o modal
+  const navigate = useNavigate();
+  const token = localStorage.getItem("token");
+  const isAllowed = usePermission(1);
+  const [modalOpen, setModalOpen] = useState(false);
+  const [modalImagemOpen, setModalImagemOpen] = useState(false);
+
+  // Novo estado para preview temporário no modal
+  const [imagemTemp, setImagemTemp] = useState<File | null>(null);
+  const [imagemTempPreview, setImagemTempPreview] = useState<string | null>(null);
+
+  const { id } = useParams(); // <-- pega o id do usuário da URL
+
   const formatTelefone = (value: string) => {
     const numericValue = value.replace(/\D/g, "");
     const cursorPosition = value.length - 1;
@@ -36,60 +81,6 @@ const DetalhesUsuario: React.FC = () => {
     return numericValue.replace(/(\d{2})(\d{5})(\d{0,4})/, "($1) $2-$3");
   };
 
-  useEffect(() => {
-    const fetchUser = async () => {
-      try {
-        const response = await fetch(`http://127.0.0.1:5000/user/${id}`, {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        });
-        if (!response.ok) throw new Error("Erro ao buscar usuário");
-        const data = await response.json();
-        setUser(data);
-        if (data.imagem) {
-          const imagemUrl = `http://127.0.0.1:5000/uploads/usuarios/${data.imagem}`;
-      
-          fetch(imagemUrl)
-            .then(async (imgResponse) => {
-              if (imgResponse.ok) {
-                setImagemPreview(imagemUrl);
-              }
-            })
-            .catch(() => {
-              console.log("Imagem não encontrada");
-            });
-        }
-
-      } catch (error) {
-        console.error(error);
-        Swal.fire(
-          {
-            title: "Erro!",
-            text: "Não foi possível carregar os dados do usuário.",
-            icon: "error",
-            customClass: {
-              title: "montserrat-alternates-semibold",
-              popup: "",
-              confirmButton: "montserrat-alternates-semibold"
-            }
-          }
-        );
-      }
-    };
-    fetchUser();
-  }, [id]);
-
-  if (user) {
-    user.telefone = formatTelefone(user.telefone);
-  }
-  
-  if (!user) return <p>Carregando...</p>;
-
-  const imageUrl = `http://127.0.0.1:5000/uploads/usuarios/${user.imagem}`;
-
   const isValidImage = (url: string) => {
     try {
       const parsedUrl = new URL(url);
@@ -99,117 +90,625 @@ const DetalhesUsuario: React.FC = () => {
     }
   };
 
+  async function recuperaDados() {
+    try {
+      // Use a mesma rota que Usuarios.tsx usa: /user/:id
+      const response = await fetch(`http://127.0.0.1:5000/user/${id}`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setNome(data.nome);
+        setEmail(data.email);
+        setTelefone(formatTelefone(data.telefone));
+        setEndereco(data.endereco);
+
+        setOriginalNome(data.nome);
+        setOriginalEmail(data.email);
+        setOriginalTelefone(formatTelefone(data.telefone));
+        setOriginalEndereco(data.endereco);
+
+        if (data.imagem) {
+          const imagemUrl = `http://127.0.0.1:5000/uploads/usuarios/${data.imagem}`;
+          setImagemPreview(imagemUrl);
+          setImagem(null);
+        } else {
+          setImagemPreview(null);
+          setImagem(null);
+        }
+      } else {
+        Swal.fire({
+          title: "Erro ao buscar dados do usuário",
+          text: data.message,
+          icon: "error",
+        });
+      }
+    } catch (error) {
+      Swal.fire({
+        title: "Erro de conexão com o servidor",
+        text: String(error),
+        icon: "error",
+      });
+    }
+  }
+
+  useEffect(() => {
+    recuperaDados()
+  }, [id, navigate, token]); // <-- adiciona id como dependência
+
+  useEffect(() => {
+    const fetchUfs = async () => {
+      try {
+        const response = await fetch(
+          "https://servicodados.ibge.gov.br/api/v1/localidades/estados"
+        );
+        if (response.ok) {
+          const data = await response.json();
+          setUfsBrasil(data.map((uf: { sigla: string }) => uf.sigla));
+        } else {
+          console.error("Erro ao buscar UFs:", response.statusText);
+        }
+      } catch (error) {
+        console.error("Erro ao buscar UFs:", error);
+      }
+    };
+
+    fetchUfs();
+  }, []);
+
+  useEffect(() => {
+    const fetchCidades = async () => {
+      if (!uf) {
+        setCidadesBrasil([]);
+        return;
+      }
+
+      try {
+        const response = await fetch(
+          `https://servicodados.ibge.gov.br/api/v1/localidades/estados/${uf}/municipios`
+        );
+        if (response.ok) {
+          const data = await response.json();
+          setCidadesBrasil(data.map((cidade: { nome: string }) => cidade.nome));
+        } else {
+          console.error("Erro ao buscar cidades:", response.statusText);
+        }
+      } catch (error) {
+        console.error("Erro ao buscar cidades:", error);
+      }
+    };
+
+    fetchCidades();
+  }, [uf]);
+
+  useEffect(() => {
+    if (endereco) {
+      const [cidadePart, ufPart] = endereco.split(" - ");
+      setCidade(cidadePart || "");
+      setUf(ufPart || "");
+      setOriginalUf(ufPart || ""); // Save original UF
+      setOriginalCidade(cidadePart || ""); // Save original city
+    }
+  }, [endereco]);
+
+  useEffect(() => {
+    if (modalOpen) {
+      setEditNome(nome);
+      setEditEmail(email);
+      setEditTelefone(telefone);
+      setEditUf(uf);
+      setEditCidade(cidade);
+
+      if (uf) {
+        fetch(`https://servicodados.ibge.gov.br/api/v1/localidades/estados/${uf}/municipios`)
+          .then(res => res.ok ? res.json() : [])
+          .then(data => setEditCidadesBrasil(Array.isArray(data) ? data.map((c: { nome: string }) => c.nome) : []));
+      } else {
+        setEditCidadesBrasil([]);
+      }
+    }
+  }, [modalOpen, nome, email, telefone, uf, cidade]);
+
+  useEffect(() => {
+    if (editUf) {
+      const fetchCidades = async () => {
+        try {
+          const response = await fetch(
+            `https://servicodados.ibge.gov.br/api/v1/localidades/estados/${editUf}/municipios`
+          );
+          if (response.ok) {
+            const data = await response.json();
+            setEditCidadesBrasil(data.map((cidade: { nome: string }) => cidade.nome));
+          } else {
+            setEditCidadesBrasil([]);
+          }
+        } catch {
+          setEditCidadesBrasil([]);
+        }
+      };
+      fetchCidades();
+    } else {
+      setEditCidadesBrasil([]);
+      setEditCidade(""); // Limpa cidade ao trocar estado
+    }
+  }, [editUf]);
+
+  const onDrop = useCallback((acceptedFiles: File[]) => {
+    const file = acceptedFiles[0];
+    if (file) {
+      setImagemTemp(file);
+      setImagemTempPreview(URL.createObjectURL(file));
+    }
+  }, []);
+
+  const { getRootProps, getInputProps } = useDropzone({
+    onDrop,
+    accept: { "image/*": [] },
+    multiple: false,
+  });
+
+  const handleRemoveImage = () => {
+    setImagemTemp(null);
+    setImagemTempPreview(null); // Deixe null para mostrar a imagem padrão
+  };
+
+  const handleEdicao = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    const enderecoCompleto = `${editCidade} - ${editUf}`;
+    // Primeiro, edite os dados do usuário SEM a imagem
+    const dadosUsuario = {
+      nome: editNome,
+      email: editEmail,
+      telefone: editTelefone.replace(/\D/g, ""),
+      endereco: enderecoCompleto,
+    };
+
+    try {
+      // Atualiza dados do usuário (sem imagem)
+      const response = await fetch(`http://127.0.0.1:5000/editar_usuario/${id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+        body: JSON.stringify(dadosUsuario),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        Swal.fire({
+          title: "Erro ao editar usuário",
+          text: data.message,
+          icon: "error",
+          customClass: {
+            title: "montserrat-alternates-semibold",
+            htmlContainer: "montserrat-alternates-semibold"
+          }
+        });
+        return;
+      }
+
+      // Se houver imagem nova, envie para a rota /upload/usuario
+      if (imagemTemp) {
+        const formData = new FormData();
+        formData.append("imagem", imagemTemp);
+        formData.append("id_usuario", id || "");
+
+        const imgResponse = await fetch("http://127.0.0.1:5000/upload/usuario", {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+          body: formData,
+        });
+
+        const imgData = await imgResponse.json();
+
+        if (!imgResponse.ok) {
+          Swal.fire({
+            title: "Erro ao salvar imagem",
+            text: imgData.message,
+            icon: "error",
+            customClass: {
+              title: "montserrat-alternates-semibold",
+              htmlContainer: "montserrat-alternates-semibold"
+            }
+          });
+          return;
+        }
+        setImagem(imagemTemp);
+        setImagemPreview(imagemTempPreview);
+      }
+
+      Swal.fire({
+        customClass: {
+          title: "montserrat-alternates-semibold",
+          htmlContainer: "montserrat-alternates-semibold"
+        },
+        title: "Usuário editado com sucesso!",
+        text: data.message,
+        icon: "success",
+      });
+      setNome(editNome);
+      setEmail(editEmail);
+      setTelefone(editTelefone);
+      setUf(editUf);
+      setCidade(editCidade);
+      setEndereco(enderecoCompleto);
+      setIsEditing(false);
+
+    } catch (error) {
+      Swal.fire("Erro de conexão com o servidor", String(error), "error");
+    }
+  };
+
+  const handleCancel = () => {
+    setEditNome(nome);
+    setEditEmail(email);
+    setEditTelefone(telefone);
+    setEditUf(uf); // Revert UF to original
+    setEditCidade(cidade); // Revert city to original
+    setIsEditing(false);
+  };
+
+  // Quando abrir o modal de imagem, sincronize o preview temporário com o atual
+  useEffect(() => {
+    if (modalImagemOpen) {
+      // Mostra sempre a imagem atual no modal, mesmo que não tenha sido alterada
+      setImagemTemp(null);
+      setImagemTempPreview(imagemPreview || null);
+    }
+  }, [modalImagemOpen, imagemPreview]);
+
+  const handleSalvarImagem = async () => {
+    // Utilize a rota /upload/usuario para salvar ou remover a imagem
+    if (imagemTemp) {
+      const formData = new FormData();
+      formData.append("imagem", imagemTemp);
+      try {
+        const response = await fetch(`http://127.0.0.1:5000/upload/usuario`, {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+          body: formData,
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+          setImagem(imagemTemp);
+          setImagemPreview(imagemTempPreview);
+          // Salva o preview no localStorage para o Header pegar imediatamente
+          localStorage.setItem("usuario_atualizado", JSON.stringify({ imagemPreview: imagemTempPreview }));
+          window.dispatchEvent(new Event("atualizarImagemUsuario"));
+          Swal.fire({
+            icon: "success",
+            title: "Imagem atualizada!",
+            text: data.message || "Sua imagem foi alterada com sucesso.",
+          });
+        } else {
+          Swal.fire({
+            icon: "error",
+            title: "Erro ao atualizar imagem",
+            text: data.message || "Não foi possível atualizar a imagem.",
+          });
+        }
+      } catch (error) {
+        Swal.fire({
+          icon: "error",
+          title: "Erro de conexão",
+          text: String(error),
+        });
+      }
+    } else {
+      // Para remover a imagem, envie um POST sem o campo "imagem"
+      try {
+        const response = await fetch(`http://127.0.0.1:5000/upload/usuario`, {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+          body: new FormData(), // vazio
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+          setImagem(null);
+          setImagemPreview(null);
+          // Salva o preview padrão no localStorage para o Header pegar imediatamente
+          localStorage.setItem("usuario_atualizado", JSON.stringify({ imagemPreview: null }));
+          window.dispatchEvent(new Event("atualizarImagemUsuario"));
+          Swal.fire({
+            icon: "success",
+            title: "Imagem removida!",
+            text: data.message || "Sua imagem foi removida com sucesso.",
+          });
+        } else {
+          Swal.fire({
+            icon: "error",
+            title: "Erro ao remover imagem",
+            text: data.message || "Não foi possível remover a imagem.",
+          });
+        }
+      } catch (error) {
+        Swal.fire({
+          icon: "error",
+          title: "Erro de conexão",
+          text: String(error),
+        });
+      }
+    }
+    setModalImagemOpen(false);
+  };
+
+  // Impede scroll na página inteira quando DetalhesUsuario está montado
+  useEffect(() => {
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, []);
+
+  if (isAllowed === null) return <p>Verificando permissão...</p>;
+  if (!isAllowed) return null;
+
   return (
     <div>
       <Header />
-      <div className="background-blue">
-        <button
-          onClick={() => navigate("/home_biblio?page=3")}
-          style={{
-            marginBottom: "20px",
-            background: "none",
-            border: "none",
-            cursor: "pointer",
-            fontSize: "24px",
-            display: "flex",
-            alignItems: "center",
-          }}
-        >
-          &lt;
-        </button>
-        <h1>Detalhes do Usuário</h1>
-        {isEditing ? (
-          <Usuarios onCancel={() => setIsEditing(false)} />
-        ) : (
-          <div className="pagina-edicao-usuario">
-            <main className="background-blue">
-              <section className="d-flex center-x size-medium g-30">
-                <div>
-                  <div
-                    className="dropzone border-book4 dropzone-responsive"
+      {/* Seta de voltar, agora embaixo do cabeçalho */}
+      <button
+        onClick={() => navigate("/home_biblio?page=3")}
+        style={{
+          position: "absolute",
+          top: 110, // logo abaixo do header fixo de 100px
+          left: 18,
+          zIndex: 2000,
+          background: "rgba(255,255,255,0.95)",
+          border: "none",
+          borderRadius: "50%",
+          width: 48,
+          height: 48,
+          boxShadow: "0 2px 8px rgba(0,0,0,0.10)",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          cursor: "pointer",
+          transition: "background 0.2s"
+        }}
+        title="Voltar"
+      >
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none">
+          <circle cx="12" cy="12" r="12" fill="#2473d9" />
+          <path d="M14.5 7L10 12L14.5 17" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+        </svg>
+      </button>
+      <div className="pagina-edicao-usuario ">
+
+        <main className="background-blue">
+          <section>
+            <div className="banner-profile"></div>
+          </section>
+          <div className="usuario-layout">
+            <section className="fifty-cents">
+              <div className="profile-picture" style={{ position: "relative" }}>
+                <div style={{ position: "relative", display: "inline-block" }}>
+                  <img
+                    src={imagemPreview || "../assets/img/user.png"}
+                    alt="Sua foto de perfil!"
+                    className="profile-picture-preview"
+                    onClick={() => setModalImagemOpen(true)}
+                    style={{ cursor: "pointer" }}
+                  />
+                  {/* Ícone de lápis branco centralizado */}
+                  <svg
+                    className="edit-icon-pfp"
                     style={{
-                      borderRadius: "50%",
-                      width: "300px",
-                      height: "300px",
-                      position: "relative",
-                      borderStyle: "dashed",
-                      padding: "0",
+                      position: "absolute",
+                      left: "50%",
+                      top: "50%",
+                      transform: "translate(-50%, -50%)",
+                      pointerEvents: "none",
+                      zIndex: 2,
                     }}
+                    width={48}
+                    height={48}
+                    viewBox="0 0 48 48"
+                    fill="white"
+                    xmlns="http://www.w3.org/2000/svg"
                   >
-                    {imagemPreview && isValidImage(imagemPreview) && (
-                      <img
-                        src={imageUrl}
-                        alt={user.nome}
-                        style={{
-                          width: "100%",
-                          height: "100%",
-                          borderRadius: "50%",
-                          objectFit: "cover",
-                        }}
-                      />
-                    )}
-                  </div>
+                    <path d="M6 34.5V42h7.5l22.13-22.13-7.5-7.5L6 34.5Zm33.71-19.04c.39-.39.39-1.02 0-1.41l-4.76-4.76a.9959.9959 0 0 0-1.41 0l-3.54 3.54 7.5 7.5 3.54-3.54Z"/>
+                  </svg>
                 </div>
-                <div className="w-656">
-                  <div className="form-group">
-                    <label className="montserrat-alternates-semibold">
-                      Nome:
-                    </label>
-                    <p className="">{user.nome}</p>
-                  </div>
-                  <div className="form-group">
-                    <label className="montserrat-alternates-semibold">
-                      Email:
-                    </label>
-                    <p className="">{user.email}</p>
-                  </div>
-                  <div className="form-group">
-                    <label className="montserrat-alternates-semibold">
-                      Telefone:
-                    </label>
-                    <p className="">{user.telefone}</p>
-                  </div>
-                  <div className="form-group">
-                    <label className="montserrat-alternates-semibold">
-                      Endereço:
-                    </label>
-                    <p className="">{user.endereco}</p>
-                  </div>
-                  <div className="form-group">
-                    <label className="montserrat-alternates-semibold">
-                      Tipo:
-                    </label>
-                    <p className="">
-                      {user.tipo === 1
-                        ? "Usuário"
-                        : user.tipo === 2
-                        ? "Bibliotecário"
-                        : "Administrador"}
-                    </p>
-                  </div>
-                  <div className="form-group">
-                    <label className="montserrat-alternates-semibold">
-                      Status:
-                    </label>
-                    <p className="">{user.ativo ? "Ativo" : "Inativo"}</p>
-                  </div>
-                  <div className="d-flex g-sm m-top">
-                    <button
-                      type="button"
-                      className="salvar cancelar montserrat-alternates-semibold"
-                      onClick={() => setIsEditing(true)}
-                    >
-                      <span>Editar</span>
-                    </button>
-                  </div>
+                <span
+                  className="material-icons edit-pfp"
+                  aria-hidden="true"
+                >
+                  edit
+                </span>
+                <div className="margin-btn">
+                  <button className="btn3 btn-primary3" onClick={() => setModalOpen(true)}>
+                    <span className="material-icons">edit</span>
+                  </button>
                 </div>
-              </section>
-            </main>
-            {id && <HistoricoUsuario userID={parseInt(id)} />}
+              </div>
+              <div className="d-flex">
+                <div className="info-container">
+                  <p className="montserrat-alternates info-profile-name">{nome || "Usuário"}</p>
+                  <p className="montserrat-alternates info-profile">{email || "Email"}</p>
+                  <p className="montserrat-alternates info-profile">{telefone || "Telefone"}</p>
+                  <p className="montserrat-alternates info-profile">{endereco || "Endereço"}</p>
+                </div>
+              </div>
+            </section>
+            <PuxarHistorico />
           </div>
-        )}
+        </main>
+        <Modal open={modalOpen} onClose={() => setModalOpen(false)}>
+          <form
+            onSubmit={async (e) => {
+              e.preventDefault();
+              await handleEdicao(e);
+              setModalOpen(false);
+            }}
+          >
+            <h2 className="montserrat-alternates-semibold" style={{ marginBottom: 16 }}>Editar Usuário</h2>
+            <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+              <label className="montserrat-alternates-semibold">
+                <p className="table-row">
+                  Nome:
+                </p>
+                <input
+                  className="input montserrat-alternates-semibold"
+                  type="text"
+                  value={editNome}
+                  onChange={e => setEditNome(e.target.value)}
+                  required
+                />
+              </label>
+              <label className="montserrat-alternates-semibold">
+                <p className="table-row">
+                  Email:
+                </p>
+                <input
+                  className="input"
+                  type="email"
+                  value={editEmail}
+                  onChange={e => setEditEmail(e.target.value)}
+                  required
+                />
+              </label>
+              <label className="montserrat-alternates-semibold">
+                <p className="table-row">
+                  Telefone:
+                </p>
+                <input
+                  className="input"
+                  type="text"
+                  value={editTelefone}
+                  onChange={e => setEditTelefone(formatTelefone(e.target.value))}
+                  required
+                />
+              </label>
+              <label className="montserrat-alternates-semibold">
+                <p className="table-row">
+                  Estado:
+                </p>
+                <select
+                  className="input montserrat-alternates-semibold"
+                  value={editUf}
+                  onChange={e => setEditUf(e.target.value)}
+                  required
+                >
+                  <option value="">Selecione o estado</option>
+                  {ufsBrasil.map((sigla) => (
+                    <option key={sigla} value={sigla}>{sigla}</option>
+                  ))}
+                </select>
+              </label>
+              <label className="montserrat-alternates-semibold">
+                <p className="table-row">
+                  Cidade:
+                </p>
+                <select
+                  className="input"
+                  value={editCidade}
+                  onChange={e => setEditCidade(e.target.value)}
+                  required
+                  disabled={!editUf || editCidadesBrasil.length === 0}
+                >
+                  <option value="">Selecione a cidade</option>
+                  {editCidadesBrasil.map((nomeCidade) => (
+                    <option key={nomeCidade} value={nomeCidade}>{nomeCidade}</option>
+                  ))}
+                </select>
+              </label>
+            </div>
+            <div style={{ display: "flex", gap: 12, marginTop: 24, justifyContent: "flex-end" }}>
+              <button
+                type="button"
+                className="btn btn-secondary montserrat-alternates-semibold"
+                onClick={() => {
+                  handleCancel();
+                  setModalOpen(false);
+                }}
+              >
+                Cancelar
+              </button>
+              <button
+                type="submit"
+                className="btn btn-primary montserrat-alternates-semibold"
+                disabled={!editUf || !editCidade}
+              >
+                Salvar
+              </button>
+            </div>
+          </form>
+        </Modal>
+
+        <Modal open={modalImagemOpen} onClose={() => setModalImagemOpen(false)}>
+          <form
+            onSubmit={async (e) => {
+              e.preventDefault();
+              await handleSalvarImagem();
+            }}
+          >
+            <h2 className="montserrat-alternates-semibold" style={{ marginBottom: 16 }}>Alterar Imagem</h2>
+            <div
+              {...getRootProps()}
+              style={{
+                border: "3px dashed #ccc",
+                padding: 20,
+                borderRadius: 10,
+                textAlign: "center",
+                cursor: "pointer",
+                marginBottom: 5
+              }}
+            >
+              <input {...getInputProps()} />
+              <p className="montserrat-alternates">Arraste ou clique para enviar nova imagem</p>
+              <img
+                src={imagemTempPreview || "../assets/img/user.png"}
+                alt="Preview"
+                className="edit-image-pfp"
+              />
+            </div>
+            <button
+              type="button"
+              className="montserrat-alternates"
+              onClick={handleRemoveImage}
+              style={{
+                background: "none",
+                border: "none",
+                color: "#007bff",
+                textDecoration: "underline",
+                cursor: "pointer",
+                marginBottom: 16,
+                padding: 0
+              }}
+            >
+              Remover Imagem
+            </button>
+            <div style={{ display: "flex", justifyContent: "center" }}>
+              <button
+                type="submit"
+                className="montserrat-alternates-semibold btn-big"
+              >
+                Salvar
+              </button>
+            </div>
+          </form>
+        </Modal>
       </div>
-      <Footer />
     </div>
   );
 };
