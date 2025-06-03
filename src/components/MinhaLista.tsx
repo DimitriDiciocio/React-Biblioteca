@@ -93,9 +93,9 @@ const MinhaLista: React.FC = () => {
 
   return (
     <section>
-      <p className="montserrat-alternates-semibold size-titles">
+      <h1 className="p-4 font-bold montserrat-alternates-semibold">
         Minha Lista de Leitura
-      </p>
+      </h1>
       {loading ? (
         <p className="montserrat-alternates">Carregando livros...</p>
       ) : books.length > 0 ? (

@@ -229,7 +229,7 @@ const CadastroUsuario: React.FC<CadastroUsuarioProps> = ({ setAtualizarListaUser
                       cursor: "pointer",
                     }}
                   >
-                    X
+                    ✕
                   </button>
                 </>
               ) : (
