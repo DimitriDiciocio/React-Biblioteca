@@ -2031,9 +2031,6 @@ ul {
   flex-wrap: wrap;
   justify-items: center;
   margin-left: 50px;
-  overflow: auto;
-  max-height: 560px;
-  padding-top: 10px;
 }
 
 .livros-grid2 {
@@ -4237,4 +4234,27 @@ button.limpar-btn,
 
 .profile-picture-preview  :hover .edit-pfp {
     display: block;
+}
+
+.btn-big{
+  padding: 10px 20px;
+  background-color: var(--azul-escuro);
+  color: var(--branco);
+  border: none;
+  border-radius: var(--border-radius);
+  cursor: pointer;
+  font-size: 16px;
+  transition: background-color var(--transition);
+}
+
+.btn-big:hover{
+  background-color: var(--primary-color);
+}
+
+.edit-image-pfp {
+  width: 200px;
+  height: 200px;
+  border-radius: 50%;
+  object-fit: cover;
+  transition: filter 0.3s;
 }

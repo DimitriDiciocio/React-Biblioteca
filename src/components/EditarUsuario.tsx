@@ -29,6 +29,8 @@ const Modal: React.FC<{ open: boolean; onClose: () => void; children: React.Reac
   );
 };
 
+
+
 const EditarUsuario: React.FC = () => {
   const [nome, setNome] = useState("");
   const [email, setEmail] = useState("");
@@ -57,13 +59,11 @@ const EditarUsuario: React.FC = () => {
   const token = localStorage.getItem("token");
   const isAllowed = usePermission(1);
   const [modalOpen, setModalOpen] = useState(false);
+  const [modalImagemOpen, setModalImagemOpen] = useState(false);
 
-    useEffect(() => {
-      document.body.classList.add("no-scroll");
-      return () => {
-        document.body.classList.remove("no-scroll");
-      };
-    }, []);
+  // Novo estado para preview temporário no modal
+  const [imagemTemp, setImagemTemp] = useState<File | null>(null);
+  const [imagemTempPreview, setImagemTempPreview] = useState<string | null>(null);
 
   const formatTelefone = (value: string) => {
     const numericValue = value.replace(/\D/g, "");
@@ -251,8 +251,8 @@ const EditarUsuario: React.FC = () => {
   const onDrop = useCallback((acceptedFiles: File[]) => {
     const file = acceptedFiles[0];
     if (file) {
-      setImagem(file);
-      setImagemPreview(URL.createObjectURL(file));
+      setImagemTemp(file);
+      setImagemTempPreview(URL.createObjectURL(file));
     }
   }, []);
 
@@ -263,27 +263,28 @@ const EditarUsuario: React.FC = () => {
   });
 
   const handleRemoveImage = () => {
-    setImagem(null);
-    setImagemPreview(null);
+    setImagemTemp(null);
+    setImagemTempPreview(null); // Deixe null para mostrar a imagem padrão
   };
 
   const handleEdicao = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (
-      !editNome.trim() ||
-      !editEmail.trim() ||
-      !editTelefone.trim() ||
-      !editUf ||
-      !editCidade
-    ) {
-      Swal.fire({
-        icon: "warning",
-        title: "Campos obrigatórios",
-        text: "Preencha todos os campos e selecione estado e cidade antes de salvar.",
-        confirmButtonText: "OK"
-      });
-      return;
-    }
+    // Remova a validação obrigatória de todos os campos
+    // if (
+    //   !editNome.trim() ||
+    //   !editEmail.trim() ||
+    //   !editTelefone.trim() ||
+    //   !editUf ||
+    //   !editCidade
+    // ) {
+    //   Swal.fire({
+    //     icon: "warning",
+    //     title: "Campos obrigatórios",
+    //     text: "Preencha todos os campos e selecione estado e cidade antes de salvar.",
+    //     confirmButtonText: "OK"
+    //   });
+    //   return;
+    // }
 
     const enderecoCompleto = `${editCidade} - ${editUf}`; // Combine city and UF
     const formData = new FormData();
@@ -349,6 +350,97 @@ const EditarUsuario: React.FC = () => {
     setIsEditing(false);
   };
 
+  // Quando abrir o modal de imagem, sincronize o preview temporário com o atual
+  useEffect(() => {
+    if (modalImagemOpen) {
+      setImagemTemp(imagem);
+      setImagemTempPreview(imagem ? (imagemPreview || null) : null);
+    }
+  }, [modalImagemOpen, imagem, imagemPreview]);
+
+  const handleSalvarImagem = async () => {
+    // Utilize a rota /upload/usuario para salvar ou remover a imagem
+    if (imagemTemp) {
+      const formData = new FormData();
+      formData.append("imagem", imagemTemp);
+      try {
+        const response = await fetch(`http://127.0.0.1:5000/upload/usuario`, {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+          body: formData,
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+          setImagem(imagemTemp);
+          setImagemPreview(imagemTempPreview);
+          // Salva o preview no localStorage para o Header pegar imediatamente
+          localStorage.setItem("usuario_atualizado", JSON.stringify({ imagemPreview: imagemTempPreview }));
+          window.dispatchEvent(new Event("atualizarImagemUsuario"));
+          Swal.fire({
+            icon: "success",
+            title: "Imagem atualizada!",
+            text: data.message || "Sua imagem foi alterada com sucesso.",
+          });
+        } else {
+          Swal.fire({
+            icon: "error",
+            title: "Erro ao atualizar imagem",
+            text: data.message || "Não foi possível atualizar a imagem.",
+          });
+        }
+      } catch (error) {
+        Swal.fire({
+          icon: "error",
+          title: "Erro de conexão",
+          text: String(error),
+        });
+      }
+    } else {
+      // Para remover a imagem, envie um POST sem o campo "imagem"
+      try {
+        const response = await fetch(`http://127.0.0.1:5000/upload/usuario`, {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+          body: new FormData(), // vazio
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+          setImagem(null);
+          setImagemPreview(null);
+          // Salva o preview padrão no localStorage para o Header pegar imediatamente
+          localStorage.setItem("usuario_atualizado", JSON.stringify({ imagemPreview: null }));
+          window.dispatchEvent(new Event("atualizarImagemUsuario"));
+          Swal.fire({
+            icon: "success",
+            title: "Imagem removida!",
+            text: data.message || "Sua imagem foi removida com sucesso.",
+          });
+        } else {
+          Swal.fire({
+            icon: "error",
+            title: "Erro ao remover imagem",
+            text: data.message || "Não foi possível remover a imagem.",
+          });
+        }
+      } catch (error) {
+        Swal.fire({
+          icon: "error",
+          title: "Erro de conexão",
+          text: String(error),
+        });
+      }
+    }
+    setModalImagemOpen(false);
+  };
+
   if (isAllowed === null) return <p>Verificando permissão...</p>;
   if (!isAllowed) return null;
 
@@ -363,9 +455,11 @@ const EditarUsuario: React.FC = () => {
           <section className="fifty-cents">
             <div className="profile-picture" style={{ position: "relative" }}>
               <img
-              src={imagemPreview || "../assets/img/user.png"}
-              alt="Sua foto de perfil!"
-              className="profile-picture-preview"
+                src={imagemPreview || "../assets/img/user.png"}
+                alt="Sua foto de perfil!"
+                className="profile-picture-preview"
+                onClick={() => setModalImagemOpen(true)}
+                style={{ cursor: "pointer" }}
               />
               <span
               className="material-icons edit-pfp"
@@ -486,6 +580,60 @@ const EditarUsuario: React.FC = () => {
               type="submit"
               className="btn btn-primary montserrat-alternates-semibold"
               disabled={!editUf || !editCidade}
+            >
+              Salvar
+            </button>
+          </div>
+        </form>
+      </Modal>
+
+      <Modal open={modalImagemOpen} onClose={() => setModalImagemOpen(false)}>
+        <form
+          onSubmit={async (e) => {
+            e.preventDefault();
+            await handleSalvarImagem();
+          }}
+        >
+          <h2 className="montserrat-alternates-semibold" style={{ marginBottom: 16 }}>Alterar Imagem</h2>
+          <div
+            {...getRootProps()}
+            style={{
+              border: "3px dashed #ccc",
+              padding: 20,
+              borderRadius: 10,
+              textAlign: "center",
+              cursor: "pointer",
+              marginBottom: 5
+            }}
+          >
+            <input {...getInputProps()} />
+            <p className="montserrat-alternates">Arraste ou clique para enviar nova imagem</p>
+            <img
+              src={imagemTempPreview || "../assets/img/user.png"}
+              alt="Preview"
+              className="edit-image-pfp"
+            />
+          </div>
+          <button
+            type="button"
+            className="montserrat-alternates"
+            onClick={handleRemoveImage}
+            style={{
+              background: "none",
+              border: "none",
+              color: "#007bff",
+              textDecoration: "underline",
+              cursor: "pointer",
+              marginBottom: 16,
+              padding: 0
+            }}
+          >
+            Remover Imagem
+          </button>
+          <div style={{ display: "flex", justifyContent: "center" }}>
+            <button
+              type="submit"
+              className="montserrat-alternates-semibold btn-big"
             >
               Salvar
             </button>

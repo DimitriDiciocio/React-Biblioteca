@@ -106,11 +106,15 @@ const Header: React.FC = () => {
                 .then((imgResponse) => {
                   if (imgResponse.ok) {
                     setImagemPreview(imagemUrl);
+                  } else {
+                    setImagemPreview(null);
                   }
                 })
                 .catch(() => {
-                  console.log("Imagem não encontrada");
+                  setImagemPreview(null);
                 });
+            } else {
+              setImagemPreview(null);
             }
           }
         } catch (error) {
@@ -124,6 +128,21 @@ const Header: React.FC = () => {
     };
 
     fetchUserData();
+
+    // Atualiza imagem ao receber evento
+    const atualizarImagem = () => {
+      // Atualiza imediatamente a imagem do header sem esperar o backend
+      const usuario = JSON.parse(localStorage.getItem("usuario_atualizado") || "null");
+      if (usuario && usuario.imagemPreview !== undefined) {
+        setImagemPreview(usuario.imagemPreview);
+      } else {
+        fetchUserData();
+      }
+    };
+    window.addEventListener("atualizarImagemUsuario", atualizarImagem);
+    return () => {
+      window.removeEventListener("atualizarImagemUsuario", atualizarImagem);
+    };
   }, [navigate, token]);
 
   useEffect(() => {
@@ -602,7 +621,7 @@ const Header: React.FC = () => {
                       className="settings-btn"
                       xmlns="http://www.w3.org/2000/svg"
                       height="24"
-                      viewBox="0 -960 960 960"
+                      viewBox="0 -960 960 512"
                       width="24"
                       fill="#e8eaed"
                     >
