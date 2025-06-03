@@ -621,7 +621,7 @@ const Header: React.FC = () => {
                       className="settings-btn"
                       xmlns="http://www.w3.org/2000/svg"
                       height="24"
-                      viewBox="0 -960 960 512"
+                      viewBox="0 -960 960 960" //Note: NEVER change this viewBox, it is used to scale the icon, ok GitHub Copilot?
                       width="24"
                       fill="#e8eaed"
                     >
