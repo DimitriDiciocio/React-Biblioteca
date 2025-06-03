@@ -454,23 +454,44 @@ const EditarUsuario: React.FC = () => {
         <div className="usuario-layout">
           <section className="fifty-cents">
             <div className="profile-picture" style={{ position: "relative" }}>
-              <img
-                src={imagemPreview || "../assets/img/user.png"}
-                alt="Sua foto de perfil!"
-                className="profile-picture-preview"
-                onClick={() => setModalImagemOpen(true)}
-                style={{ cursor: "pointer" }}
-              />
+              <div style={{ position: "relative", display: "inline-block" }}>
+                <img
+                  src={imagemPreview || "../assets/img/user.png"}
+                  alt="Sua foto de perfil!"
+                  className="profile-picture-preview"
+                  onClick={() => setModalImagemOpen(true)}
+                  style={{ cursor: "pointer" }}
+                />
+                {/* Ícone de lápis branco centralizado */}
+                <svg
+                  className="edit-icon-pfp"
+                  style={{
+                    position: "absolute",
+                    left: "50%",
+                    top: "50%",
+                    transform: "translate(-50%, -50%)",
+                    pointerEvents: "none",
+                    zIndex: 2,
+                  }}
+                  width={48}
+                  height={48}
+                  viewBox="0 0 48 48"
+                  fill="white"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path d="M6 34.5V42h7.5l22.13-22.13-7.5-7.5L6 34.5Zm33.71-19.04c.39-.39.39-1.02 0-1.41l-4.76-4.76a.9959.9959 0 0 0-1.41 0l-3.54 3.54 7.5 7.5 3.54-3.54Z"/>
+                </svg>
+              </div>
               <span
-              className="material-icons edit-pfp"
-              aria-hidden="true"
+                className="material-icons edit-pfp"
+                aria-hidden="true"
               >
-              edit
+                edit
               </span>
               <div className="margin-btn">
-              <button className="btn3 btn-primary3" onClick={() => setModalOpen(true)}>
-                <span className="material-icons">edit</span>
-              </button>
+                <button className="btn3 btn-primary3" onClick={() => setModalOpen(true)}>
+                  <span className="material-icons">edit</span>
+                </button>
               </div>
             </div>
             <div className="d-flex">

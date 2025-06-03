@@ -3970,7 +3970,7 @@ button.limpar-btn,
   background-color: var(--branco);
   border: 3px solid var(--azul-escuro);
   margin: 10px;
-  width: 100%;
+  width: 98%;
   border-radius: 20px;
   overflow-y: auto; 
   height: 400px;
@@ -4045,7 +4045,7 @@ button.limpar-btn,
   }
   .info-container {
     margin: 0 auto;
-    margin-top: 20px;
+    margin-top: -20px;
     min-width: 0;
     padding-top: 20px;
     padding-left: 0;
@@ -4055,11 +4055,8 @@ button.limpar-btn,
 
 @media (max-width: 600px) {
   .profile-picture-preview {
-    width: 120px !important;
-    height: 120px !important;
-  }
-  .info-profile-name {
-    font-size: 18px !important;
+    width: 170px !important;
+    height: 170px !important;
   }
   .info-profile {
     font-size: 14px !important;
@@ -4069,10 +4066,6 @@ button.limpar-btn,
   }
   .profile-picture {
     margin-top: -70px !important;
-  }
-  .info-container {
-    padding-top: 10px;
-    margin-top: 10px;
   }
 }
 
@@ -4257,4 +4250,12 @@ button.limpar-btn,
   border-radius: 50%;
   object-fit: cover;
   transition: filter 0.3s;
+}
+
+.edit-icon-pfp{
+  display: none;
+}
+
+.profile-picture-preview:hover ~ .edit-icon-pfp{
+  display: block;
 }
