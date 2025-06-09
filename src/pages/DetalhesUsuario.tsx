@@ -6,6 +6,7 @@ import Swal from "sweetalert2";
 import { usePermission } from "../components/usePermission.ts";
 import PuxarHistorico from "../components/PuxarHistorico";
 import Header from "../components/Header"; // <-- adicionado
+import HistoricoUsuario from "../components/HistoricoUsuario.tsx";
 
 const Modal: React.FC<{ open: boolean; onClose: () => void; children: React.ReactNode }> = ({ open, onClose, children }) => {
   if (!open) return null;
@@ -92,7 +93,6 @@ const DetalhesUsuario: React.FC = () => {
 
   async function recuperaDados() {
     try {
-      // Use a mesma rota que Usuarios.tsx usa: /user/:id
       const response = await fetch(`http://127.0.0.1:5000/user/${id}`, {
         method: "GET",
         headers: {
@@ -116,11 +116,14 @@ const DetalhesUsuario: React.FC = () => {
 
         if (data.imagem) {
           const imagemUrl = `http://127.0.0.1:5000/uploads/usuarios/${data.imagem}`;
-          setImagemPreview(imagemUrl);
-          setImagem(null);
+          const imageResponse = await fetch(imagemUrl);
+          if (imageResponse.ok) {
+            setImagemPreview(imagemUrl);
+          } else {
+            setImagemPreview("/assets/img/user.png"); // Fallback to default image
+          }
         } else {
-          setImagemPreview(null);
-          setImagem(null);
+          setImagemPreview("/assets/img/user.png"); // Fallback to default image
         }
       } else {
         Swal.fire({
@@ -339,12 +342,9 @@ const DetalhesUsuario: React.FC = () => {
       if (imagemTemp) {
         // If a new image is uploaded, send it
         formData.append("imagem", imagemTemp);
-      } else if (imagemPreview) {
-        // Convert imagemPreview to a File object and send it
-        const response = await fetch(imagemPreview);
-        const blob = await response.blob();
-        const file = new File([blob], "imagem_atual.jpg", { type: blob.type });
-        formData.append("imagem", file);
+      } else {
+        // Send an empty file to indicate image removal
+        formData.append("imagem", "");
       }
 
       const response = await fetch(`http://127.0.0.1:5000/upload/usuario/${id}`, {
@@ -358,13 +358,21 @@ const DetalhesUsuario: React.FC = () => {
       const data = await response.json();
 
       if (response.ok) {
-        setImagem(imagemTemp || null);
-        setImagemPreview(imagemTempPreview || null);
         Swal.fire({
           icon: "success",
-          title: imagemTemp || imagemPreview ? "Imagem atualizada!" : "Imagem removida!",
+          title: imagemTemp ? "Imagem atualizada!" : "Imagem removida!",
           text: data.message || "Sua imagem foi alterada com sucesso.",
         });
+
+        // Re-fetch user data to update the image
+        await recuperaDados();
+
+        // Update the preview with the new image
+        if (imagemTemp) {
+          setImagemPreview(URL.createObjectURL(imagemTemp));
+        } else {
+          setImagemPreview("/assets/img/user.png"); // Fallback to default image
+        }
       } else {
         Swal.fire({
           icon: "error",
@@ -435,7 +443,7 @@ const DetalhesUsuario: React.FC = () => {
               <div className="profile-picture" style={{ position: "relative" }}>
                 <div style={{ position: "relative", display: "inline-block" }}>
                   <img
-                    src={imagemPreview || "../assets/img/user.png"}
+                    src={imagemPreview || "/assets/img/user.png"} // Use default image if no preview
                     alt="Sua foto de perfil!"
                     className="profile-picture-preview"
                     onClick={() => setModalImagemOpen(true)}
@@ -482,7 +490,9 @@ const DetalhesUsuario: React.FC = () => {
                 </div>
               </div>
             </section>
-            <PuxarHistorico />
+            {id !== undefined && !isNaN(Number(id)) && (
+              <HistoricoUsuario userID={Number(id)} />
+            )}
           </div>
         </main>
         <Modal open={modalOpen} onClose={() => setModalOpen(false)}>

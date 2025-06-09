@@ -78,11 +78,11 @@ const HistoricoUsuario = ({ userID }: HistoricoUsuarioProps) => {
     const handleScroll = useCallback(() => {
         if (loading || isFetching) return;
 
-        const historicElement = document.getElementById("historic0");
+        const historicElement = document.querySelector(".historic"); // Fetch element by class name
         if (
             historicElement &&
-            window.innerHeight + historicElement.scrollTop
-            >= historicElement.offsetHeight - 100
+            historicElement.scrollTop + historicElement.clientHeight
+            >= historicElement.scrollHeight - 100
         ) {
             switch (activeTab) {
                 case "emprestimosAtivos":
@@ -120,8 +120,15 @@ const HistoricoUsuario = ({ userID }: HistoricoUsuarioProps) => {
     }, [loading, isFetching, activeTab, hasMoreEmpAtiv, hasMoreEmpConc, hasMoreResAtiv, hasMoreMulPend, hasMoreMulConc, hasMoreEmpPend]);
 
     useEffect(() => {
-        window.addEventListener("scroll", handleScroll);
-        return () => window.removeEventListener("scroll", handleScroll);
+        const historicElement = document.querySelector(".historic");
+        if (historicElement) {
+            historicElement.addEventListener("scroll", handleScroll);
+        }
+        return () => {
+            if (historicElement) {
+                historicElement.removeEventListener("scroll", handleScroll);
+            }
+        };
     }, [handleScroll]);
 
     const puxarHistorico = useCallback(async () => {

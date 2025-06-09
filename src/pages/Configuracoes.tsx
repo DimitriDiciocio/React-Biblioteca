@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 import { usePermission } from "../components/usePermission";
-import { formatDate } from "../services/FormatDate";
+import { formatDate, formatDateTime } from "../services/FormatDate";
 import styles from "./Configuracoes.module.css";
 
 const Configuracoes: React.FC = () => {
@@ -21,6 +21,7 @@ const Configuracoes: React.FC = () => {
     endereco: "",
     telefone: "",
     email: "",
+    apelido_email: "", // Add apelido_email field
   });
 
   const [originais, setOriginais] = useState({
@@ -35,6 +36,7 @@ const Configuracoes: React.FC = () => {
     endereco: "",
     telefone: "",
     email: "",
+    apelido_email: "", // Add apelido_email field
   });
   interface HistoricoConfiguracao {
     dias_validade_emprestimo?: number;
@@ -46,6 +48,7 @@ const Configuracoes: React.FC = () => {
     endereco?: string;
     telefone?: string;
     email?: string;
+    apelido_email?: string; // Added property for apelido_email
     data_adicionado?: string;
     [key: number]: string | number | undefined;
   }
@@ -114,23 +117,22 @@ const Configuracoes: React.FC = () => {
           endereco: config[5]?.toString() || "",
           telefone: config[6]?.toString() || "",
           email: config[7]?.toString() || "",
+          apelido_email: config[10]?.toString() || "", // Retrieve apelido_email
           limite_emprestimos: config[8]?.toString() || "",
           limite_reservas: config[9]?.toString() || "",
         });
-        setOriginais((prev) => ({
-          ...prev,
-          dias_validade_emprestimo:
-            parseInt(config.dias_validade_emprestimo || config[1]) || 0,
-          dias_validade_emprestimo_buscar:
-            parseInt(config.dias_validade_emprestimo_buscar || config[2]) || 0,
+        setOriginais({
+          dias_validade_emprestimo: parseInt(config[1]) || 0,
+          dias_validade_emprestimo_buscar: parseInt(config[2]) || 0,
           chave_pix: config[3]?.toString() || "",
           razao_social: config[4]?.toString() || "",
           endereco: config[5]?.toString() || "",
           telefone: config[6]?.toString() || "",
           email: config[7]?.toString() || "",
+          apelido_email: config[10]?.toString() || "", // Set original apelido_email
           limite_emprestimos: parseInt(config[8]) || 0,
           limite_reservas: parseInt(config[9]) || 0,
-        }));
+        });
       })
       .catch((error) => {
         console.error("Erro ao buscar configurações:", error);
@@ -160,9 +162,10 @@ const Configuracoes: React.FC = () => {
             endereco: item[5] || "",
             telefone: item[6] || "",
             email: item[7] || "",
+            apelido_email: item[10] || "", // Retrieve apelido_email
             limite_emprestimos: item[8] || "",
             limite_reservas: item[9] || "",
-            data_adicionado: item[10] || "",
+            data_adicionado: item[11] || "",
           }))
         );
       })
@@ -183,22 +186,35 @@ const Configuracoes: React.FC = () => {
 
   const formatTelefone = (value: string) => {
     const numericValue = value.replace(/\D/g, "");
-    const cursorPosition = value.length - 1;
-    if (value[cursorPosition] === "-" || value[cursorPosition] === ")") {
-      return value.slice(0, cursorPosition);
-    }
     if (numericValue.length <= 10) {
       return numericValue.replace(/(\d{2})(\d{4})(\d{0,4})/, "($1) $2-$3");
     }
     return numericValue.replace(/(\d{2})(\d{5})(\d{0,4})/, "($1) $2-$3");
   };
 
+  const handleTelefoneChange = (value: string) => {
+    setConfiguracoes((prev) => ({
+      ...prev,
+      telefone: formatTelefone(value), // Apply formatting on change
+    }));
+  };
+
+  useEffect(() => {
+    if (configuracoes.telefone) {
+      setConfiguracoes((prev) => ({
+        ...prev,
+        telefone: formatTelefone(prev.telefone), // Format existing value on load
+      }));
+    }
+  }, []);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
+    const telefoneNumerico = configuracoes.telefone.replace(/\D/g, ""); // Remove formatting
+
     // Add phone validation for Pix key and remove formatting
     const pixNumerico = configuracoes.chave_pix.replace(/\D/g, "");
-    const telefoneNumerico = configuracoes.telefone.replace(/\D/g, "");
     
     if (!validatePhoneNumber(pixNumerico)) {
       Swal.fire({
@@ -224,6 +240,7 @@ const Configuracoes: React.FC = () => {
       configuracoes.endereco !== originais.endereco ||
       configuracoes.telefone !== originais.telefone ||
       configuracoes.email !== originais.email ||
+      configuracoes.apelido_email !== originais.apelido_email || // Check apelido_email
       parseInt(configuracoes.limite_emprestimos) !== originais.limite_emprestimos ||
       parseInt(configuracoes.limite_reservas) !== originais.limite_reservas;
 
@@ -242,7 +259,8 @@ const Configuracoes: React.FC = () => {
         !configuracoes.chave_pix ||
         !configuracoes.endereco ||
         !configuracoes.telefone ||
-        !configuracoes.email)
+        !configuracoes.email ||
+        !configuracoes.apelido_email) // Validate apelido_email
     ) {
       Swal.fire({
         icon: "error",
@@ -284,8 +302,9 @@ const Configuracoes: React.FC = () => {
           chave_pix: pixNumerico,
           razao_social: configuracoes.razao_social,
           endereco: configuracoes.endereco,
-          telefone: telefoneNumerico,
+          telefone: telefoneNumerico, // Send unformatted phone number
           email: configuracoes.email,
+          apelido_email: configuracoes.apelido_email, // Send apelido_email to API
           limite_emprestimo: parseInt(configuracoes.limite_emprestimos),
           limite_reserva: parseInt(configuracoes.limite_reservas),
         }),
@@ -302,6 +321,7 @@ const Configuracoes: React.FC = () => {
         endereco: configuracoes.endereco,
         telefone: configuracoes.telefone,
         email: configuracoes.email,
+        apelido_email: configuracoes.apelido_email, // Update original apelido_email
         limite_emprestimos: parseInt(configuracoes.limite_emprestimos) || 0,
         limite_reservas: parseInt(configuracoes.limite_reservas) || 0,
       });
@@ -500,13 +520,8 @@ const Configuracoes: React.FC = () => {
             <label>Telefone</label>
             <input
               type="text"
-              value={configuracoes.telefone}
-              onChange={(e) =>
-                setConfiguracoes({
-                  ...configuracoes,
-                  telefone: formatTelefone(e.target.value),
-                })
-              }
+              value={formatTelefone(configuracoes.telefone)}
+              onChange={(e) => handleTelefoneChange(e.target.value)} // Update formatting on typing
               maxLength={15}
               className={styles.input}
               required
@@ -521,6 +536,21 @@ const Configuracoes: React.FC = () => {
                 setConfiguracoes({
                   ...configuracoes,
                   email: e.target.value,
+                })
+              }
+              className={styles.input}
+              required
+            />
+          </div>
+          <div className={styles.inputGroup}>
+            <label>Apelido do Email</label>
+            <input
+              type="text"
+              value={configuracoes.apelido_email}
+              onChange={(e) =>
+                setConfiguracoes({
+                  ...configuracoes,
+                  apelido_email: e.target.value,
                 })
               }
               className={styles.input}
@@ -546,6 +576,7 @@ const Configuracoes: React.FC = () => {
                   <th>Razão Social</th>
                   <th>Chave Pix</th>
                   <th>Email</th>
+                  <th>Apelido Email</th>
                   <th>Data Adicionado</th>
                 </tr>
               </thead>
@@ -559,8 +590,9 @@ const Configuracoes: React.FC = () => {
                     <td>{config.razao_social || "N/A"}</td>
                     <td>{config.chave_pix || "N/A"}</td>
                     <td>{config.email || "N/A"}</td>
+                    <td>{config.apelido_email || "N/A"}</td>
                     <td>
-                      {config.data_adicionado ? config.data_adicionado : "N/A"}
+                      {config.data_adicionado ? formatDateTime(config.data_adicionado) : "N/A"}
                     </td>
                   </tr>
                 ))}
