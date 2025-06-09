@@ -4266,3 +4266,16 @@ button.limpar-btn,
 .profile-picture-preview:hover ~ .edit-icon-pfp{
   display: block;
 }
+
+.info-btn{
+  border: solid 2px var(--azul-escuro);
+  border-radius: 50%;
+  width: 25px;
+  height: 25px;
+  text-align: center;
+  cursor: pointer;
+}
+
+.modal-data .owl-carousel.owl-drag .owl-item{
+  padding: 0px;
+}

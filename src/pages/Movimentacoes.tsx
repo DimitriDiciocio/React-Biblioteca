@@ -6,12 +6,73 @@ import { atenderReserva } from "../services/atenderReservaService";
 import { atenderEmprestimo } from "../services/atenderEmprestimoService";
 import { cancelarReserva } from "../services/cancelarReserva";
 import { formatDateTime } from "../services/FormatDate";
+import OwlCarousel from 'react-owl-carousel'; // npm install react-owl-carousel
+import 'owl.carousel/dist/assets/owl.carousel.css';
+import 'owl.carousel/dist/assets/owl.theme.default.css';
+
+const InfoModal: React.FC<{
+  open: boolean;
+  onClose: () => void;
+  children: React.ReactNode;
+}> = ({ open, onClose, children }) => {
+  if (!open) return null;
+  return (
+    <div
+      className="modal-data"
+      style={{
+        position: "fixed",
+        top: 0,
+        left: 0,
+        width: "100vw",
+        height: "100vh",
+        background: "rgba(0,0,0,0.3)",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        zIndex: 99999,
+      }}
+      onClick={onClose}
+    >
+      <div
+        style={{
+          background: "#fff",
+          borderRadius: 10,
+          padding: 32,
+          minWidth: 320,
+          maxWidth: 400,
+          width: "100%",
+          position: "relative",
+          zIndex: 100000,
+        }}
+        onClick={(e) => e.stopPropagation()}
+      >
+        <button
+          onClick={onClose}
+          style={{
+            position: "absolute",
+            top: 10,
+            right: 10,
+            background: "none",
+            border: "none",
+            fontSize: 22,
+            cursor: "pointer",
+          }}
+          aria-label="Fechar"
+        >
+          ×
+        </button>
+        {children}
+      </div>
+    </div>
+  );
+};
 
 type Movimentacao = {
   tipo: string;
   id: number;
   usuario: string;
   titulo: string;
+  id_livro: string; // <- adicione este campo (é uma string com ids separados por vírgula)
   data_evento: number;
   data_evento_str: string;
   status: string;
@@ -34,6 +95,8 @@ const Movimentacoes: React.FC = () => {
   const [debouncedFilters, setDebouncedFilters] = useState(filters); // Debounced filters
   const [page, setPage] = useState(1);
   const [hasMoreData, setHasMoreData] = useState(true); // Track if more data is available
+  const [infoModalOpen, setInfoModalOpen] = useState(false);
+  const [infoMovimentacao, setInfoMovimentacao] = useState<Movimentacao | null>(null);
 
   const observerRef = useRef<HTMLDivElement | null>(null);
   const debounceTimeout = useRef<NodeJS.Timeout | null>(null);
@@ -211,6 +274,25 @@ const Movimentacoes: React.FC = () => {
     );
   };
 
+  const truncate = (text: string, max: number) =>
+    text.length > max ? text.slice(0, max) + "..." : text;
+
+  const breakLines = (text: string, max: number) => {
+    let result = "";
+    for (let i = 0; i < text.length; i += max) {
+      result += text.slice(i, i + max) + (i + max < text.length ? "\n" : "");
+    }
+    return result;
+  };
+
+  // Função para obter a URL da capa do livro, igual ao padrão usado na Home e MostrarLivros
+  const getCapaUrl = (titulo: string, id?: number) => {
+    // Usa o id da movimentação para buscar a imagem
+    // Se id não for passado, retorna imagem padrão
+    if (!infoMovimentacao?.id) return "/assets/img/book-default.png";
+    return `http://127.0.0.1:5000/uploads/livros/${infoMovimentacao.id}.jpeg`;
+  };
+
   return (
     <div className={styles.container}>
       <i
@@ -257,20 +339,34 @@ const Movimentacoes: React.FC = () => {
             <tr>
               <th>Livro</th>
               <th>Usuário</th>
-              <th>Tipo de Movimentação</th>
-              <th>Data Criação</th>
-              <th>Data Devolver</th>
-              <th>Data Devolvida</th>
-              <th>Data Retirada</th>
-              <th>Data Validade</th>
+              <th>Tipo</th>
               <th>Status</th>
               <th>Ações</th>
+              <th></th>
             </tr>
           </thead>
           <tbody>
             {filteredData?.map((m) => (
               <tr key={`${m.tipo}-${m.id}`}>
-                <td>{m.titulo}</td>
+                <td>
+                  <ul style={{ margin: 0, paddingLeft: 18 }}>
+                    {/* Garante que cada livro fique em uma linha diferente */}
+                    {(Array.isArray(m.titulo) ? m.titulo : String(m.titulo).split(","))
+                      .map((tituloLivro: string, idx: number) => (
+                        <li
+                          key={idx}
+                          style={{
+                            listStyleType: "disc",
+                            wordBreak: "break-word",
+                            whiteSpace: "normal",
+                            fontFamily: "inherit"
+                          }}
+                        >
+                          {truncate(tituloLivro.trim(), 80)}
+                        </li>
+                      ))}
+                  </ul>
+                </td>
                 <td>{m.usuario}</td>
                 <td>
                   <span
@@ -286,11 +382,7 @@ const Movimentacoes: React.FC = () => {
                   >
                     {getDescriptiveTipo(m.tipo, m.status)}
                   </span>
-                </td>                <td>{formatDateTime(m.data_criacao ? new Date(m.data_criacao).toISOString() : null)}</td>
-                <td>{formatDateTime(m.data_devolver ? new Date(m.data_devolver).toISOString() : null)}</td>
-                <td>{formatDateTime(m.data_devolvida ? new Date(m.data_devolvida).toISOString() : null)}</td>
-                <td>{formatDateTime(m.data_retirada ? new Date(m.data_retirada).toISOString() : null)}</td>
-                <td>{formatDateTime(m.data_validade ? new Date(m.data_validade).toISOString() : null)}</td>
+                </td>
                 <td>
                   <span
                     className={`${styles.tag} ${getStatusClass(
@@ -369,12 +461,153 @@ const Movimentacoes: React.FC = () => {
                     </button>
                   )}
                 </td>
+                <td>
+                  <div
+                    className="info-btn"
+                    onClick={() => {
+                      setInfoMovimentacao(m);
+                      setInfoModalOpen(true);
+                    }}
+                  >
+                    i
+                  </div>
+                </td>
               </tr>
             ))}
           </tbody>
         </table>
         <div ref={observerRef} className={styles.observer}></div>
       </section>
+      <InfoModal
+        open={infoModalOpen}
+        onClose={() => setInfoModalOpen(false)}
+      >
+        <h2 style={{ marginBottom: 16 }}>Informações da Movimentação</h2>
+        {infoMovimentacao && (
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              gap: 10,
+            }}
+          >
+            {/* Carrossel de capas */}
+            <div style={{ marginBottom: 16 }}>
+              {(() => {
+                const titulos = Array.isArray(infoMovimentacao.titulo)
+                  ? infoMovimentacao.titulo
+                  : String(infoMovimentacao.titulo).split(",");
+                const ids = Array.isArray(infoMovimentacao.id_livro)
+                  ? infoMovimentacao.id_livro
+                  : String(infoMovimentacao.id_livro || "").split(",");
+                // Debug: log ids brutos e separados
+                console.log("id_livro bruto:", infoMovimentacao.id_livro);
+                console.log("ids separados:", ids);
+
+                if (titulos.length === 1) {
+                  // Apenas um livro, não usa OwlCarousel
+                  const idLivro = (ids[0] || "").trim();
+                  return (
+                    <div style={{ display: "flex", justifyContent: "center" }}>
+                      <img
+                        src={`http://127.0.0.1:5000/uploads/livros/${idLivro}.jpeg`}
+                        alt={`Capa do livro`}
+                        style={{
+                          width: "150px",
+                          height: "220px",
+                          objectFit: "cover",
+                          borderRadius: 8,
+                          boxShadow: "0 2px 8px rgba(0,0,0,0.15)"
+                        }}
+                        onError={e => {
+                          (e.target as HTMLImageElement).src = "/assets/img/book-default.png";
+                        }}
+                      />
+                    </div>
+                  );
+                }
+
+                // Mais de um livro, usa OwlCarousel com loop
+                return (
+                  <OwlCarousel
+                    className="owl-theme"
+                    items={1}
+                    loop
+                    margin={10}
+                    nav
+                    dots
+                    autoplayTimeout={3000}
+                    style={{ width: "100%", maxWidth: 250, margin: "0 auto" }}
+                  >
+                    {titulos.map((tituloLivro: string, idx: number) => {
+                      const idLivro = (ids[idx] || "").trim();
+                      console.log(`Livro ${idx}:`, { titulo: tituloLivro, idLivro });
+                      return (
+                        <div key={idx} style={{ display: "flex", justifyContent: "center" }}>
+                          <img
+                            src={`http://127.0.0.1:5000/uploads/livros/${idLivro}.jpeg`}
+                            alt={`Capa do livro`}
+                            style={{
+                              width: "150px",
+                              height: "220px",
+                              objectFit: "cover",
+                              borderRadius: 8,
+                              boxShadow: "0 2px 8px rgba(0,0,0,0.15)"
+                            }}
+                            onError={e => {
+                              (e.target as HTMLImageElement).src = "/assets/img/book-default.png";
+                            }}
+                          />
+                        </div>
+                      );
+                    })}
+                  </OwlCarousel>
+                );
+              })()}
+            </div>
+            <div style={{ fontFamily: "Montserrat Alternates, Montserrat, Arial, sans-serif" }}>
+              <strong>Data de Criação:</strong>{" "}
+              {formatDateTime(
+              infoMovimentacao.data_criacao
+                ? new Date(infoMovimentacao.data_criacao).toISOString()
+                : null
+              ) || "-"}
+            </div>
+            <div style={{ fontFamily: "Montserrat Alternates, Montserrat, Arial, sans-serif" }}>
+              <strong>Data de Retirada:</strong>{" "}
+              {formatDateTime(
+              infoMovimentacao.data_retirada
+                ? new Date(infoMovimentacao.data_retirada).toISOString()
+                : null
+              ) || "-"}
+            </div>
+            <div style={{ fontFamily: "Montserrat Alternates, Montserrat, Arial, sans-serif" }}>
+              <strong>Data para Devolver:</strong>{" "}
+              {formatDateTime(
+              infoMovimentacao.data_devolver
+                ? new Date(infoMovimentacao.data_devolver).toISOString()
+                : null
+              ) || "-"}
+            </div>
+            <div style={{ fontFamily: "Montserrat Alternates, Montserrat, Arial, sans-serif" }}>
+              <strong>Data de Validade:</strong>{" "}
+              {formatDateTime(
+              infoMovimentacao.data_validade
+                ? new Date(infoMovimentacao.data_validade).toISOString()
+                : null
+              ) || "-"}
+            </div>
+            <div style={{ fontFamily: "Montserrat Alternates, Montserrat, Arial, sans-serif" }}>
+              <strong>Data Devolvida:</strong>{" "}
+              {formatDateTime(
+              infoMovimentacao.data_devolvida
+                ? new Date(infoMovimentacao.data_devolvida).toISOString()
+                : null
+              ) || "-"}
+            </div>
+          </div>
+        )}
+      </InfoModal>
     </div>
   );
 };
