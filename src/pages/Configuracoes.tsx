@@ -566,38 +566,41 @@ const Configuracoes: React.FC = () => {
         <div className={styles.historico}>
           <h3 className={styles.subtitle}>Histórico de Configurações</h3>
           {historicoConfiguracoes && historicoConfiguracoes.length > 0 ? (
-            <table className={styles.table}>
-              <thead>
-                <tr>
-                  <th>Dias Empréstimo</th>
-                  <th>Dias Buscar</th>
-                  <th>Limite Empréstimos</th>
-                  <th>Limite Reservas</th>
-                  <th>Razão Social</th>
-                  <th>Chave Pix</th>
-                  <th>Email</th>
-                  <th>Apelido Email</th>
-                  <th>Data Adicionado</th>
-                </tr>
-              </thead>
-              <tbody>
-                {historicoConfiguracoes.map((config, index) => (
-                  <tr key={index}>
-                    <td>{config.dias_validade_emprestimo || "N/A"}</td>
-                    <td>{config.dias_validade_emprestimo_buscar || "N/A"}</td>
-                    <td>{config.limite_emprestimos || "N/A"}</td>
-                    <td>{config.limite_reservas || "N/A"}</td>
-                    <td>{config.razao_social || "N/A"}</td>
-                    <td>{config.chave_pix || "N/A"}</td>
-                    <td>{config.email || "N/A"}</td>
-                    <td>{config.apelido_email || "N/A"}</td>
-                    <td>
-                      {config.data_adicionado ? formatDateTime(config.data_adicionado) : "N/A"}
-                    </td>
+            <section className={styles["table-container"]}>
+              <table className={styles.table}>
+                <thead>
+                  <tr>
+                    <th>Dias Empréstimo</th>
+                    <th>Dias Buscar</th>
+                    <th>Limite Empréstimos</th>
+                    <th>Limite Reservas</th>
+                    <th>Razão Social</th>
+                    <th>Chave Pix</th>
+                    <th>Email</th>
+                    <th>Apelido Email</th>
+                    <th>Data Adicionado</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody>
+                  {historicoConfiguracoes.map((config, index) => (
+                    <tr key={index}>
+                      <td>{config.dias_validade_emprestimo || "N/A"}</td>
+                      <td>{config.dias_validade_emprestimo_buscar || "N/A"}</td>
+                      <td>{config.limite_emprestimos || "N/A"}</td>
+                      <td>{config.limite_reservas || "N/A"}</td>
+                      <td>{config.razao_social || "N/A"}</td>
+                      <td>{config.chave_pix || "N/A"}</td>
+                      <td>{config.email || "N/A"}</td>
+                      <td>{config.apelido_email || "N/A"}</td>
+                      <td>
+                        {config.data_adicionado ? formatDateTime(config.data_adicionado) : "N/A"}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+              <div className={styles.observer}></div>
+            </section>
           ) : (
             <p className={styles.noData}>Nenhum histórico encontrado.</p>
           )}
