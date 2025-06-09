@@ -455,8 +455,16 @@ const BookDetail = () => {
           if (!prevBook) return prevBook;
           const novaQtdAvaliacoes = prevBook.qtd_avaliacoes - 1;
           const novaMedia = novaQtdAvaliacoes > 0
-            ? (prevBook.avaliacao * prevBook.qtd_avaliacoes - userRating!) / novaQtdAvaliacoes
-            : 0;
+            ? Math.min(
+              parseFloat(
+                (
+                  (prevBook.avaliacao * prevBook.qtd_avaliacoes - userRating!) /
+                  novaQtdAvaliacoes
+                ).toFixed(2)
+              ),
+              5
+            )
+          : 0;
           return {
             ...prevBook,
             qtd_avaliacoes: novaQtdAvaliacoes,
@@ -495,8 +503,17 @@ const BookDetail = () => {
         setBook((prevBook) => {
           if (!prevBook) return prevBook;
           const novaQtdAvaliacoes = prevBook.qtd_avaliacoes + (userRating ? 0 : 1);
-          const novaMedia =
-            (prevBook.avaliacao * prevBook.qtd_avaliacoes + newRating - (userRating || 0)) / novaQtdAvaliacoes;
+          const novaMedia = Math.min(
+            parseFloat(
+            (
+              (prevBook.avaliacao * prevBook.qtd_avaliacoes +
+                newRating -
+                (userRating || 0)) /
+              novaQtdAvaliacoes
+            ).toFixed(2)
+          ),
+          5
+        );
           return {
             ...prevBook,
             qtd_avaliacoes: novaQtdAvaliacoes,

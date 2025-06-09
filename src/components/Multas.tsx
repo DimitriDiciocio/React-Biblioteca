@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useState, useCallback, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 import { pagarMulta } from "../services/multaService";
@@ -25,17 +25,31 @@ const Multas: React.FC<Props> = ({ isVisible }) => {
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
+  const [filters, setFilters] = useState({ usuario: "" });
+  const [debouncedFilters, setDebouncedFilters] = useState(filters); // Debounced filters
+  const debounceTimeout = useRef<NodeJS.Timeout | null>(null);
   const token = localStorage.getItem("token");
   const navigate = useNavigate();
 
   const fetchMultas = useCallback(async () => {
     if (!isVisible) return;
     try {
-      const response = await fetch(`http://localhost:5000/multas/${page}`, {
-        method: "GET",
+      const endpoint =
+        debouncedFilters.usuario
+          ? `http://localhost:5000/multas/${page}/pesquisa`
+          : `http://localhost:5000/multas/${page}`;
+      const method = debouncedFilters.usuario ? "POST" : "GET";
+
+      const response = await fetch(endpoint, {
+        method,
         headers: {
           Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
         },
+        body:
+          method === "POST"
+            ? JSON.stringify({ pesquisa: debouncedFilters.usuario }) // Updated to match API
+            : null,
       });
 
       const data = await response.json();
@@ -55,7 +69,7 @@ const Multas: React.FC<Props> = ({ isVisible }) => {
     } finally {
       setLoading(false);
     }
-  }, [page, token, isVisible]);
+  }, [page, token, isVisible, debouncedFilters]);
 
   const handleScroll = useCallback(() => {
     if (loading || !hasMore) return;
@@ -67,6 +81,27 @@ const Multas: React.FC<Props> = ({ isVisible }) => {
       }
     }
   }, [loading, hasMore]);
+
+  const handleFilterChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setFilters((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+
+    if (debounceTimeout.current) {
+      clearTimeout(debounceTimeout.current);
+    }
+
+    debounceTimeout.current = setTimeout(() => {
+      setDebouncedFilters((prev) => ({
+        ...prev,
+        [name]: value,
+      }));
+      setPage(1);
+      setHasMore(true);
+    }, 300); // Debounce delay
+  };
 
   useEffect(() => {
     if (isVisible) {
@@ -117,6 +152,16 @@ const Multas: React.FC<Props> = ({ isVisible }) => {
       <div className={styles.header}>
         <h1 className={styles.title}>Lista de Multas</h1>
       </div>
+      <section className={styles.filters}>
+        <input
+          type="text"
+          name="usuario"
+          placeholder="Pesquisar por usuário"
+          className={styles.input}
+          value={filters.usuario}
+          onChange={handleFilterChange}
+        />
+      </section>
       <section className={styles["table-container"]}>
         {loading ? (
           <p className="multas-loading montserrat-alternates">Carregando...</p>
