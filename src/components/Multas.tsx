@@ -162,7 +162,6 @@ const Multas: React.FC<Props> = ({ isVisible }) => {
                             key={idx}
                             style={{
                               listStyleType: "disc",
-                              wordBreak: "break-word",
                               whiteSpace: "normal",
                               fontFamily: "inherit",
                             }}

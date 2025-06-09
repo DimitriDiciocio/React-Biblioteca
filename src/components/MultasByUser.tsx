@@ -1,4 +1,6 @@
 import React, { useEffect, useState } from "react";
+import styles from "../pages/Movimentacoes.module.css";
+import { useNavigate } from "react-router-dom";
 
 interface Multa {
     id_multa: number;
@@ -12,10 +14,11 @@ interface Multa {
     titulos: string;
 }
 
-const MultasByUser:React.FC = () => {
+const MultasByUser: React.FC = () => {
     const [multas, setMultas] = useState<Multa[]>([]);
     const [loading, setLoading] = useState(true);
-    const token = localStorage.getItem("token")
+    const token = localStorage.getItem("token");
+    const navigate = useNavigate();
 
     useEffect(() => {
         fetch(`http://localhost:5000/usuarios/multas`, {
@@ -40,42 +43,77 @@ const MultasByUser:React.FC = () => {
             });
     }, []);
 
-    return(
-        <div className="p-4">
-            <h1 className="text-xl font-bold mb-4 montserrat-alternates-semibold">Lista de Multas</h1>
-            {loading ? (
-                <p className="montserrat-alternates">Carregando...</p>
-            ) : multas.length === 0 ? (
-                <p className="montserrat-alternates-semibold">Nenhuma multa encontrada.</p>
-            ) : (
-                <div className="overflow-auto max-w-full">
-                <table className="w-full table-auto border border-gray-300 min-w-[600px]">
-                  <thead className="bg-gray-100">
-                    <tr>
-                      <th className="border px-4 py-2 montserrat-alternates-semibold">Nome</th>
-                      <th className="border px-4 py-2 montserrat-alternates-semibold">Email</th>
-                      <th className="border px-4 py-2 montserrat-alternates-semibold">Valor Base</th>
-                      <th className="border px-4 py-2 montserrat-alternates-semibold">Acréscimo</th>
-                      <th className="border px-4 py-2 montserrat-alternates-semibold">Pago</th>
-                      <th className="border px-4 py-2 montserrat-alternates-semibold">Títulos</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {multas.map((multa) => (
-                      <tr key={multa.id_multa}>
-                        <td className="border px-4 py-2 montserrat-alternates">{multa.nome}</td>
-                        <td className="border px-4 py-2 montserrat-alternates">{multa.email}</td>
-                        <td className="border px-4 py-2 montserrat-alternates">R$ {multa.valor_base}</td>
-                        <td className="border px-4 py-2 montserrat-alternates">R$ {multa.valor_acrescimo}</td>
-                        <td className="border px-4 py-2 montserrat-alternates">{multa.pago ? "Sim" : "Não"}</td>
-                        <td className="border px-4 py-2 montserrat-alternates">{multa.titulos}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            )}
+    return (
+        <div className={styles.container}>
+            <i
+                className="fa-solid fa-arrow-left arrow-back"
+                onClick={() => navigate("/home_biblio?page=1")}
+            ></i>
+            <div className="space-sm"></div>
+            <div className={styles.header}>
+                <h1 className={styles.title}>Lista de Multas</h1>
+            </div>
+            <section className={styles["table-container"]}>
+                {loading ? (
+                    <p className="multas-loading montserrat-alternates">Carregando...</p>
+                ) : multas.length === 0 ? (
+                    <p className="multas-empty montserrat-alternates">
+                        Nenhuma multa encontrada.
+                    </p>
+                ) : (
+                    <table className={styles.table}>
+                        <thead>
+                            <tr>
+                                <th>Nome</th>
+                                <th>Email</th>
+                                <th>Valor Base</th>
+                                <th>Acréscimo</th>
+                                <th>Pago</th>
+                                <th>Títulos</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {multas.map((multa) => (
+                                <tr key={multa.id_multa}>
+                                    <td>{multa.nome}</td>
+                                    <td>{multa.email}</td>
+                                    <td>R$ {multa.valor_base}</td>
+                                    <td>R$ {multa.valor_acrescimo}</td>
+                                    <td>
+                                        <span
+                                            className={`${styles.tag} ${
+                                                multa.pago ? styles.devolvido : styles.pendente
+                                            }`}
+                                        >
+                                            {multa.pago ? "Sim" : "Não"}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <ul style={{ margin: 0, paddingLeft: 18 }}>
+                                            {String(multa.titulos)
+                                                .split(",")
+                                                .map((titulo, idx) => (
+                                                    <li
+                                                        key={idx}
+                                                        style={{
+                                                            listStyleType: "disc",
+                                                            whiteSpace: "normal",
+                                                            fontFamily: "inherit",
+                                                        }}
+                                                    >
+                                                        {titulo.trim()}
+                                                    </li>
+                                                ))}
+                                        </ul>
+                                    </td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                )}
+            </section>
         </div>
     );
 };
-export default MultasByUser
+
+export default MultasByUser;

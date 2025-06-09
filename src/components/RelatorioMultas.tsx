@@ -1,4 +1,5 @@
 import React, { useEffect, useState, useCallback } from "react";
+import styles from "../pages/Movimentacoes.module.css";
 import { formatDate } from "../services/FormatDate";
 
 interface Props {
@@ -225,10 +226,7 @@ export default function RelatorioMultas({ isVisible }: Props) {
   }, [abaAtiva, isVisible, pageGeral, pagePendentes]);
 
   return (
-    <div
-      className="montserrat-alternates"
-      style={{ padding: "24px", maxWidth: "1000px", margin: "0 auto" }}
-    >
+    <div className={styles.container}>
       <div
         style={{
           display: "flex",
@@ -239,21 +237,20 @@ export default function RelatorioMultas({ isVisible }: Props) {
         }}
         className="relatorio-title montserrat-alternates"
       >
-        <h1 style={{ fontSize: "16px", fontWeight: "bold" }}>
-          Relatório de Multas
-        </h1>
+        <h1 className={styles.title}>Relatório de Multas</h1>
         <div style={{ display: "flex", gap: "10px" }}>
           <button
             className="montserrat-alternates"
             onClick={gerarPDF}
             disabled={loading}
             style={{
-              padding: "8px 3px",
+              padding: "8px 16px",
               backgroundColor: "#2473D9",
               color: "white",
               border: "none",
               borderRadius: "4px",
               cursor: "pointer",
+              fontWeight: 600,
             }}
           >
             <span>Gerar PDF</span>
@@ -265,12 +262,13 @@ export default function RelatorioMultas({ isVisible }: Props) {
             disabled={loading}
             className="montserrat-alternates"
             style={{
-              padding: "8px 3px",
+              padding: "8px 16px",
               backgroundColor: "#2473D9",
               color: "white",
               border: "none",
               borderRadius: "4px",
               cursor: "pointer",
+              fontWeight: 600,
             }}
           >
             {loading ? "Atualizando..." : "Atualizar"}
@@ -279,7 +277,6 @@ export default function RelatorioMultas({ isVisible }: Props) {
       </div>
 
       <div
-        className="montserrat-alternates"
         style={{
           display: "flex",
           justifyContent: "center",
@@ -289,6 +286,7 @@ export default function RelatorioMultas({ isVisible }: Props) {
       >
         <button
           onClick={() => setAbaAtiva("geral")}
+          className="montserrat-alternates"
           style={{
             padding: "8px 16px",
             backgroundColor: abaAtiva === "geral" ? "#2473D9" : "#ccc",
@@ -296,12 +294,14 @@ export default function RelatorioMultas({ isVisible }: Props) {
             border: "none",
             borderRadius: "4px",
             cursor: "pointer",
+            fontWeight: 600,
           }}
         >
           Geral
         </button>
         <button
           onClick={() => setAbaAtiva("pendentes")}
+          className="montserrat-alternates"
           style={{
             padding: "8px 16px",
             backgroundColor: abaAtiva === "pendentes" ? "#2473D9" : "#ccc",
@@ -309,247 +309,69 @@ export default function RelatorioMultas({ isVisible }: Props) {
             border: "none",
             borderRadius: "4px",
             cursor: "pointer",
+            fontWeight: 600,
           }}
         >
           Pendentes
         </button>
       </div>
 
-      {abaAtiva === "geral" && (
-        <div
-          style={{
-            overflowX: "auto",
-            border: "1px solid #ddd",
-            borderRadius: "8px",
-            marginBottom: "24px",
-          }}
-        >
-          <table style={{ width: "100%", borderCollapse: "collapse" }}>
-            <thead>
-              <tr style={{ backgroundColor: "#f0f0f0" }}>
-                <th
-                  className="montserrat-alternates"
-                  style={{ textAlign: "left", padding: "12px" }}
-                >
-                  Email
-                </th>
-                <th
-                  className="montserrat-alternates"
-                  style={{ textAlign: "left", padding: "12px" }}
-                >
-                  Telefone
-                </th>
-                <th
-                  className="montserrat-alternates"
-                  style={{ textAlign: "left", padding: "12px" }}
-                >
-                  Nome
-                </th>
-                <th
-                  className="montserrat-alternates"
-                  style={{ textAlign: "left", padding: "12px" }}
-                >
-                  ID Empréstimo
-                </th>
-                <th
-                  className="montserrat-alternates"
-                  style={{ textAlign: "left", padding: "12px" }}
-                >
-                  Data Devolver
-                </th>
-                <th
-                  className="montserrat-alternates"
-                  style={{ textAlign: "left", padding: "12px" }}
-                >
-                  Pago
-                </th>
+      <section className={styles["table-container"]}>
+        <table className={styles.table}>
+          <thead>
+            <tr>
+              <th>Email</th>
+              <th>Telefone</th>
+              <th>Nome</th>
+              <th>ID Empréstimo</th>
+              <th>Data Devolver</th>
+              <th>Pago</th>
+            </tr>
+          </thead>
+          <tbody>
+            {(abaAtiva === "geral" ? multas : multasPendentes).length === 0 ? (
+              <tr>
+                <td colSpan={6} style={{ textAlign: "center", padding: 32 }}>
+                  {loading
+                    ? "Carregando..."
+                    : abaAtiva === "geral"
+                    ? "Nenhuma multa encontrada."
+                    : "Nenhuma multa pendente encontrada."}
+                </td>
               </tr>
-            </thead>
-            <tbody>
-              {multas.length === 0 ? (
-                <tr>
-                  <td
-                    colSpan={6}
-                    className="montserrat-alternates"
-                    style={{ textAlign: "center", padding: "20px" }}
-                  >
-                    {loading ? "Carregando..." : "Nenhuma multa encontrada."}
+            ) : (
+              (abaAtiva === "geral" ? multas : multasPendentes).map((multa, index) => (
+                <tr
+                  key={`${multa.id_emprestimo}-${index}`}
+                  style={{
+                    background: "#fff",
+                    borderBottom: "1px solid #e0e0e0",
+                  }}
+                >
+                  <td>{multa.email}</td>
+                  <td>{multa.telefone}</td>
+                  <td>{multa.nome}</td>
+                  <td>{multa.id_emprestimo}</td>
+                  <td>
+                    {multa.data_devolver
+                      ? formatDate(multa.data_devolver)
+                      : "N/A"}
                   </td>
-                </tr>
-              ) : (
-                multas.map((multa, index) => (
-                  <tr
-                    key={`${multa.id_emprestimo}-${index}`}
-                    style={{
-                      borderBottom: "1px solid #ddd",
-                      backgroundColor: index % 2 === 0 ? "#ffffff" : "#f8f9fa",
-                    }}
-                  >
-                    <td
-                      className="montserrat-alternates"
-                      style={{ padding: "10px" }}
-                    >
-                      {multa.email}
-                    </td>
-                    <td
-                      className="montserrat-alternates"
-                      style={{ padding: "10px" }}
-                    >
-                      {multa.telefone}
-                    </td>
-                    <td
-                      className="montserrat-alternates"
-                      style={{ padding: "10px" }}
-                    >
-                      {multa.nome}
-                    </td>
-                    <td
-                      className="montserrat-alternates"
-                      style={{ padding: "10px" }}
-                    >
-                      {multa.id_emprestimo}
-                    </td>
-                    <td
-                      className="montserrat-alternates"
-                      style={{ padding: "10px" }}
-                    >
-                      {multa.data_devolver
-                        ? formatDate(multa.data_devolver)
-                        : "N/A"}
-                    </td>
-                    <td
-                      className="montserrat-alternates"
-                      style={{ padding: "10px" }}
+                  <td>
+                    <span
+                      className={`${styles.tag} ${
+                        multa.pago ? styles.devolvido : styles.pendente
+                      }`}
                     >
                       {multa.pago ? "Sim" : "Não"}
-                    </td>
-                  </tr>
-                ))
-              )}
-            </tbody>{" "}
-          </table>
-          {/* Removido o texto 'Carregando mais multas...' e 'Carregando mais multas pendentes...' */}
-        </div>
-      )}
-
-      {abaAtiva === "pendentes" && (
-        <div
-          style={{
-            overflowX: "auto",
-            border: "1px solid #ddd",
-            borderRadius: "8px",
-            marginBottom: "24px",
-          }}
-        >
-          <table style={{ width: "100%", borderCollapse: "collapse" }}>
-            <thead>
-              <tr style={{ backgroundColor: "#f0f0f0" }}>
-                <th
-                  className="montserrat-alternates"
-                  style={{ textAlign: "left", padding: "12px" }}
-                >
-                  Email
-                </th>
-                <th
-                  className="montserrat-alternates"
-                  style={{ textAlign: "left", padding: "12px" }}
-                >
-                  Telefone
-                </th>
-                <th
-                  className="montserrat-alternates"
-                  style={{ textAlign: "left", padding: "12px" }}
-                >
-                  Nome
-                </th>
-                <th
-                  className="montserrat-alternates"
-                  style={{ textAlign: "left", padding: "12px" }}
-                >
-                  ID Empréstimo
-                </th>
-                <th
-                  className="montserrat-alternates"
-                  style={{ textAlign: "left", padding: "12px" }}
-                >
-                  Data Devolver
-                </th>
-                <th
-                  className="montserrat-alternates"
-                  style={{ textAlign: "left", padding: "12px" }}
-                >
-                  Pago
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              {multasPendentes.length === 0 ? (
-                <tr>
-                  <td
-                    colSpan={6}
-                    className="montserrat-alternates"
-                    style={{ textAlign: "center", padding: "20px" }}
-                  >
-                    {loading
-                      ? "Carregando..."
-                      : "Nenhuma multa pendente encontrada."}
+                    </span>
                   </td>
                 </tr>
-              ) : (
-                multasPendentes.map((multa, index) => (
-                  <tr
-                    key={`${multa.id_emprestimo}-${index}`}
-                    style={{
-                      borderBottom: "1px solid #ddd",
-                      backgroundColor: index % 2 === 0 ? "#ffffff" : "#f8f9fa",
-                    }}
-                  >
-                    <td
-                      className="montserrat-alternates"
-                      style={{ padding: "10px" }}
-                    >
-                      {multa.email}
-                    </td>
-                    <td
-                      className="montserrat-alternates"
-                      style={{ padding: "10px" }}
-                    >
-                      {multa.telefone}
-                    </td>
-                    <td
-                      className="montserrat-alternates"
-                      style={{ padding: "10px" }}
-                    >
-                      {multa.nome}
-                    </td>
-                    <td
-                      className="montserrat-alternates"
-                      style={{ padding: "10px" }}
-                    >
-                      {multa.id_emprestimo}
-                    </td>
-                    <td
-                      className="montserrat-alternates"
-                      style={{ padding: "10px" }}
-                    >
-                      {multa.data_devolver
-                        ? formatDate(multa.data_devolver)
-                        : "N/A"}
-                    </td>
-                    <td
-                      className="montserrat-alternates"
-                      style={{ padding: "10px" }}
-                    >
-                      {multa.pago ? "Sim" : "Não"}
-                    </td>
-                  </tr>
-                ))
-              )}
-            </tbody>
-          </table>
-          {/* Aqui estava o texto removido */}
-        </div>
-      )}
+              ))
+            )}
+          </tbody>
+        </table>
+      </section>
     </div>
   );
 }

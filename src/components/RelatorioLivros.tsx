@@ -1,4 +1,5 @@
 import React, { useEffect, useState, useCallback } from "react";
+import styles from "../pages/Movimentacoes.module.css";
 import { useNavigate } from "react-router-dom";
 import {
   BarChart,
@@ -29,81 +30,16 @@ interface Book {
   isbn: string;
   qtd_disponivel: string;
   qtd_emprestada: string;
-  qtd_total: string; // Nova propriedade adicionada
+  qtd_total: string;
   descricao: string;
   selectedTags: Tag[];
   ano_publicado: string;
   imagem: string;
   avaliacao: number;
   idiomas: string;
-  usuarios: string; // This will be a comma-separated string of usernames
-  id_usuarios: string; // This will be a comma-separated string of user IDs
+  usuarios: string;
+  id_usuarios: string;
 }
-
-const LivroItem = ({
-  livro,
-  index,
-  abaAtiva,
-}: {
-  livro: Book;
-  index: number;
-  abaAtiva: string;
-}) => {
-  const [expanded, setExpanded] = useState(false);
-  const navigate = useNavigate();
-
-  // Parse users and their IDs
-  const usuariosNomes = livro.usuarios?.split(",").filter(Boolean) || [];
-  const usuariosIds = livro.id_usuarios?.split(",").filter(Boolean) || [];
-
-  // Create array of user objects
-  const usuariosList = usuariosNomes.map((nome, idx) => ({
-    nome: nome.trim(),
-    id: parseInt(usuariosIds[idx]),
-  }));
-
-  return (
-    <div
-      className="livro-item"
-      style={{ backgroundColor: index % 2 === 0 ? "#ffffff" : "#f8f9fa" }}
-    >
-      <div
-        className="livro-header"
-        onClick={() => abaAtiva === "faltando" && setExpanded(!expanded)}
-      >
-        <span className="montserrat-alternates">{livro.titulo}</span>
-        <span className="montserrat-alternates">{livro.autor}</span>
-        <span className="montserrat-alternates">{livro.categoria}</span>
-        <span className="montserrat-alternates">{livro.qtd_emprestada}</span>
-        <span className="montserrat-alternates">{livro.qtd_total}</span>
-        <span className="montserrat-alternates">{livro.ano_publicado}</span>
-        {abaAtiva === "faltando" && usuariosList.length > 0 && (
-          <i
-            className={`fas fa-chevron-down expand-icon ${
-              expanded ? "rotated" : ""
-            }`}
-          />
-        )}
-      </div>
-      {abaAtiva === "faltando" && usuariosList.length > 0 && (
-        <div className={`livro-usuarios ${expanded ? "expanded" : ""}`}>
-          <div className="usuarios-list">
-            {usuariosList.map((usuario, idx) => (
-              <div
-                key={idx}
-                className="usuario-item montserrat-alternates"
-                onClick={() => navigate(`/usuarios/${usuario.id}`)}
-                style={{ cursor: "pointer" }}
-              >
-                {usuario.nome}
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
-    </div>
-  );
-};
 
 export default function RelatorioLivros({ isVisible }: Props) {
   const [livros, setLivros] = useState<Book[]>([]);
@@ -111,6 +47,7 @@ export default function RelatorioLivros({ isVisible }: Props) {
   const [abaAtiva, setAbaAtiva] = useState<"geral" | "faltando">("geral");
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
+  const navigate = useNavigate();
 
   const buscarLivros = useCallback(async () => {
     if (!hasMore || loading) return;
@@ -230,7 +167,7 @@ export default function RelatorioLivros({ isVisible }: Props) {
   };
 
   return (
-    <div style={{ padding: "24px", maxWidth: "1000px", margin: "0 auto" }}>
+    <div className={styles.container}>
       <div
         style={{
           display: "flex",
@@ -241,7 +178,12 @@ export default function RelatorioLivros({ isVisible }: Props) {
         }}
         className="relatorio-title montserrat-alternates"
       >
-        <h1 style={{ fontSize: "16px", fontWeight: "bold" }}>
+        <h1
+          className={styles.title}
+          style={{
+            margin: 0,
+          }}
+        >
           {abaAtiva === "geral"
             ? "Relatório de Livros"
             : "Relatório de Livros Faltando"}
@@ -252,12 +194,13 @@ export default function RelatorioLivros({ isVisible }: Props) {
             disabled={loading}
             className="montserrat-alternates"
             style={{
-              padding: "8px 5px",
+              padding: "8px 16px",
               backgroundColor: "#2473D9",
               color: "white",
               border: "none",
               borderRadius: "4px",
               cursor: "pointer",
+              fontWeight: 600,
             }}
           >
             <span>Gerar PDF</span>
@@ -267,12 +210,13 @@ export default function RelatorioLivros({ isVisible }: Props) {
             disabled={loading}
             className="montserrat-alternates"
             style={{
-              padding: "8px 5px",
+              padding: "8px 16px",
               backgroundColor: "#2473D9",
               color: "white",
               border: "none",
               borderRadius: "4px",
               cursor: "pointer",
+              fontWeight: 600,
             }}
           >
             {loading ? "Atualizando..." : "Atualizar"}
@@ -298,6 +242,7 @@ export default function RelatorioLivros({ isVisible }: Props) {
             border: "none",
             borderRadius: "4px",
             cursor: "pointer",
+            fontWeight: 600,
           }}
         >
           Geral
@@ -312,44 +257,88 @@ export default function RelatorioLivros({ isVisible }: Props) {
             border: "none",
             borderRadius: "4px",
             cursor: "pointer",
+            fontWeight: 600,
           }}
         >
           Faltando
         </button>
       </div>
 
-      <div className="livros-lista">
-        <div
-          className="livro-header"
-          style={{ fontWeight: "bold", backgroundColor: "#f0f0f0" }}
-        >
-          <span>Título</span>
-          <span>Autor</span>
-          <span>Categoria</span>
-          <span>Emprestados</span>
-          <span>Total</span>
-          <span>Ano Publicado</span>
-        </div>
-        {livros.length === 0 ? (
-          <div className="livro-item">
-            <div
-              className="livro-header"
-              style={{ width: "100%", textAlign: "center" }}
-            >
-              {loading ? "Carregando..." : "Nenhum livro encontrado."}
-            </div>
-          </div>
-        ) : (
-          livros.map((livro, index) => (
-            <LivroItem
-              key={livro.id}
-              livro={livro}
-              index={index}
-              abaAtiva={abaAtiva}
-            />
-          ))
-        )}
-      </div>
+      <section className={styles["table-container"]}>
+        <table className={styles.table}>
+          <thead>
+            <tr>
+              <th>Título</th>
+              <th>Autor</th>
+              <th>Categoria</th>
+              <th>Emprestados</th>
+              <th>Total</th>
+              <th>Ano Publicado</th>
+              {abaAtiva === "faltando" && <th>Usuários</th>}
+            </tr>
+          </thead>
+          <tbody>
+            {livros.length === 0 ? (
+              <tr>
+                <td colSpan={abaAtiva === "faltando" ? 7 : 6} style={{ textAlign: "center", padding: 32 }}>
+                  {loading ? "Carregando..." : "Nenhum livro encontrado."}
+                </td>
+              </tr>
+            ) : (
+              livros.map((livro) => {
+                const usuariosNomes = livro.usuarios?.split(",").filter(Boolean) || [];
+                const usuariosIds = livro.id_usuarios?.split(",").filter(Boolean) || [];
+                const usuariosList = usuariosNomes.map((nome, idx) => ({
+                  nome: nome.trim(),
+                  id: parseInt(usuariosIds[idx]),
+                }));
+
+                return (
+                  <tr
+                    key={livro.id}
+                    style={{
+                      background: "#fff",
+                      borderBottom: "1px solid #e0e0e0",
+                    }}
+                  >
+                    <td>
+                      <ul style={{ margin: 0, paddingLeft: 18 }}>
+                        <li>
+                          {livro.titulo}
+                        </li>
+                      </ul>
+                    </td>
+                    <td>{livro.autor}</td>
+                    <td>{livro.categoria}</td>
+                    <td style={{ textAlign: "center" }}>{livro.qtd_emprestada}</td>
+                    <td style={{ textAlign: "center" }}>{livro.qtd_total}</td>
+                    <td style={{ textAlign: "center" }}>{livro.ano_publicado}</td>
+                    {abaAtiva === "faltando" && (
+                      <td>
+                        {usuariosList.length > 0 ? (
+                          <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
+                            {usuariosList.map((usuario, idx) => (
+                              <span
+                                key={idx}
+                                style={{ cursor: "pointer", color: "#2473D9", textDecoration: "underline" }}
+                                onClick={() => navigate(`/usuarios/${usuario.id}`)}
+                              >
+                                {usuario.nome}
+                              </span>
+                            ))}
+                          </div>
+                        ) : (
+                          "-"
+                        )}
+                      </td>
+                    )}
+                  </tr>
+                );
+              })
+            )}
+          </tbody>
+        </table>
+      </section>
 
       {abaAtiva === "geral" && (
         <div
@@ -357,6 +346,8 @@ export default function RelatorioLivros({ isVisible }: Props) {
             padding: "16px",
             border: "1px solid #ddd",
             borderRadius: "8px",
+            background: "#fff",
+            boxShadow: "0 4px 8px rgba(36, 115, 217, 0.06)",
           }}
         >
           <>
@@ -366,6 +357,7 @@ export default function RelatorioLivros({ isVisible }: Props) {
                 fontSize: "18px",
                 fontWeight: "bold",
                 marginBottom: "16px",
+                color: "#2473d9",
               }}
             >
               Livros por Idioma

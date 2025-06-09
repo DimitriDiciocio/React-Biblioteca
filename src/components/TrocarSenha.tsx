@@ -119,7 +119,7 @@ const TrocarSenha: React.FC = () => {
   };
 
   return (
-    <div>
+    <div className="trocar-senha-container">
       <div className="security-container">
         <h2 className="size-medium montserrat-alternates-semibold">
           {etapa === "verificar"

@@ -1,4 +1,5 @@
 import React, { useEffect, useState, useCallback } from "react";
+import styles from "../pages/Movimentacoes.module.css";
 import {
   BarChart,
   Bar,
@@ -141,7 +142,7 @@ const RelatorioUsuarios: React.FC<Props> = ({ isVisible }) => {
   }
 
   return (
-    <div style={{ padding: "24px", maxWidth: "1000px", margin: "0 auto" }}>
+    <div className={styles.container}>
       <div
         style={{
           display: "flex",
@@ -150,19 +151,20 @@ const RelatorioUsuarios: React.FC<Props> = ({ isVisible }) => {
           marginBottom: "20px",
           gap: "10px",
         }}
-        className="relatorio-title "
+        className="relatorio-title"
       >
-        <h1 className="montserrat-alternates" style={{ fontSize: "16px", fontWeight: "bold" }}>Relatório de Usuários</h1>
+        <h1 className={styles.title}>Relatório de Usuários</h1>
         <div style={{ display: "flex", gap: "10px" }}>
           <button className="montserrat-alternates"
             onClick={relatorioPDF}
             style={{
-              padding: "8px 5px",
+              padding: "8px 16px",
               backgroundColor: "#2473D9",
               color: "white",
               border: "none",
               borderRadius: "4px",
               cursor: "pointer",
+              fontWeight: 400,
             }}
           >
             Gerar PDF
@@ -171,12 +173,13 @@ const RelatorioUsuarios: React.FC<Props> = ({ isVisible }) => {
             onClick={buscarUsuarios}
             disabled={loading}
             style={{
-              padding: "8px 5px",
+              padding: "8px 16px",
               backgroundColor: "#2473D9",
               color: "white",
               border: "none",
               borderRadius: "4px",
               cursor: "pointer",
+              fontWeight: 600,
             }}
           >
             {loading ? "Atualizando..." : "Atualizar"}
@@ -184,54 +187,45 @@ const RelatorioUsuarios: React.FC<Props> = ({ isVisible }) => {
         </div>
       </div>
 
-      <div
-        style={{
-          overflowX: "auto",
-          border: "1px solid #ddd",
-          borderRadius: "8px",
-          marginBottom: "24px",
-        }}
-      >
-        <table style={{ width: "100%", borderCollapse: "collapse" }}>
+      <section className={styles["table-container"]}>
+        <table className={styles.table}>
           <thead>
-            <tr style={{ backgroundColor: "#f0f0f0" }}>
-              <th className="montserrat-alternates" style={{ textAlign: "left", padding: "12px" }}>Nome</th>
-              <th className="montserrat-alternates" style={{ textAlign: "left", padding: "12px" }}>E-mail</th>
-              <th className="montserrat-alternates" style={{ textAlign: "left", padding: "12px" }}>Telefone</th>
-              <th className="montserrat-alternates" style={{ textAlign: "left", padding: "12px" }}>Endereço</th>
+            <tr>
+              <th>Nome</th>
+              <th>E-mail</th>
+              <th>Telefone</th>
+              <th>Endereço</th>
             </tr>
           </thead>
           <tbody>
             {users.length === 0 ? (
               <tr>
-                <td colSpan={4} className="montserrat-alternates" style={{ textAlign: "center", padding: "20px" }}>
+                <td colSpan={4} style={{ textAlign: "center", padding: "20px" }}>
                   {loading ? "Carregando..." : "Nenhum usuário encontrado."}
                 </td>
               </tr>
             ) : (
-              <>
-                {users.map((usuario, index) => (
-                  <tr 
-                    key={usuario.id} 
-                    style={{ 
-                      borderBottom: "1px solid #ddd",
-                      backgroundColor: index % 2 === 0 ? '#ffffff' : '#f8f9fa' 
-                    }}
-                  >
-                    <td className="montserrat-alternates" style={{ padding: "10px" }}>{usuario.nome}</td>
-                    <td className="montserrat-alternates" style={{ padding: "10px" }}>{usuario.email}</td>
-                    <td className="montserrat-alternates" style={{ padding: "10px" }}>{usuario.telefone}</td>
-                    <td className="montserrat-alternates" style={{ padding: "10px" }}>{usuario.endereco}</td>
-                  </tr>
-                ))}
-              </>
+              users.map((usuario) => (
+                <tr
+                  key={usuario.id}
+                  style={{
+                    background: "#fff",
+                    borderBottom: "1px solid #e0e0e0",
+                  }}
+                >
+                  <td>{usuario.nome}</td>
+                  <td>{usuario.email}</td>
+                  <td>{usuario.telefone}</td>
+                  <td>{usuario.endereco}</td>
+                </tr>
+              ))
             )}
           </tbody>
         </table>
-      </div>
+      </section>
 
       <div style={{ padding: "16px", border: "1px solid #ddd", borderRadius: "8px" }}>
-        <h2 className="montserrat-alternates" style={{ fontSize: "18px", fontWeight: "bold", marginBottom: "16px" }}>
+        <h2 className="montserrat-alternates" style={{ fontSize: "18px", fontWeight: "bold", marginBottom: "16px", color: "#2473d9" }}>
           Usuários por Estado (simulado)
         </h2>
         <ResponsiveContainer width="100%" height={300}>
@@ -242,7 +236,8 @@ const RelatorioUsuarios: React.FC<Props> = ({ isVisible }) => {
             <Tooltip />
             <Bar dataKey="quantidade" fill="#4A90E2" radius={[4, 4, 0, 0]} />
           </BarChart>
-        </ResponsiveContainer>      </div>
+        </ResponsiveContainer>
+      </div>
       {!loading && hasMore && (
         <div className="montserrat-alternates" style={{ textAlign: "center", padding: "10px", color: "#666" }}>
           Carregando mais usuários...
