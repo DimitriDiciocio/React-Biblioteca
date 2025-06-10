@@ -126,6 +126,13 @@ const Search = () => {
     setSelectedTags(tags);
   };
 
+  useEffect(() => {
+    // Escuta o evento customizado para abrir/fechar a aside de filtros
+    const handleToggleAside = () => setIsSidebarOpen(prev => !prev);
+    window.addEventListener("togglePesquisaAside", handleToggleAside);
+    return () => window.removeEventListener("togglePesquisaAside", handleToggleAside);
+  }, []);
+
   return (
     <div>
       <Header />

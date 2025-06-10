@@ -46,7 +46,12 @@ const Header: React.FC = () => {
   const [borrowing, setBorrowing] = useState(false);
 
   const handleFiltroClick = () => {
-    navigate('/pesquisa/');
+    if (window.location.pathname.startsWith("/pesquisa")) {
+      // Dispara um evento customizado para abrir/fechar a aside de filtros
+      window.dispatchEvent(new CustomEvent("togglePesquisaAside"));
+    } else {
+      navigate('/pesquisa/');
+    }
   };
 
   useEffect(() => {
@@ -687,7 +692,7 @@ const Header: React.FC = () => {
                   type="text"
                   placeholder="Pesquisar..."
                 />
-                <span id="avancada"></span>
+                <span id="avancada" onClick={handleFiltroClick}></span>
               </div>
           </form>
           <div></div>
