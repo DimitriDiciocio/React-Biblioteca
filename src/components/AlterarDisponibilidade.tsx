@@ -89,6 +89,7 @@ const AlterarDisponibilidade: React.FC<AlterarDisponibilidadeProps> = ({
       onClick={handleStatusChange}
       disabled={loading}
       className="btn btn-primary"
+      title={disponivel ? 'Inativar livro' : 'Reativar livro'}
     >
       {loading ? (
         <span className="spinner-border spinner-border-sm"></span>

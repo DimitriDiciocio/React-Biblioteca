@@ -562,6 +562,7 @@ const BookDetail = () => {
                   className={isProcessing ? 'disabled' : ''} 
                   onClick={handleAddToList}
                   style={{ pointerEvents: isProcessing ? 'none' : 'auto' }}
+                  title={isInList ? "Remover da Minha Lista" : "Adicionar à Minha Lista"}
                 >
                   <label className="ui-bookmark">
                     <input type="checkbox" checked={isInList} readOnly/>

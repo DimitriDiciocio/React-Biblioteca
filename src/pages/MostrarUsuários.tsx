@@ -235,7 +235,6 @@ const MostrarUsuarios: React.FC = () => {
           </div>
         ))}
       </div>
-      {hasMore && <p>Carregando mais usuários...</p>}
     </div>
   );
 };
