@@ -351,7 +351,7 @@ const Movimentacoes: React.FC = () => {
                 <td>
                   <ul style={{ margin: 0, paddingLeft: 18 }}>
                     {/* Garante que cada livro fique em uma linha diferente */}
-                    {(Array.isArray(m.titulo) ? m.titulo : String(m.titulo).split(","))
+                    {(Array.isArray(m.titulo) ? m.titulo : String(m.titulo).split(";"))
                       .map((tituloLivro: string, idx: number) => (
                         <li
                           key={idx}
