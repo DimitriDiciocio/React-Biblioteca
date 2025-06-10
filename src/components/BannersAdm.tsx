@@ -9,6 +9,7 @@ interface Banner {
   finishDate: string;
   imagePath: string;
   position: number; // Add position property
+  isMobile: boolean; // Add isMobile property
 }
 
 const BannersAdm: React.FC = () => {
@@ -186,6 +187,7 @@ const BannersAdm: React.FC = () => {
             <th className="montserrat-alternates-semibold">Data de Início</th>
             <th className="montserrat-alternates-semibold">Data de Fim</th>
             <th className="montserrat-alternates-semibold">Ações</th>
+            <th className="montserrat-alternates-semibold">Mobile</th> {/* Add column for mobile */}
           </tr>
         </thead>
         <tbody>
@@ -241,6 +243,9 @@ const BannersAdm: React.FC = () => {
                     Deletar
                   </button>
                 </div>
+              </td>
+              <td style={{ textAlign: "center" }}> {/* Mobile column */}
+                {banner.mobile ? "Sim" : "Não"}
               </td>
             </tr>
           ))}

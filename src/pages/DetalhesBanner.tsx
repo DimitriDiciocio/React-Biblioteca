@@ -9,6 +9,7 @@ interface Banner {
   startDate: string;
   finishDate: string;
   indefiniteEndDate?: boolean;
+  isMobile?: boolean; // Add mobile flag
 }
 
 const DetalhesBanner: React.FC = () => {
@@ -59,7 +60,8 @@ const DetalhesBanner: React.FC = () => {
           finishDate: isIndefinite ? '' : new Date(data.banner.finishDate)
             .toISOString()
             .split("T")[0],
-          indefiniteEndDate: isIndefinite
+          indefiniteEndDate: isIndefinite,
+          isMobile: data.banner.mobile || false, // Set mobile flag
         });
 
         if (data.banner.imagePath) {
@@ -123,6 +125,7 @@ const DetalhesBanner: React.FC = () => {
     form.append("startdate", formData.startDate);
     form.append("finishdate", formData.indefiniteEndDate ? "" : formData.finishDate);
     form.append("indefiniteEndDate", String(formData.indefiniteEndDate));
+    form.append("isMobile", String(formData.isMobile));
     if (banner) {
       form.append("banner", banner);
     }
@@ -262,6 +265,18 @@ const DetalhesBanner: React.FC = () => {
                   />
                   <span className="checkmark"></span>
                   Banner sem data de término
+                </label>
+              </div>
+
+              <div className="form-group">
+                <label className="montserrat-alternates-semibold">
+                  <input
+                    type="checkbox"
+                    name="isMobile"
+                    checked={formData.isMobile || false}
+                    onChange={handleChange}
+                  />
+                  <span style={{ marginLeft: "8px" }}>É para mobile?</span>
                 </label>
               </div>
 

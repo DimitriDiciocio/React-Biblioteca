@@ -19,7 +19,15 @@ const Cadastro: React.FC = () => {
   const [uf, setUf] = useState("");
   const [cidade, setCidade] = useState("");
   const [ufsBrasil, setUfsBrasil] = useState<string[]>([]);
+  const [senhaStrength, setSenhaStrength] = useState<"fraca" | "media" | "forte" | "invalida">("invalida");
   const navigate = useNavigate();
+
+  const senhaStrengthMessages = {
+    fraca: "A senha deve ter pelo menos 8 caracteres, incluindo letras maiúsculas, minúsculas, números e caracteres especiais.",
+    media: "Adicione letras maiúsculas, minúsculas e caracteres especiais para fortalecer sua senha.",
+    forte: "Sua senha é forte.",
+    invalida: "A senha é inválida.",
+  };
 
   useEffect(() => {
     const fetchUfs = async () => {
@@ -65,6 +73,22 @@ const Cadastro: React.FC = () => {
 
     fetchCidades();
   }, [uf]);
+
+  const validateSenha = (senha: string) => {
+    const temMaiuscula = /[A-Z]/.test(senha);
+    const temMinuscula = /[a-z]/.test(senha);
+    const temNumero = /\d/.test(senha);
+    const temCaractEspecial = /[!@#$%^&*(),-.?":{}|<>]/.test(senha);
+
+    if (senha.length < 8) return "fraca";
+    if (temMaiuscula && temMinuscula && temNumero && temCaractEspecial) return "forte";
+    if ((temMaiuscula || temMinuscula) && temNumero) return "media";
+    return "fraca";
+  };
+
+  useEffect(() => {
+    setSenhaStrength(validateSenha(senha));
+  }, [senha]);
 
   const handleCadastro = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -287,14 +311,14 @@ const Cadastro: React.FC = () => {
                   value={senha}
                   onChange={(e) => setSenha(e.target.value)}
                   tabIndex={6}
+                  style={{
+                    borderBottom: `2px solid ${
+                      senhaStrength === "forte" ? "green" : senhaStrength === "media" ? "orange" : "red"
+                    }`,
+                  }}
                 />
                 <label className="montserrat-alternates-semibold">Senha:</label>
-                <input
-                  type="checkbox"
-                  id="togglePassword"
-                  checked={mostrarSenha}
-                  hidden
-                />
+                <input type="checkbox" id="togglePassword" checked={mostrarSenha} hidden />
                 <div className="eye-container" onClick={() => veSenha("senha")}>
                   <svg
                     className="eye"
@@ -312,7 +336,39 @@ const Cadastro: React.FC = () => {
                   </svg>
                 </div>
               </div>
-
+              <div className="senha-strength-bar" style={{ marginTop: "5px", position: "relative" }}>
+                <div
+                  style={{
+                    height: "5px",
+                    backgroundColor:
+                      senhaStrength === "forte"
+                        ? "green"
+                        : senhaStrength === "media"
+                        ? "orange"
+                        : "red",
+                    width: senhaStrength === "forte" ? "100%" : senhaStrength === "media" ? "66%" : "33%",
+                    transition: "width 0.3s ease",
+                  }}
+                ></div>
+                <div
+                  className="tooltip"
+                  style={{
+                    position: "absolute",
+                    top: "-25px",
+                    left: "0",
+                    backgroundColor: "#333",
+                    color: "#fff",
+                    padding: "5px 10px",
+                    borderRadius: "5px",
+                    fontSize: "12px",
+                    visibility: "hidden",
+                    opacity: 0,
+                    transition: "opacity 0.3s ease",
+                  }}
+                >
+                  {senhaStrengthMessages[senhaStrength]}
+                </div>
+              </div>
             </div>
             <div>
               <div className="inputGroup">
@@ -355,6 +411,9 @@ const Cadastro: React.FC = () => {
                   value={confirmSenha}
                   onChange={(e) => setConfirmSenha(e.target.value)}
                   tabIndex={7}
+                  style={{
+                    borderBottom: `2px solid ${confirmSenha === senha && confirmSenha ? "green" : "red"}`,
+                  }}
                 />
                 <label className="montserrat-alternates-semibold">Confirmar Senha:</label>
                 <input
@@ -405,3 +464,10 @@ const Cadastro: React.FC = () => {
 };
 
 export default Cadastro;
+
+/*
+.senha-strength-bar:hover .tooltip {
+  visibility: visible;
+  opacity: 1;
+}
+*/

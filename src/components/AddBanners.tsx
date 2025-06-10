@@ -12,6 +12,7 @@ const AddBanners: React.FC = () => {
     finishdate: "",
   });
   const [indeterminado, setIndeterminado] = useState(false); // Add this state
+  const [isMobile, setIsMobile] = useState(false); // Add state for mobile checkbox
 
   const [banner, setBanner] = useState<File | null>(null);
   const [bannerPreview, setBannerPreview] = useState<string | null>(null);
@@ -51,6 +52,8 @@ const AddBanners: React.FC = () => {
     Object.keys(formData).forEach((key) => {
       requestBody.append(key, formData[key as keyof typeof formData]);
     });
+
+    requestBody.append("mobile", String(isMobile)); // Append mobile flag
 
     if (banner) {
       requestBody.append("banner", banner);
@@ -201,22 +204,32 @@ const AddBanners: React.FC = () => {
                   />
                 </div>
               </div>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginTop: '8px' }}>
-                    <input
-                      type="checkbox"
-                      checked={indeterminado}
-                      onChange={(e) => {
-                        setIndeterminado(e.target.checked);
-                        if (e.target.checked) {
-                          setFormData(prev => ({ ...prev, finishdate: "" }));
-                        }
-                      }}
-                      id="indeterminado"
-                    />
-                    <label htmlFor="indeterminado" className="montserrat-alternates-bold">
-                      Por tempo indeterminado
-                    </label>
-                  </div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginTop: '8px' }}>
+                <input
+                  type="checkbox"
+                  checked={indeterminado}
+                  onChange={(e) => {
+                    setIndeterminado(e.target.checked);
+                    if (e.target.checked) {
+                      setFormData(prev => ({ ...prev, finishdate: "" }));
+                    }
+                  }}
+                  id="indeterminado"
+                />
+                <label htmlFor="indeterminado" className="montserrat-alternates-bold">
+                  Por tempo indeterminado
+                </label>
+              </div>
+              <div className="form-group">
+                <label className="montserrat-alternates-semibold">
+                  <input
+                    type="checkbox"
+                    checked={isMobile}
+                    onChange={(e) => setIsMobile(e.target.checked)}
+                  />
+                  <span style={{ marginLeft: "8px" }}>É para mobile?</span>
+                </label>
+              </div>
               <div className="d-flex g-sm m-top">
                 <button
                   type="submit"

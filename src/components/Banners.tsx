@@ -16,7 +16,12 @@ const Banners: React.FC = () => {
   useEffect(() => {
     const fetchBanners = async () => {
       try {
-        const response = await fetch("http://127.0.0.1:5000/banners/users");
+        const isMobileScreen = window.innerWidth <= 768; // Check if screen is mobile
+        const endpoint = isMobileScreen
+          ? "http://127.0.0.1:5000/banners/users2"
+          : "http://127.0.0.1:5000/banners/users";
+
+        const response = await fetch(endpoint);
         const data = await response.json();
         setBanners(data.banners);
       } catch (error) {
@@ -24,7 +29,17 @@ const Banners: React.FC = () => {
       }
     };
 
-    fetchBanners();
+    fetchBanners(); // Fetch banners on initial load
+
+    const handleResize = () => {
+      fetchBanners(); // Refetch banners on screen resize
+    };
+
+    window.addEventListener("resize", handleResize);
+
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
   }, []);
 
   return (
