@@ -53,7 +53,10 @@ const AddBanners: React.FC = () => {
       requestBody.append(key, formData[key as keyof typeof formData]);
     });
 
-    requestBody.append("mobile", String(isMobile)); // Append mobile flag
+    // Só envia o campo mobile se for true
+    if (isMobile) {
+      requestBody.append("mobile", "true");
+    }
 
     if (banner) {
       requestBody.append("banner", banner);
@@ -220,15 +223,13 @@ const AddBanners: React.FC = () => {
                   Por tempo indeterminado
                 </label>
               </div>
-              <div className="form-group">
-                <label className="montserrat-alternates-semibold">
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginTop: '8px' }}>
                   <input
                     type="checkbox"
                     checked={isMobile}
                     onChange={(e) => setIsMobile(e.target.checked)}
                   />
-                  <span style={{ marginLeft: "8px" }}>É para mobile?</span>
-                </label>
+                  <span className="montserrat-alternates-bold">É para mobile?</span>
               </div>
               <div className="d-flex g-sm m-top">
                 <button

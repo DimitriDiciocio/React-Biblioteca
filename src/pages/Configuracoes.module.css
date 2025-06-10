@@ -4,7 +4,7 @@
   min-height: 100vh;
   max-width: 1200px; /* Set a maximum width for the container */
   margin: 0 auto; /* Center the container horizontally */
-  overflow-x: hidden; /* Prevent horizontal overflow */
+  overflow-x: auto; /* Prevent horizontal overflow */
 }
 
 .content-area {
@@ -39,7 +39,7 @@
 .subtitle {
   font-size: 20px;
   font-weight: bold;
-  color: #333; /* Darker text for subtitles */
+  color: #2473d9; 
   margin-bottom: 10px;
 }
 
@@ -85,6 +85,7 @@ label {
   color: white;
   border: none;
   border-radius: 5px;
+  width: 120px;
   cursor: pointer;
   font-size: 16px;
   font-weight: bold;
@@ -211,4 +212,11 @@ label {
 .observer {
   height: 1px;
   visibility: hidden;
+}
+
+@media (max-width: 500px) {
+  /* Alinha os grids de inputs em uma coluna só */
+  .form > div[style*="grid"] {
+    grid-template-columns: 1fr !important;
+  }
 }

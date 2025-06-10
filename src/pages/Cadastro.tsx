@@ -340,13 +340,14 @@ const Cadastro: React.FC = () => {
                 <div
                   style={{
                     height: "5px",
+                    borderRadius: "10px",
                     backgroundColor:
                       senhaStrength === "forte"
                         ? "green"
                         : senhaStrength === "media"
                         ? "orange"
                         : "red",
-                    width: senhaStrength === "forte" ? "100%" : senhaStrength === "media" ? "66%" : "33%",
+                    width: senhaStrength === "forte" ? "95%" : senhaStrength === "media" ? "61%" : "28%",
                     transition: "width 0.3s ease",
                   }}
                 ></div>

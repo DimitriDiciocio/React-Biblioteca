@@ -369,193 +369,198 @@ const Configuracoes: React.FC = () => {
       {activeTab === "configuracoes" && (
         <form onSubmit={handleSubmit} className={styles.form}>
           <h3 className={styles.subtitle}>Atualizar Valores</h3>
-          <div className={styles.inputGroup}>
-            <label>Valor Base</label>
-            <label className={styles.inputLabel}>
-              R$
-              <input
-                type="number"
-                value={valores.valor_base}
-                onChange={(e) =>
-                  setValores({
-                    ...valores,
-                    valor_base: e.target.value,
-                  })
-                }
-                className={styles.input}
-                step={0.01}
-                required
-              />
-            </label>
-          </div>
-          <div className={styles.inputGroup}>
-            <label>Valor Acrescimo</label>
-            <label className={styles.inputLabel}>
-              R$
-              <input
-                type="number"
-                value={valores.valor_acrescimo}
-                onChange={(e) =>
-                  setValores({
-                    ...valores,
-                    valor_acrescimo: e.target.value,
-                  })
-                }
-                className={styles.input}
-                required
-                step={0.01}
-              />
-            </label>
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "16px" }}>
+            <div className={styles.inputGroup}>
+              <label>Valor Base</label>
+              <label className={styles.inputLabel}>
+                R$
+                <input
+                  type="number"
+                  value={valores.valor_base}
+                  onChange={(e) =>
+                    setValores({
+                      ...valores,
+                      valor_base: e.target.value,
+                    })
+                  }
+                  className={`${styles.input} montserrat-alternates-semibold`}
+                  step={0.01}
+                  required
+                />
+              </label>
+            </div>
+            <div className={styles.inputGroup}>
+              <label>Valor Acréscimo</label>
+              <label className={styles.inputLabel}>
+                R$
+                <input
+                  type="number"
+                  value={valores.valor_acrescimo}
+                  onChange={(e) =>
+                    setValores({
+                      ...valores,
+                      valor_acrescimo: e.target.value,
+                    })
+                  }
+                  className={`${styles.input} montserrat-alternates-semibold`}
+                  required
+                  step={0.01}
+                />
+              </label>
+            </div>
           </div>
           <h3 className={styles.subtitle}>Configurações Gerais</h3>
-          <div className={styles.inputGroup}>
-            <label>Dias de Validade do Empréstimo</label>
-            <input
-              type="number"
-              value={configuracoes.dias_validade_emprestimo}
-              onChange={(e) =>
-                setConfiguracoes({
-                  ...configuracoes,
-                  dias_validade_emprestimo: e.target.value,
-                })
-              }
-              className={styles.input}
-              required
-            />
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "16px" }}>
+            <div className={styles.inputGroup}>
+              <label>Dias de Validade do Empréstimo</label>
+              <input
+                type="number"
+                value={configuracoes.dias_validade_emprestimo}
+                onChange={(e) =>
+                  setConfiguracoes({
+                    ...configuracoes,
+                    dias_validade_emprestimo: e.target.value,
+                  })
+                }
+                className={`${styles.input} montserrat-alternates-semibold`}
+                required
+              />
+            </div>
+            <div className={styles.inputGroup}>
+              <label>Máximo de dias para Buscar Empréstimo</label>
+              <input
+                type="number"
+                value={configuracoes.dias_validade_emprestimo_buscar}
+                onChange={(e) =>
+                  setConfiguracoes({
+                    ...configuracoes,
+                    dias_validade_emprestimo_buscar: e.target.value,
+                  })
+                }
+                className={`${styles.input} montserrat-alternates-semibold`}
+                required
+              />
+            </div>
+            <div className={styles.inputGroup}>
+              <label>Limite de Empréstimos</label>
+              <input
+                type="number"
+                value={configuracoes.limite_emprestimos}
+                onChange={(e) =>
+                  setConfiguracoes({
+                    ...configuracoes,
+                    limite_emprestimos: e.target.value,
+                  })
+                }
+                className={`${styles.input} montserrat-alternates-semibold`}
+                required
+              />
+            </div>
+            <div className={styles.inputGroup}>
+              <label>Limite de Reservas</label>
+              <input
+                type="number"
+                value={configuracoes.limite_reservas}
+                onChange={(e) =>
+                  setConfiguracoes({
+                    ...configuracoes,
+                    limite_reservas: e.target.value,
+                  })
+                }
+                className={`${styles.input} montserrat-alternates-semibold`}
+                required
+              />
+            </div>
           </div>
-          <div className={styles.inputGroup}>
-            <label>Dias de Validade para Buscar Empréstimo</label>
-            <input
-              type="number"
-              value={configuracoes.dias_validade_emprestimo_buscar}
-              onChange={(e) =>
-                setConfiguracoes({
-                  ...configuracoes,
-                  dias_validade_emprestimo_buscar: e.target.value,
-                })
-              }
-              className={styles.input}
-              required
-            />
-          </div>
-          <div className={styles.inputGroup}>
-            <label>Limite de Empréstimos</label>
-            <input
-              type="number"
-              value={configuracoes.limite_emprestimos}
-              onChange={(e) =>
-                setConfiguracoes({
-                  ...configuracoes,
-                  limite_emprestimos: e.target.value,
-                })
-              }
-              className={styles.input}
-              required
-            />
-          </div>
-          <div className={styles.inputGroup}>
-            <label>Limite de Reservas</label>
-            <input
-              type="number"
-              value={configuracoes.limite_reservas}
-              onChange={(e) =>
-                setConfiguracoes({
-                  ...configuracoes,
-                  limite_reservas: e.target.value,
-                })
-              }
-              className={styles.input}
-              required
-            />
-          </div>
-
           <h3 className={styles.subtitle}>Configurações da Biblioteca</h3>
-          <div className={styles.inputGroup}>
-            <label>Razão Social</label>
-            <input
-              type="text"
-              value={configuracoes.razao_social}
-              onChange={(e) =>
-                setConfiguracoes({
-                  ...configuracoes,
-                  razao_social: e.target.value,
-                })
-              }
-              className={styles.input}
-              required
-            />
-          </div>
-          <div className={styles.inputGroup}>
-            <label>Chave Pix (Telefone com DDD)</label>
-            <input
-              type="text"
-              value={configuracoes.chave_pix}
-              onChange={(e) =>
-                setConfiguracoes({
-                  ...configuracoes,
-                  chave_pix: formatTelefone(e.target.value),
-                })
-              }
-              maxLength={15}
-              className={styles.input}
-              required
-            />
-          </div>
-          <div className={styles.inputGroup}>
-            <label>Endereço</label>
-            <input
-              type="text"
-              value={configuracoes.endereco}
-              onChange={(e) =>
-                setConfiguracoes({
-                  ...configuracoes,
-                  endereco: e.target.value,
-                })
-              }
-              className={styles.input}
-              required
-            />
-          </div>
-          <div className={styles.inputGroup}>
-            <label>Telefone</label>
-            <input
-              type="text"
-              value={formatTelefone(configuracoes.telefone)}
-              onChange={(e) => handleTelefoneChange(e.target.value)} // Update formatting on typing
-              maxLength={15}
-              className={styles.input}
-              required
-            />
-          </div>
-          <div className={styles.inputGroup}>
-            <label>Email</label>
-            <input
-              type="email"
-              value={configuracoes.email}
-              onChange={(e) =>
-                setConfiguracoes({
-                  ...configuracoes,
-                  email: e.target.value,
-                })
-              }
-              className={styles.input}
-              required
-            />
-          </div>
-          <div className={styles.inputGroup}>
-            <label>Apelido do Email</label>
-            <input
-              type="text"
-              value={configuracoes.apelido_email}
-              onChange={(e) =>
-                setConfiguracoes({
-                  ...configuracoes,
-                  apelido_email: e.target.value,
-                })
-              }
-              className={styles.input}
-              required
-            />
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "16px" }}>
+            <div className={styles.inputGroup}>
+              <label>Razão Social</label>
+              <input
+                type="text"
+                value={configuracoes.razao_social}
+                onChange={(e) =>
+                  setConfiguracoes({
+                    ...configuracoes,
+                    razao_social: e.target.value,
+                  })
+                }
+                className={`${styles.input} montserrat-alternates-semibold`}
+                required
+              />
+            </div>
+            <div className={styles.inputGroup}>
+              <label>Chave Pix (Telefone com DDD)</label>
+              <input
+                type="text"
+                value={configuracoes.chave_pix}
+                onChange={(e) =>
+                  setConfiguracoes({
+                    ...configuracoes,
+                    chave_pix: formatTelefone(e.target.value),
+                  })
+                }
+                maxLength={15}
+                className={`${styles.input} montserrat-alternates-semibold`}
+                required
+              />
+            </div>
+            <div className={styles.inputGroup}>
+              <label>Endereço</label>
+              <input
+                type="text"
+                value={configuracoes.endereco}
+                onChange={(e) =>
+                  setConfiguracoes({
+                    ...configuracoes,
+                    endereco: e.target.value,
+                  })
+                }
+                className={`${styles.input} montserrat-alternates-semibold`}
+                required
+              />
+            </div>
+            <div className={styles.inputGroup}>
+              <label>Telefone</label>
+              <input
+                type="text"
+                value={formatTelefone(configuracoes.telefone)}
+                onChange={(e) => handleTelefoneChange(e.target.value)}
+                maxLength={15}
+                className={`${styles.input} montserrat-alternates-semibold`}
+                required
+              />
+            </div>
+            <div className={styles.inputGroup}>
+              <label>Email</label>
+              <input
+                type="email"
+                value={configuracoes.email}
+                onChange={(e) =>
+                  setConfiguracoes({
+                    ...configuracoes,
+                    email: e.target.value,
+                  })
+                }
+                className={`${styles.input} montserrat-alternates-semibold`}
+                required
+              />
+            </div>
+            <div className={styles.inputGroup}>
+              <label>Apelido do Email</label>
+              <input
+                type="text"
+                value={configuracoes.apelido_email}
+                onChange={(e) =>
+                  setConfiguracoes({
+                    ...configuracoes,
+                    apelido_email: e.target.value,
+                  })
+                }
+                className={`${styles.input} montserrat-alternates-semibold`}
+                required
+              />
+            </div>
           </div>
           <button type="submit" className={styles.button}>
             Atualizar

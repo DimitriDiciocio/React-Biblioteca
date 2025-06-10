@@ -3683,13 +3683,16 @@ button.limpar-btn,
   width: 80vw !important;
   height: 70vh !important;
 }
+@media screen and (max-width: 475px) {
+  .banner-image {
+    width: 85vw !important;
+    height: 40vh !important;
+  }
+  
+}
 .banner-item{
   display: flex;
   justify-content: center;
-}
-
-.owl-theme .owl-nav.disabled + .owl-dots {
-  margin-top: -20px !important;
 }
 
 .banner-profile{
@@ -4297,4 +4300,8 @@ button.limpar-btn,
 .remove-button:hover {
   background-color: #cc0000;
 }
-
+.senha-strength-bar{
+  position: relative;
+  top: -15px;
+  right: -5px;
+}

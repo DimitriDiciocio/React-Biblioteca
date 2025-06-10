@@ -91,11 +91,22 @@ const DetalhesBanner: React.FC = () => {
   ) => {
     const { name, value, type, checked } = e.target;
 
-    setFormData((prev) => ({
-      ...prev,
-      [name]: type === "checkbox" ? checked : value, // Properly handle checkbox updates
-      finishDate: name === "indefiniteEndDate" && checked ? "" : prev.finishDate, // Clear finishDate if indefiniteEndDate is checked
-    }));
+    setFormData((prev) => {
+      if (name === "indefiniteEndDate") {
+        // Se marcar o checkbox, limpa o finishDate. Se desmarcar, mantém o valor anterior.
+        return {
+          ...prev,
+          indefiniteEndDate: checked,
+          finishDate: checked ? "" : prev.finishDate,
+        };
+      } else {
+        // Permite editar normalmente os outros campos
+        return {
+          ...prev,
+          [name]: type === "checkbox" ? checked : value,
+        };
+      }
+    });
   };
 
   const onDrop = useCallback((acceptedFiles: File[]) => {
