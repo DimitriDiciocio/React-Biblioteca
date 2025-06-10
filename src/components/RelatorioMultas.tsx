@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useState, useCallback, useRef } from "react";
 import styles from "../pages/Movimentacoes.module.css";
 import { formatDate } from "../services/FormatDate";
 
@@ -24,6 +24,9 @@ export default function RelatorioMultas({ isVisible }: Props) {
   const [pagePendentes, setPagePendentes] = useState(1);
   const [hasMoreGeral, setHasMoreGeral] = useState(true);
   const [hasMorePendentes, setHasMorePendentes] = useState(true);
+  const [filters, setFilters] = useState({ usuario: "" });
+  const [debouncedFilters, setDebouncedFilters] = useState(filters);
+  const debounceTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const buscarMultas = useCallback(async () => {
     if (!hasMoreGeral || loading) return;
@@ -73,6 +76,7 @@ export default function RelatorioMultas({ isVisible }: Props) {
       setLoading(false);
     }
   }, [pageGeral, hasMoreGeral, loading]);
+
   const buscarMultasPendentes = useCallback(async () => {
     if (!hasMorePendentes || loading) return;
 
@@ -128,6 +132,57 @@ export default function RelatorioMultas({ isVisible }: Props) {
       setLoading(false);
     }
   }, [pagePendentes, hasMorePendentes, loading, multasPendentes.length]);
+
+  const buscarMultasPorPesquisa = useCallback(async () => {
+    if (loading) return;
+    setLoading(true);
+    try {
+      const response = await fetch(
+        `http://localhost:5000/relatorio/multas/${pageGeral}/pesquisa`,
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ pesquisa: debouncedFilters.usuario }),
+        }
+      );
+
+      if (!response.ok) {
+        if (response.status === 404) {
+          setHasMoreGeral(false);
+          return;
+        }
+        throw new Error("Erro ao buscar multas por pesquisa");
+      }
+
+      const data = await response.json();
+      if (!data.multas || data.multas.length === 0) {
+        setHasMoreGeral(false);
+        return;
+      }
+
+      const formattedMultas = data.multas.map(
+        (multa: [string, string, string, number, string, boolean]) => ({
+          email: multa[0],
+          telefone: multa[1],
+          nome: multa[2],
+          id_emprestimo: multa[3],
+          data_devolver: multa[4],
+          pago: multa[5],
+        })
+      );
+
+      setMultas((prev) =>
+        pageGeral === 1 ? formattedMultas : [...prev, ...formattedMultas]
+      );
+    } catch (error) {
+      console.error("Erro ao buscar multas por pesquisa:", error);
+    } finally {
+      setLoading(false);
+    }
+  }, [pageGeral, debouncedFilters.usuario, loading]);
 
   const gerarPDF = async () => {
     try {
@@ -195,10 +250,12 @@ export default function RelatorioMultas({ isVisible }: Props) {
       setPageGeral(1);
       setHasMoreGeral(true);
       setMultas([]);
+      buscarMultas(); // Trigger API call for "geral"
     } else {
       setPagePendentes(1);
       setHasMorePendentes(true);
       setMultasPendentes([]);
+      buscarMultasPendentes(); // Trigger API call for "pendentes"
     }
   }, [abaAtiva, isVisible]);
 
@@ -224,6 +281,50 @@ export default function RelatorioMultas({ isVisible }: Props) {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [abaAtiva, isVisible, pageGeral, pagePendentes]);
+
+  const handleFilterChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setFilters((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+
+    if (debounceTimeout.current) {
+      clearTimeout(debounceTimeout.current);
+    }
+
+    debounceTimeout.current = setTimeout(() => {
+      setDebouncedFilters((prev) => ({
+        ...prev,
+        [name]: value,
+      }));
+    }, 300);
+  };
+
+  useEffect(() => {
+    if (isVisible) {
+      if (debouncedFilters.usuario) {
+        console.log('Filtros atualizados, iniciando nova busca:', debouncedFilters.usuario);
+        setPageGeral(1);
+        setHasMoreGeral(true);
+        setMultas([]); // Limpa a lista atual
+        buscarMultasPorPesquisa();
+      } else {
+        console.log('Filtro limpo, voltando ao GET padrão');
+        setPageGeral(1);
+        setHasMoreGeral(true);
+        setMultas([]); // Limpa a lista atual
+        buscarMultas();
+      }
+    }
+  }, [isVisible, debouncedFilters.usuario]);
+
+  useEffect(() => {
+    if (isVisible && !debouncedFilters.usuario) {
+      console.log('Carregando página:', pageGeral);
+      buscarMultas();
+    }
+  }, [isVisible, pageGeral, debouncedFilters.usuario]);
 
   return (
     <div className={styles.container}>
@@ -314,6 +415,17 @@ export default function RelatorioMultas({ isVisible }: Props) {
         >
           Pendentes
         </button>
+      </div>
+
+      <div style={{ marginBottom: "20px" }}>
+        <input
+          type="text"
+          name="usuario"
+          placeholder="Pesquisar por usuário"
+          className={styles.input}
+          value={filters.usuario}
+          onChange={handleFilterChange}
+        />
       </div>
 
       <section className={styles["table-container"]}>
