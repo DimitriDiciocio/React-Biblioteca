@@ -48,7 +48,7 @@ const MostrarTop: React.FC = () => {
             dots={false}
             autoplay={false}
             stagePadding={50}
-            slideBy={3}
+            slideBy={1}
             responsive={{
               0: { items: 1, nav: false },
               480: { items: 2, nav: false },

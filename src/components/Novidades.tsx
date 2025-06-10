@@ -78,7 +78,7 @@ useEffect(() => {
           dots={false}
           autoplay={false}
           stagePadding={50}
-          slideBy={5}
+          slideBy={2}
           responsive={{
             0: { items: 1, nav: false },
             480: { items: 3, nav: false },
