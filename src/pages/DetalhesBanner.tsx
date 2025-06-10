@@ -9,7 +9,7 @@ interface Banner {
   startDate: string;
   finishDate: string;
   indefiniteEndDate?: boolean;
-  isMobile?: boolean; // Add mobile flag
+  mobile?: boolean; // Add mobile flag
 }
 
 const DetalhesBanner: React.FC = () => {
@@ -61,7 +61,7 @@ const DetalhesBanner: React.FC = () => {
             .toISOString()
             .split("T")[0],
           indefiniteEndDate: isIndefinite,
-          isMobile: data.banner.mobile || false, // Set mobile flag
+          mobile: data.banner.mobile || false, // Set mobile flag
         });
 
         if (data.banner.imagePath) {
@@ -89,18 +89,13 @@ const DetalhesBanner: React.FC = () => {
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
-    const { name, value, type } = e.target;
-    const checked = (e.target as HTMLInputElement).checked;
+    const { name, value, type, checked } = e.target;
 
-    if (type === 'checkbox') {
-      setFormData(prev => ({
-        ...prev,
-        [name]: checked,
-        finishDate: checked ? '' : prev.finishDate
-      }));
-    } else {
-      setFormData(prev => ({ ...prev, [name]: value }));
-    }
+    setFormData((prev) => ({
+      ...prev,
+      [name]: type === "checkbox" ? checked : value, // Properly handle checkbox updates
+      finishDate: name === "indefiniteEndDate" && checked ? "" : prev.finishDate, // Clear finishDate if indefiniteEndDate is checked
+    }));
   };
 
   const onDrop = useCallback((acceptedFiles: File[]) => {
@@ -124,8 +119,11 @@ const DetalhesBanner: React.FC = () => {
     form.append("title", formData.title);
     form.append("startdate", formData.startDate);
     form.append("finishdate", formData.indefiniteEndDate ? "" : formData.finishDate);
-    form.append("indefiniteEndDate", String(formData.indefiniteEndDate));
-    form.append("isMobile", String(formData.isMobile));
+
+    if (formData.mobile) {
+      form.append("mobile", "true"); // Only include mobile if it's true
+    }
+
     if (banner) {
       form.append("banner", banner);
     }
@@ -272,8 +270,8 @@ const DetalhesBanner: React.FC = () => {
                 <label className="montserrat-alternates-semibold">
                   <input
                     type="checkbox"
-                    name="isMobile"
-                    checked={formData.isMobile || false}
+                    name="mobile"
+                    checked={formData.mobile || false}
                     onChange={handleChange}
                   />
                   <span style={{ marginLeft: "8px" }}>É para mobile?</span>
