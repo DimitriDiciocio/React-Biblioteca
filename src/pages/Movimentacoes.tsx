@@ -6,9 +6,9 @@ import { atenderReserva } from "../services/atenderReservaService";
 import { atenderEmprestimo } from "../services/atenderEmprestimoService";
 import { cancelarReserva } from "../services/cancelarReserva";
 import { formatDateTime } from "../services/FormatDate";
-import OwlCarousel from 'react-owl-carousel'; // npm install react-owl-carousel
-import 'owl.carousel/dist/assets/owl.carousel.css';
-import 'owl.carousel/dist/assets/owl.theme.default.css';
+import OwlCarousel from "react-owl-carousel"; // npm install react-owl-carousel
+import "owl.carousel/dist/assets/owl.carousel.css";
+import "owl.carousel/dist/assets/owl.theme.default.css";
 
 const InfoModal: React.FC<{
   open: boolean;
@@ -96,7 +96,9 @@ const Movimentacoes: React.FC = () => {
   const [page, setPage] = useState(1);
   const [hasMoreData, setHasMoreData] = useState(true); // Track if more data is available
   const [infoModalOpen, setInfoModalOpen] = useState(false);
-  const [infoMovimentacao, setInfoMovimentacao] = useState<Movimentacao | null>(null);
+  const [infoMovimentacao, setInfoMovimentacao] = useState<Movimentacao | null>(
+    null
+  );
 
   const observerRef = useRef<HTMLDivElement | null>(null);
   const debounceTimeout = useRef<NodeJS.Timeout | null>(null);
@@ -293,6 +295,18 @@ const Movimentacoes: React.FC = () => {
     return `http://127.0.0.1:5000/uploads/livros/${infoMovimentacao.id}.jpeg`;
   };
 
+  // Função para separar títulos por ; e ids por ,
+  const splitTitulos = (str: string) =>
+    str
+      .split(";")
+      .map((s) => s.trim())
+      .filter(Boolean);
+  const splitIds = (str: string) =>
+    str
+      .split(";")
+      .map((s) => s.trim())
+      .filter(Boolean);
+
   return (
     <div className={styles.container}>
       <i
@@ -351,19 +365,21 @@ const Movimentacoes: React.FC = () => {
                 <td>
                   <ul style={{ margin: 0, paddingLeft: 18 }}>
                     {/* Garante que cada livro fique em uma linha diferente */}
-                    {(Array.isArray(m.titulo) ? m.titulo : String(m.titulo).split(";"))
-                      .map((tituloLivro: string, idx: number) => (
-                        <li
-                          key={idx}
-                          style={{
-                            listStyleType: "disc",
-                            whiteSpace: "normal",
-                            fontFamily: "inherit"
-                          }}
-                        >
-                          {truncate(tituloLivro.trim(), 80)}
-                        </li>
-                      ))}
+                    {(Array.isArray(m.titulo)
+                      ? m.titulo
+                      : String(m.titulo).split(";")
+                    ).map((tituloLivro: string, idx: number) => (
+                      <li
+                        key={idx}
+                        style={{
+                          listStyleType: "disc",
+                          whiteSpace: "normal",
+                          fontFamily: "inherit",
+                        }}
+                      >
+                        {truncate(tituloLivro.trim(), 80)}
+                      </li>
+                    ))}
                   </ul>
                 </td>
                 <td>{m.usuario}</td>
@@ -477,10 +493,7 @@ const Movimentacoes: React.FC = () => {
         </table>
         <div ref={observerRef} className={styles.observer}></div>
       </section>
-      <InfoModal
-        open={infoModalOpen}
-        onClose={() => setInfoModalOpen(false)}
-      >
+      <InfoModal open={infoModalOpen} onClose={() => setInfoModalOpen(false)}>
         <h2 style={{ marginBottom: 16 }}>Informações da Movimentação</h2>
         {infoMovimentacao && (
           <div
@@ -495,10 +508,10 @@ const Movimentacoes: React.FC = () => {
               {(() => {
                 const titulos = Array.isArray(infoMovimentacao.titulo)
                   ? infoMovimentacao.titulo
-                  : String(infoMovimentacao.titulo).split(",");
+                  : splitTitulos(String(infoMovimentacao.titulo));
                 const ids = Array.isArray(infoMovimentacao.id_livro)
                   ? infoMovimentacao.id_livro
-                  : String(infoMovimentacao.id_livro || "").split(",");
+                  : splitIds(String(infoMovimentacao.id_livro || ""));
                 // Debug: log ids brutos e separados
                 console.log("id_livro bruto:", infoMovimentacao.id_livro);
                 console.log("ids separados:", ids);
@@ -516,10 +529,11 @@ const Movimentacoes: React.FC = () => {
                           height: "220px",
                           objectFit: "cover",
                           borderRadius: 8,
-                          boxShadow: "0 2px 8px rgba(0,0,0,0.15)"
+                          boxShadow: "0 2px 8px rgba(0,0,0,0.15)",
                         }}
-                        onError={e => {
-                          (e.target as HTMLImageElement).src = "/assets/img/book-default.png";
+                        onError={(e) => {
+                          (e.target as HTMLImageElement).src =
+                            "/assets/img/book-default.png";
                         }}
                       />
                     </div>
@@ -540,9 +554,15 @@ const Movimentacoes: React.FC = () => {
                   >
                     {titulos.map((tituloLivro: string, idx: number) => {
                       const idLivro = (ids[idx] || "").trim();
-                      console.log(`Livro ${idx}:`, { titulo: tituloLivro, idLivro });
+                      console.log(`Livro ${idx}:`, {
+                        titulo: tituloLivro,
+                        idLivro,
+                      });
                       return (
-                        <div key={idx} style={{ display: "flex", justifyContent: "center" }}>
+                        <div
+                          key={idx}
+                          style={{ display: "flex", justifyContent: "center" }}
+                        >
                           <img
                             src={`http://127.0.0.1:5000/uploads/livros/${idLivro}.jpeg`}
                             alt={`Capa do livro`}
@@ -551,10 +571,11 @@ const Movimentacoes: React.FC = () => {
                               height: "220px",
                               objectFit: "cover",
                               borderRadius: 8,
-                              boxShadow: "0 2px 8px rgba(0,0,0,0.15)"
+                              boxShadow: "0 2px 8px rgba(0,0,0,0.15)",
                             }}
-                            onError={e => {
-                              (e.target as HTMLImageElement).src = "/assets/img/book-default.png";
+                            onError={(e) => {
+                              (e.target as HTMLImageElement).src =
+                                "/assets/img/book-default.png";
                             }}
                           />
                         </div>
@@ -564,44 +585,69 @@ const Movimentacoes: React.FC = () => {
                 );
               })()}
             </div>
-            <div style={{ fontFamily: "Montserrat Alternates, Montserrat, Arial, sans-serif" }}>
+            <div
+              style={{
+                fontFamily:
+                  "Montserrat Alternates, Montserrat, Arial, sans-serif",
+              }}
+            >
               <strong>Data de Criação:</strong>{" "}
               {formatDateTime(
-              infoMovimentacao.data_criacao
-                ? new Date(infoMovimentacao.data_criacao).toISOString()
-                : null
+                infoMovimentacao.data_criacao
+                  ? new Date(infoMovimentacao.data_criacao).toISOString()
+                  : null
               ) || "-"}
             </div>
-            <div style={{ fontFamily: "Montserrat Alternates, Montserrat, Arial, sans-serif" }}>
+            <div
+              style={{
+                fontFamily:
+                  "Montserrat Alternates, Montserrat, Arial, sans-serif",
+              }}
+            >
               <strong>Data de Retirada:</strong>{" "}
               {formatDateTime(
-              infoMovimentacao.data_retirada
-                ? new Date(infoMovimentacao.data_retirada).toISOString()
-                : null
+                infoMovimentacao.data_retirada
+                  ? new Date(infoMovimentacao.data_retirada).toISOString()
+                  : null
               ) || "-"}
             </div>
-            <div style={{ fontFamily: "Montserrat Alternates, Montserrat, Arial, sans-serif" }}>
+            <div
+              style={{
+                fontFamily:
+                  "Montserrat Alternates, Montserrat, Arial, sans-serif",
+              }}
+            >
               <strong>Data para Devolver:</strong>{" "}
               {formatDateTime(
-              infoMovimentacao.data_devolver
-                ? new Date(infoMovimentacao.data_devolver).toISOString()
-                : null
+                infoMovimentacao.data_devolver
+                  ? new Date(infoMovimentacao.data_devolver).toISOString()
+                  : null
               ) || "-"}
             </div>
-            <div style={{ fontFamily: "Montserrat Alternates, Montserrat, Arial, sans-serif" }}>
+            <div
+              style={{
+                fontFamily:
+                  "Montserrat Alternates, Montserrat, Arial, sans-serif",
+              }}
+            >
               <strong>Data de Validade:</strong>{" "}
               {formatDateTime(
-              infoMovimentacao.data_validade
-                ? new Date(infoMovimentacao.data_validade).toISOString()
-                : null
+                infoMovimentacao.data_validade
+                  ? new Date(infoMovimentacao.data_validade).toISOString()
+                  : null
               ) || "-"}
             </div>
-            <div style={{ fontFamily: "Montserrat Alternates, Montserrat, Arial, sans-serif" }}>
+            <div
+              style={{
+                fontFamily:
+                  "Montserrat Alternates, Montserrat, Arial, sans-serif",
+              }}
+            >
               <strong>Data Devolvida:</strong>{" "}
               {formatDateTime(
-              infoMovimentacao.data_devolvida
-                ? new Date(infoMovimentacao.data_devolvida).toISOString()
-                : null
+                infoMovimentacao.data_devolvida
+                  ? new Date(infoMovimentacao.data_devolvida).toISOString()
+                  : null
               ) || "-"}
             </div>
           </div>

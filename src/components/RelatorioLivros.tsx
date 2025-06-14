@@ -12,6 +12,7 @@ import {
 } from "recharts";
 import "../index.css";
 import "../styles/RelatorioLivros.css";
+import ModalUsuariosFaltando from "./ModalUsuariosFaltando";
 
 interface Props {
   isVisible: boolean;
@@ -47,6 +48,13 @@ export default function RelatorioLivros({ isVisible }: Props) {
   const [abaAtiva, setAbaAtiva] = useState<"geral" | "faltando">("geral");
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
+  const [modalUsuariosOpen, setModalUsuariosOpen] = useState(false);
+  const [usuariosModal, setUsuariosModal] = useState<{
+    id: number;
+    nome: string;
+    email?: string;
+    telefone?: string;
+  }[]>([]);
   const navigate = useNavigate();
 
   const buscarLivros = useCallback(async () => {
@@ -164,6 +172,11 @@ export default function RelatorioLivros({ isVisible }: Props) {
     } catch (error) {
       console.error("Erro ao gerar relatório:", error);
     }
+  };
+
+  const getUserInfo = (id: number, nome: string) => {
+    // Aqui você pode buscar mais dados do backend se quiser
+    return { id, nome };
   };
 
   return (
@@ -317,15 +330,16 @@ export default function RelatorioLivros({ isVisible }: Props) {
                       <td>
                         {usuariosList.length > 0 ? (
                           <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
-                            {usuariosList.map((usuario, idx) => (
-                              <span
-                                key={idx}
-                                style={{ cursor: "pointer", color: "#2473D9", textDecoration: "underline" }}
-                                onClick={() => navigate(`/usuarios/${usuario.id}`)}
-                              >
-                                {usuario.nome}
-                              </span>
-                            ))}
+                            <div
+                              className="info-btn"
+                              onClick={() => {
+                                setUsuariosModal(usuariosList.map(u => getUserInfo(u.id, u.nome)));
+                                setModalUsuariosOpen(true);
+                              }}
+                              title="Ver todos os usuários"
+                            >
+                              i
+                            </div>
                           </div>
                         ) : (
                           "-"
@@ -378,6 +392,17 @@ export default function RelatorioLivros({ isVisible }: Props) {
           </>
         </div>
       )}
+
+      {/* Modal de usuários faltando */}
+      <ModalUsuariosFaltando
+        open={modalUsuariosOpen}
+        onClose={() => setModalUsuariosOpen(false)}
+        usuarios={usuariosModal}
+        onNavigate={(id) => {
+          setModalUsuariosOpen(false);
+          navigate(`/usuarios/${id}`);
+        }}
+      />
     </div>
   );
 }

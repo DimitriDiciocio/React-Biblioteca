@@ -1,0 +1,29 @@
+.cadastroBtn {
+  border: none;
+  border-bottom: 3px solid #d32f2f;
+  background: #2473d9;
+  color: white;
+  border-radius: 4px 4px 0 0;
+  padding: 10px 24px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: box-shadow 0.2s;
+}
+.cadastroBtn:active {
+  box-shadow: 0 2px 8px rgba(211, 47, 47, 0.2);
+}
+.inputBar {
+  border: none;
+  border-bottom: 2px solid #ccc;
+  outline: none;
+  padding: 8px 0;
+  background: transparent;
+  transition: border-color 0.2s;
+}
+.inputBar.active {
+  border-bottom: 2px solid #d32f2f;
+}
+.inputBar.complete {
+  border-bottom: 2px solid #2ecc40 !important; /* verde */
+  box-shadow: 0 2px 0 0 #2ecc40;
+}

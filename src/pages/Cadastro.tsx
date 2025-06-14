@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 import "../index.css";
 import { useDropzone } from "react-dropzone";
+import styles from "./Cadastro.module.css";
 
 const Cadastro: React.FC = () => {
   const [nome, setNome] = useState("");
@@ -19,12 +20,21 @@ const Cadastro: React.FC = () => {
   const [uf, setUf] = useState("");
   const [cidade, setCidade] = useState("");
   const [ufsBrasil, setUfsBrasil] = useState<string[]>([]);
-  const [senhaStrength, setSenhaStrength] = useState<"fraca" | "media" | "forte" | "invalida">("invalida");
+  const [senhaStrength, setSenhaStrength] = useState<
+    "fraca" | "media" | "forte" | "invalida"
+  >("invalida");
+  const [nomeActive, setNomeActive] = useState(false);
+  const [emailActive, setEmailActive] = useState(false);
+  const [telefoneActive, setTelefoneActive] = useState(false);
+  const [senhaActive, setSenhaActive] = useState(false);
+  const [confirmSenhaActive, setConfirmSenhaActive] = useState(false);
   const navigate = useNavigate();
 
   const senhaStrengthMessages = {
-    fraca: "A senha deve ter pelo menos 8 caracteres, incluindo letras maiúsculas, minúsculas, números e caracteres especiais.",
-    media: "Adicione letras maiúsculas, minúsculas e caracteres especiais para fortalecer sua senha.",
+    fraca:
+      "A senha deve ter pelo menos 8 caracteres, incluindo letras maiúsculas, minúsculas, números e caracteres especiais.",
+    media:
+      "Adicione letras maiúsculas, minúsculas e caracteres especiais para fortalecer sua senha.",
     forte: "Sua senha é forte.",
     invalida: "A senha é inválida.",
   };
@@ -81,7 +91,8 @@ const Cadastro: React.FC = () => {
     const temCaractEspecial = /[!@#$%^&*(),-.?":{}|<>]/.test(senha);
 
     if (senha.length < 8) return "fraca";
-    if (temMaiuscula && temMinuscula && temNumero && temCaractEspecial) return "forte";
+    if (temMaiuscula && temMinuscula && temNumero && temCaractEspecial)
+      return "forte";
     if ((temMaiuscula || temMinuscula) && temNumero) return "media";
     return "fraca";
   };
@@ -118,12 +129,12 @@ const Cadastro: React.FC = () => {
       if (response.ok) {
         await Swal.fire({
           customClass: {
-            title: 'montserrat-alternates-semibold',
-            htmlContainer: 'montserrat-alternates-semibold',
-            popup: 'montserrat-alternates-semibold',
-            container: 'montserrat-alternates-semibold',
-            confirmButton: 'montserrat-alternates-semibold',
-            content: 'montserrat-alternates-semibold',
+            title: "montserrat-alternates-semibold",
+            htmlContainer: "montserrat-alternates-semibold",
+            popup: "montserrat-alternates-semibold",
+            container: "montserrat-alternates-semibold",
+            confirmButton: "montserrat-alternates-semibold",
+            content: "montserrat-alternates-semibold",
           },
           title: "Cadastro realizado!",
           text: data.message,
@@ -135,12 +146,12 @@ const Cadastro: React.FC = () => {
       } else {
         await Swal.fire({
           customClass: {
-            title: 'montserrat-alternates-semibold',
-            htmlContainer: 'montserrat-alternates-semibold',
-            popup: 'montserrat-alternates-semibold',
-            container: 'montserrat-alternates-semibold',
-            confirmButton: 'montserrat-alternates-semibold',
-            content: 'montserrat-alternates-semibold',
+            title: "montserrat-alternates-semibold",
+            htmlContainer: "montserrat-alternates-semibold",
+            popup: "montserrat-alternates-semibold",
+            container: "montserrat-alternates-semibold",
+            confirmButton: "montserrat-alternates-semibold",
+            content: "montserrat-alternates-semibold",
           },
           title: "Erro no cadastro",
           text: data.message,
@@ -151,12 +162,12 @@ const Cadastro: React.FC = () => {
     } catch (error) {
       await Swal.fire({
         customClass: {
-          title: 'montserrat-alternates-semibold',
-          htmlContainer: 'montserrat-alternates-semibold',
-          popup: 'montserrat-alternates-semibold',
-          container: 'montserrat-alternates-semibold',
-          confirmButton: 'montserrat-alternates-semibold',
-          content: 'montserrat-alternates-semibold',
+          title: "montserrat-alternates-semibold",
+          htmlContainer: "montserrat-alternates-semibold",
+          popup: "montserrat-alternates-semibold",
+          container: "montserrat-alternates-semibold",
+          confirmButton: "montserrat-alternates-semibold",
+          content: "montserrat-alternates-semibold",
         },
         title: "Erro de conexão!",
         text: "Não foi possível se conectar ao servidor." + String(error),
@@ -259,35 +270,54 @@ const Cadastro: React.FC = () => {
         <h2 className="h2-cadastro montserrat-alternates-semibold">Cadastro</h2>
 
         <form onSubmit={handleCadastro} className="d-flex-column-cadastro">
-        <div className="inputGroup2">
-                <input
-                  className="montserrat-alternates-semibold"
-                  type="text"
-                  required
-                  autoComplete="off"
-                  value={nome}
-                  onChange={(e) => setNome(e.target.value)}
-                  tabIndex={1}
-                />
-                <label htmlFor="name" className="montserrat-alternates-semibold">Nome do Usuário</label>
-              </div>
+          <div className="inputGroup2">
+            <input
+              className={`montserrat-alternates-semibold ${styles.inputBar} ${
+                nomeActive ? styles.active : ""
+              } ${nome && nome.length >= 3 ? styles.complete : ""}`}
+              type="text"
+              required
+              autoComplete="off"
+              value={nome}
+              onChange={(e) => setNome(e.target.value)}
+              onFocus={() => setNomeActive(true)}
+              tabIndex={1}
+            />
+            <label htmlFor="name" className="montserrat-alternates-semibold">
+              Nome do Usuário
+            </label>
+          </div>
           <div className="d-flex gap-5-responsive">
             <div>
               <div className="inputGroup">
                 <input
-                  className="montserrat-alternates-semibold"
+                  className={`montserrat-alternates-semibold ${
+                    styles.inputBar
+                  } ${emailActive ? styles.active : ""} ${
+                    email && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)
+                      ? styles.complete
+                      : ""
+                  }`}
                   type="email"
                   required
                   autoComplete="off"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
+                  onFocus={() => setEmailActive(true)}
                   tabIndex={2}
                 />
-                <label htmlFor="name" className="montserrat-alternates-semibold">E-mail:</label>
+                <label
+                  htmlFor="name"
+                  className="montserrat-alternates-semibold"
+                >
+                  E-mail:
+                </label>
               </div>
               <div className="inputGroup">
                 <select
-                  className="montserrat-alternates-semibold"
+                  className={`montserrat-alternates-semibold ${
+                    uf ? styles.complete : ""
+                  }`}
                   value={uf}
                   onChange={(e) => setUf(e.target.value)}
                   required
@@ -303,22 +333,27 @@ const Cadastro: React.FC = () => {
               </div>
               <div className="inputGroup">
                 <input
-                  className="montserrat-alternates-semibold"
+                  className={`montserrat-alternates-semibold ${
+                    styles.inputBar
+                  } ${senhaActive ? styles.active : ""} ${
+                    senhaStrength === "forte" && senha ? styles.complete : ""
+                  }`}
                   type={mostrarSenha ? "text" : "password"}
                   id="senha"
                   required
                   autoComplete="off"
                   value={senha}
                   onChange={(e) => setSenha(e.target.value)}
+                  onFocus={() => setSenhaActive(true)}
                   tabIndex={6}
-                  style={{
-                    borderBottom: `2px solid ${
-                      senhaStrength === "forte" ? "green" : senhaStrength === "media" ? "orange" : "red"
-                    }`,
-                  }}
                 />
                 <label className="montserrat-alternates-semibold">Senha:</label>
-                <input type="checkbox" id="togglePassword" checked={mostrarSenha} hidden />
+                <input
+                  type="checkbox"
+                  id="togglePassword"
+                  checked={mostrarSenha}
+                  hidden
+                />
                 <div className="eye-container" onClick={() => veSenha("senha")}>
                   <svg
                     className="eye"
@@ -336,58 +371,111 @@ const Cadastro: React.FC = () => {
                   </svg>
                 </div>
               </div>
-              <div className="senha-strength-bar" style={{ marginTop: "5px", position: "relative" }}>
+              {senhaActive && (
                 <div
+                  className="senha-strength-bar"
                   style={{
-                    height: "5px",
-                    borderRadius: "10px",
-                    backgroundColor:
-                      senhaStrength === "forte"
-                        ? "green"
-                        : senhaStrength === "media"
-                        ? "orange"
-                        : "red",
-                    width: senhaStrength === "forte" ? "95%" : senhaStrength === "media" ? "61%" : "28%",
-                    transition: "width 0.3s ease",
-                  }}
-                ></div>
-                <div
-                  className="tooltip"
-                  style={{
-                    position: "absolute",
-                    top: "-25px",
-                    left: "0",
-                    backgroundColor: "#333",
-                    color: "#fff",
-                    padding: "5px 10px",
-                    borderRadius: "5px",
-                    fontSize: "12px",
-                    visibility: "hidden",
-                    opacity: 0,
-                    transition: "opacity 0.3s ease",
+                    marginTop: "5px",
+                    position: "relative",
+                    height: "8px",
+                    width: "calc(100% - 16px)",
+                    maxWidth: "360px",
                   }}
                 >
-                  {senhaStrengthMessages[senhaStrength]}
+                  {/* Fundo cinza sempre */}
+                  <div
+                    style={{
+                      height: "8px",
+                      borderRadius: "10px",
+                      backgroundColor: "#ccc",
+                      width: "100%",
+                      position: "absolute",
+                      top: 0,
+                      left: 0,
+                      zIndex: 1,
+                    }}
+                  ></div>
+                  {/* Barra colorida só se senha não está vazia */}
+                  {senha ? (
+                    <div
+                      style={{
+                        height: "8px",
+                        borderRadius: "10px",
+                        backgroundColor:
+                          senhaStrength === "forte"
+                            ? "green"
+                            : senhaStrength === "media"
+                            ? "orange"
+                            : "red",
+                        width:
+                          senhaStrength === "forte"
+                            ? "100%"
+                            : senhaStrength === "media"
+                            ? "61%"
+                            : "28%",
+                        transition: "width 0.3s ease",
+                        position: "absolute",
+                        top: 0,
+                        left: 0,
+                        zIndex: 2,
+                      }}
+                    ></div>
+                  ) : null}
+                  {/* Tooltip */}
+                  {senha && (
+                    <div
+                      className="tooltip"
+                      style={{
+                        position: "absolute",
+                        top: "-25px",
+                        left: "0",
+                        backgroundColor: "#333",
+                        color: "#fff",
+                        padding: "5px 10px",
+                        borderRadius: "5px",
+                        fontSize: "12px",
+                        visibility: "hidden",
+                        opacity: 0,
+                        transition: "opacity 0.3s ease",
+                      }}
+                    >
+                      {senhaStrengthMessages[senhaStrength]}
+                    </div>
+                  )}
                 </div>
-              </div>
+              )}
             </div>
             <div>
               <div className="inputGroup">
                 <input
-                  className="montserrat-alternates-semibold"
+                  className={`montserrat-alternates-semibold ${
+                    styles.inputBar
+                  } ${telefoneActive ? styles.active : ""} ${
+                    telefone && telefone.replace(/\D/g, "").length >= 10
+                      ? styles.complete
+                      : ""
+                  }`}
                   type="text"
                   required
                   autoComplete="off"
                   value={telefone}
                   onChange={(e) => setTelefone(formatTelefone(e.target.value))}
+                  onFocus={() => setTelefoneActive(true)}
                   maxLength={15}
                   tabIndex={3}
                 />
-                <label htmlFor="name" className="montserrat-alternates-semibold">Telefone:</label>
+                <label
+                  htmlFor="name"
+                  className="montserrat-alternates-semibold"
+                >
+                  Telefone:
+                </label>
               </div>
               <div className="inputGroup">
                 <select
-                  className="montserrat-alternates-semibold"
+                  className={`montserrat-alternates-semibold ${
+                    cidade ? styles.complete : ""
+                  }`}
                   value={cidade}
                   onChange={(e) => setCidade(e.target.value)}
                   required
@@ -404,19 +492,25 @@ const Cadastro: React.FC = () => {
               </div>
               <div className="inputGroup">
                 <input
-                  className="montserrat-alternates-semibold"
+                  className={`montserrat-alternates-semibold ${
+                    styles.inputBar
+                  } ${confirmSenhaActive ? styles.active : ""} ${
+                    confirmSenha && confirmSenha === senha && senha
+                      ? styles.complete
+                      : ""
+                  }`}
                   type={mostrarConfirmSenha ? "text" : "password"}
                   id="senha-confirm"
                   required
                   autoComplete="off"
                   value={confirmSenha}
                   onChange={(e) => setConfirmSenha(e.target.value)}
+                  onFocus={() => setConfirmSenhaActive(true)}
                   tabIndex={7}
-                  style={{
-                    borderBottom: `2px solid ${confirmSenha === senha && confirmSenha ? "green" : "red"}`,
-                  }}
                 />
-                <label className="montserrat-alternates-semibold">Confirmar Senha:</label>
+                <label className="montserrat-alternates-semibold">
+                  Confirmar Senha:
+                </label>
                 <input
                   type="checkbox"
                   id="togglePassword-confirm"
@@ -447,7 +541,10 @@ const Cadastro: React.FC = () => {
           </div>
 
           <div>
-            <button type="submit" className="button-login montserrat-alternates-semibold">
+            <button
+              type="submit"
+              className="button-login montserrat-alternates-semibold"
+            >
               Cadastrar
             </button>
             <div className="space-lilsm-y"></div>
