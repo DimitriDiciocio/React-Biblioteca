@@ -49,12 +49,14 @@ export default function RelatorioLivros({ isVisible }: Props) {
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
   const [modalUsuariosOpen, setModalUsuariosOpen] = useState(false);
-  const [usuariosModal, setUsuariosModal] = useState<{
-    id: number;
-    nome: string;
-    email?: string;
-    telefone?: string;
-  }[]>([]);
+  const [usuariosModal, setUsuariosModal] = useState<
+    {
+      id: number;
+      nome: string;
+      email?: string;
+      telefone?: string;
+    }[]
+  >([]);
   const navigate = useNavigate();
 
   const buscarLivros = useCallback(async () => {
@@ -293,14 +295,19 @@ export default function RelatorioLivros({ isVisible }: Props) {
           <tbody>
             {livros.length === 0 ? (
               <tr>
-                <td colSpan={abaAtiva === "faltando" ? 7 : 6} style={{ textAlign: "center", padding: 32 }}>
+                <td
+                  colSpan={abaAtiva === "faltando" ? 7 : 6}
+                  style={{ textAlign: "center", padding: 32 }}
+                >
                   {loading ? "Carregando..." : "Nenhum livro encontrado."}
                 </td>
               </tr>
             ) : (
               livros.map((livro) => {
-                const usuariosNomes = livro.usuarios?.split(",").filter(Boolean) || [];
-                const usuariosIds = livro.id_usuarios?.split(",").filter(Boolean) || [];
+                const usuariosNomes =
+                  livro.usuarios?.split(",").filter(Boolean) || [];
+                const usuariosIds =
+                  livro.id_usuarios?.split(",").filter(Boolean) || [];
                 const usuariosList = usuariosNomes.map((nome, idx) => ({
                   nome: nome.trim(),
                   id: parseInt(usuariosIds[idx]),
@@ -316,24 +323,36 @@ export default function RelatorioLivros({ isVisible }: Props) {
                   >
                     <td>
                       <ul style={{ margin: 0, paddingLeft: 18 }}>
-                        <li>
-                          {livro.titulo}
-                        </li>
+                        <li>{livro.titulo}</li>
                       </ul>
                     </td>
                     <td>{livro.autor}</td>
                     <td>{livro.categoria}</td>
-                    <td style={{ textAlign: "center" }}>{livro.qtd_emprestada}</td>
+                    <td style={{ textAlign: "center" }}>
+                      {livro.qtd_emprestada}
+                    </td>
                     <td style={{ textAlign: "center" }}>{livro.qtd_total}</td>
-                    <td style={{ textAlign: "center" }}>{livro.ano_publicado}</td>
+                    <td style={{ textAlign: "center" }}>
+                      {livro.ano_publicado}
+                    </td>
                     {abaAtiva === "faltando" && (
                       <td>
                         {usuariosList.length > 0 ? (
-                          <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
+                          <div
+                            style={{
+                              display: "flex",
+                              flexDirection: "column",
+                              gap: 4,
+                            }}
+                          >
                             <div
                               className="info-btn"
                               onClick={() => {
-                                setUsuariosModal(usuariosList.map(u => getUserInfo(u.id, u.nome)));
+                                setUsuariosModal(
+                                  usuariosList.map((u) =>
+                                    getUserInfo(u.id, u.nome)
+                                  )
+                                );
                                 setModalUsuariosOpen(true);
                               }}
                               title="Ver todos os usuários"

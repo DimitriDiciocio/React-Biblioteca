@@ -213,17 +213,16 @@ const Configuracoes: React.FC = () => {
 
     const telefoneNumerico = configuracoes.telefone.replace(/\D/g, ""); // Remove formatting
 
-    // Add phone validation for Pix key and remove formatting
-    const pixNumerico = configuracoes.chave_pix.replace(/\D/g, "");
-    
-    if (!validatePhoneNumber(pixNumerico)) {
-      Swal.fire({
-        icon: "error",
-        title: "Erro",
-        text: "A chave Pix deve ser um número de telefone válido (com DDD).",
-      });
-      return;
-    }
+    // Não valida mais Pix como telefone
+    // const pixNumerico = configuracoes.chave_pix.replace(/\D/g, "");
+    // if (!validatePhoneNumber(pixNumerico)) {
+    //   Swal.fire({
+    //     icon: "error",
+    //     title: "Erro",
+    //     text: "A chave Pix deve ser um número de telefone válido (com DDD).",
+    //   });
+    //   return;
+    // }
 
     const valorBase = parseFloat(valores.valor_base) || 0;
     const valorAcrescimo = parseFloat(valores.valor_acrescimo) || 0;
@@ -241,7 +240,8 @@ const Configuracoes: React.FC = () => {
       configuracoes.telefone !== originais.telefone ||
       configuracoes.email !== originais.email ||
       configuracoes.apelido_email !== originais.apelido_email || // Check apelido_email
-      parseInt(configuracoes.limite_emprestimos) !== originais.limite_emprestimos ||
+      parseInt(configuracoes.limite_emprestimos) !==
+        originais.limite_emprestimos ||
       parseInt(configuracoes.limite_reservas) !== originais.limite_reservas;
 
     if (!valoresAlterados && !configAlterada) {
@@ -290,32 +290,41 @@ const Configuracoes: React.FC = () => {
       return;
     }
     try {
-      const resConfig = await fetch("http://127.0.0.1:5000/configuracoes/criar", {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          dias_validade_emprestimo: parseInt(configuracoes.dias_validade_emprestimo),
-          dias_validade_buscar: parseInt(configuracoes.dias_validade_emprestimo_buscar),
-          chave_pix: pixNumerico,
-          razao_social: configuracoes.razao_social,
-          endereco: configuracoes.endereco,
-          telefone: telefoneNumerico, // Send unformatted phone number
-          email: configuracoes.email,
-          apelido_email: configuracoes.apelido_email, // Send apelido_email to API
-          limite_emprestimo: parseInt(configuracoes.limite_emprestimos),
-          limite_reserva: parseInt(configuracoes.limite_reservas),
-        }),
-      });
+      const resConfig = await fetch(
+        "http://127.0.0.1:5000/configuracoes/criar",
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            dias_validade_emprestimo: parseInt(
+              configuracoes.dias_validade_emprestimo
+            ),
+            dias_validade_buscar: parseInt(
+              configuracoes.dias_validade_emprestimo_buscar
+            ),
+            chave_pix: configuracoes.chave_pix, // Envia o valor como está
+            razao_social: configuracoes.razao_social,
+            endereco: configuracoes.endereco,
+            telefone: telefoneNumerico, // Send unformatted phone number
+            email: configuracoes.email,
+            apelido_email: configuracoes.apelido_email, // Send apelido_email to API
+            limite_emprestimo: parseInt(configuracoes.limite_emprestimos),
+            limite_reserva: parseInt(configuracoes.limite_reservas),
+          }),
+        }
+      );
       if (!resConfig.ok) throw new Error("Erro ao atualizar configurações");
 
       setOriginais({
         valor_base: parseFloat(valores.valor_base) || 0,
         valor_acrescimo: parseFloat(valores.valor_acrescimo) || 0,
-        dias_validade_emprestimo: parseInt(configuracoes.dias_validade_emprestimo) || 0,
-        dias_validade_emprestimo_buscar: parseInt(configuracoes.dias_validade_emprestimo_buscar) || 0,
+        dias_validade_emprestimo:
+          parseInt(configuracoes.dias_validade_emprestimo) || 0,
+        dias_validade_emprestimo_buscar:
+          parseInt(configuracoes.dias_validade_emprestimo_buscar) || 0,
         chave_pix: configuracoes.chave_pix,
         razao_social: configuracoes.razao_social,
         endereco: configuracoes.endereco,
@@ -369,7 +378,13 @@ const Configuracoes: React.FC = () => {
       {activeTab === "configuracoes" && (
         <form onSubmit={handleSubmit} className={styles.form}>
           <h3 className={styles.subtitle}>Atualizar Valores</h3>
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "16px" }}>
+          <div
+            style={{
+              display: "grid",
+              gridTemplateColumns: "1fr 1fr",
+              gap: "16px",
+            }}
+          >
             <div className={styles.inputGroup}>
               <label>Valor Base</label>
               <label className={styles.inputLabel}>
@@ -410,7 +425,13 @@ const Configuracoes: React.FC = () => {
             </div>
           </div>
           <h3 className={styles.subtitle}>Configurações Gerais</h3>
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "16px" }}>
+          <div
+            style={{
+              display: "grid",
+              gridTemplateColumns: "1fr 1fr",
+              gap: "16px",
+            }}
+          >
             <div className={styles.inputGroup}>
               <label>Dias de Validade do Empréstimo</label>
               <input
@@ -473,7 +494,13 @@ const Configuracoes: React.FC = () => {
             </div>
           </div>
           <h3 className={styles.subtitle}>Configurações da Biblioteca</h3>
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "16px" }}>
+          <div
+            style={{
+              display: "grid",
+              gridTemplateColumns: "1fr 1fr",
+              gap: "16px",
+            }}
+          >
             <div className={styles.inputGroup}>
               <label>Razão Social</label>
               <input
@@ -490,17 +517,16 @@ const Configuracoes: React.FC = () => {
               />
             </div>
             <div className={styles.inputGroup}>
-              <label>Chave Pix (Telefone com DDD)</label>
+              <label>Chave Pix</label>
               <input
                 type="text"
                 value={configuracoes.chave_pix}
                 onChange={(e) =>
                   setConfiguracoes({
                     ...configuracoes,
-                    chave_pix: formatTelefone(e.target.value),
+                    chave_pix: e.target.value,
                   })
                 }
-                maxLength={15}
                 className={`${styles.input} montserrat-alternates-semibold`}
                 required
               />
@@ -598,7 +624,9 @@ const Configuracoes: React.FC = () => {
                       <td>{config.email || "N/A"}</td>
                       <td>{config.apelido_email || "N/A"}</td>
                       <td>
-                        {config.data_adicionado ? formatDateTime(config.data_adicionado) : "N/A"}
+                        {config.data_adicionado
+                          ? formatDateTime(config.data_adicionado)
+                          : "N/A"}
                       </td>
                     </tr>
                   ))}

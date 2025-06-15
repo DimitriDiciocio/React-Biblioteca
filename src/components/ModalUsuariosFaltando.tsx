@@ -16,7 +16,12 @@ interface ModalUsuariosFaltandoProps {
   onNavigate: (id: number) => void;
 }
 
-const ModalUsuariosFaltando: React.FC<ModalUsuariosFaltandoProps> = ({ open, onClose, usuarios, onNavigate }) => {
+const ModalUsuariosFaltando: React.FC<ModalUsuariosFaltandoProps> = ({
+  open,
+  onClose,
+  usuarios,
+  onNavigate,
+}) => {
   if (!open) return null;
   return (
     <div
@@ -45,7 +50,7 @@ const ModalUsuariosFaltando: React.FC<ModalUsuariosFaltandoProps> = ({ open, onC
           width: "100%",
           position: "relative",
           zIndex: 100000,
-          fontFamily: 'Montserrat Alternates, Montserrat, Arial, sans-serif',
+          fontFamily: "Montserrat Alternates, Montserrat, Arial, sans-serif",
         }}
         onClick={(e) => e.stopPropagation()}
       >
@@ -66,7 +71,9 @@ const ModalUsuariosFaltando: React.FC<ModalUsuariosFaltandoProps> = ({ open, onC
         </button>
         <h2 style={{ marginBottom: 16 }}>Usuários com este livro</h2>
         {usuarios.length === 0 ? (
-          <div style={{ textAlign: "center", color: "#888" }}>Nenhum usuário encontrado.</div>
+          <div style={{ textAlign: "center", color: "#888" }}>
+            Nenhum usuário encontrado.
+          </div>
         ) : (
           <ul style={{ padding: 0, margin: 0, listStyle: "none" }}>
             {usuarios.map((usuario) => (
@@ -82,16 +89,25 @@ const ModalUsuariosFaltando: React.FC<ModalUsuariosFaltandoProps> = ({ open, onC
                 }}
               >
                 <span
-                  style={{ color: "#2473D9", textDecoration: "underline", cursor: "pointer", fontWeight: 600 }}
+                  style={{
+                    color: "#2473D9",
+                    textDecoration: "underline",
+                    cursor: "pointer",
+                    fontWeight: 600,
+                  }}
                   onClick={() => onNavigate(usuario.id)}
                 >
                   {usuario.nome}
                 </span>
                 {usuario.email && (
-                  <span style={{ fontSize: 13, color: "#555" }}>Email: {usuario.email}</span>
+                  <span style={{ fontSize: 13, color: "#555" }}>
+                    Email: {usuario.email}
+                  </span>
                 )}
                 {usuario.telefone && (
-                  <span style={{ fontSize: 13, color: "#555" }}>Telefone: {usuario.telefone}</span>
+                  <span style={{ fontSize: 13, color: "#555" }}>
+                    Telefone: {usuario.telefone}
+                  </span>
                 )}
               </li>
             ))}
