@@ -57,6 +57,8 @@ const Configuracoes: React.FC = () => {
     HistoricoConfiguracao[]
   >([]);
   const [activeTab, setActiveTab] = useState("configuracoes");
+  const [pixModalOpen, setPixModalOpen] = useState(false);
+  const [pixImage, setPixImage] = useState<string | null>(null);
 
   const isAllowed = usePermission(3); // Check if the user is an admin
   const navigate = useNavigate();
@@ -350,6 +352,40 @@ const Configuracoes: React.FC = () => {
     }
   };
 
+  const handleTestPixKey = async () => {
+    try {
+      const response = await fetch("http://127.0.0.1:5000/testar_pix", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+          "Content-Type": "application/json",
+        },
+      });
+
+      if (!response.ok) throw new Error("Erro ao testar chave Pix");
+
+      const data = await response.json();
+      const imageFilename = data.imagem;
+      const imageResponse = await fetch(
+        `http://127.0.0.1:5000/uploads/codigos-pix/${imageFilename}`
+      );
+
+      if (!imageResponse.ok) throw new Error("Erro ao buscar imagem do Pix");
+
+      const imageBlob = await imageResponse.blob();
+      const imageUrl = URL.createObjectURL(imageBlob);
+      setPixImage(imageUrl);
+      setPixModalOpen(true);
+    } catch (error) {
+      Swal.fire({
+        icon: "error",
+        title: "Erro",
+        text: "Não foi possível testar a chave Pix.",
+      });
+      console.error(error);
+    }
+  };
+
   return (
     <div className={styles.container}>
       <i
@@ -530,6 +566,14 @@ const Configuracoes: React.FC = () => {
                 className={`${styles.input} montserrat-alternates-semibold`}
                 required
               />
+              <button
+                type="button"
+                className={styles.button}
+                onClick={handleTestPixKey}
+                style={{ marginTop: "8px" }}
+              >
+                Testar Chave Pix
+              </button>
             </div>
             <div className={styles.inputGroup}>
               <label>Endereço</label>
@@ -637,6 +681,61 @@ const Configuracoes: React.FC = () => {
           ) : (
             <p className={styles.noData}>Nenhum histórico encontrado.</p>
           )}
+        </div>
+      )}
+      {pixModalOpen && (
+        <div
+          className="modal-overlay"
+          style={{
+            position: "fixed",
+            top: 0,
+            left: 0,
+            width: "100vw",
+            height: "100vh",
+            background: "rgba(0,0,0,0.3)",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            zIndex: 9999,
+          }}
+          onClick={() => setPixModalOpen(false)}
+        >
+          <div
+            className="modal-content"
+            style={{
+              background: "#fff",
+              borderRadius: 10,
+              padding: 32,
+              minWidth: 320,
+              maxWidth: 400,
+              width: "100%",
+              position: "relative",
+            }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <button
+              onClick={() => setPixModalOpen(false)}
+              style={{
+                position: "absolute",
+                top: 10,
+                right: 10,
+                background: "none",
+                border: "none",
+                fontSize: 22,
+                cursor: "pointer",
+              }}
+              aria-label="Fechar"
+            >
+              ×
+            </button>
+            {pixImage && (
+              <img
+                src={pixImage}
+                alt="Código Pix"
+                style={{ width: "100%" }}
+              />
+            )}
+          </div>
         </div>
       )}
     </div>
