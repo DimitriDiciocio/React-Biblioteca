@@ -553,27 +553,29 @@ const Configuracoes: React.FC = () => {
               />
             </div>
             <div className={styles.inputGroup}>
-              <label>Chave Pix</label>
-              <input
-                type="text"
-                value={configuracoes.chave_pix}
-                onChange={(e) =>
-                  setConfiguracoes({
-                    ...configuracoes,
-                    chave_pix: e.target.value,
-                  })
-                }
-                className={`${styles.input} montserrat-alternates-semibold`}
-                required
-              />
-              <button
+              <div style={{ display: "flex", alignItems: "center" }}>
+                <label style={{ display: "flex", marginRight: "8px" }}>Chave Pix</label>
+                <button
                 type="button"
                 className={styles.button}
                 onClick={handleTestPixKey}
-                style={{ marginTop: "8px" }}
+                style={{width: "30%"}}
               >
                 Testar Chave Pix
               </button>
+              </div>
+              <input
+                  type="text"
+                  value={configuracoes.chave_pix}
+                  onChange={(e) =>
+                    setConfiguracoes({
+                      ...configuracoes,
+                      chave_pix: e.target.value,
+                    })
+                  }
+                  className={`${styles.input} montserrat-alternates-semibold`}
+                  required
+                />
             </div>
             <div className={styles.inputGroup}>
               <label>Endereço</label>
